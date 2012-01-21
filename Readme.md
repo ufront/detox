@@ -84,7 +84,8 @@ I want to be able to:
 API
 ---
 
-These are the API things I want, but they could easily be done through "using", which I might do.
+These are the API functions from JQuery.  I've split them up into different groupings.  
+My plan is to use haxe's "using" functionality to add these to normal Node elements, or to Query objects (collections of nodes, JQuery style).
 
 JQuery functions
 ================
@@ -127,139 +128,139 @@ DOM Element Manipulation
 
 DOM Tree Manipulation
 ---------------------
-wrap()
-unwrap
-empty() - 
-wrapAll()
-wrapInner()
-insertAfter
-insertBefore
-prepend
-prependTo
-append() - append a string (or html) to each object
-appendTo() - adds the collection to each item that matches the selector
-remove() - remove element from DOM, destroys
-detach() - removes element, but keeps data
-replaceAll(selector) - replace each element matching selector with our collection
-replaceWith(newContent) - replace collection with new content
-after() - places html after each element in collection
-before() - places html before each element in collection
+	wrap()
+	unwrap
+	empty() - 
+	wrapAll()
+	wrapInner()
+	insertAfter
+	insertBefore
+	prepend
+	prependTo
+	append() - append a string (or html) to each object
+	appendTo() - adds the collection to each item that matches the selector
+	remove() - remove element from DOM, destroys
+	detach() - removes element, but keeps data
+	replaceAll(selector) - replace each element matching selector with our collection
+	replaceWith(newContent) - replace collection with new content
+	after() - places html after each element in collection
+	before() - places html before each element in collection
 
 
 
 Events
 ------
-mousedown
-mouseenter
-mouseleave
-mousemove
-mouseout
-mouseover
-mouseup
-keydown
-keypress
-keyup
-hover() - 
-submit()
-toggleClick(callBackFirstClick, callBackSecondClick)
-blur() - 
-change() - 
-click() - 
-dblclick() - 
-focus()
-focusIn()
-focusOut()
-resize - event
-scroll - event
-select - event
-live
-die(?eventType) - remove all event handlers
-load()
-ready()
-noBubble
-one()
-trigger
-triggerHandler
-bind() - addEventListener() basically
-unbind (events)
-unload (events)
-error() - 
+	mousedown
+	mouseenter
+	mouseleave
+	mousemove
+	mouseout
+	mouseover
+	mouseup
+	keydown
+	keypress
+	keyup
+	hover() - 
+	submit()
+	toggleClick(callBackFirstClick, callBackSecondClick)
+	blur() - 
+	change() - 
+	click() - 
+	dblclick() - 
+	focus()
+	focusIn()
+	focusOut()
+	resize - event
+	scroll - event
+	select - event
+	live
+	die(?eventType) - remove all event handlers
+	load()
+	ready()
+	noBubble
+	one()
+	trigger
+	triggerHandler
+	bind() - addEventListener() basically
+	unbind (events)
+	unload (events)
+	error() - 
 
 Animation
 ---------
-hide() - 
-slideDown
-slideToggle
-slideUp
-show
-stop()
-fadeIn() - 
-fadeOut() - 
-fadeTo() - 
-fadeToggle() - 
-toggle() - animation
-clearQueue() -
-delay() - 
-queue() - get queue of animations?
-dequeue() - 
-animate() - 
+	hide() - 
+	slideDown
+	slideToggle
+	slideUp
+	show
+	stop()
+	fadeIn() - 
+	fadeOut() - 
+	fadeTo() - 
+	fadeToggle() - 
+	toggle() - animation
+	clearQueue() -
+	delay() - 
+	queue() - get queue of animations?
+	dequeue() - 
+	animate() - 
 
 Style
 -----
-innerHeight
-innerWidth
-css() - 
-offset()
-offsetParent()
-scrollLeft - int
-scrollTop - int
-position(top, left)
-width()
-height() - 
-outerHeight()
-outerWidth()
+	innerHeight
+	innerWidth
+	css() - 
+	offset()
+	offsetParent()
+	scrollLeft - int
+	scrollTop - int
+	position(top, left)
+	width()
+	height() - 
+	outerHeight()
+	outerWidth()
 
 Collection Management
 ---------------------
-add() - adds an object to the collection
-each() - 
-first() - first element in a set
-get() - an array of the DOM elements
-iterator()
-size - number of objects in collection
-toArray()
-eq() - 
-filter() - 
-last() - final matched element in set
-slice
-not - removes elements (or selector) from set
-is("") - like filter, but returns Bool rather than new list if(element.is("li.menu"))
-has(selector) - does it have a certain children
-andSelf() - previous set of matched elements to the current set
-index(?selector) - 
+	add() - adds an object to the collection
+	each() - 
+	first() - first element in a set
+	get() - an array of the DOM elements
+	iterator()
+	size - number of objects in collection
+	toArray()
+	eq() - 
+	filter() - 
+	last() - final matched element in set
+	slice
+	not - removes elements (or selector) from set
+	is("") - like filter, but returns Bool rather than new list if(element.is("li.menu"))
+	has(selector) - does it have a certain children
+	andSelf() - previous set of matched elements to the current set
+	index(?selector) - 
 
 Probably no need to implement
 -----------------------------
-data<T>(key, ?value) - basically a hash
-removeData(key)
-noConflict()
-end() - to undo the last filter.  Probably irrelevant if we use static methods?
-serialise - string
-serialiseArray()
-pushStack(Array<HtmlDom>):JQuery - if we are using statics this is unnecessary - we're operating on regular elements.
-delegate() - superseded
-undelegate - superseded
-loadURL() / load() - let other haxe classes do this?
-
-
+	data<T>(key, ?value) - basically a hash
+	removeData(key)
+	noConflict()
+	end() - to undo the last filter.  Probably irrelevant if we use static methods?
+	serialise - string
+	serialiseArray()
+	pushStack(Array<HtmlDom>):JQuery - if we are using statics this is unnecessary - we're operating on regular elements.
+	delegate() - superseded
+	undelegate - superseded
+	loadURL() / load() - let other haxe classes do this?
 
 Static
-browser.webkit, browser.version, browser.opera, browser.msie, browser.mozilla, 
-cur() - current element in callback (like $(this))
-fx.off, fx.interval
-contains(parent, child)
-JQuery.of(dom:HtmlDom):JQuery
-parseJSON
+------
+
+	browser.webkit, browser.version, browser.opera, browser.msie, browser.mozilla, 
+	cur() - current element in callback (like $(this))
+	fx.off, fx.interval
+	contains(parent, child)
+	JQuery.of(dom:HtmlDom):JQuery
+	parseJSON
 
 
 
