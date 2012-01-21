@@ -1,0 +1,7 @@
+<project name="domtools" url="https://github.com/jasononeil/domtools" license="BSD">
+    <user name="jason"/>
+    <tag v="js"/>
+    <description>DOM Tools - A JQuery like API for haxe JS.</description>
+    <version name="0.5.0">A library of tools that makes it easy to work with the DOM in javascript.  Inspired by JQuery in many ways, see the github page for a breakdown of how this is different.</version>
+    <depends name="xirsys_stdjs"/>
+</project>

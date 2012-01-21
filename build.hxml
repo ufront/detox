@@ -3,3 +3,12 @@
 -main test.Main
 --dead-code-elimination
 -cmd haxelib run jsmin test/main-uncompressed.js test/main.js 3
+
+# documentation
+-xml doc/haxedoc.xml
+#--next
+#--no-output
+#-main test.Main
+#--macro ImportAll.run()
+#-cp haxe/
+#-js all.js
