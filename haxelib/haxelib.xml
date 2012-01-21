@@ -2,6 +2,6 @@
     <user name="jason"/>
     <tag v="js"/>
     <description>DOM Tools - A JQuery like API for haxe JS.</description>
-    <version name="0.5.0">A library of tools that makes it easy to work with the DOM in javascript.  Inspired by JQuery in many ways, see the github page for a breakdown of how this is different.</version>
+    <version name="0.5.01">Added code for basic events.  Will only work with W3C event model, so FF, Webkit, Opera and IE9+.  Even then some won't work.  Some will though!  Post to Github if you see stuff that needs fixing.  Or better yet, fork, fix, and submit a pull request :)</version>
     <depends name="xirsys_stdjs"/>
 </project>

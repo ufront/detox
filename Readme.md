@@ -33,21 +33,32 @@ Where JQuery wins
 * Testing - JQuery is used on thousands (millions?) of websites, and is thoroughly tested.  This, not so much.  You can help change that!
 * Plugins - JQuery has a lot of plugins, which we obviously can't support here.  However, they have never been easy to get working in haxe, because you have to write an extern for each one.  With this it should be easier to extend your own functionality in a haxe-like way.
 
+Current Status
+--------------
+
+* Query - the main object you work with, essentially a collection of Nodes that you can group and manage together.  Working.
+* ElementManipulation - largely working, tested thoroughly on firefox only.
+* DOMManipulation - appears to be working, not thoroughly tested.
+* Traversing - appears to be working in Firefox, not thoroughly tested.
+* Events - basic structure for code is in for each jquery event.  Only events that are native to the browser will work.  Currently using only "addEventListener", so will not work in IE8 or less.
+* Style - not implemented yet.
+* Animation - not implemented yet.
+
 The Plan
 --------
 
 * Use xirsys' "StdJS" library to get proper typedefs for html5/js
 * Implement JQuery like functions, but as a collection of "Using" libraries.
 * package domtools;
-** using domtools.Traversing;
-** using domtools.ElementManipulation;
-** using domtools.DOMManipulation;
-** using domtools.Events;
-** using domtools.Animation;
-** using domtools.Style;
+    * using domtools.Traversing;
+    * using domtools.ElementManipulation;
+    * using domtools.DOMManipulation;
+    * using domtools.Events;
+    * using domtools.Animation;
+    * using domtools.Style;
 * Create the basic files and method signiatures, but with #error statements
 * Post to git.  Fill them out as I go.
-** Start with Traversing, ElementManipulation, DOMManipulation.  Later add Events.  Then Style.  Then Animation.
+    * Start with Traversing, ElementManipulation, DOMManipulation.  Later add Events.  Then Style.  Then Animation.
 * Start with basic functions, don't worry too much about extra selectors on methods where it's not necessary yet.
 * All functions should have an overload, so it can take both a Node and a Query (collection).  This means all Node or Query objects will work with the API.
 * To make "using" work for both Node and Query, the API will need to be duplicated.  Both of these are stored in the same class, and the code for "Query" mostly calls the code for "Node" on each of its elements.  See domtools.ElementManipulation for an example.
@@ -55,11 +66,10 @@ The Plan
 Questions
 ---------
 
-Scrap the following...
-
 * If I use "class Button implements HtmlDom", will my object be found via the DOM inspector in firebug?  Can I find my object using JQuery?
-* Can I use HtmlDom where MetaDom / Dom is required? (Will affect if I can use DOM in some places to allow server side)
-** The only issue will be "var cloneNode"
+
+    Answer: this doesn't work, you can't construct a HtmlDom.  What does work is constructing a query, using document.createNode("div"), adding it to the query collection and having your class extend that query.
+
 
 Aim
 ---
@@ -69,6 +79,7 @@ I want to be able to:
 * Create "blank canvas" html, with no styling, but with enough markup to be REALLY easy to CSS.
 * Easily add / remove classes and ids
 * Easily add / remove event listeners
+* Basic animations (show/hide?)
 
 API
 ---
