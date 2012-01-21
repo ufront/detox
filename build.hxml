@@ -1,0 +1,5 @@
+-lib xirsys_stdjs
+-js test/main-uncompressed.js
+-main test.Main
+--dead-code-elimination
+-cmd haxelib run jsmin test/main-uncompressed.js test/main.js 3
