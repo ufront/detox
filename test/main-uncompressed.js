@@ -9,7 +9,7 @@ test.Main = $hxClasses["test.Main"] = function() { }
 test.Main.__name__ = ["test","Main"];
 test.Main.main = function() {
 	haxe.Log.trace = haxe.Firebug.trace;
-	js.Lib.window.onload = test.Main.run;
+	window.onload = test.Main.run;
 }
 test.Main.run = function(e) {
 	var h1Node = new domtools.Query("h1");
@@ -17,53 +17,53 @@ test.Main.run = function(e) {
 	var textContentTest = new domtools.Query("#textcontenttest");
 	var innerHTMLTest = new domtools.Query("#innerhtmltest");
 	domtools.QueryElementManipulation.setAttr(h1Node,"id","bigtitle");
-	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"id"),{ fileName : "Main.hx", lineNumber : 29, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryElementManipulation.text(domtools.QueryElementManipulation.setText(h1Node,"New Title")),{ fileName : "Main.hx", lineNumber : 30, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryElementManipulation.text(textContentTest),{ fileName : "Main.hx", lineNumber : 31, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryElementManipulation.text(domtools.QueryElementManipulation.setText(textContentTest,"Simplified")),{ fileName : "Main.hx", lineNumber : 32, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"id"),{ fileName : "Main.hx", lineNumber : 31, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.text(domtools.QueryElementManipulation.setText(h1Node,"New Title")),{ fileName : "Main.hx", lineNumber : 32, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.text(textContentTest),{ fileName : "Main.hx", lineNumber : 33, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.text(domtools.QueryElementManipulation.setText(textContentTest,"Simplified")),{ fileName : "Main.hx", lineNumber : 34, className : "test.Main", methodName : "run"});
 	domtools.QueryElementManipulation.addClass(h1Node,"big");
 	domtools.QueryElementManipulation.addClass(h1Node,"ass");
 	domtools.QueryElementManipulation.addClass(h1Node,"title");
-	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 38, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryElementManipulation.hasClass(h1Node,"big"),{ fileName : "Main.hx", lineNumber : 40, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryElementManipulation.hasClass(h1Node,"massive"),{ fileName : "Main.hx", lineNumber : 41, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 40, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.hasClass(h1Node,"big"),{ fileName : "Main.hx", lineNumber : 42, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.hasClass(h1Node,"massive"),{ fileName : "Main.hx", lineNumber : 43, className : "test.Main", methodName : "run"});
 	domtools.QueryElementManipulation.removeAttr(h1Node,"class");
-	haxe.Log.trace(domtools.QueryElementManipulation.hasClass(h1Node,"big"),{ fileName : "Main.hx", lineNumber : 44, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.hasClass(h1Node,"big"),{ fileName : "Main.hx", lineNumber : 46, className : "test.Main", methodName : "run"});
 	domtools.QueryElementManipulation.addClass(domtools.QueryElementManipulation.addClass(h1Node,"no-duplicate"),"no-duplicate");
-	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 46, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 48, className : "test.Main", methodName : "run"});
 	domtools.QueryElementManipulation.removeAttr(h1Node,"class");
 	domtools.QueryElementManipulation.addClass(domtools.QueryElementManipulation.addClass(domtools.QueryElementManipulation.addClass(domtools.QueryElementManipulation.addClass(domtools.QueryElementManipulation.addClass(h1Node,"one"),"two"),"three"),"four"),"five");
-	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 50, className : "test.Main", methodName : "run"});
-	domtools.QueryElementManipulation.removeClass(domtools.QueryElementManipulation.removeClass(domtools.QueryElementManipulation.removeClass(h1Node,"one"),"three"),"five");
 	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 52, className : "test.Main", methodName : "run"});
+	domtools.QueryElementManipulation.removeClass(domtools.QueryElementManipulation.removeClass(domtools.QueryElementManipulation.removeClass(h1Node,"one"),"three"),"five");
+	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 54, className : "test.Main", methodName : "run"});
 	domtools.QueryElementManipulation.removeClass(h1Node,"fake-class");
 	domtools.QueryElementManipulation.removeClass(domtools.QueryElementManipulation.removeClass(h1Node,"two"),"four");
-	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 56, className : "test.Main", methodName : "run"});
-	domtools.QueryElementManipulation.toggleClass(h1Node,"toggle-on");
-	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 59, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 58, className : "test.Main", methodName : "run"});
 	domtools.QueryElementManipulation.toggleClass(h1Node,"toggle-on");
 	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 61, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryElementManipulation.val(hiddenField),{ fileName : "Main.hx", lineNumber : 63, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryElementManipulation.innerHTML(innerHTMLTest),{ fileName : "Main.hx", lineNumber : 65, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryElementManipulation.innerHTML(domtools.QueryTraversing.firstChild(innerHTMLTest)),{ fileName : "Main.hx", lineNumber : 66, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryTraversing.firstChild(domtools.QueryElementManipulation.setInnerHTML(innerHTMLTest,"Welcome to the <strong>WORLD</strong> of tomorrow")).collection[0].nodeType,{ fileName : "Main.hx", lineNumber : 67, className : "test.Main", methodName : "run"});
+	domtools.QueryElementManipulation.toggleClass(h1Node,"toggle-on");
+	haxe.Log.trace(domtools.QueryElementManipulation.attr(h1Node,"class"),{ fileName : "Main.hx", lineNumber : 63, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.val(hiddenField),{ fileName : "Main.hx", lineNumber : 65, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.innerHTML(innerHTMLTest),{ fileName : "Main.hx", lineNumber : 67, className : "test.Main", methodName : "run"});
 	haxe.Log.trace(domtools.QueryElementManipulation.innerHTML(domtools.QueryTraversing.firstChild(innerHTMLTest)),{ fileName : "Main.hx", lineNumber : 68, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryTraversing.firstChild(domtools.QueryElementManipulation.setInnerHTML(innerHTMLTest,"Welcome to the <strong>WORLD</strong> of tomorrow")).collection[0].nodeType,{ fileName : "Main.hx", lineNumber : 69, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.innerHTML(domtools.QueryTraversing.firstChild(innerHTMLTest)),{ fileName : "Main.hx", lineNumber : 70, className : "test.Main", methodName : "run"});
 	var clonedNode = domtools.QueryElementManipulation.setAttr(h1Node.clone(),"id","secondTitle");
 	domtools.DOMManipulation.append(CommonJS.getHtmlDocument().body,null,clonedNode);
 	domtools.QueryElementManipulation.setText(clonedNode,"Second Title");
-	haxe.Log.trace(new domtools.Query("#secondTitle") != null,{ fileName : "Main.hx", lineNumber : 73, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryElementManipulation.text(h1Node.clone()),{ fileName : "Main.hx", lineNumber : 74, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(new domtools.Query("#secondTitle") != null,{ fileName : "Main.hx", lineNumber : 75, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.text(h1Node.clone()),{ fileName : "Main.hx", lineNumber : 76, className : "test.Main", methodName : "run"});
 	var allListItems = new domtools.Query("li");
-	haxe.Log.trace(domtools.QueryElementManipulation.text(new domtools.Query(null,allListItems.collection[0])),{ fileName : "Main.hx", lineNumber : 77, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(allListItems.collection.length,{ fileName : "Main.hx", lineNumber : 78, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.text(new domtools.Query(null,allListItems.collection[0])),{ fileName : "Main.hx", lineNumber : 79, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(allListItems.collection.length,{ fileName : "Main.hx", lineNumber : 80, className : "test.Main", methodName : "run"});
 	var i = 0;
 	var $it0 = allListItems.collection.iterator();
 	while( $it0.hasNext() ) {
 		var n = $it0.next();
 		i = i + 1;
 	}
-	haxe.Log.trace(i == allListItems.collection.length,{ fileName : "Main.hx", lineNumber : 81, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(new domtools.Query(null,allListItems.collection[allListItems.collection.length - 1]).collection[0].textContent,{ fileName : "Main.hx", lineNumber : 82, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(i == allListItems.collection.length,{ fileName : "Main.hx", lineNumber : 83, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(new domtools.Query(null,allListItems.collection[allListItems.collection.length - 1]).collection[0].textContent,{ fileName : "Main.hx", lineNumber : 84, className : "test.Main", methodName : "run"});
 	var secondListItems = new domtools.Query("li.second");
 	{
 		Lambda.iter(secondListItems.collection,function(n) {
@@ -75,22 +75,39 @@ test.Main.run = function(e) {
 		secondListItems;
 	}
 	var secondListItemInSecondList = new domtools.Query("ul.second li.second");
-	haxe.Log.trace(domtools.QueryElementManipulation.text(secondListItemInSecondList),{ fileName : "Main.hx", lineNumber : 92, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.text(secondListItemInSecondList),{ fileName : "Main.hx", lineNumber : 94, className : "test.Main", methodName : "run"});
 	var listItemsWithLetterI = new domtools.Query(null,null,Lambda.filter(allListItems.collection,function(n) {
 		return n.textContent.indexOf("i") > -1;
 	}));
-	haxe.Log.trace(listItemsWithLetterI.collection.length,{ fileName : "Main.hx", lineNumber : 97, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(listItemsWithLetterI.collection.length,{ fileName : "Main.hx", lineNumber : 99, className : "test.Main", methodName : "run"});
 	var $it1 = domtools.QueryTraversing.ancestors(secondListItemInSecondList).collection.iterator();
 	while( $it1.hasNext() ) {
 		var node = $it1.next();
-		haxe.Log.trace(node.nodeName,{ fileName : "Main.hx", lineNumber : 101, className : "test.Main", methodName : "run"});
+		haxe.Log.trace(node.nodeName,{ fileName : "Main.hx", lineNumber : 103, className : "test.Main", methodName : "run"});
 	}
-	haxe.Log.trace(domtools.QueryTraversing.ancestors(secondListItemInSecondList).collection.length,{ fileName : "Main.hx", lineNumber : 103, className : "test.Main", methodName : "run"});
-	haxe.Log.trace(domtools.QueryElementManipulation.text(domtools.QueryElementManipulation.addClass(domtools.QueryTraversing.find(new domtools.Query("ul"),"li.first"),"first-list-item")),{ fileName : "Main.hx", lineNumber : 105, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryTraversing.ancestors(secondListItemInSecondList).collection.length,{ fileName : "Main.hx", lineNumber : 105, className : "test.Main", methodName : "run"});
+	haxe.Log.trace(domtools.QueryElementManipulation.text(domtools.QueryElementManipulation.addClass(domtools.QueryTraversing.find(new domtools.Query("ul"),"li.first"),"first-list-item")),{ fileName : "Main.hx", lineNumber : 107, className : "test.Main", methodName : "run"});
 	var table = new test.Table();
-	haxe.Log.trace(domtools.QueryElementManipulation.text(table),{ fileName : "Main.hx", lineNumber : 108, className : "test.Main", methodName : "run"});
-	CommonJS.getHtmlDocument().body.appendChild(table.collection[0]);
+	haxe.Log.trace(domtools.QueryElementManipulation.text(table),{ fileName : "Main.hx", lineNumber : 110, className : "test.Main", methodName : "run"});
+	document.body.appendChild(table.collection[0]);
 	domtools.QueryElementManipulation.setAttr(domtools.QueryTraversing.find(table,"td"),"style","border:1px solid black");
+	var face = "hello";
+	domtools.QueryEvents.on(table,"click",function(e1) {
+		var table1 = e1.currentTarget;
+		var clickedNode = e1.target;
+		haxe.Log.trace(table1.nodeName.toLowerCase(),{ fileName : "Main.hx", lineNumber : 118, className : "test.Main", methodName : "run"});
+		haxe.Log.trace(clickedNode.nodeName.toLowerCase() + ": " + clickedNode.textContent,{ fileName : "Main.hx", lineNumber : 119, className : "test.Main", methodName : "run"});
+	});
+	domtools.QueryEvents.one(new domtools.Query("#secondTitle"),"click",function(e1) {
+		haxe.Log.trace("You got me! Never again...",{ fileName : "Main.hx", lineNumber : 123, className : "test.Main", methodName : "run"});
+	});
+	haxe.Log.trace(domtools.QueryEvents.hover(new domtools.Query("#innerhtmltest"),function(e1) {
+		var n = e1.currentTarget;
+		domtools.ElementManipulation.setAttr(n,"style","color:blue");
+	},function(e1) {
+		var n = e1.currentTarget;
+		domtools.ElementManipulation.setAttr(n,"style","");
+	}).collection.length,{ fileName : "Main.hx", lineNumber : 126, className : "test.Main", methodName : "run"});
 }
 test.Main.prototype = {
 	__class__: test.Main
@@ -255,8 +272,17 @@ domtools.Query = $hxClasses["domtools.Query"] = function(selector,node,collectio
 	}
 }
 domtools.Query.__name__ = ["domtools","Query"];
+domtools.Query.__properties__ = {get_window:"get_window",get_document:"get_document"}
+domtools.Query.document = null;
+domtools.Query.window = null;
 domtools.Query.createElement = function(name) {
 	return document.createElement(name);
+}
+domtools.Query.get_window = function() {
+	return window;
+}
+domtools.Query.get_document = function() {
+	return document;
 }
 domtools.Query.prototype = {
 	collection: null
@@ -395,6 +421,65 @@ List.prototype = {
 		}};
 	}
 	,__class__: List
+}
+domtools.Events = $hxClasses["domtools.Events"] = function() { }
+domtools.Events.__name__ = ["domtools","Events"];
+domtools.Events.on = function(target,eventType,listener) {
+	var elm = target;
+	elm.addEventListener(eventType,listener,false);
+	return target;
+}
+domtools.Events.one = function(target,eventType,listener) {
+	var fn = null;
+	fn = function(e) {
+		listener(e);
+		target.removeEventListener(eventType,fn,false);
+	};
+	target.addEventListener(eventType,fn,false);
+	return target;
+}
+domtools.Events.mouseenter = function(target,listener) {
+	return domtools.Events.on(target,"mouseover",listener);
+}
+domtools.Events.mouseleave = function(target,listener) {
+	return domtools.Events.on(target,"mouseout",listener);
+}
+domtools.Events.hover = function(target,listener1,listener2) {
+	domtools.Events.on(target,"mouseover",listener1);
+	if(listener2 == null) domtools.Events.on(target,"mouseout",listener1); else domtools.Events.on(target,"mouseout",listener2);
+	return target;
+}
+domtools.Events.prototype = {
+	__class__: domtools.Events
+}
+domtools.QueryEvents = $hxClasses["domtools.QueryEvents"] = function() { }
+domtools.QueryEvents.__name__ = ["domtools","QueryEvents"];
+domtools.QueryEvents.on = function(targetCollection,eventType,listener) {
+	var $it0 = targetCollection.collection.iterator();
+	while( $it0.hasNext() ) {
+		var target = $it0.next();
+		domtools.Events.on(target,eventType,listener);
+	}
+	return targetCollection;
+}
+domtools.QueryEvents.one = function(targetCollection,eventType,listener) {
+	var $it0 = targetCollection.collection.iterator();
+	while( $it0.hasNext() ) {
+		var target = $it0.next();
+		domtools.Events.one(target,eventType,listener);
+	}
+	return targetCollection;
+}
+domtools.QueryEvents.hover = function(targetCollection,listener1,listener2) {
+	var $it0 = targetCollection.collection.iterator();
+	while( $it0.hasNext() ) {
+		var node = $it0.next();
+		domtools.Events.hover(node,listener1,listener2);
+	}
+	return targetCollection;
+}
+domtools.QueryEvents.prototype = {
+	__class__: domtools.QueryEvents
 }
 var js = js || {}
 js.Lib = $hxClasses["js.Lib"] = function() { }
@@ -657,6 +742,9 @@ domtools.ElementManipulation.removeClass = function(elm,className) {
 domtools.ElementManipulation.toggleClass = function(elm,className) {
 	if(domtools.ElementManipulation.hasClass(elm,className)) domtools.ElementManipulation.removeClass(elm,className); else domtools.ElementManipulation.addClass(elm,className);
 	return elm;
+}
+domtools.ElementManipulation.tagName = function(elm) {
+	return elm.nodeName.toLowerCase();
 }
 domtools.ElementManipulation.val = function(elm) {
 	return domtools.ElementManipulation.attr(elm,"value");

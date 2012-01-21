@@ -3,9 +3,11 @@ package test;
 
 import domtools.Query;
 import domtools.AbstractCustomElement;
+
 using domtools.ElementManipulation;
 using domtools.Traversing;
 using domtools.DOMManipulation;
+using domtools.Events;
 
 class Main
 {
@@ -15,7 +17,7 @@ class Main
 		haxe.Log.trace = haxe.Firebug.trace;
 		
 		// When the window is loaded, run our test.
-		js.Lib.window.onload = run;
+		Query.window.onload = run;
 	}
 
 	public static function run(e)
@@ -106,7 +108,27 @@ class Main
 
 		var table = new test.Table();
 		trace (table.text()); // "SampleTable!PrettyGreat"
-		CommonJS.getHtmlDocument().body.appendChild(table.getNode(0));
+		Query.document.body.appendChild(table.getNode(0));
 		table.find("td").setAttr("style","border:1px solid black");
+
+		var face = "hello";
+		table.on("click", function (e:Event) {
+			var table:Node = cast e.currentTarget;
+			var clickedNode:Node = cast e.target;
+			trace (table.tagName());
+			trace (clickedNode.tagName() + ": " + clickedNode.text());
+		});
+
+		new Query("#secondTitle").one("click", function (e) {
+			trace ("You got me! Never again...");
+		});
+
+		trace (new Query("#innerhtmltest").hover(function (e) {
+			var n:Node = cast e.currentTarget;
+			n.setAttr("style","color:blue");
+		}, function (e) {
+			var n:Node = cast e.currentTarget;
+			n.setAttr("style","");
+		}).length);
 	}
 }

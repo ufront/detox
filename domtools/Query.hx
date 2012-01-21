@@ -16,12 +16,16 @@ package domtools;
 * - parse()
 **/
 import js.w3c.level3.Core;
+import UserAgentContext;
+import CommonJS;
 using domtools.ElementManipulation;
 
 class Query
 {
 	public var collection(default,null):Array<Node>;
 	public var length(get_length,null):Int;
+	public static var document(get_document,null):HTMLDocument;
+	public static var window(get_window,null):Window;
 
 	public function new(?selector:String = "", ?node:Node = null, ?collection:Iterable<Node>)
 	{
@@ -131,15 +135,29 @@ class Query
 		return collection.length;
 	}
 
-	static inline function createElement(name:String):Element
+	public static inline function createElement(name:String):Element
 	{
 		return untyped __js__("document").createElement(name);
 	}
 
-	static inline function create(str:String):Query
+	public static inline function create(str:String):Query
 	{
 		return new Query(Query.createElement(str));
+	}
+
+
+	static inline function get_window():Window
+	{
+		return untyped __js__("window");
+	}
+
+	static inline function get_document():HTMLDocument
+	{
+		return untyped __js__("document");
 	}
 }
 
 typedef Node = js.w3c.level3.Core.Node;
+typedef Event = js.w3c.level3.Events.Event;
+
+import domtools.Events;

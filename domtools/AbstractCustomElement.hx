@@ -7,7 +7,9 @@ import domtools.Query;
 
 class AbstractCustomElement extends Query
 {
-	/** Create a new element of type "name", and add it to the collection.  When your class extends this, it will automatically have access to the entire Query API.  */
+	/** Create a new element of type "name", and add it to the collection.  
+	When your class extends this, it will automatically work with the domtools API (through using).  
+	Therefore your class can have very tight integration between haxe features and the DOM. */
 	public function new(name:String)
 	{
 		super();
