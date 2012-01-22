@@ -428,8 +428,8 @@ THE SOFTWARE.
 		<new public="1" set="method"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="test.Main" params="" file="/home/jason/workspace/domtools/test/Main.hx">
-		<main public="1" set="method" line="14" static="1"><f a=""><e path="Void"/></f></main>
-		<run public="1" set="method" line="23" static="1"><f a="e">
+		<main public="1" set="method" line="15" static="1"><f a=""><e path="Void"/></f></main>
+		<run public="1" set="method" line="24" static="1"><f a="e">
 	<c path="js.w3c.level3.Event"/>
 	<e path="Void"/>
 </f></run>
@@ -3654,6 +3654,92 @@ THE SOFTWARE.
 		<type public="1" set="null"><t path="js.webgl.GLenum"/></type>
 		<name public="1" set="null"><t path="js.w3c.DOMString"/></name>
 	</class>
+	<class path="domtools.EventManagement" params="" file="/home/jason/workspace/domtools/domtools/EventManagement.hx">
+		<on public="1" set="method" line="118" static="1">
+			<f a="target:eventType:listener">
+				<t path="domtools.Node"/>
+				<c path="String"/>
+				<f a="">
+					<t path="domtools.Event"/>
+					<e path="Void"/>
+				</f>
+				<t path="domtools.Node"/>
+			</f>
+			<haxe_doc> add an event listener </haxe_doc>
+		</on>
+		<one public="1" set="method" line="142" static="1">
+			<f a="target:eventType:listener">
+				<t path="domtools.Node"/>
+				<c path="String"/>
+				<f a="">
+					<t path="domtools.Event"/>
+					<e path="Void"/>
+				</f>
+				<t path="domtools.Node"/>
+			</f>
+			<haxe_doc> Attach an event but only let it run once </haxe_doc>
+		</one>
+		<mouseenter public="1" get="inline" set="null" line="159" static="1"><f a="target:listener">
+	<t path="domtools.Node"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<t path="domtools.Node"/>
+</f></mouseenter>
+		<mouseleave public="1" get="inline" set="null" line="164" static="1"><f a="target:listener">
+	<t path="domtools.Node"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<t path="domtools.Node"/>
+</f></mouseleave>
+		<hover public="1" set="method" line="204" static="1"><f a="target:listener1:?listener2">
+	<t path="domtools.Node"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<t path="domtools.Node"/>
+</f></hover>
+	</class>
+	<class path="domtools.QueryEventManagement" params="" file="/home/jason/workspace/domtools/domtools/EventManagement.hx" module="domtools.EventManagement">
+		<on public="1" set="method" line="326" static="1"><f a="targetCollection:eventType:listener">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<c path="domtools.Query"/>
+</f></on>
+		<one public="1" set="method" line="344" static="1"><f a="targetCollection:eventType:listener">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<c path="domtools.Query"/>
+</f></one>
+		<hover public="1" set="method" line="403" static="1"><f a="targetCollection:listener1:?listener2">
+	<c path="domtools.Query"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<c path="domtools.Query"/>
+</f></hover>
+	</class>
 	<typedef path="js.w3c.DOMString" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/DOMTypes.hx" module="js.w3c.DOMTypes">
 		<c path="String"/>
 		<haxe_doc>****************************************************************************
@@ -4038,10 +4124,10 @@ THE SOFTWARE.
 	<class path="domtools.Query" params="" file="/home/jason/workspace/domtools/domtools/Query.hx">
 		<document public="1" get="get_document" set="null" static="1"><t path="HTMLDocument"/></document>
 		<window public="1" get="get_window" set="null" static="1"><c path="Window"/></window>
-		<createElement public="1" get="inline" set="null" line="138" static="1"><f a="name">
+		<create public="1" get="inline" set="null" line="138" static="1"><f a="name">
 	<c path="String"/>
 	<c path="js.w3c.level3.Element"/>
-</f></createElement>
+</f></create>
 		<get_window get="inline" set="null" line="149" static="1"><f a=""><c path="Window"/></f></get_window>
 		<get_document get="inline" set="null" line="154" static="1"><f a=""><t path="HTMLDocument"/></f></get_document>
 		<collection public="1" set="null"><c path="Array"><t path="domtools.Node"/></c></collection>
@@ -5096,92 +5182,6 @@ THE SOFTWARE.
 	<t path="js.w3c.DOMString"/>
 	<e path="Void"/>
 </f></initCompositionEventNS>
-	</class>
-	<class path="domtools.Events" params="" file="/home/jason/workspace/domtools/domtools/Events.hx">
-		<on public="1" set="method" line="118" static="1">
-			<f a="target:eventType:listener">
-				<t path="domtools.Node"/>
-				<c path="String"/>
-				<f a="">
-					<t path="domtools.Event"/>
-					<e path="Void"/>
-				</f>
-				<t path="domtools.Node"/>
-			</f>
-			<haxe_doc> add an event listener </haxe_doc>
-		</on>
-		<one public="1" set="method" line="142" static="1">
-			<f a="target:eventType:listener">
-				<t path="domtools.Node"/>
-				<c path="String"/>
-				<f a="">
-					<t path="domtools.Event"/>
-					<e path="Void"/>
-				</f>
-				<t path="domtools.Node"/>
-			</f>
-			<haxe_doc> Attach an event but only let it run once </haxe_doc>
-		</one>
-		<mouseenter public="1" get="inline" set="null" line="159" static="1"><f a="target:listener">
-	<t path="domtools.Node"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<t path="domtools.Node"/>
-</f></mouseenter>
-		<mouseleave public="1" get="inline" set="null" line="164" static="1"><f a="target:listener">
-	<t path="domtools.Node"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<t path="domtools.Node"/>
-</f></mouseleave>
-		<hover public="1" set="method" line="204" static="1"><f a="target:listener1:?listener2">
-	<t path="domtools.Node"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<t path="domtools.Node"/>
-</f></hover>
-	</class>
-	<class path="domtools.QueryEvents" params="" file="/home/jason/workspace/domtools/domtools/Events.hx" module="domtools.Events">
-		<on public="1" set="method" line="326" static="1"><f a="targetCollection:eventType:listener">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<c path="domtools.Query"/>
-</f></on>
-		<one public="1" set="method" line="344" static="1"><f a="targetCollection:eventType:listener">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<c path="domtools.Query"/>
-</f></one>
-		<hover public="1" set="method" line="403" static="1"><f a="targetCollection:listener1:?listener2">
-	<c path="domtools.Query"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<c path="domtools.Query"/>
-</f></hover>
 	</class>
 	<class path="js.w3c.html5.HTMLCollection" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/html5/Core.hx" module="js.w3c.html5.Core" extern="1" interface="1">
 		<length public="1"><t path="js.w3c.UnsignedLong"/></length>

@@ -135,15 +135,15 @@ class Query
 		return collection.length;
 	}
 
-	public static inline function createElement(name:String):Element
+	public static inline function create(name:String):Element
 	{
 		return untyped __js__("document").createElement(name);
 	}
 
-	public static inline function create(str:String):Query
+	/*public static inline function create(str:String):Query
 	{
 		return new Query(Query.createElement(str));
-	}
+	}*/
 
 
 	static inline function get_window():Window
@@ -160,4 +160,4 @@ class Query
 typedef Node = js.w3c.level3.Core.Node;
 typedef Event = js.w3c.level3.Events.Event;
 
-import domtools.Events;
+import domtools.EventManagement;

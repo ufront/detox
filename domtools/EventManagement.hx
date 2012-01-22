@@ -53,9 +53,9 @@ die(?eventType) - remove all event handlers // deprecated
 package domtools;
 import domtools.Query;
 using domtools.ElementManipulation;
-import js.w3c.level3.Events;
+//import js.w3c.level3.Events;
 import js.w3c.level3.Core;
-class Events
+class EventManagement
 {
 	/*private static var eventTypeMap = {
 		'click':'MouseEvent',
@@ -321,13 +321,13 @@ class Events
 
 }
 
-class QueryEvents
+class QueryEventManagement
 {
 	public static function on(targetCollection:Query, eventType:String, listener:Event->Void):Query
 	{
 		for (target in targetCollection)
 		{
-			Events.on(target, eventType, listener);
+			EventManagement.on(target, eventType, listener);
 		}
 		return targetCollection;
 	}
@@ -345,7 +345,7 @@ class QueryEvents
 	{
 		for (target in targetCollection)
 		{
-			Events.one(target, eventType, listener);
+			EventManagement.one(target, eventType, listener);
 		}
 		return targetCollection;
 	}
@@ -404,7 +404,7 @@ class QueryEvents
 	{
 		for (node in targetCollection)
 		{
-			Events.hover(node, listener1, listener2);
+			EventManagement.hover(node, listener1, listener2);
 		}
 		return targetCollection;
 	}

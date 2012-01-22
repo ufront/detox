@@ -7,7 +7,8 @@ import domtools.AbstractCustomElement;
 using domtools.ElementManipulation;
 using domtools.Traversing;
 using domtools.DOMManipulation;
-using domtools.Events;
+using domtools.EventManagement;
+using domtools.Style;
 
 class Main
 {

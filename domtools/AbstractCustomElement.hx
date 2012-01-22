@@ -14,7 +14,7 @@ class AbstractCustomElement extends Query
 	{
 		super();
 
-		var elm = Query.createElement(name);
+		var elm = Query.create(name);
 		
 		this.add(elm);
 	}
