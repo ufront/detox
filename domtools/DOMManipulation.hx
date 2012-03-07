@@ -154,7 +154,7 @@ class QueryDOMManipulation
 	/** Append the specified child to all nodes in this collection, cloning when necessary */
 	static public function append(parentCollection:Query, ?childNode:Node = null, ?childCollection:Query = null)
 	{
-		var firstChildUsed = false;
+		var firstChildUsed = true;
 		for (parent in parentCollection)
 		{
 			// if the first child has been used, then clone whichever of these is not null
@@ -163,7 +163,7 @@ class QueryDOMManipulation
 
 			// now run the append from before
 			DOMManipulation.append(parent, childNode, childCollection);
-			firstChildUsed = true;
+			firstChildUsed = false;
 		}
 		return parentCollection;
 	}
@@ -206,7 +206,7 @@ class QueryDOMManipulation
 	static public inline function prependTo(children:Query, ?parentNode:Node = null, ?parentCollection:Query = null)
 	{
 		// add this collection of children to a single parent Node
-		return insertThisBefore(children, parentNode.firstChild, parentCollection.firstChild());
+		return insertThisBefore(children, parentNode.firstChild, parentCollection.firstChildren());
 	}
 
 	static public function insertThisBefore(content:Query, ?targetNode:Node = null, ?targetCollection:Query = null)
