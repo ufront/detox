@@ -18,7 +18,6 @@ package domtools;
 import js.w3c.level3.Core;
 import UserAgentContext;
 import CommonJS;
-using domtools.ElementManipulation;
 
 class Query
 {
@@ -160,4 +159,4 @@ class Query
 typedef Node = js.w3c.level3.Core.Node;
 typedef Event = js.w3c.level3.Events.Event;
 
-import domtools.EventManagement;
+import domtools.Tools;

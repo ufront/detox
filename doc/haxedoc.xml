@@ -1,5 +1,5 @@
 <haxe>
-	<class path="Enum" params="T" file="/usr/share/haxe/std/Enum.hx" extern="1"><haxe_doc>
+	<class path="Enum" params="T" file="/usr/lib/haxe/std/Enum.hx" extern="1"><haxe_doc>
 	An abstract type that represents an Enum.
 	See [Type] for the haXe Reflection API.
 </haxe_doc></class>
@@ -239,6 +239,12 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></initCloseEvent>
 	</class>
+	<class path="StringTools" params="" file="/usr/lib/haxe/std/StringTools.hx" extern="1"><haxe_doc>
+	The StringTools class contains some extra functionalities for [String]
+	manipulation. It's stored in a different class in order to prevent
+	the standard [String] of being bloated and thus increasing the size of
+	each application using it.
+</haxe_doc></class>
 	<class path="js.w3c.level2.Range" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/level2/Range.hx" extern="1">
 		<START_TO_START public="1" get="inline" set="null" line="50" static="1"><t path="js.w3c.Short"/></START_TO_START>
 		<START_TO_END public="1" get="inline" set="null" line="51" static="1"><t path="js.w3c.Short"/></START_TO_END>
@@ -428,8 +434,8 @@ THE SOFTWARE.
 		<new public="1" set="method"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="test.Main" params="" file="/home/jason/workspace/domtools/test/Main.hx">
-		<main public="1" set="method" line="15" static="1"><f a=""><e path="Void"/></f></main>
-		<run public="1" set="method" line="24" static="1"><f a="e">
+		<main public="1" set="method" line="11" static="1"><f a=""><e path="Void"/></f></main>
+		<run public="1" set="method" line="20" static="1"><f a="e">
 	<c path="js.w3c.level3.Event"/>
 	<e path="Void"/>
 </f></run>
@@ -524,7 +530,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></truncate>
 	</class>
-	<class path="haxe.Log" params="" file="/usr/share/haxe/std/haxe/Log.hx"><trace public="1" set="dynamic" line="29" static="1"><f a="v:?infos">
+	<class path="haxe.Log" params="" file="/usr/lib/haxe/std/haxe/Log.hx"><trace public="1" set="dynamic" line="29" static="1"><f a="v:?infos">
 	<d/>
 	<t path="haxe.PosInfos"/>
 	<e path="Void"/>
@@ -1103,58 +1109,318 @@ THE SOFTWARE.
 		<ENCODING_ERR public="1" line="111" static="1"><t path="js.w3c.UnsignedShort"/></ENCODING_ERR>
 		<code public="1" set="null"><t path="js.w3c.UnsignedShort"/></code>
 	</class>
-	<class path="domtools.Traversing" params="" file="/home/jason/workspace/domtools/domtools/Traversing.hx">
-		<firstChild public="1" set="method" line="32" static="1"><f a="node:?elementsOnly">
+	<class path="domtools.Tools" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" extern="1"><haxe_doc> 
+* Designed to be used with "using domtools.Tools;" this gives you access
+* to all of the classes defined in this module.  These include
+*   - ElementManipulation
+*   - DOMManipulation
+*   - Traversing
+*   - EventManagement (Client JS only)
+*   - Style (Client JS only?)
+*   - Animation (Client JS only)
+* 
+* I have so far made no effort at making these work cross platform,
+* though I am designing unit tests which should hopefully simplify the process.
+* 
+* The API is designed to be similar to JQuery, though not as complete
+* nor as robust in the cross-platform department.  JQuery will still be the
+* better pick for many client side projects.
+*
+* There are a few advantages
+*  - better integration into haxe's Object Oriented style
+*  - hopefully a smaller codebase, thanks to Dead Code Elimination
+*  - works with native DOMNode or XMLNode, can work without wrapping
+*  - works on non-js haxe platforms, hopefully
+</haxe_doc></class>
+	<class path="domtools.ElementManipulation" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+		<NodeTypeElement line="61" static="1"><c path="Int"/></NodeTypeElement>
+		<isElement public="1" set="method" line="65" static="1"><f a="node">
+	<c path="js.w3c.level3.Node"/>
+	<e path="Bool"/>
+</f></isElement>
+		<attr public="1" set="method" line="70" static="1"><f a="elm:attName">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+	<c path="String"/>
+</f></attr>
+		<setAttr public="1" set="method" line="82" static="1"><f a="elm:attName:attValue">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+	<c path="String"/>
+	<c path="js.w3c.level3.Node"/>
+</f></setAttr>
+		<removeAttr public="1" set="method" line="92" static="1"><f a="elm:attName">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+	<c path="js.w3c.level3.Node"/>
+</f></removeAttr>
+		<hasClass public="1" set="method" line="102" static="1"><f a="elm:className">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+	<e path="Bool"/>
+</f></hasClass>
+		<addClass public="1" set="method" line="107" static="1"><f a="elm:className">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+	<c path="js.w3c.level3.Node"/>
+</f></addClass>
+		<removeClass public="1" set="method" line="119" static="1"><f a="elm:className">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+	<c path="js.w3c.level3.Node"/>
+</f></removeClass>
+		<toggleClass public="1" set="method" line="133" static="1"><f a="elm:className">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+	<c path="js.w3c.level3.Node"/>
+</f></toggleClass>
+		<tagName public="1" get="inline" set="null" line="146" static="1"><f a="elm">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+</f></tagName>
+		<val public="1" get="inline" set="null" line="151" static="1"><f a="elm">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+</f></val>
+		<text public="1" get="inline" set="null" line="156" static="1"><f a="elm">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+</f></text>
+		<setText public="1" get="inline" set="null" line="161" static="1"><f a="elm:text">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+	<c path="js.w3c.level3.Node"/>
+</f></setText>
+		<innerHTML public="1" set="method" line="166" static="1"><f a="elm">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+</f></innerHTML>
+		<setInnerHTML public="1" set="method" line="180" static="1"><f a="elm:html">
+	<c path="js.w3c.level3.Node"/>
+	<c path="String"/>
+	<c path="js.w3c.level3.Node"/>
+</f></setInnerHTML>
+	</class>
+	<class path="domtools.QueryElementManipulation" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+		<attr public="1" set="method" line="203" static="1">
+			<f a="query:attName">
+				<c path="domtools.Query"/>
+				<c path="String"/>
+				<c path="String"/>
+			</f>
+			<haxe_doc> Assume we're operating on the first element. </haxe_doc>
+		</attr>
+		<setAttr public="1" set="method" line="208" static="1"><f a="query:attName:attValue">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<c path="String"/>
+	<c path="domtools.Query"/>
+</f></setAttr>
+		<removeAttr public="1" set="method" line="217" static="1"><f a="query:attName">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<c path="domtools.Query"/>
+</f></removeAttr>
+		<hasClass public="1" set="method" line="227" static="1">
+			<f a="query:className">
+				<c path="domtools.Query"/>
+				<c path="String"/>
+				<e path="Bool"/>
+			</f>
+			<haxe_doc> Checks if the first element in the collection has the given class </haxe_doc>
+		</hasClass>
+		<addClass public="1" set="method" line="232" static="1"><f a="query:className">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<c path="domtools.Query"/>
+</f></addClass>
+		<removeClass public="1" set="method" line="241" static="1"><f a="query:className">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<c path="domtools.Query"/>
+</f></removeClass>
+		<toggleClass public="1" set="method" line="250" static="1"><f a="query:className">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<c path="domtools.Query"/>
+</f></toggleClass>
+		<val public="1" set="method" line="274" static="1"><f a="query">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+</f></val>
+		<text public="1" set="method" line="279" static="1"><f a="query">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+</f></text>
+		<setText public="1" set="method" line="289" static="1"><f a="query:text">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<c path="domtools.Query"/>
+</f></setText>
+		<innerHTML public="1" set="method" line="298" static="1"><f a="query">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+</f></innerHTML>
+		<setInnerHTML public="1" set="method" line="308" static="1"><f a="query:html">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<c path="domtools.Query"/>
+</f></setInnerHTML>
+	</class>
+	<class path="domtools.DOMManipulation" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+		<append public="1" set="method" line="358" static="1">
+			<f a="parent:?childNode:?childCollection">
+				<c path="js.w3c.level3.Node"/>
+				<c path="js.w3c.level3.Node"/>
+				<c path="domtools.Query"/>
+				<c path="js.w3c.level3.Node"/>
+			</f>
+			<haxe_doc> Append the specified child to this node </haxe_doc>
+		</append>
+		<haxe_doc> This class could do with some more DRY - Don't Repeat Yourself.  I feel like between 
+append() and insertBefore() there should be no need for any other functions </haxe_doc>
+	</class>
+	<class path="domtools.QueryDOMManipulation" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools" extern="1"/>
+	<class path="domtools.Traversing" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+		<firstChildren public="1" set="method" line="679" static="1"><f a="node:?elementsOnly">
 	<c path="js.w3c.level3.Node"/>
 	<e path="Bool"/>
 	<c path="js.w3c.level3.Node"/>
-</f></firstChild>
-		<parent public="1" set="method" line="65" static="1">
+</f></firstChildren>
+		<parent public="1" set="method" line="712" static="1">
 			<f a="node">
 				<c path="js.w3c.level3.Node"/>
 				<c path="js.w3c.level3.Node"/>
 			</f>
 			<haxe_doc> Gets the direct parents of each element in the collection. </haxe_doc>
 		</parent>
-		<ancestors public="1" set="method" line="71" static="1">
+		<ancestors public="1" set="method" line="718" static="1">
 			<f a="node">
 				<c path="js.w3c.level3.Node"/>
 				<c path="domtools.Query"/>
 			</f>
 			<haxe_doc> Gets all parents of the current collection, and is called recursively to get all ancestors. </haxe_doc>
 		</ancestors>
-		<find public="1" set="method" line="96" static="1"><f a="node:selector">
+		<find public="1" set="method" line="743" static="1"><f a="node:selector">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
 </f></find>
 		<haxe_doc><![CDATA[ When returning a Null<Node>, it might be worth creating a static NullNode that won't generate errors (so we can chain easily and carelessly) but also not affect the DOM.   For now I'll leave it null.  ]]></haxe_doc>
 	</class>
-	<class path="domtools.QueryTraversing" params="" file="/home/jason/workspace/domtools/domtools/Traversing.hx" module="domtools.Traversing">
-		<firstChild public="1" set="method" line="125" static="1"><f a="query:?elementsOnly">
+	<class path="domtools.QueryTraversing" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+		<firstChildren public="1" set="method" line="772" static="1"><f a="query:?elementsOnly">
 	<c path="domtools.Query"/>
 	<e path="Bool"/>
 	<c path="domtools.Query"/>
-</f></firstChild>
-		<parent public="1" set="method" line="164" static="1">
+</f></firstChildren>
+		<parent public="1" set="method" line="811" static="1">
 			<f a="query">
 				<c path="domtools.Query"/>
 				<c path="domtools.Query"/>
 			</f>
 			<haxe_doc> Gets the direct parents of each element in the collection. </haxe_doc>
 		</parent>
-		<ancestors public="1" set="method" line="176" static="1">
+		<ancestors public="1" set="method" line="823" static="1">
 			<f a="query">
 				<c path="domtools.Query"/>
 				<c path="domtools.Query"/>
 			</f>
 			<haxe_doc> Gets all parents of the current collection, and is called recursively to get all ancestors. </haxe_doc>
 		</ancestors>
-		<find public="1" set="method" line="212" static="1"><f a="query:selector">
+		<find public="1" set="method" line="859" static="1"><f a="query:selector">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
 </f></find>
+	</class>
+	<class path="domtools.Style" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools" extern="1"/>
+	<class path="domtools.QueryStyle" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools" extern="1"/>
+	<class path="domtools.EventManagement" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+		<on public="1" set="method" line="1074" static="1">
+			<f a="target:eventType:listener">
+				<c path="js.w3c.level3.Node"/>
+				<c path="String"/>
+				<f a="">
+					<t path="domtools.Event"/>
+					<e path="Void"/>
+				</f>
+				<c path="js.w3c.level3.Node"/>
+			</f>
+			<haxe_doc> add an event listener </haxe_doc>
+		</on>
+		<one public="1" set="method" line="1098" static="1">
+			<f a="target:eventType:listener">
+				<c path="js.w3c.level3.Node"/>
+				<c path="String"/>
+				<f a="">
+					<t path="domtools.Event"/>
+					<e path="Void"/>
+				</f>
+				<c path="js.w3c.level3.Node"/>
+			</f>
+			<haxe_doc> Attach an event but only let it run once </haxe_doc>
+		</one>
+		<mouseenter public="1" get="inline" set="null" line="1115" static="1"><f a="target:listener">
+	<c path="js.w3c.level3.Node"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<c path="js.w3c.level3.Node"/>
+</f></mouseenter>
+		<mouseleave public="1" get="inline" set="null" line="1120" static="1"><f a="target:listener">
+	<c path="js.w3c.level3.Node"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<c path="js.w3c.level3.Node"/>
+</f></mouseleave>
+		<hover public="1" set="method" line="1160" static="1"><f a="target:listener1:?listener2">
+	<c path="js.w3c.level3.Node"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<c path="js.w3c.level3.Node"/>
+</f></hover>
+	</class>
+	<class path="domtools.QueryEventManagement" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+		<on public="1" set="method" line="1283" static="1"><f a="targetCollection:eventType:listener">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<c path="domtools.Query"/>
+</f></on>
+		<one public="1" set="method" line="1301" static="1"><f a="targetCollection:eventType:listener">
+	<c path="domtools.Query"/>
+	<c path="String"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<c path="domtools.Query"/>
+</f></one>
+		<hover public="1" set="method" line="1360" static="1"><f a="targetCollection:listener1:?listener2">
+	<c path="domtools.Query"/>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<f a="">
+		<t path="domtools.Event"/>
+		<e path="Void"/>
+	</f>
+	<c path="domtools.Query"/>
+</f></hover>
 	</class>
 	<class path="js.w3c.webapi.NodeSelector" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/webapi/Selectors2.hx" module="js.w3c.webapi.Selectors2" extern="1" interface="1">
 		<querySelector public="1" set="method"><f a="selectors:?refNodes">
@@ -1204,24 +1470,11 @@ THE SOFTWARE.
 	<d/>
 	<e path="Bool"/>
 </f></matchesSelector></class>
-	<class path="haxe.Firebug" params="" file="/usr/share/haxe/std/haxe/Firebug.hx"><trace public="1" set="method" line="65" static="1"><f a="v:?inf">
+	<class path="haxe.Firebug" params="" file="/usr/lib/haxe/std/haxe/Firebug.hx"><trace public="1" set="method" line="65" static="1"><f a="v:?inf">
 	<d/>
 	<t path="haxe.PosInfos"/>
 	<e path="Void"/>
 </f></trace></class>
-	<class path="domtools.DOMManipulation" params="" file="/home/jason/workspace/domtools/domtools/DOMManipulation.hx">
-		<append public="1" set="method" line="22" static="1">
-			<f a="parent:?childNode:?childCollection">
-				<c path="js.w3c.level3.Node"/>
-				<c path="js.w3c.level3.Node"/>
-				<c path="domtools.Query"/>
-				<c path="js.w3c.level3.Node"/>
-			</f>
-			<haxe_doc> Append the specified child to this node </haxe_doc>
-		</append>
-		<haxe_doc> This class could do with some more DRY - Don't Repeat Yourself.  I feel like between 
-append() and insertBefore() there should be no need for any other functions </haxe_doc>
-	</class>
 	<typedef path="DOMString" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/UserAgentContext.hx" module="UserAgentContext">
 		<t path="js.w3c.DOMString"/>
 		<haxe_doc>****************************************************************************
@@ -3505,7 +3758,7 @@ THE SOFTWARE.
 
 ****************************************************************************</haxe_doc>
 	</class>
-	<class path="Date" params="" file="/usr/share/haxe/std/Date.hx" extern="1">
+	<class path="Date" params="" file="/usr/lib/haxe/std/Date.hx" extern="1">
 		<now public="1" set="method" static="1">
 			<f a=""><c path="Date"/></f>
 			<haxe_doc>
@@ -3610,6 +3863,9 @@ THE SOFTWARE.
 	available in the [DateTools] class.
 </haxe_doc>
 	</class>
+	<class path="IntIter" params="" file="/usr/lib/haxe/std/IntIter.hx" extern="1"><haxe_doc>
+	Integer iterator. Used for interval implementation.
+</haxe_doc></class>
 	<class path="js.webgl.WebGLContextAttributes" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/webgl/WebGLContext.hx" module="js.webgl.WebGLContext" extern="1" interface="1">
 		<alpha public="1"><e path="Bool"/></alpha>
 		<depth public="1"><e path="Bool"/></depth>
@@ -3654,92 +3910,6 @@ THE SOFTWARE.
 		<type public="1" set="null"><t path="js.webgl.GLenum"/></type>
 		<name public="1" set="null"><t path="js.w3c.DOMString"/></name>
 	</class>
-	<class path="domtools.EventManagement" params="" file="/home/jason/workspace/domtools/domtools/EventManagement.hx">
-		<on public="1" set="method" line="118" static="1">
-			<f a="target:eventType:listener">
-				<t path="domtools.Node"/>
-				<c path="String"/>
-				<f a="">
-					<t path="domtools.Event"/>
-					<e path="Void"/>
-				</f>
-				<t path="domtools.Node"/>
-			</f>
-			<haxe_doc> add an event listener </haxe_doc>
-		</on>
-		<one public="1" set="method" line="142" static="1">
-			<f a="target:eventType:listener">
-				<t path="domtools.Node"/>
-				<c path="String"/>
-				<f a="">
-					<t path="domtools.Event"/>
-					<e path="Void"/>
-				</f>
-				<t path="domtools.Node"/>
-			</f>
-			<haxe_doc> Attach an event but only let it run once </haxe_doc>
-		</one>
-		<mouseenter public="1" get="inline" set="null" line="159" static="1"><f a="target:listener">
-	<t path="domtools.Node"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<t path="domtools.Node"/>
-</f></mouseenter>
-		<mouseleave public="1" get="inline" set="null" line="164" static="1"><f a="target:listener">
-	<t path="domtools.Node"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<t path="domtools.Node"/>
-</f></mouseleave>
-		<hover public="1" set="method" line="204" static="1"><f a="target:listener1:?listener2">
-	<t path="domtools.Node"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<t path="domtools.Node"/>
-</f></hover>
-	</class>
-	<class path="domtools.QueryEventManagement" params="" file="/home/jason/workspace/domtools/domtools/EventManagement.hx" module="domtools.EventManagement">
-		<on public="1" set="method" line="326" static="1"><f a="targetCollection:eventType:listener">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<c path="domtools.Query"/>
-</f></on>
-		<one public="1" set="method" line="344" static="1"><f a="targetCollection:eventType:listener">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<c path="domtools.Query"/>
-</f></one>
-		<hover public="1" set="method" line="403" static="1"><f a="targetCollection:listener1:?listener2">
-	<c path="domtools.Query"/>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<f a="">
-		<t path="domtools.Event"/>
-		<e path="Void"/>
-	</f>
-	<c path="domtools.Query"/>
-</f></hover>
-	</class>
 	<typedef path="js.w3c.DOMString" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/DOMTypes.hx" module="js.w3c.DOMTypes">
 		<c path="String"/>
 		<haxe_doc>****************************************************************************
@@ -3777,7 +3947,7 @@ THE SOFTWARE.
 	<typedef path="js.w3c.UnsignedByte" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/DOMTypes.hx" module="js.w3c.DOMTypes"><d/></typedef>
 	<typedef path="js.w3c.ByteArray" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/DOMTypes.hx" module="js.w3c.DOMTypes"><d/></typedef>
 	<typedef path="js.w3c.Byte" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/DOMTypes.hx" module="js.w3c.DOMTypes"><d/></typedef>
-	<class path="String" params="" file="/usr/share/haxe/std/String.hx" extern="1">
+	<class path="String" params="" file="/usr/lib/haxe/std/String.hx" extern="1">
 		<fromCharCode public="1" set="method" static="1"><f a="code">
 	<c path="Int"/>
 	<c path="String"/>
@@ -3882,7 +4052,7 @@ THE SOFTWARE.
 	The basic String class.
 </haxe_doc>
 	</class>
-	<class path="Array" params="T" file="/usr/share/haxe/std/Array.hx" extern="1">
+	<class path="Array" params="T" file="/usr/lib/haxe/std/Array.hx" extern="1">
 		<length public="1" set="null">
 			<c path="Int"/>
 			<haxe_doc>
@@ -4034,136 +4204,80 @@ THE SOFTWARE.
 	is less memory and CPU consuming, unless you really need indexed access.
 </haxe_doc>
 	</class>
-	<class path="Float" params="" file="/usr/share/haxe/std/StdTypes.hx" module="StdTypes" extern="1"><haxe_doc>
+	<class path="Float" params="" file="/usr/lib/haxe/std/StdTypes.hx" module="StdTypes" extern="1"><haxe_doc>
 	The standard Float type, this is a double-precision IEEE 64bit float.
 </haxe_doc></class>
-	<class path="Int" params="" file="/usr/share/haxe/std/StdTypes.hx" module="StdTypes" extern="1">
+	<class path="Int" params="" file="/usr/lib/haxe/std/StdTypes.hx" module="StdTypes" extern="1">
 		<extends path="Float"/>
 		<haxe_doc>
 	The standard Int type. Its precision depends on the platform.
 </haxe_doc>
 	</class>
-	<class path="Dynamic" params="T" file="/usr/share/haxe/std/StdTypes.hx" module="StdTypes" extern="1"><haxe_doc>
+	<class path="Dynamic" params="T" file="/usr/lib/haxe/std/StdTypes.hx" module="StdTypes" extern="1"><haxe_doc>
 	Dynamic is an internal compiler type which has special behavior.
 	See the haXe language reference for more informations.
 </haxe_doc></class>
-	<enum path="Bool" params="" file="/usr/share/haxe/std/StdTypes.hx" module="StdTypes">
+	<enum path="Bool" params="" file="/usr/lib/haxe/std/StdTypes.hx" module="StdTypes">
 		<true/>
 		<false/>
 		<haxe_doc>
 	The standard Boolean type is represented as an enum with two choices.
 </haxe_doc>
 	</enum>
-	<class path="Class" params="T" file="/usr/share/haxe/std/Class.hx" extern="1"><haxe_doc>
+	<class path="Class" params="T" file="/usr/lib/haxe/std/Class.hx" extern="1"><haxe_doc>
 	An abstract type that represents a Class.
 	See [Type] for the haXe Reflection API.
 </haxe_doc></class>
-	<enum path="Void" params="" file="/usr/share/haxe/std/StdTypes.hx" module="StdTypes"><haxe_doc>
+	<enum path="Void" params="" file="/usr/lib/haxe/std/StdTypes.hx" module="StdTypes"><haxe_doc>
 	The standard Void type. Only [null] values can be of the type [Void].
 </haxe_doc></enum>
-	<class path="Std" params="" file="/usr/share/haxe/std/js/_std/Std.hx">
-		<is public="1" set="method" line="28" static="1">
-			<f a="v:t">
-				<d/>
-				<d/>
-				<e path="Bool"/>
-			</f>
-			<haxe_doc>
-		Tells if a value v is of the type t.
-	</haxe_doc>
-		</is>
-		<string public="1" set="method" line="32" static="1">
-			<f a="s">
-				<d/>
-				<c path="String"/>
-			</f>
-			<haxe_doc>
-		Convert any value to a String
-	</haxe_doc>
-		</string>
-		<int public="1" set="method" line="36" static="1">
-			<f a="x">
-				<c path="Float"/>
-				<c path="Int"/>
-			</f>
-			<haxe_doc>
-		Convert a Float to an Int, rounded down.
-	</haxe_doc>
-		</int>
-		<parseInt public="1" set="method" line="41" static="1">
-			<f a="x">
-				<c path="String"/>
-				<t path="Null"><c path="Int"/></t>
-			</f>
-			<haxe_doc>
-		Convert a String to an Int, parsing different possible representations. Returns [null] if could not be parsed.
-	</haxe_doc>
-		</parseInt>
-		<parseFloat public="1" set="method" line="51" static="1">
-			<f a="x">
-				<c path="String"/>
-				<c path="Float"/>
-			</f>
-			<haxe_doc>
-		Convert a String to a Float, parsing different possible reprensations.
-	</haxe_doc>
-		</parseFloat>
-		<random public="1" set="method" line="55" static="1">
-			<f a="x">
-				<c path="Int"/>
-				<c path="Int"/>
-			</f>
-			<haxe_doc>
-		Return a random integer between 0 included and x excluded.
-	</haxe_doc>
-		</random>
-		<haxe_doc>
-	The Std class provides standard methods for manipulating basic types.
-</haxe_doc>
-	</class>
+	<class path="Std" params="" file="/usr/lib/haxe/std/js/_std/Std.hx"><string public="1" set="method" line="32" static="1"><f a="s">
+	<d/>
+	<c path="String"/>
+</f></string></class>
 	<class path="domtools.Query" params="" file="/home/jason/workspace/domtools/domtools/Query.hx">
 		<document public="1" get="get_document" set="null" static="1"><t path="HTMLDocument"/></document>
 		<window public="1" get="get_window" set="null" static="1"><c path="Window"/></window>
-		<create public="1" get="inline" set="null" line="138" static="1"><f a="name">
+		<create public="1" get="inline" set="null" line="137" static="1"><f a="name">
 	<c path="String"/>
 	<c path="js.w3c.level3.Element"/>
 </f></create>
-		<get_window get="inline" set="null" line="149" static="1"><f a=""><c path="Window"/></f></get_window>
-		<get_document get="inline" set="null" line="154" static="1"><f a=""><t path="HTMLDocument"/></f></get_document>
+		<get_window get="inline" set="null" line="148" static="1"><f a=""><c path="Window"/></f></get_window>
+		<get_document get="inline" set="null" line="153" static="1"><f a=""><t path="HTMLDocument"/></f></get_document>
 		<collection public="1" set="null"><c path="Array"><t path="domtools.Node"/></c></collection>
 		<length public="1" get="get_length" set="null"><c path="Int"/></length>
-		<iterator public="1" get="inline" set="null" line="56"><f a=""><t path="Iterator"><t path="Null"><t path="domtools.Node"/></t></t></f></iterator>
-		<getNode public="1" get="inline" set="null" line="61"><f a="?i">
+		<iterator public="1" get="inline" set="null" line="55"><f a=""><t path="Iterator"><t path="Null"><t path="domtools.Node"/></t></t></f></iterator>
+		<getNode public="1" get="inline" set="null" line="60"><f a="?i">
 	<c path="Int"/>
 	<t path="domtools.Node"/>
 </f></getNode>
-		<eq public="1" get="inline" set="null" line="66"><f a="?i">
+		<eq public="1" get="inline" set="null" line="65"><f a="?i">
 	<c path="Int"/>
 	<c path="domtools.Query"/>
 </f></eq>
-		<first public="1" get="inline" set="null" line="71"><f a=""><c path="domtools.Query"/></f></first>
-		<last public="1" get="inline" set="null" line="76"><f a=""><c path="domtools.Query"/></f></last>
-		<add public="1" get="inline" set="null" line="81"><f a="node">
+		<first public="1" get="inline" set="null" line="70"><f a=""><c path="domtools.Query"/></f></first>
+		<last public="1" get="inline" set="null" line="75"><f a=""><c path="domtools.Query"/></f></last>
+		<add public="1" get="inline" set="null" line="80"><f a="node">
 	<t path="domtools.Node"/>
 	<c path="domtools.Query"/>
 </f></add>
-		<addCollection public="1" set="method" line="86"><f a="collection">
+		<addCollection public="1" set="method" line="85"><f a="collection">
 	<t path="Iterable"><t path="domtools.Node"/></t>
 	<c path="domtools.Query"/>
 </f></addCollection>
-		<addNodeList public="1" set="method" line="95"><f a="nodeList:?elementsOnly">
+		<addNodeList public="1" set="method" line="94"><f a="nodeList:?elementsOnly">
 	<c path="js.w3c.level3.NodeList"/>
 	<e path="Bool"/>
 	<c path="domtools.Query"/>
 </f></addNodeList>
-		<each public="1" get="inline" set="null" line="112"><f a="f">
+		<each public="1" get="inline" set="null" line="111"><f a="f">
 	<f a="">
 		<t path="domtools.Node"/>
 		<e path="Void"/>
 	</f>
 	<c path="domtools.Query"/>
 </f></each>
-		<filter public="1" get="inline" set="null" line="118">
+		<filter public="1" get="inline" set="null" line="117">
 			<f a="fn">
 				<f a="">
 					<t path="domtools.Node"/>
@@ -4173,9 +4287,9 @@ THE SOFTWARE.
 			</f>
 			<haxe_doc> Use a function to return a filtered list. In future might allow a selector as well. </haxe_doc>
 		</filter>
-		<clone public="1" set="method" line="123"><f a=""><c path="domtools.Query"/></f></clone>
-		<get_length get="inline" set="null" line="133"><f a=""><c path="Int"/></f></get_length>
-		<new public="1" set="method" line="30"><f a="?selector:?node:?collection">
+		<clone public="1" set="method" line="122"><f a=""><c path="domtools.Query"/></f></clone>
+		<get_length get="inline" set="null" line="132"><f a=""><c path="Int"/></f></get_length>
+		<new public="1" set="method" line="29"><f a="?selector:?node:?collection">
 	<c path="String"/>
 	<t path="domtools.Node"/>
 	<t path="Iterable"><t path="domtools.Node"/></t>
@@ -4199,7 +4313,7 @@ THE SOFTWARE.
 	</class>
 	<typedef path="domtools.Node" params="" file="/home/jason/workspace/domtools/domtools/Query.hx" module="domtools.Query"><c path="js.w3c.level3.Node"/></typedef>
 	<typedef path="domtools.Event" params="" file="/home/jason/workspace/domtools/domtools/Query.hx" module="domtools.Query"><c path="js.w3c.level3.Event"/></typedef>
-	<typedef path="Null" params="T" file="/usr/share/haxe/std/StdTypes.hx" module="StdTypes">
+	<typedef path="Null" params="T" file="/usr/lib/haxe/std/StdTypes.hx" module="StdTypes">
 		<c path="Null.T"/>
 		<haxe_doc>
 	[Null] can be useful in two cases. In order to document some methods
@@ -4208,7 +4322,7 @@ THE SOFTWARE.
 	can't.
 </haxe_doc>
 	</typedef>
-	<typedef path="Iterator" params="T" file="/usr/share/haxe/std/StdTypes.hx" module="StdTypes">
+	<typedef path="Iterator" params="T" file="/usr/lib/haxe/std/StdTypes.hx" module="StdTypes">
 		<a>
 			<next set="method"><f a=""><c path="Iterator.T"/></f></next>
 			<hasNext set="method"><f a=""><e path="Bool"/></f></hasNext>
@@ -4219,108 +4333,18 @@ THE SOFTWARE.
 	documentation for more informations.
 </haxe_doc>
 	</typedef>
-	<typedef path="Iterable" params="T" file="/usr/share/haxe/std/StdTypes.hx" module="StdTypes">
+	<typedef path="Iterable" params="T" file="/usr/lib/haxe/std/StdTypes.hx" module="StdTypes">
 		<a><iterator set="method"><f a=""><t path="Iterator"><c path="Iterable.T"/></t></f></iterator></a>
 		<haxe_doc>
 	An Iterable is a data structure which has an iterator() method.
 	See [Lambda] for generic functions on iterable structures.
 </haxe_doc>
 	</typedef>
-	<class path="ArrayAccess" params="T" file="/usr/share/haxe/std/StdTypes.hx" module="StdTypes" extern="1" interface="1"><haxe_doc>
+	<class path="ArrayAccess" params="T" file="/usr/lib/haxe/std/StdTypes.hx" module="StdTypes" extern="1" interface="1"><haxe_doc>
 	ArrayAccess is used to indicate a class that can be accessed using brackets.
 	The type parameter represent the type of the elements stored.
 </haxe_doc></class>
-	<class path="Math" params="" file="/usr/share/haxe/std/Math.hx" extern="1">
-		<PI public="1" set="null" static="1"><c path="Float"/></PI>
-		<NaN public="1" set="null" static="1"><c path="Float"/></NaN>
-		<NEGATIVE_INFINITY public="1" set="null" static="1"><c path="Float"/></NEGATIVE_INFINITY>
-		<POSITIVE_INFINITY public="1" set="null" static="1"><c path="Float"/></POSITIVE_INFINITY>
-		<abs public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Float"/>
-</f></abs>
-		<min public="1" set="method" static="1"><f a="a:b">
-	<c path="Float"/>
-	<c path="Float"/>
-	<c path="Float"/>
-</f></min>
-		<max public="1" set="method" static="1"><f a="a:b">
-	<c path="Float"/>
-	<c path="Float"/>
-	<c path="Float"/>
-</f></max>
-		<sin public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Float"/>
-</f></sin>
-		<cos public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Float"/>
-</f></cos>
-		<atan2 public="1" set="method" static="1"><f a="y:x">
-	<c path="Float"/>
-	<c path="Float"/>
-	<c path="Float"/>
-</f></atan2>
-		<tan public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Float"/>
-</f></tan>
-		<exp public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Float"/>
-</f></exp>
-		<log public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Float"/>
-</f></log>
-		<sqrt public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Float"/>
-</f></sqrt>
-		<round public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Int"/>
-</f></round>
-		<floor public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Int"/>
-</f></floor>
-		<ceil public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Int"/>
-</f></ceil>
-		<atan public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Float"/>
-</f></atan>
-		<asin public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Float"/>
-</f></asin>
-		<acos public="1" set="method" static="1"><f a="v">
-	<c path="Float"/>
-	<c path="Float"/>
-</f></acos>
-		<pow public="1" set="method" static="1"><f a="v:exp">
-	<c path="Float"/>
-	<c path="Float"/>
-	<c path="Float"/>
-</f></pow>
-		<random public="1" set="method" static="1"><f a=""><c path="Float"/></f></random>
-		<isFinite public="1" set="method" static="1"><f a="f">
-	<c path="Float"/>
-	<e path="Bool"/>
-</f></isFinite>
-		<isNaN public="1" set="method" static="1"><f a="f">
-	<c path="Float"/>
-	<e path="Bool"/>
-</f></isNaN>
-		<haxe_doc>
-	This class defines mathematical functions and constants.
-</haxe_doc>
-	</class>
-	<class path="Lambda" params="" file="/usr/share/haxe/std/Lambda.hx">
+	<class path="Lambda" params="" file="/usr/lib/haxe/std/Lambda.hx">
 		<iter public="1" params="A" set="method" line="117" static="1">
 			<f a="it:f">
 				<t path="Iterable"><c path="iter.A"/></t>
@@ -4840,7 +4864,7 @@ THE SOFTWARE.
 
 ****************************************************************************</haxe_doc>
 	</class>
-	<class path="List" params="T" file="/usr/share/haxe/std/List.hx">
+	<class path="List" params="T" file="/usr/lib/haxe/std/List.hx">
 		<h><c path="Array"><d/></c></h>
 		<q><c path="Array"><d/></c></q>
 		<length public="1" set="null">
@@ -6155,13 +6179,13 @@ THE SOFTWARE.
 		<previousNode public="1" set="method"><f a=""><c path="js.w3c.level3.Node"/></f></previousNode>
 		<nextNode public="1" set="method"><f a=""><c path="js.w3c.level3.Node"/></f></nextNode>
 	</class>
-	<class path="js.Lib" params="" file="/usr/share/haxe/std/js/Lib.hx">
+	<class path="js.Lib" params="" file="/usr/lib/haxe/std/js/Lib.hx">
 		<isIE public="1" static="1"><e path="Bool"/></isIE>
 		<isOpera public="1" static="1"><e path="Bool"/></isOpera>
 		<document public="1" static="1"><t path="js.Document"/></document>
 		<window public="1" static="1"><t path="js.Window"/></window>
 	</class>
-	<class path="js.Boot" params="" file="/usr/share/haxe/std/js/Boot.hx">
+	<class path="js.Boot" params="" file="/usr/lib/haxe/std/js/Boot.hx">
 		<__unhtml set="method" line="29" static="1"><f a="s">
 	<c path="String"/>
 	<c path="String"/>
@@ -6181,8 +6205,7 @@ THE SOFTWARE.
 	<t path="haxe.PosInfos"/>
 	<e path="Void"/>
 </f></__trace>
-		<__clear_trace set="method" line="50" static="1"><f a=""><e path="Void"/></f></__clear_trace>
-		<__string_rec set="method" line="62" static="1"><f a="o:s">
+		<__string_rec set="method" line="74" static="1"><f a="o:s">
 	<a>
 		<toString set="null"><f a=""><c path="String"/></f></toString>
 		<length set="null"><c path="Int"/></length>
@@ -6197,17 +6220,17 @@ THE SOFTWARE.
 	<a><length set="null"><c path="Int"/></length></a>
 	<c path="String"/>
 </f></__string_rec>
-		<__interfLoop set="method" line="134" static="1"><f a="cc:cl">
+		<__interfLoop set="method" line="146" static="1"><f a="cc:cl">
 	<d/>
 	<d/>
 	<e path="Bool"/>
 </f></__interfLoop>
-		<__instanceof set="method" line="149" static="1"><f a="o:cl">
+		<__instanceof set="method" line="161" static="1"><f a="o:cl">
 	<d/>
 	<t path="#Array"/>
 	<e path="Bool"/>
 </f></__instanceof>
-		<__init set="method" line="182" static="1"><f a=""><e path="Void"/></f></__init>
+		<__init set="method" line="194" static="1"><f a=""><e path="Void"/></f></__init>
 	</class>
 	<class path="CommonJS" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/CommonJS.hx">
 		<getHtmlDocument public="1" set="method" line="43" static="1"><f a=""><t path="HTMLDocument"/></f></getHtmlDocument>
@@ -6578,7 +6601,7 @@ THE SOFTWARE.
 		<extends path="domtools.AbstractCustomElement"/>
 		<new public="1" set="method" line="6"><f a=""><e path="Void"/></f></new>
 	</class>
-	<typedef path="haxe.PosInfos" params="" file="/usr/share/haxe/std/haxe/PosInfos.hx"><a>
+	<typedef path="haxe.PosInfos" params="" file="/usr/lib/haxe/std/haxe/PosInfos.hx"><a>
 	<methodName><c path="String"/></methodName>
 	<lineNumber><c path="Int"/></lineNumber>
 	<fileName><c path="String"/></fileName>
@@ -6624,141 +6647,6 @@ THE SOFTWARE.
 	<typedef path="js.webgl.GLuint" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/webgl/DOMTypes.hx" module="js.webgl.DOMTypes"><t path="js.w3c.UnsignedLong"/></typedef>
 	<typedef path="js.webgl.GLfloat" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/webgl/DOMTypes.hx" module="js.webgl.DOMTypes"><c path="Float"/></typedef>
 	<typedef path="js.webgl.GLclampf" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/webgl/DOMTypes.hx" module="js.webgl.DOMTypes"><c path="Float"/></typedef>
-	<class path="domtools.ElementManipulation" params="" file="/home/jason/workspace/domtools/domtools/ElementManipulation.hx">
-		<NodeTypeElement line="15" static="1"><c path="Int"/></NodeTypeElement>
-		<isElement public="1" set="method" line="19" static="1"><f a="node">
-	<c path="js.w3c.level3.Node"/>
-	<e path="Bool"/>
-</f></isElement>
-		<attr public="1" set="method" line="24" static="1"><f a="elm:attName">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-	<c path="String"/>
-</f></attr>
-		<setAttr public="1" set="method" line="36" static="1"><f a="elm:attName:attValue">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-	<c path="String"/>
-	<c path="js.w3c.level3.Node"/>
-</f></setAttr>
-		<removeAttr public="1" set="method" line="46" static="1"><f a="elm:attName">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-	<c path="js.w3c.level3.Node"/>
-</f></removeAttr>
-		<hasClass public="1" set="method" line="56" static="1"><f a="elm:className">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-	<e path="Bool"/>
-</f></hasClass>
-		<addClass public="1" set="method" line="61" static="1"><f a="elm:className">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-	<c path="js.w3c.level3.Node"/>
-</f></addClass>
-		<removeClass public="1" set="method" line="73" static="1"><f a="elm:className">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-	<c path="js.w3c.level3.Node"/>
-</f></removeClass>
-		<toggleClass public="1" set="method" line="87" static="1"><f a="elm:className">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-	<c path="js.w3c.level3.Node"/>
-</f></toggleClass>
-		<tagName public="1" get="inline" set="null" line="100" static="1"><f a="elm">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-</f></tagName>
-		<val public="1" get="inline" set="null" line="105" static="1"><f a="elm">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-</f></val>
-		<text public="1" get="inline" set="null" line="110" static="1"><f a="elm">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-</f></text>
-		<setText public="1" get="inline" set="null" line="115" static="1"><f a="elm:text">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-	<c path="js.w3c.level3.Node"/>
-</f></setText>
-		<innerHTML public="1" set="method" line="120" static="1"><f a="elm">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-</f></innerHTML>
-		<setInnerHTML public="1" set="method" line="134" static="1"><f a="elm:html">
-	<c path="js.w3c.level3.Node"/>
-	<c path="String"/>
-	<c path="js.w3c.level3.Node"/>
-</f></setInnerHTML>
-	</class>
-	<class path="domtools.QueryElementManipulation" params="" file="/home/jason/workspace/domtools/domtools/ElementManipulation.hx" module="domtools.ElementManipulation">
-		<attr public="1" set="method" line="157" static="1">
-			<f a="query:attName">
-				<c path="domtools.Query"/>
-				<c path="String"/>
-				<c path="String"/>
-			</f>
-			<haxe_doc> Assume we're operating on the first element. </haxe_doc>
-		</attr>
-		<setAttr public="1" set="method" line="162" static="1"><f a="query:attName:attValue">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<c path="String"/>
-	<c path="domtools.Query"/>
-</f></setAttr>
-		<removeAttr public="1" set="method" line="171" static="1"><f a="query:attName">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<c path="domtools.Query"/>
-</f></removeAttr>
-		<hasClass public="1" set="method" line="181" static="1">
-			<f a="query:className">
-				<c path="domtools.Query"/>
-				<c path="String"/>
-				<e path="Bool"/>
-			</f>
-			<haxe_doc> Checks if the first element in the collection has the given class </haxe_doc>
-		</hasClass>
-		<addClass public="1" set="method" line="186" static="1"><f a="query:className">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<c path="domtools.Query"/>
-</f></addClass>
-		<removeClass public="1" set="method" line="195" static="1"><f a="query:className">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<c path="domtools.Query"/>
-</f></removeClass>
-		<toggleClass public="1" set="method" line="204" static="1"><f a="query:className">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<c path="domtools.Query"/>
-</f></toggleClass>
-		<val public="1" set="method" line="228" static="1"><f a="query">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-</f></val>
-		<text public="1" set="method" line="233" static="1"><f a="query">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-</f></text>
-		<setText public="1" set="method" line="243" static="1"><f a="query:text">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<c path="domtools.Query"/>
-</f></setText>
-		<innerHTML public="1" set="method" line="252" static="1"><f a="query">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-</f></innerHTML>
-		<setInnerHTML public="1" set="method" line="262" static="1"><f a="query:html">
-	<c path="domtools.Query"/>
-	<c path="String"/>
-	<c path="domtools.Query"/>
-</f></setInnerHTML>
-	</class>
 	<class path="js.w3c.css.MediaList" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/css/CSSOM.hx" module="js.w3c.css.CSSOM" extern="1">
 		<extends path="Object"/>
 		<mediaText public="1"><t path="js.w3c.DOMString"/></mediaText>
@@ -7027,11 +6915,11 @@ THE SOFTWARE.
 	<typedef path="js.w3c.css.CSSRuleList" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/css/CSSOM.hx" module="js.w3c.css.CSSOM"><c path="Array"><c path="js.w3c.css.CSSRule"/></c></typedef>
 	<typedef path="js.w3c.css.StyleSheetList" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/css/CSSOM.hx" module="js.w3c.css.CSSOM"><c path="Array"><c path="js.w3c.css.StyleSheet"/></c></typedef>
 	<class path="js.w3c.css.CSSStyleDeclarationValue" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/css/CSSOM.hx" module="js.w3c.css.CSSOM" extern="1" interface="1"/>
-	<class path="js.HtmlCollection" params="T" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom" extern="1">
+	<class path="js.HtmlCollection" params="T" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom" extern="1">
 		<length public="1" set="null"><c path="Int"/></length>
 		<haxe_dynamic><c path="js.HtmlCollection.T"/></haxe_dynamic>
 	</class>
-	<typedef path="js.MetaDom" params="T" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.MetaDom" params="T" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<setAttribute set="method"><f a="attr:val">
 	<c path="String"/>
 	<c path="String"/>
@@ -7074,8 +6962,8 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Dom" params="" file="/usr/share/haxe/std/js/Dom.hx"><t path="js.MetaDom"><t path="js.Dom"/></t></typedef>
-	<typedef path="js.HtmlDom" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Dom" params="" file="/usr/lib/haxe/std/js/Dom.hx"><t path="js.MetaDom"><t path="js.Dom"/></t></typedef>
+	<typedef path="js.HtmlDom" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<title><c path="String"/></title>
 	<style><t path="js.Style"/></style>
 	<setAttribute set="method"><f a="attr:val">
@@ -7199,7 +7087,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.FormElement" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.FormElement" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -7337,7 +7225,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Anchor" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Anchor" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<title><c path="String"/></title>
 	<target><c path="String"/></target>
 	<tabIndex><c path="Int"/></tabIndex>
@@ -7468,7 +7356,7 @@ THE SOFTWARE.
 </f></appendChild>
 	<accessKey><c path="String"/></accessKey>
 </a></typedef>
-	<typedef path="js.Body" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Body" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<vLink><c path="String"/></vLink>
 	<title><c path="String"/></title>
 	<text><c path="String"/></text>
@@ -7598,7 +7486,7 @@ THE SOFTWARE.
 </f></appendChild>
 	<aLink><c path="String"/></aLink>
 </a></typedef>
-	<typedef path="js.Button" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Button" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -7736,7 +7624,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Checkbox" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Checkbox" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -7876,7 +7764,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Document" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Document" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<writeln set="method"><f a="str">
 	<c path="String"/>
 	<e path="Void"/>
@@ -8039,7 +7927,7 @@ THE SOFTWARE.
 </f></appendChild>
 	<anchors><c path="js.HtmlCollection"><t path="js.Anchor"/></c></anchors>
 </a></typedef>
-	<typedef path="js.Event" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Event" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<type><c path="String"/></type>
 	<target><t path="js.HtmlDom"/></target>
 	<stopPropagation set="method"><f a=""><e path="Void"/></f></stopPropagation>
@@ -8054,7 +7942,7 @@ THE SOFTWARE.
 	<button><c path="Int"/></button>
 	<altKey><e path="Bool"/></altKey>
 </a></typedef>
-	<typedef path="js.FileUpload" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.FileUpload" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -8193,7 +8081,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Form" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Form" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<title><c path="String"/></title>
 	<target><c path="String"/></target>
 	<tabIndex><c path="Int"/></tabIndex>
@@ -8337,7 +8225,7 @@ THE SOFTWARE.
 	<action><c path="String"/></action>
 	<acceptCharset><c path="String"/></acceptCharset>
 </a></typedef>
-	<typedef path="js.Frame" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Frame" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<title><c path="String"/></title>
 	<style><t path="js.Style"/></style>
 	<src><c path="String"/></src>
@@ -8469,7 +8357,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Frameset" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Frameset" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<title><c path="String"/></title>
 	<style><t path="js.Style"/></style>
 	<setAttribute set="method"><f a="attr:val">
@@ -8595,7 +8483,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Hidden" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Hidden" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -8734,7 +8622,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.History" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.History" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<length><c path="Int"/></length>
 	<go set="method"><f a="p">
 	<d/>
@@ -8743,7 +8631,7 @@ THE SOFTWARE.
 	<forward set="method"><f a=""><e path="Void"/></f></forward>
 	<back set="method"><f a=""><e path="Void"/></f></back>
 </a></typedef>
-	<typedef path="js.IFrame" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.IFrame" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<width><c path="Int"/></width>
 	<title><c path="String"/></title>
 	<style><t path="js.Style"/></style>
@@ -8876,7 +8764,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Image" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Image" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<width><c path="Int"/></width>
 	<vspace><c path="Int"/></vspace>
 	<useMap><c path="String"/></useMap>
@@ -9025,7 +8913,7 @@ THE SOFTWARE.
 	<alt><c path="String"/></alt>
 	<align><c path="String"/></align>
 </a></typedef>
-	<typedef path="js.Link" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Link" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
 	<target><c path="String"/></target>
@@ -9163,7 +9051,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Location" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Location" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<search><c path="String"/></search>
 	<replace set="method"><f a="url">
 	<c path="String"/>
@@ -9185,7 +9073,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></assign>
 </a></typedef>
-	<typedef path="js.Navigator" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Navigator" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<userAgent><c path="String"/></userAgent>
 	<taintEnabled set="method"><f a=""><e path="Bool"/></f></taintEnabled>
 	<platform><c path="String"/></platform>
@@ -9195,7 +9083,7 @@ THE SOFTWARE.
 	<appName><c path="String"/></appName>
 	<appCodeName><c path="String"/></appCodeName>
 </a></typedef>
-	<typedef path="js.Option" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Option" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -9336,7 +9224,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Password" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Password" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -9478,7 +9366,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Radio" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Radio" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -9619,7 +9507,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Reset" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Reset" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -9757,14 +9645,14 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Screen" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Screen" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<width><c path="Int"/></width>
 	<height><c path="Int"/></height>
 	<colorDepth><c path="Int"/></colorDepth>
 	<availWidth><c path="Int"/></availWidth>
 	<availHeight><c path="Int"/></availHeight>
 </a></typedef>
-	<typedef path="js.Select" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Select" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -9911,7 +9799,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Style" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Style" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<zoom><d/></zoom>
 	<zIndex><c path="Int"/></zIndex>
 	<writingMode><d/></writingMode>
@@ -10031,13 +9919,13 @@ THE SOFTWARE.
 	<backgroundAttachment><d/></backgroundAttachment>
 	<background><d/></background>
 </a></typedef>
-	<typedef path="js.StyleSheet" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.StyleSheet" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
 	<href><c path="String"/></href>
 	<disabled><e path="Bool"/></disabled>
 </a></typedef>
-	<typedef path="js.Submit" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Submit" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -10179,7 +10067,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Text" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Text" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -10321,7 +10209,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Textarea" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Textarea" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -10463,7 +10351,7 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Window" params="" file="/usr/share/haxe/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Window" params="" file="/usr/lib/haxe/std/js/Dom.hx" module="js.Dom"><a>
 	<top><t path="js.Window"/></top>
 	<status><c path="String"/></status>
 	<self><t path="js.Window"/></self>

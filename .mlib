@@ -1,0 +1,5 @@
+<mlib bin="bin">
+	<resources>
+<!--		<resource type="src" path="original/path" dest="relative/path/inside/haxelib/project" />-->
+	</resources>
+</mlib>

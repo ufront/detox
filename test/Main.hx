@@ -4,11 +4,7 @@ package test;
 import domtools.Query;
 import domtools.AbstractCustomElement;
 
-using domtools.ElementManipulation;
-using domtools.Traversing;
-using domtools.DOMManipulation;
-using domtools.EventManagement;
-using domtools.Style;
+using domtools.Tools;
 
 class Main
 {
@@ -66,9 +62,9 @@ class Main
 		trace (hiddenField.val()); // "dinosaur"
 
 		trace (innerHTMLTest.innerHTML()); // "<!--Hidden Comment-->My <em>second</em> paragraph"
-		trace (innerHTMLTest.firstChild().innerHTML()); // "Hidden Comment"
-		trace (innerHTMLTest.setInnerHTML("Welcome to the <strong>WORLD</strong> of tomorrow").firstChild().getNode().nodeType); // 3
-		trace (innerHTMLTest.firstChild().innerHTML()); // "WORLD"
+		trace (innerHTMLTest.firstChildren().innerHTML()); // "Hidden Comment"
+		trace (innerHTMLTest.setInnerHTML("Welcome to the <strong>WORLD</strong> of tomorrow").firstChildren().getNode().nodeType); // 3
+		trace (innerHTMLTest.firstChildren().innerHTML()); // "WORLD"
 
 		var clonedNode = h1Node.clone().setAttr("id","secondTitle");
 		CommonJS.getHtmlDocument().body.append(clonedNode);

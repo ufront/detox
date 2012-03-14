@@ -1,5 +1,5 @@
 package test;
-using domtools.ElementManipulation;
+using domtools.Tools;
 
 class Table extends domtools.AbstractCustomElement
 {
