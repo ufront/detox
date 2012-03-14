@@ -433,13 +433,6 @@ THE SOFTWARE.
 </f></append>
 		<new public="1" set="method"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="test.Main" params="" file="/home/jason/workspace/domtools/test/Main.hx">
-		<main public="1" set="method" line="11" static="1"><f a=""><e path="Void"/></f></main>
-		<run public="1" set="method" line="20" static="1"><f a="e">
-	<c path="js.w3c.level3.Event"/>
-	<e path="Void"/>
-</f></run>
-	</class>
 	<class path="js.w3c.webapi.BlobBuilder" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/webapi/FileWriter.hx" module="js.w3c.webapi.FileWriter" extern="1">
 		<extends path="Object"/>
 		<getBlob public="1" set="method"><f a="?contentType">
@@ -1109,7 +1102,7 @@ THE SOFTWARE.
 		<ENCODING_ERR public="1" line="111" static="1"><t path="js.w3c.UnsignedShort"/></ENCODING_ERR>
 		<code public="1" set="null"><t path="js.w3c.UnsignedShort"/></code>
 	</class>
-	<class path="domtools.Tools" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" extern="1"><haxe_doc> 
+	<class path="domtools.Tools" params="" file="src/domtools/Tools.hx" extern="1"><haxe_doc> 
 * Designed to be used with "using domtools.Tools;" this gives you access
 * to all of the classes defined in this module.  These include
 *   - ElementManipulation
@@ -1132,7 +1125,7 @@ THE SOFTWARE.
 *  - works with native DOMNode or XMLNode, can work without wrapping
 *  - works on non-js haxe platforms, hopefully
 </haxe_doc></class>
-	<class path="domtools.ElementManipulation" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+	<class path="domtools.ElementManipulation" params="" file="src/domtools/Tools.hx" module="domtools.Tools">
 		<NodeTypeElement line="61" static="1"><c path="Int"/></NodeTypeElement>
 		<isElement public="1" set="method" line="65" static="1"><f a="node">
 	<c path="js.w3c.level3.Node"/>
@@ -1201,7 +1194,7 @@ THE SOFTWARE.
 	<c path="js.w3c.level3.Node"/>
 </f></setInnerHTML>
 	</class>
-	<class path="domtools.QueryElementManipulation" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+	<class path="domtools.QueryElementManipulation" params="" file="src/domtools/Tools.hx" module="domtools.Tools">
 		<attr public="1" set="method" line="203" static="1">
 			<f a="query:attName">
 				<c path="domtools.Query"/>
@@ -1267,7 +1260,7 @@ THE SOFTWARE.
 	<c path="domtools.Query"/>
 </f></setInnerHTML>
 	</class>
-	<class path="domtools.DOMManipulation" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+	<class path="domtools.DOMManipulation" params="" file="src/domtools/Tools.hx" module="domtools.Tools">
 		<append public="1" set="method" line="358" static="1">
 			<f a="parent:?childNode:?childCollection">
 				<c path="js.w3c.level3.Node"/>
@@ -1280,8 +1273,8 @@ THE SOFTWARE.
 		<haxe_doc> This class could do with some more DRY - Don't Repeat Yourself.  I feel like between 
 append() and insertBefore() there should be no need for any other functions </haxe_doc>
 	</class>
-	<class path="domtools.QueryDOMManipulation" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools" extern="1"/>
-	<class path="domtools.Traversing" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+	<class path="domtools.QueryDOMManipulation" params="" file="src/domtools/Tools.hx" module="domtools.Tools" extern="1"/>
+	<class path="domtools.Traversing" params="" file="src/domtools/Tools.hx" module="domtools.Tools">
 		<firstChildren public="1" set="method" line="679" static="1"><f a="node:?elementsOnly">
 	<c path="js.w3c.level3.Node"/>
 	<e path="Bool"/>
@@ -1308,7 +1301,7 @@ append() and insertBefore() there should be no need for any other functions </ha
 </f></find>
 		<haxe_doc><![CDATA[ When returning a Null<Node>, it might be worth creating a static NullNode that won't generate errors (so we can chain easily and carelessly) but also not affect the DOM.   For now I'll leave it null.  ]]></haxe_doc>
 	</class>
-	<class path="domtools.QueryTraversing" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+	<class path="domtools.QueryTraversing" params="" file="src/domtools/Tools.hx" module="domtools.Tools">
 		<firstChildren public="1" set="method" line="772" static="1"><f a="query:?elementsOnly">
 	<c path="domtools.Query"/>
 	<e path="Bool"/>
@@ -1334,9 +1327,9 @@ append() and insertBefore() there should be no need for any other functions </ha
 	<c path="domtools.Query"/>
 </f></find>
 	</class>
-	<class path="domtools.Style" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools" extern="1"/>
-	<class path="domtools.QueryStyle" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools" extern="1"/>
-	<class path="domtools.EventManagement" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+	<class path="domtools.Style" params="" file="src/domtools/Tools.hx" module="domtools.Tools" extern="1"/>
+	<class path="domtools.QueryStyle" params="" file="src/domtools/Tools.hx" module="domtools.Tools" extern="1"/>
+	<class path="domtools.EventManagement" params="" file="src/domtools/Tools.hx" module="domtools.Tools">
 		<on public="1" set="method" line="1074" static="1">
 			<f a="target:eventType:listener">
 				<c path="js.w3c.level3.Node"/>
@@ -1390,7 +1383,7 @@ append() and insertBefore() there should be no need for any other functions </ha
 	<c path="js.w3c.level3.Node"/>
 </f></hover>
 	</class>
-	<class path="domtools.QueryEventManagement" params="" file="/home/jason/workspace/domtools/domtools/Tools.hx" module="domtools.Tools">
+	<class path="domtools.QueryEventManagement" params="" file="src/domtools/Tools.hx" module="domtools.Tools">
 		<on public="1" set="method" line="1283" static="1"><f a="targetCollection:eventType:listener">
 	<c path="domtools.Query"/>
 	<c path="String"/>
@@ -4235,7 +4228,7 @@ THE SOFTWARE.
 	<d/>
 	<c path="String"/>
 </f></string></class>
-	<class path="domtools.Query" params="" file="/home/jason/workspace/domtools/domtools/Query.hx">
+	<class path="domtools.Query" params="" file="src/domtools/Query.hx">
 		<document public="1" get="get_document" set="null" static="1"><t path="HTMLDocument"/></document>
 		<window public="1" get="get_window" set="null" static="1"><c path="Window"/></window>
 		<create public="1" get="inline" set="null" line="137" static="1"><f a="name">
@@ -4311,8 +4304,8 @@ THE SOFTWARE.
 * - parse()
 </haxe_doc>
 	</class>
-	<typedef path="domtools.Node" params="" file="/home/jason/workspace/domtools/domtools/Query.hx" module="domtools.Query"><c path="js.w3c.level3.Node"/></typedef>
-	<typedef path="domtools.Event" params="" file="/home/jason/workspace/domtools/domtools/Query.hx" module="domtools.Query"><c path="js.w3c.level3.Event"/></typedef>
+	<typedef path="domtools.Node" params="" file="src/domtools/Query.hx" module="domtools.Query"><c path="js.w3c.level3.Node"/></typedef>
+	<typedef path="domtools.Event" params="" file="src/domtools/Query.hx" module="domtools.Query"><c path="js.w3c.level3.Event"/></typedef>
 	<typedef path="Null" params="T" file="/usr/lib/haxe/std/StdTypes.hx" module="StdTypes">
 		<c path="Null.T"/>
 		<haxe_doc>
@@ -4376,7 +4369,7 @@ THE SOFTWARE.
 	use functional-style programming with haXe.
 </haxe_doc>
 	</class>
-	<class path="domtools.AbstractCustomElement" params="" file="/home/jason/workspace/domtools/domtools/AbstractCustomElement.hx">
+	<class path="domtools.AbstractCustomElement" params="" file="src/domtools/AbstractCustomElement.hx">
 		<extends path="domtools.Query"/>
 		<new public="1" set="method" line="13">
 			<f a="name">
@@ -6281,6 +6274,10 @@ THE SOFTWARE.
 	<e path="Void"/>
 </f></initStorageEvent>
 	</class>
+	<class path="Table" params="" file="src/Table.hx">
+		<extends path="domtools.AbstractCustomElement"/>
+		<new public="1" set="method" line="6"><f a=""><e path="Void"/></f></new>
+	</class>
 	<class path="js.w3c.level3.DOMException" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/level3/Core.hx" module="js.w3c.level3.Core" extern="1">
 		<NO_MODIFICATION_ALLOWED_ERR public="1" line="35" static="1"><t path="js.w3c.UnsignedShort"/></NO_MODIFICATION_ALLOWED_ERR>
 		<NOT_FOUND_ERR public="1" line="36" static="1"><t path="js.w3c.UnsignedShort"/></NOT_FOUND_ERR>
@@ -6596,10 +6593,6 @@ THE SOFTWARE.
 	<t path="js.w3c.DOMString"/>
 	<c path="js.w3c.level3.NodeList"/>
 </f></queryScopedSelectorAll>
-	</class>
-	<class path="test.Table" params="" file="/home/jason/workspace/domtools/test/Table.hx">
-		<extends path="domtools.AbstractCustomElement"/>
-		<new public="1" set="method" line="6"><f a=""><e path="Void"/></f></new>
 	</class>
 	<typedef path="haxe.PosInfos" params="" file="/usr/lib/haxe/std/haxe/PosInfos.hx"><a>
 	<methodName><c path="String"/></methodName>
@@ -10489,4 +10482,11 @@ THE SOFTWARE.
 		<onmessage public="1"><t path="js.w3c.level3.EventListener"><c path="js.w3c.html5.MessageEvent"/></t></onmessage>
 	</class>
 	<typedef path="js.w3c.html5.MessagePortArray" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/html5/Messaging.hx" module="js.w3c.html5.Messaging"><c path="Array"><c path="js.w3c.html5.MessagePort"/></c></typedef>
+	<class path="Main" params="" file="src/Main.hx">
+		<main public="1" set="method" line="9" static="1"><f a=""><e path="Void"/></f></main>
+		<run public="1" set="method" line="18" static="1"><f a="e">
+	<c path="js.w3c.level3.Event"/>
+	<e path="Void"/>
+</f></run>
+	</class>
 </haxe>

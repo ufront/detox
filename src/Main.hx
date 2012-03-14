@@ -1,6 +1,4 @@
 
-package test;
-
 import domtools.Query;
 import domtools.AbstractCustomElement;
 
@@ -103,7 +101,7 @@ class Main
 
 		trace(new Query("ul").find("li.first").addClass("first-list-item").text()); // FirstA
 
-		var table = new test.Table();
+		var table = new Table();
 		trace (table.text()); // "SampleTable!PrettyGreat"
 		Query.document.body.appendChild(table.getNode(0));
 		table.find("td").setAttr("style","border:1px solid black");

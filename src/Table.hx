@@ -1,4 +1,4 @@
-package test;
+
 using domtools.Tools;
 
 class Table extends domtools.AbstractCustomElement

@@ -1,8 +1,9 @@
 -lib xirsys_stdjs
--js test/main-uncompressed.js
--main test.Main
+-js build/main-uncompressed.js
+-cp src
+-main Main
 --dead-code-elimination
--cmd haxelib run jsmin test/main-uncompressed.js test/main.js 3
+-cmd haxelib run jsmin build/main-uncompressed.js build/main.js 3
 
 # documentation
 -xml doc/haxedoc.xml
