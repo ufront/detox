@@ -159,7 +159,7 @@ class ElementManipulation
 		return attr(elm,"value");
 	}
 
-	public static inline function setVal(elm:Node, val:Dynamic):String
+	public static inline function setVal(elm:Node, val:Dynamic)
 	{
 		return setAttr(elm, "value", Std.string(val));
 	}
@@ -285,6 +285,16 @@ class QueryElementManipulation
 	public static function val(query:Query):String
 	{
 		return (query.length > 0) ? ElementManipulation.val(query.getNode()) : "";
+	}
+
+	public static function setVal(query:Query, val:Dynamic)
+	{
+		var value = Std.string(val);
+		for (node in query)
+		{
+			ElementManipulation.setVal(node, value);
+		}
+		return query;
 	}
 	
 	public static function text(query:Query):String
