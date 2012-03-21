@@ -1097,76 +1097,76 @@ THE SOFTWARE.
 		<code public="1" set="null"><t path="js.w3c.UnsignedShort"/></code>
 	</class>
 	<class path="domtools.ElementManipulation" params="" file="/home/jason/workspace/domtools/src/domtools/Tools.hx" module="domtools.Tools">
-		<NodeTypeElement line="67" static="1"><c path="Int"/></NodeTypeElement>
-		<isElement public="1" set="method" line="71" static="1"><f a="node">
+		<NodeTypeElement line="61" static="1"><c path="Int"/></NodeTypeElement>
+		<isElement public="1" set="method" line="65" static="1"><f a="node">
 	<c path="js.w3c.level3.Node"/>
 	<e path="Bool"/>
 </f></isElement>
-		<attr public="1" set="method" line="76" static="1"><f a="elm:attName">
+		<attr public="1" set="method" line="70" static="1"><f a="elm:attName">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<c path="String"/>
 </f></attr>
-		<setAttr public="1" set="method" line="88" static="1"><f a="elm:attName:attValue">
+		<setAttr public="1" set="method" line="82" static="1"><f a="elm:attName:attValue">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<c path="String"/>
 	<c path="js.w3c.level3.Node"/>
 </f></setAttr>
-		<removeAttr public="1" set="method" line="98" static="1"><f a="elm:attName">
+		<removeAttr public="1" set="method" line="92" static="1"><f a="elm:attName">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<c path="js.w3c.level3.Node"/>
 </f></removeAttr>
-		<hasClass public="1" set="method" line="108" static="1"><f a="elm:className">
+		<hasClass public="1" set="method" line="102" static="1"><f a="elm:className">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<e path="Bool"/>
 </f></hasClass>
-		<addClass public="1" set="method" line="113" static="1"><f a="elm:className">
+		<addClass public="1" set="method" line="107" static="1"><f a="elm:className">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<c path="js.w3c.level3.Node"/>
 </f></addClass>
-		<removeClass public="1" set="method" line="125" static="1"><f a="elm:className">
+		<removeClass public="1" set="method" line="119" static="1"><f a="elm:className">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<c path="js.w3c.level3.Node"/>
 </f></removeClass>
-		<toggleClass public="1" set="method" line="139" static="1"><f a="elm:className">
+		<toggleClass public="1" set="method" line="133" static="1"><f a="elm:className">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<c path="js.w3c.level3.Node"/>
 </f></toggleClass>
-		<tagName public="1" get="inline" set="null" line="152" static="1"><f a="elm">
+		<tagName public="1" get="inline" set="null" line="146" static="1"><f a="elm">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 </f></tagName>
-		<val public="1" get="inline" set="null" line="157" static="1"><f a="elm">
+		<val public="1" get="inline" set="null" line="151" static="1"><f a="elm">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 </f></val>
-		<text public="1" get="inline" set="null" line="162" static="1"><f a="elm">
+		<text public="1" get="inline" set="null" line="156" static="1"><f a="elm">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 </f></text>
-		<setText public="1" get="inline" set="null" line="167" static="1"><f a="elm:text">
+		<setText public="1" get="inline" set="null" line="161" static="1"><f a="elm:text">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<c path="js.w3c.level3.Node"/>
 </f></setText>
-		<innerHTML public="1" set="method" line="172" static="1"><f a="elm">
+		<innerHTML public="1" set="method" line="166" static="1"><f a="elm">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 </f></innerHTML>
-		<setInnerHTML public="1" set="method" line="186" static="1"><f a="elm:html">
+		<setInnerHTML public="1" set="method" line="180" static="1"><f a="elm:html">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<c path="js.w3c.level3.Node"/>
 </f></setInnerHTML>
 	</class>
 	<class path="domtools.QueryElementManipulation" params="" file="/home/jason/workspace/domtools/src/domtools/Tools.hx" module="domtools.Tools">
-		<attr public="1" set="method" line="209" static="1">
+		<attr public="1" set="method" line="203" static="1">
 			<f a="query:attName">
 				<c path="domtools.Query"/>
 				<c path="String"/>
@@ -1174,18 +1174,18 @@ THE SOFTWARE.
 			</f>
 			<haxe_doc> Assume we're operating on the first element. </haxe_doc>
 		</attr>
-		<setAttr public="1" set="method" line="214" static="1"><f a="query:attName:attValue">
+		<setAttr public="1" set="method" line="208" static="1"><f a="query:attName:attValue">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
 </f></setAttr>
-		<removeAttr public="1" set="method" line="223" static="1"><f a="query:attName">
+		<removeAttr public="1" set="method" line="217" static="1"><f a="query:attName">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
 </f></removeAttr>
-		<hasClass public="1" set="method" line="233" static="1">
+		<hasClass public="1" set="method" line="227" static="1">
 			<f a="query:className">
 				<c path="domtools.Query"/>
 				<c path="String"/>
@@ -1193,46 +1193,46 @@ THE SOFTWARE.
 			</f>
 			<haxe_doc> Checks if the first element in the collection has the given class </haxe_doc>
 		</hasClass>
-		<addClass public="1" set="method" line="238" static="1"><f a="query:className">
+		<addClass public="1" set="method" line="232" static="1"><f a="query:className">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
 </f></addClass>
-		<removeClass public="1" set="method" line="247" static="1"><f a="query:className">
+		<removeClass public="1" set="method" line="241" static="1"><f a="query:className">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
 </f></removeClass>
-		<toggleClass public="1" set="method" line="256" static="1"><f a="query:className">
+		<toggleClass public="1" set="method" line="250" static="1"><f a="query:className">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
 </f></toggleClass>
-		<val public="1" set="method" line="280" static="1"><f a="query">
+		<val public="1" set="method" line="274" static="1"><f a="query">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 </f></val>
-		<text public="1" set="method" line="285" static="1"><f a="query">
+		<text public="1" set="method" line="279" static="1"><f a="query">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 </f></text>
-		<setText public="1" set="method" line="295" static="1"><f a="query:text">
+		<setText public="1" set="method" line="289" static="1"><f a="query:text">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
 </f></setText>
-		<innerHTML public="1" set="method" line="304" static="1"><f a="query">
+		<innerHTML public="1" set="method" line="298" static="1"><f a="query">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 </f></innerHTML>
-		<setInnerHTML public="1" set="method" line="314" static="1"><f a="query:html">
+		<setInnerHTML public="1" set="method" line="308" static="1"><f a="query:html">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
 </f></setInnerHTML>
 	</class>
 	<class path="domtools.DOMManipulation" params="" file="/home/jason/workspace/domtools/src/domtools/Tools.hx" module="domtools.Tools">
-		<append public="1" set="method" line="364" static="1">
+		<append public="1" set="method" line="358" static="1">
 			<f a="parent:?childNode:?childCollection">
 				<c path="js.w3c.level3.Node"/>
 				<c path="js.w3c.level3.Node"/>
@@ -1245,26 +1245,26 @@ THE SOFTWARE.
 append() and insertBefore() there should be no need for any other functions </haxe_doc>
 	</class>
 	<class path="domtools.Traversing" params="" file="/home/jason/workspace/domtools/src/domtools/Tools.hx" module="domtools.Tools">
-		<firstChildren public="1" set="method" line="685" static="1"><f a="node:?elementsOnly">
+		<firstChildren public="1" set="method" line="679" static="1"><f a="node:?elementsOnly">
 	<c path="js.w3c.level3.Node"/>
 	<e path="Bool"/>
 	<c path="js.w3c.level3.Node"/>
 </f></firstChildren>
-		<parent public="1" set="method" line="718" static="1">
+		<parent public="1" set="method" line="712" static="1">
 			<f a="node">
 				<c path="js.w3c.level3.Node"/>
 				<c path="js.w3c.level3.Node"/>
 			</f>
 			<haxe_doc> Gets the direct parents of each element in the collection. </haxe_doc>
 		</parent>
-		<ancestors public="1" set="method" line="724" static="1">
+		<ancestors public="1" set="method" line="718" static="1">
 			<f a="node">
 				<c path="js.w3c.level3.Node"/>
 				<c path="domtools.Query"/>
 			</f>
 			<haxe_doc> Gets all parents of the current collection, and is called recursively to get all ancestors. </haxe_doc>
 		</ancestors>
-		<find public="1" set="method" line="749" static="1"><f a="node:selector">
+		<find public="1" set="method" line="743" static="1"><f a="node:selector">
 	<c path="js.w3c.level3.Node"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
@@ -1272,33 +1272,33 @@ append() and insertBefore() there should be no need for any other functions </ha
 		<haxe_doc><![CDATA[ When returning a Null<Node>, it might be worth creating a static NullNode that won't generate errors (so we can chain easily and carelessly) but also not affect the DOM.   For now I'll leave it null.  ]]></haxe_doc>
 	</class>
 	<class path="domtools.QueryTraversing" params="" file="/home/jason/workspace/domtools/src/domtools/Tools.hx" module="domtools.Tools">
-		<firstChildren public="1" set="method" line="778" static="1"><f a="query:?elementsOnly">
+		<firstChildren public="1" set="method" line="772" static="1"><f a="query:?elementsOnly">
 	<c path="domtools.Query"/>
 	<e path="Bool"/>
 	<c path="domtools.Query"/>
 </f></firstChildren>
-		<parent public="1" set="method" line="817" static="1">
+		<parent public="1" set="method" line="811" static="1">
 			<f a="query">
 				<c path="domtools.Query"/>
 				<c path="domtools.Query"/>
 			</f>
 			<haxe_doc> Gets the direct parents of each element in the collection. </haxe_doc>
 		</parent>
-		<ancestors public="1" set="method" line="829" static="1">
+		<ancestors public="1" set="method" line="823" static="1">
 			<f a="query">
 				<c path="domtools.Query"/>
 				<c path="domtools.Query"/>
 			</f>
 			<haxe_doc> Gets all parents of the current collection, and is called recursively to get all ancestors. </haxe_doc>
 		</ancestors>
-		<find public="1" set="method" line="865" static="1"><f a="query:selector">
+		<find public="1" set="method" line="859" static="1"><f a="query:selector">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<c path="domtools.Query"/>
 </f></find>
 	</class>
 	<class path="domtools.EventManagement" params="" file="/home/jason/workspace/domtools/src/domtools/Tools.hx" module="domtools.Tools">
-		<on public="1" set="method" line="1080" static="1">
+		<on public="1" set="method" line="1074" static="1">
 			<f a="target:eventType:listener">
 				<c path="js.w3c.level3.Node"/>
 				<c path="String"/>
@@ -1310,7 +1310,7 @@ append() and insertBefore() there should be no need for any other functions </ha
 			</f>
 			<haxe_doc> add an event listener </haxe_doc>
 		</on>
-		<one public="1" set="method" line="1104" static="1">
+		<one public="1" set="method" line="1098" static="1">
 			<f a="target:eventType:listener">
 				<c path="js.w3c.level3.Node"/>
 				<c path="String"/>
@@ -1322,7 +1322,7 @@ append() and insertBefore() there should be no need for any other functions </ha
 			</f>
 			<haxe_doc> Attach an event but only let it run once </haxe_doc>
 		</one>
-		<mouseenter public="1" get="inline" set="null" line="1121" static="1"><f a="target:listener">
+		<mouseenter public="1" get="inline" set="null" line="1115" static="1"><f a="target:listener">
 	<c path="js.w3c.level3.Node"/>
 	<f a="">
 		<t path="domtools.Event"/>
@@ -1330,7 +1330,7 @@ append() and insertBefore() there should be no need for any other functions </ha
 	</f>
 	<c path="js.w3c.level3.Node"/>
 </f></mouseenter>
-		<mouseleave public="1" get="inline" set="null" line="1126" static="1"><f a="target:listener">
+		<mouseleave public="1" get="inline" set="null" line="1120" static="1"><f a="target:listener">
 	<c path="js.w3c.level3.Node"/>
 	<f a="">
 		<t path="domtools.Event"/>
@@ -1338,7 +1338,7 @@ append() and insertBefore() there should be no need for any other functions </ha
 	</f>
 	<c path="js.w3c.level3.Node"/>
 </f></mouseleave>
-		<hover public="1" set="method" line="1166" static="1"><f a="target:listener1:?listener2">
+		<hover public="1" set="method" line="1160" static="1"><f a="target:listener1:?listener2">
 	<c path="js.w3c.level3.Node"/>
 	<f a="">
 		<t path="domtools.Event"/>
@@ -1352,7 +1352,7 @@ append() and insertBefore() there should be no need for any other functions </ha
 </f></hover>
 	</class>
 	<class path="domtools.QueryEventManagement" params="" file="/home/jason/workspace/domtools/src/domtools/Tools.hx" module="domtools.Tools">
-		<on public="1" set="method" line="1289" static="1"><f a="targetCollection:eventType:listener">
+		<on public="1" set="method" line="1283" static="1"><f a="targetCollection:eventType:listener">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<f a="">
@@ -1361,7 +1361,7 @@ append() and insertBefore() there should be no need for any other functions </ha
 	</f>
 	<c path="domtools.Query"/>
 </f></on>
-		<one public="1" set="method" line="1307" static="1"><f a="targetCollection:eventType:listener">
+		<one public="1" set="method" line="1301" static="1"><f a="targetCollection:eventType:listener">
 	<c path="domtools.Query"/>
 	<c path="String"/>
 	<f a="">
@@ -1370,7 +1370,7 @@ append() and insertBefore() there should be no need for any other functions </ha
 	</f>
 	<c path="domtools.Query"/>
 </f></one>
-		<hover public="1" set="method" line="1366" static="1"><f a="targetCollection:listener1:?listener2">
+		<hover public="1" set="method" line="1360" static="1"><f a="targetCollection:listener1:?listener2">
 	<c path="domtools.Query"/>
 	<f a="">
 		<t path="domtools.Event"/>
@@ -4252,46 +4252,46 @@ THE SOFTWARE.
 	<class path="domtools.Query" params="" file="/home/jason/workspace/domtools/src/domtools/Query.hx">
 		<document public="1" get="get_document" set="null" static="1"><t path="HTMLDocument"/></document>
 		<window public="1" get="get_window" set="null" static="1"><c path="Window"/></window>
-		<create public="1" get="inline" set="null" line="145" static="1"><f a="name">
+		<create public="1" get="inline" set="null" line="138" static="1"><f a="name">
 	<c path="String"/>
 	<c path="js.w3c.level3.Element"/>
 </f></create>
-		<get_window get="inline" set="null" line="161" static="1"><f a=""><c path="Window"/></f></get_window>
-		<get_document get="inline" set="null" line="166" static="1"><f a=""><t path="HTMLDocument"/></f></get_document>
+		<get_window get="inline" set="null" line="149" static="1"><f a=""><c path="Window"/></f></get_window>
+		<get_document get="inline" set="null" line="154" static="1"><f a=""><t path="HTMLDocument"/></f></get_document>
 		<collection public="1" set="null"><c path="Array"><t path="domtools.Node"/></c></collection>
 		<length public="1" get="get_length" set="null"><c path="Int"/></length>
-		<iterator public="1" get="inline" set="null" line="63"><f a=""><t path="Iterator"><t path="Null"><t path="domtools.Node"/></t></t></f></iterator>
-		<getNode public="1" get="inline" set="null" line="68"><f a="?i">
+		<iterator public="1" get="inline" set="null" line="56"><f a=""><t path="Iterator"><t path="Null"><t path="domtools.Node"/></t></t></f></iterator>
+		<getNode public="1" get="inline" set="null" line="61"><f a="?i">
 	<c path="Int"/>
 	<t path="domtools.Node"/>
 </f></getNode>
-		<eq public="1" get="inline" set="null" line="73"><f a="?i">
+		<eq public="1" get="inline" set="null" line="66"><f a="?i">
 	<c path="Int"/>
 	<c path="domtools.Query"/>
 </f></eq>
-		<first public="1" get="inline" set="null" line="78"><f a=""><c path="domtools.Query"/></f></first>
-		<last public="1" get="inline" set="null" line="83"><f a=""><c path="domtools.Query"/></f></last>
-		<add public="1" get="inline" set="null" line="88"><f a="node">
+		<first public="1" get="inline" set="null" line="71"><f a=""><c path="domtools.Query"/></f></first>
+		<last public="1" get="inline" set="null" line="76"><f a=""><c path="domtools.Query"/></f></last>
+		<add public="1" get="inline" set="null" line="81"><f a="node">
 	<t path="domtools.Node"/>
 	<c path="domtools.Query"/>
 </f></add>
-		<addCollection public="1" set="method" line="93"><f a="collection">
+		<addCollection public="1" set="method" line="86"><f a="collection">
 	<t path="Iterable"><t path="domtools.Node"/></t>
 	<c path="domtools.Query"/>
 </f></addCollection>
-		<addNodeList public="1" set="method" line="102"><f a="nodeList:?elementsOnly">
+		<addNodeList public="1" set="method" line="95"><f a="nodeList:?elementsOnly">
 	<c path="js.w3c.level3.NodeList"/>
 	<e path="Bool"/>
 	<c path="domtools.Query"/>
 </f></addNodeList>
-		<each public="1" get="inline" set="null" line="119"><f a="f">
+		<each public="1" get="inline" set="null" line="112"><f a="f">
 	<f a="">
 		<t path="domtools.Node"/>
 		<e path="Void"/>
 	</f>
 	<c path="domtools.Query"/>
 </f></each>
-		<filter public="1" get="inline" set="null" line="125">
+		<filter public="1" get="inline" set="null" line="118">
 			<f a="fn">
 				<f a="">
 					<t path="domtools.Node"/>
@@ -4301,9 +4301,9 @@ THE SOFTWARE.
 			</f>
 			<haxe_doc> Use a function to return a filtered list. In future might allow a selector as well. </haxe_doc>
 		</filter>
-		<clone public="1" set="method" line="130"><f a=""><c path="domtools.Query"/></f></clone>
-		<get_length get="inline" set="null" line="140"><f a=""><c path="Int"/></f></get_length>
-		<new public="1" set="method" line="37"><f a="?selector:?node:?collection">
+		<clone public="1" set="method" line="123"><f a=""><c path="domtools.Query"/></f></clone>
+		<get_length get="inline" set="null" line="133"><f a=""><c path="Int"/></f></get_length>
+		<new public="1" set="method" line="30"><f a="?selector:?node:?collection">
 	<c path="String"/>
 	<t path="domtools.Node"/>
 	<t path="Iterable"><t path="domtools.Node"/></t>
@@ -4482,7 +4482,7 @@ THE SOFTWARE.
 	</class>
 	<class path="domtools.AbstractCustomElement" params="" file="/home/jason/workspace/domtools/src/domtools/AbstractCustomElement.hx">
 		<extends path="domtools.Query"/>
-		<new public="1" set="method" line="19">
+		<new public="1" set="method" line="13">
 			<f a="name">
 				<c path="String"/>
 				<e path="Void"/>
@@ -4491,11 +4491,6 @@ THE SOFTWARE.
 	When your class extends this, it will automatically work with the domtools API (through using).  
 	Therefore your class can have very tight integration between haxe features and the DOM. </haxe_doc>
 		</new>
-		<haxe_doc>**
-* Created by Jason O'Neil in 2012 
-* 
-* Released into the public domain, as an act of generosity and / or practicality.
-**</haxe_doc>
 	</class>
 	<class path="js.w3c.level3.DocumentEvent" params="" file="/usr/lib/haxe/lib/xirsys_stdjs/5,0,1/js/w3c/level3/Events.hx" module="js.w3c.level3.Events" extern="1" interface="1">
 		<createEvent public="1" set="method"><f a="eventType">

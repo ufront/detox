@@ -25,7 +25,6 @@ import js.w3c.level3.Core;
 import UserAgentContext;
 import CommonJS;
 import domtools.Tools;
-using domtools.Tools;
 
 class Query
 {
@@ -145,11 +144,6 @@ class Query
 	public static inline function create(name:String):Element
 	{
 		return untyped __js__("document").createElement(name);
-	}
-
-	public static inline function parse(html:String):Query
-	{
-		return Query.create("div").setInnerHTML(html).children(false);
 	}
 
 	/*public static inline function create(str:String):Query

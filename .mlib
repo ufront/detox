@@ -1,5 +1,7 @@
-<mlib bin="bin">
+<mlib bin="package">
 	<resources>
-<!--		<resource type="src" path="original/path" dest="relative/path/inside/haxelib/project" />-->
+		<resource type="src" path="src/domtools" dest="domtools" />
+		<resource path="doc/haxedoc.xml" dest="haxedoc.xml" />
+		<resource type="license" path="license.mtt" />
 	</resources>
 </mlib>

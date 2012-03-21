@@ -1,7 +1,0 @@
-<project name="domtools" url="https://github.com/jasononeil/domtools" license="BSD">
-    <user name="jason"/>
-    <tag v="js"/>
-    <description>DOM Tools - A JQuery like API for haxe JS.</description>
-    <version name="0.5.02">Minor bug fixes.  Renamed Events.hx to EventManagement.hx to avoid naming conflict.  Began work on styling API, not functional yet.</version>
-    <depends name="xirsys_stdjs"/>
-</project>
