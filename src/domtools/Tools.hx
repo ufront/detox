@@ -158,6 +158,11 @@ class ElementManipulation
 	{
 		return attr(elm,"value");
 	}
+
+	public static inline function setVal(elm:Node, val:Dynamic):String
+	{
+		return setAttr(elm, "value", Std.string(val));
+	}
 	
 	public static inline function text(elm:Node):String
 	{
