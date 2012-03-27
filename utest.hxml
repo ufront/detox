@@ -1,9 +1,0 @@
-
-# JavaScript
--main UTest
--lib utest
--lib xirsys_stdjs
--cp src
--cp test
--js build/utest.js
-

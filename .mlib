@@ -2,6 +2,6 @@
 	<resources>
 		<resource type="src" path="src/domtools" dest="domtools" />
 		<resource path="doc/haxedoc.xml" dest="haxedoc.xml" />
-		<resource type="license" path="license.mtt" />
+		<resource type="license" path="package/license.mtt" />
 	</resources>
 </mlib>
