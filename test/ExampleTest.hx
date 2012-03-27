@@ -44,6 +44,12 @@ class ExampleTest
 	{
 		Assert.isTrue(true);
 	}
+
+	@Test
+	public function testExampleThatFailes():Void
+	{
+		Assert.isTrue(true);
+	}
 	
 	@AsyncTest
 	public function testAsyncExample(factory:AsyncFactory):Void
