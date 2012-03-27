@@ -156,7 +156,16 @@ class ElementManipulation
 
 	public static inline function val(elm:Node):String
 	{
-		return attr(elm,"value");
+		var val = "";
+		try {
+			val = untyped elm.value;
+			if (val == null) val = "";
+		} catch (e:Dynamic)
+		{
+			val = attr(elm, "value");
+		}
+
+		return val;
 	}
 
 	public static inline function setVal(elm:Node, val:Dynamic)
