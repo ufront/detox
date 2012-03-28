@@ -73,6 +73,11 @@ class ElementManipulation
 		return node.nodeType == NodeTypeElement;
 	}
 
+	public static function toQuery(n:Node):Query
+	{
+		return new Query(n);
+	}
+
 	public static function attr(elm:Node, attName:String):String
 	{
 		var ret = "";
