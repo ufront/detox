@@ -4,38 +4,44 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
+import domtools.Tools;
+using domtools.Tools;
+
 /**
 * Auto generated ExampleTest for MassiveUnit. 
 * This is an example test class can be used as a template for writing normal and async tests 
 * Refer to munit command line tool for more information (haxelib run munit)
 */
-class ExampleTest 
+class EventManagementTest 
 {
 	private var timer:Timer;
 	
 	public function new() 
 	{
-		
 	}
 	
 	@BeforeClass
 	public function beforeClass():Void
 	{
+		// trace ("BeforeClass");
 	}
 	
 	@AfterClass
 	public function afterClass():Void
 	{
+		// trace ("AfterClass");
 	}
 	
 	@Before
 	public function setup():Void
 	{
+		// trace ("Setup");
 	}
 	
 	@After
 	public function tearDown():Void
 	{
+		// trace ("Tear Down");
 	}
 	
 	
@@ -47,28 +53,6 @@ class ExampleTest
 
 	@Test
 	public function testExampleThatFailes():Void
-	{
-		Assert.isTrue(true);
-	}
-	
-	@AsyncTest
-	public function testAsyncExample(factory:AsyncFactory):Void
-	{
-		var handler:Dynamic = factory.createHandler(this, onTestAsyncExampleComplete, 300);
-		timer = Timer.delay(handler, 200);
-	}
-	
-	private function onTestAsyncExampleComplete():Void
-	{
-		Assert.isFalse(false);
-	}
-	
-	
-	/**
-	* test that only runs when compiled with the -D testDebug flag
-	*/
-	@TestDebug
-	public function testExampleThatOnlyRunsWithDebugFlag():Void
 	{
 		Assert.isTrue(true);
 	}
