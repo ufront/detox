@@ -41,6 +41,33 @@ class Tools
 	{
 		
 	}
+
+	/**
+	* A helper function that lets you do this:
+	* "#myElm".find().addClass("super");
+	*/
+	public static function find(selector:String)
+	{
+		return new Query(selector);
+	} 
+
+	/**
+	* A helper function that lets you do this:
+	* "div".create().setAttr("id","myElm");
+	*/
+	public static function create(elmName:String)
+	{
+		return Query.create(selector);
+	}
+
+	/**
+	* A helper function that lets you do this:
+	* "<div>Hello <i>There</i></div>".parse().find('i');
+	*/
+	public static function parse(html:String)
+	{
+		return Query.parse(html);
+	} 
 }
 
 //---------------------------------------------------------
