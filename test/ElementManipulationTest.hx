@@ -275,4 +275,138 @@ class ElementManipulationTest
 		Assert.areEqual("attr", div.val());
 	}
 
+	@Test
+	public function testSetValInput():Void 
+	{
+		var input = "<input type='text' value='attr' />".parse().getNode();
+		input.setVal("newvalue");
+		Assert.areEqual("newvalue", input.val());
+	}
+
+	@Test
+	public function testSetValComment():Void 
+	{
+		comment.setVal("mycomment");
+		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML());
+	}
+
+	@Test
+	public function testSetValTextNode():Void 
+	{
+		text.setVal("NewText");
+		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML());
+	}
+
+	@Test
+	public function testText():Void 
+	{
+		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
+		Assert.areEqual("Hello World", helloworld.text());
+	}
+
+	@Test
+	public function testSetText():Void 
+	{
+		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
+		helloworld.setText("Goodbye Planet");
+		Assert.areEqual("Goodbye Planet", helloworld.innerHTML());
+	}
+
+	@Test
+	public function testSetTextComment():Void 
+	{
+		comment.setText("mycomment");
+		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML());
+	}
+
+	@Test
+	public function testSetTextTextNode():Void 
+	{
+		text.setText("NewText");
+		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML());
+	}
+
+	@Test
+	public function testInnerHTML():Void 
+	{
+		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
+		Assert.areEqual("Hello <i>World</i>", helloworld.innerHTML());
+		Assert.areEqual("World", helloworld.find("i").innerHTML());
+	}
+
+	@Test
+	public function testInnerHTMLOnNonElements():Void 
+	{
+		Assert.areEqual(" A comment ", comment.innerHTML());
+		Assert.areEqual("Text", text.innerHTML());
+	}
+
+	@Test
+	public function testSetInnerHTML():Void 
+	{
+		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
+		helloworld.setInnerHTML("Goodbye <i>Cruel</i> Planet");
+		Assert.areEqual("Goodbye <i>Cruel</i> Planet", helloworld.innerHTML());
+	}
+
+	@Test
+	public function testSetInnerHTMLComment():Void 
+	{
+		comment.setInnerHTML("mycomment");
+		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML());
+	}
+
+	@Test
+	public function testSetInnerHTMLTextNode():Void 
+	{
+		text.setInnerHTML("NewText");
+		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML());
+	}
+
+	@Test
+	public function testCloneTextNode():Void 
+	{
+		var newText = text.clone();
+		Assert.areEqual(text.nodeValue, newText.nodeValue);
+		newText.setText("Different");
+		Assert.areNotEqual(text.nodeValue, newText.nodeValue);
+	}
+
+	@Test
+	public function testCloneComment():Void 
+	{
+		var newComment = comment.clone();
+		Assert.areEqual(comment.nodeValue, newComment.nodeValue);
+		newComment.setText("Different");
+		Assert.areNotEqual(comment.nodeValue, newComment.nodeValue);
+	}
+
+	@Test
+	public function testCloneElement():Void 
+	{
+		var newH1 = h1.clone();
+		Assert.areEqual(h1.text(), newH1.text());
+		Assert.areEqual(h1.attr('id'), newH1.attr('id'));
+
+		newH1.setText("Different");
+		newH1.setAttr("id", "differentid");
+		Assert.areNotEqual(h1.text(), newH1.text());
+		Assert.areNotEqual(h1.attr('id'), newH1.attr('id'));
+	}
+
+	@Test
+	public function testCloneElementRecursive():Void 
+	{
+		var newSampleDoc = sampleDocument.clone();
+		var newH1 = newSampleDoc.find('h1').getNode();
+		var newH2 = newSampleDoc.find('h2').getNode();
+		newH1.setText("Different");
+		newH1.setAttr("id", "differentid");
+
+		Assert.areNotEqual(h1.text(), newH1.text());
+		Assert.areNotEqual(h1.attr('id'), newH1.attr('id'));
+		Assert.areNotEqual(sampleDocument.innerHTML(), newSampleDoc.innerHTML());
+		Assert.areEqual(h2.text(), newH2.text());
+	}
+
 }
