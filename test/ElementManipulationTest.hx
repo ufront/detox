@@ -99,7 +99,7 @@ class ElementManipulationTest
 	@Test
 	public function testReadAttr():Void
 	{
-		Assert.areEqual(h1.attr("id"), "title");
+		Assert.areEqual("title", h1.attr("id"));
 	}
 
 	@Test
@@ -107,7 +107,7 @@ class ElementManipulationTest
 	{
 		var newID = "test";
 		child.setAttr('id', newID);
-		Assert.areEqual(child.attr("id"), newID);
+		Assert.areEqual(newID, child.attr("id"));
 	}
 
 	@Test
@@ -172,19 +172,19 @@ class ElementManipulationTest
 		Assert.isFalse(h1.hasClass('myclass1'));
 		Assert.isTrue(h1.hasClass('myclass2'));
 		Assert.isTrue(h1.hasClass('myclass3'));
-		Assert.areEqual(h1.attr('class'), 'myclass2 myclass3');
+		Assert.areEqual('myclass2 myclass3', h1.attr('class'));
 
 		h1.removeClass('myclass2');
 		Assert.isFalse(h1.hasClass('myclass1'));
 		Assert.isFalse(h1.hasClass('myclass2'));
 		Assert.isTrue(h1.hasClass('myclass3'));
-		Assert.areEqual(h1.attr('class'), 'myclass3');
+		Assert.areEqual('myclass3', h1.attr('class'));
 
 		h1.removeClass('myclass3');
 		Assert.isFalse(h1.hasClass('myclass1'));
 		Assert.isFalse(h1.hasClass('myclass2'));
 		Assert.isFalse(h1.hasClass('myclass3'));
-		Assert.areEqual(h1.attr('class'), '');
+		Assert.areEqual('', h1.attr('class'));
 	}
 
 	@Test
@@ -218,7 +218,7 @@ class ElementManipulationTest
 
 		h1.addClass('myclass3 myclass4');
 		h1.toggleClass('myclass3');
-		Assert.areEqual(h1.attr('class'), 'myclass2 myclass4');
+		Assert.areEqual('myclass2 myclass4', h1.attr('class'));
 	}
 
 	@Test
@@ -235,9 +235,9 @@ class ElementManipulationTest
 	@Test
 	public function testTagName():Void 
 	{
-		Assert.areEqual(h1.tagName(), "h1");
-		Assert.areEqual(h2.tagName(), "h2");
-		Assert.areEqual(sampleDocument.tagName(), "myxml");
+		Assert.areEqual("h1", h1.tagName());
+		Assert.areEqual("h2", h2.tagName());
+		Assert.areEqual("myxml", sampleDocument.tagName());
 	}
 
 	@Test
@@ -245,7 +245,7 @@ class ElementManipulationTest
 	{
 		var input = "<input type='text' value='attr' />".parse().getNode();
 		Reflect.setField(input, "value", "myvalue");
-		Assert.areEqual(input.val(), "myvalue");
+		Assert.areEqual("myvalue", input.val());
 	}
 
 	@Test
@@ -253,19 +253,19 @@ class ElementManipulationTest
 	{
 		var ta = "<textarea>test</textarea>".parse().getNode();
 		Reflect.setField(ta, "value", "myvalue");
-		Assert.areEqual(ta.val(), "myvalue");
+		Assert.areEqual("myvalue", ta.val());
 	}
 
 	@Test
 	public function testValOnComment():Void 
 	{
-		Assert.areEqual(comment.val(), " A comment ");
+		Assert.areEqual(" A comment ", comment.val());
 	}
 
 	@Test
 	public function testValOnTextNode():Void 
 	{
-		Assert.areEqual(text.val(), "Text");
+		Assert.areEqual("Text", text.val());
 	}
 
 	@Test
