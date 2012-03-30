@@ -43,18 +43,5 @@ class QueryEventManagementTest
 	{
 		// trace ("Tear Down");
 	}
-	
-	
-	@Test
-	public function testExample():Void
-	{
-		Assert.isTrue(true);
-	}
-
-	@Test
-	public function testExampleThatFailes():Void
-	{
-		Assert.isTrue(true);
-	}
 
 }
