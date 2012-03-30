@@ -57,7 +57,7 @@ class Tools
 	*/
 	public static function create(elmName:String)
 	{
-		return Query.create(selector);
+		return Query.create(elmName);
 	}
 
 	/**
@@ -227,15 +227,27 @@ class ElementManipulation
 		return elm.nodeName.toLowerCase();
 	}
 
-	public static inline function val(elm:Node):String
+	public static function val(node:Node):String
 	{
 		var val = "";
-		try {
-			val = untyped elm.value;
-			if (val == null) val = "";
-		} catch (e:Dynamic)
+
+		switch (node.nodeType)
 		{
-			val = attr(elm, "value");
+			case NodeTypeElement:
+				val = Reflect.field(node, 'value');
+				
+				// If the value is null, that means
+				// the element did not have a field
+				// "value".  See if it has an attr
+				// instead.  This will return "" if
+				// it doesn't, which is a sane default
+				// also.
+				if (val == null)
+				{
+					val = attr(node, "value");
+				}
+			default:
+				val = node.nodeValue;
 		}
 
 		return val;

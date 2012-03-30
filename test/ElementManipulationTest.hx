@@ -54,7 +54,7 @@ class ElementManipulationTest
 		<div id='classtest' class='first third fourth'></div>
 		</myxml>";
 
-		sampleDocument = Query.parse(html).getNode();
+		sampleDocument = html.parse().getNode();
 		h1 = sampleDocument.find('h1').getNode();
 		h2 = sampleDocument.find('h2').getNode();
 		comment = sampleDocument.find('.containscomment').getNode().firstChild;
@@ -62,6 +62,11 @@ class ElementManipulationTest
 		parent = sampleDocument.find('.parent').getNode();
 		child = sampleDocument.find('.child').getNode();
 		classTest = sampleDocument.find('#classtest').getNode();
+
+		
+
+
+
 	}
 	
 	@After
@@ -239,6 +244,41 @@ class ElementManipulationTest
 		Assert.areEqual(h1.tagName(), "h1");
 		Assert.areEqual(h2.tagName(), "h2");
 		Assert.areEqual(sampleDocument.tagName(), "myxml");
+	}
+
+	@Test
+	public function testValInput():Void 
+	{
+		var input = "<input type='text' value='attr' />".parse().getNode();
+		Reflect.setField(input, "value", "myvalue");
+		Assert.areEqual(input.val(), "myvalue");
+	}
+
+	@Test
+	public function testValOnTextArea():Void 
+	{
+		var ta = "<textarea>test</textarea>".parse().getNode();
+		Reflect.setField(ta, "value", "myvalue");
+		Assert.areEqual(ta.val(), "myvalue");
+	}
+
+	@Test
+	public function testValOnComment():Void 
+	{
+		Assert.areEqual(comment.val(), " A comment ");
+	}
+
+	@Test
+	public function testValOnTextNode():Void 
+	{
+		Assert.areEqual(text.val(), "Text");
+	}
+
+	@Test
+	public function testValOnAttribute():Void 
+	{
+		var div = "<div value='attr'></div>".parse().getNode();
+		Assert.areEqual("attr", div.val());
 	}
 
 }

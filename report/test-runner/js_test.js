@@ -1413,6 +1413,15 @@ if(typeof domtools=='undefined') domtools = {}
 domtools.Tools = function(p) {
 }
 domtools.Tools.__name__ = ["domtools","Tools"];
+domtools.Tools.find = function(selector) {
+	return new domtools.Query(selector);
+}
+domtools.Tools.create = function(elmName) {
+	return document.createElement(elmName);
+}
+domtools.Tools.parse = function(html) {
+	return domtools.Traversing.children(domtools.ElementManipulation.setInnerHTML(document.createElement("div"),html),false);
+}
 domtools.Tools.prototype.__class__ = domtools.Tools;
 domtools.ElementManipulation = function() { }
 domtools.ElementManipulation.__name__ = ["domtools","ElementManipulation"];
@@ -1504,13 +1513,15 @@ domtools.ElementManipulation.toggleClass = function(elm,className) {
 domtools.ElementManipulation.tagName = function(elm) {
 	return elm.nodeName.toLowerCase();
 }
-domtools.ElementManipulation.val = function(elm) {
+domtools.ElementManipulation.val = function(node) {
 	var val = "";
-	try {
-		val = elm.value;
-		if(val == null) val = "";
-	} catch( e ) {
-		val = domtools.ElementManipulation.attr(elm,"value");
+	switch(node.nodeType) {
+	case domtools.ElementManipulation.NodeTypeElement:
+		val = Reflect.field(node,"value");
+		if(val == null) val = domtools.ElementManipulation.attr(node,"value");
+		break;
+	default:
+		val = node.nodeValue;
 	}
 	return val;
 }
@@ -3508,7 +3519,7 @@ ElementManipulationTest.prototype.afterClass = function() {
 }
 ElementManipulationTest.prototype.setup = function() {
 	var html = "<myxml>\n\t\t<h1 id='title'>My Header</h1>\n\t\t<h2>My Sub Header</h2>\n\t\t<div class='containscomment'><!-- A comment --></div>\n\t\t<div class='containstext'>Text</div>\n\t\t<div class='parent'><span class='child'>Child</span></div>\n\t\t<div id='classtest' class='first third fourth'></div>\n\t\t</myxml>";
-	this.sampleDocument = domtools.Traversing.children(domtools.ElementManipulation.setInnerHTML(document.createElement("div"),html),false).collection[0];
+	this.sampleDocument = domtools.Tools.parse(html).collection[0];
 	this.h1 = domtools.Traversing.find(this.sampleDocument,"h1").collection[0];
 	this.h2 = domtools.Traversing.find(this.sampleDocument,"h2").collection[0];
 	this.comment = domtools.Traversing.find(this.sampleDocument,".containscomment").collection[0].firstChild;
@@ -3520,118 +3531,138 @@ ElementManipulationTest.prototype.setup = function() {
 ElementManipulationTest.prototype.tearDown = function() {
 }
 ElementManipulationTest.prototype.isElement = function() {
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.isElement(this.sampleDocument),{ fileName : "ElementManipulationTest.hx", lineNumber : 77, className : "ElementManipulationTest", methodName : "isElement"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.isElement(this.h1),{ fileName : "ElementManipulationTest.hx", lineNumber : 78, className : "ElementManipulationTest", methodName : "isElement"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.isElement(this.comment),{ fileName : "ElementManipulationTest.hx", lineNumber : 79, className : "ElementManipulationTest", methodName : "isElement"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.isElement(this.text),{ fileName : "ElementManipulationTest.hx", lineNumber : 80, className : "ElementManipulationTest", methodName : "isElement"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.isElement(this.sampleDocument),{ fileName : "ElementManipulationTest.hx", lineNumber : 82, className : "ElementManipulationTest", methodName : "isElement"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.isElement(this.h1),{ fileName : "ElementManipulationTest.hx", lineNumber : 83, className : "ElementManipulationTest", methodName : "isElement"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.isElement(this.comment),{ fileName : "ElementManipulationTest.hx", lineNumber : 84, className : "ElementManipulationTest", methodName : "isElement"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.isElement(this.text),{ fileName : "ElementManipulationTest.hx", lineNumber : 85, className : "ElementManipulationTest", methodName : "isElement"});
 }
 ElementManipulationTest.prototype.isComment = function() {
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.isComment(this.h1),{ fileName : "ElementManipulationTest.hx", lineNumber : 86, className : "ElementManipulationTest", methodName : "isComment"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.isComment(this.comment),{ fileName : "ElementManipulationTest.hx", lineNumber : 87, className : "ElementManipulationTest", methodName : "isComment"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.isComment(this.text),{ fileName : "ElementManipulationTest.hx", lineNumber : 88, className : "ElementManipulationTest", methodName : "isComment"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.isComment(this.h1),{ fileName : "ElementManipulationTest.hx", lineNumber : 91, className : "ElementManipulationTest", methodName : "isComment"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.isComment(this.comment),{ fileName : "ElementManipulationTest.hx", lineNumber : 92, className : "ElementManipulationTest", methodName : "isComment"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.isComment(this.text),{ fileName : "ElementManipulationTest.hx", lineNumber : 93, className : "ElementManipulationTest", methodName : "isComment"});
 }
 ElementManipulationTest.prototype.isTextNode = function() {
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.isTextNode(this.h1),{ fileName : "ElementManipulationTest.hx", lineNumber : 95, className : "ElementManipulationTest", methodName : "isTextNode"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.isTextNode(this.comment),{ fileName : "ElementManipulationTest.hx", lineNumber : 96, className : "ElementManipulationTest", methodName : "isTextNode"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.isTextNode(this.text),{ fileName : "ElementManipulationTest.hx", lineNumber : 97, className : "ElementManipulationTest", methodName : "isTextNode"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.isTextNode(this.h1),{ fileName : "ElementManipulationTest.hx", lineNumber : 100, className : "ElementManipulationTest", methodName : "isTextNode"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.isTextNode(this.comment),{ fileName : "ElementManipulationTest.hx", lineNumber : 101, className : "ElementManipulationTest", methodName : "isTextNode"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.isTextNode(this.text),{ fileName : "ElementManipulationTest.hx", lineNumber : 102, className : "ElementManipulationTest", methodName : "isTextNode"});
 }
 ElementManipulationTest.prototype.testReadAttr = function() {
-	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"id"),"title",{ fileName : "ElementManipulationTest.hx", lineNumber : 103, className : "ElementManipulationTest", methodName : "testReadAttr"});
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"id"),"title",{ fileName : "ElementManipulationTest.hx", lineNumber : 108, className : "ElementManipulationTest", methodName : "testReadAttr"});
 }
 ElementManipulationTest.prototype.testSetAttr = function() {
 	var newID = "test";
 	domtools.ElementManipulation.setAttr(this.child,"id",newID);
-	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.child,"id"),newID,{ fileName : "ElementManipulationTest.hx", lineNumber : 111, className : "ElementManipulationTest", methodName : "testSetAttr"});
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.child,"id"),newID,{ fileName : "ElementManipulationTest.hx", lineNumber : 116, className : "ElementManipulationTest", methodName : "testSetAttr"});
 }
 ElementManipulationTest.prototype.testRemoveAttr = function() {
 	domtools.ElementManipulation.removeAttr(this.h1,"id");
-	massive.munit.Assert.isFalse(this.h1.hasAttributes(),{ fileName : "ElementManipulationTest.hx", lineNumber : 118, className : "ElementManipulationTest", methodName : "testRemoveAttr"});
+	massive.munit.Assert.isFalse(this.h1.hasAttributes(),{ fileName : "ElementManipulationTest.hx", lineNumber : 123, className : "ElementManipulationTest", methodName : "testRemoveAttr"});
 }
 ElementManipulationTest.prototype.testHasClass = function() {
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.classTest,"first"),{ fileName : "ElementManipulationTest.hx", lineNumber : 124, className : "ElementManipulationTest", methodName : "testHasClass"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.classTest,"second"),{ fileName : "ElementManipulationTest.hx", lineNumber : 125, className : "ElementManipulationTest", methodName : "testHasClass"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.classTest,"third"),{ fileName : "ElementManipulationTest.hx", lineNumber : 126, className : "ElementManipulationTest", methodName : "testHasClass"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.classTest,"fourth"),{ fileName : "ElementManipulationTest.hx", lineNumber : 127, className : "ElementManipulationTest", methodName : "testHasClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.classTest,"first"),{ fileName : "ElementManipulationTest.hx", lineNumber : 129, className : "ElementManipulationTest", methodName : "testHasClass"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.classTest,"second"),{ fileName : "ElementManipulationTest.hx", lineNumber : 130, className : "ElementManipulationTest", methodName : "testHasClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.classTest,"third"),{ fileName : "ElementManipulationTest.hx", lineNumber : 131, className : "ElementManipulationTest", methodName : "testHasClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.classTest,"fourth"),{ fileName : "ElementManipulationTest.hx", lineNumber : 132, className : "ElementManipulationTest", methodName : "testHasClass"});
 }
 ElementManipulationTest.prototype.testHasClassMultiple = function() {
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.classTest,"third first"),{ fileName : "ElementManipulationTest.hx", lineNumber : 133, className : "ElementManipulationTest", methodName : "testHasClassMultiple"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.classTest,"fourth second third"),{ fileName : "ElementManipulationTest.hx", lineNumber : 134, className : "ElementManipulationTest", methodName : "testHasClassMultiple"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.classTest,"third first"),{ fileName : "ElementManipulationTest.hx", lineNumber : 138, className : "ElementManipulationTest", methodName : "testHasClassMultiple"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.classTest,"fourth second third"),{ fileName : "ElementManipulationTest.hx", lineNumber : 139, className : "ElementManipulationTest", methodName : "testHasClassMultiple"});
 }
 ElementManipulationTest.prototype.testAddClass = function() {
 	domtools.ElementManipulation.addClass(this.h1,"myclass");
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 141, className : "ElementManipulationTest", methodName : "testAddClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 146, className : "ElementManipulationTest", methodName : "testAddClass"});
 }
 ElementManipulationTest.prototype.testAddMultipleClasses = function() {
 	domtools.ElementManipulation.addClass(this.h1,"myclass myclass2 myclass3");
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 148, className : "ElementManipulationTest", methodName : "testAddMultipleClasses"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 149, className : "ElementManipulationTest", methodName : "testAddMultipleClasses"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 150, className : "ElementManipulationTest", methodName : "testAddMultipleClasses"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 153, className : "ElementManipulationTest", methodName : "testAddMultipleClasses"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 154, className : "ElementManipulationTest", methodName : "testAddMultipleClasses"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 155, className : "ElementManipulationTest", methodName : "testAddMultipleClasses"});
 }
 ElementManipulationTest.prototype.testAddClassThatAlreadyExists = function() {
 	domtools.ElementManipulation.addClass(this.h1,"myclass");
 	domtools.ElementManipulation.addClass(this.h1,"myclass");
 	var classVal = domtools.ElementManipulation.attr(this.h1,"class");
-	massive.munit.Assert.areEqual(classVal.indexOf("myclass"),classVal.lastIndexOf("myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 159, className : "ElementManipulationTest", methodName : "testAddClassThatAlreadyExists"});
+	massive.munit.Assert.areEqual(classVal.indexOf("myclass"),classVal.lastIndexOf("myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 164, className : "ElementManipulationTest", methodName : "testAddClassThatAlreadyExists"});
 }
 ElementManipulationTest.prototype.testRemoveClass = function() {
 	domtools.ElementManipulation.addClass(this.h1,"myclass1 myclass2 myclass3");
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass1"),{ fileName : "ElementManipulationTest.hx", lineNumber : 167, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 168, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 169, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"class"),"myclass1 myclass2 myclass3",{ fileName : "ElementManipulationTest.hx", lineNumber : 170, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass1"),{ fileName : "ElementManipulationTest.hx", lineNumber : 172, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 173, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 174, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"class"),"myclass1 myclass2 myclass3",{ fileName : "ElementManipulationTest.hx", lineNumber : 175, className : "ElementManipulationTest", methodName : "testRemoveClass"});
 	domtools.ElementManipulation.removeClass(this.h1,"myclass1");
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass1"),{ fileName : "ElementManipulationTest.hx", lineNumber : 173, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 174, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 175, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"class"),"myclass2 myclass3",{ fileName : "ElementManipulationTest.hx", lineNumber : 176, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass1"),{ fileName : "ElementManipulationTest.hx", lineNumber : 178, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 179, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 180, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"class"),"myclass2 myclass3",{ fileName : "ElementManipulationTest.hx", lineNumber : 181, className : "ElementManipulationTest", methodName : "testRemoveClass"});
 	domtools.ElementManipulation.removeClass(this.h1,"myclass2");
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass1"),{ fileName : "ElementManipulationTest.hx", lineNumber : 179, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 180, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 181, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"class"),"myclass3",{ fileName : "ElementManipulationTest.hx", lineNumber : 182, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass1"),{ fileName : "ElementManipulationTest.hx", lineNumber : 184, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 185, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 186, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"class"),"myclass3",{ fileName : "ElementManipulationTest.hx", lineNumber : 187, className : "ElementManipulationTest", methodName : "testRemoveClass"});
 	domtools.ElementManipulation.removeClass(this.h1,"myclass3");
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass1"),{ fileName : "ElementManipulationTest.hx", lineNumber : 185, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 186, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 187, className : "ElementManipulationTest", methodName : "testRemoveClass"});
-	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"class"),"",{ fileName : "ElementManipulationTest.hx", lineNumber : 188, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass1"),{ fileName : "ElementManipulationTest.hx", lineNumber : 190, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 191, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 192, className : "ElementManipulationTest", methodName : "testRemoveClass"});
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"class"),"",{ fileName : "ElementManipulationTest.hx", lineNumber : 193, className : "ElementManipulationTest", methodName : "testRemoveClass"});
 }
 ElementManipulationTest.prototype.testRemoveMultipleClasses = function() {
 	domtools.ElementManipulation.addClass(this.h1,"myclass");
 	domtools.ElementManipulation.addClass(this.h1,"myclass2");
 	domtools.ElementManipulation.addClass(this.h1,"myclass3");
 	domtools.ElementManipulation.addClass(this.h1,"myclass4");
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 198, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 199, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 200, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass4"),{ fileName : "ElementManipulationTest.hx", lineNumber : 201, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 203, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 204, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 205, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass4"),{ fileName : "ElementManipulationTest.hx", lineNumber : 206, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
 	domtools.ElementManipulation.removeClass(this.h1,"myclass4 myclass myclass3");
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 204, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 205, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 206, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass4"),{ fileName : "ElementManipulationTest.hx", lineNumber : 207, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 209, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 210, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 211, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass4"),{ fileName : "ElementManipulationTest.hx", lineNumber : 212, className : "ElementManipulationTest", methodName : "testRemoveMultipleClasses"});
 }
 ElementManipulationTest.prototype.testToggleClass = function() {
 	domtools.ElementManipulation.addClass(this.h1,"myclass");
 	domtools.ElementManipulation.toggleClass(this.h1,"myclass");
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 215, className : "ElementManipulationTest", methodName : "testToggleClass"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass"),{ fileName : "ElementManipulationTest.hx", lineNumber : 220, className : "ElementManipulationTest", methodName : "testToggleClass"});
 	domtools.ElementManipulation.toggleClass(this.h1,"myclass2");
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 218, className : "ElementManipulationTest", methodName : "testToggleClass"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 223, className : "ElementManipulationTest", methodName : "testToggleClass"});
 	domtools.ElementManipulation.addClass(this.h1,"myclass3 myclass4");
 	domtools.ElementManipulation.toggleClass(this.h1,"myclass3");
-	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"class"),"myclass2 myclass4",{ fileName : "ElementManipulationTest.hx", lineNumber : 222, className : "ElementManipulationTest", methodName : "testToggleClass"});
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.attr(this.h1,"class"),"myclass2 myclass4",{ fileName : "ElementManipulationTest.hx", lineNumber : 227, className : "ElementManipulationTest", methodName : "testToggleClass"});
 }
 ElementManipulationTest.prototype.testToggleMultipleClasses = function() {
 	domtools.ElementManipulation.addClass(this.h1,"myclass1 myclass2 myclass3 myclass4");
 	domtools.ElementManipulation.toggleClass(this.h1,"myclass1 myclass3");
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass1"),{ fileName : "ElementManipulationTest.hx", lineNumber : 230, className : "ElementManipulationTest", methodName : "testToggleMultipleClasses"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 231, className : "ElementManipulationTest", methodName : "testToggleMultipleClasses"});
-	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 232, className : "ElementManipulationTest", methodName : "testToggleMultipleClasses"});
-	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass4"),{ fileName : "ElementManipulationTest.hx", lineNumber : 233, className : "ElementManipulationTest", methodName : "testToggleMultipleClasses"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass1"),{ fileName : "ElementManipulationTest.hx", lineNumber : 235, className : "ElementManipulationTest", methodName : "testToggleMultipleClasses"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass2"),{ fileName : "ElementManipulationTest.hx", lineNumber : 236, className : "ElementManipulationTest", methodName : "testToggleMultipleClasses"});
+	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 237, className : "ElementManipulationTest", methodName : "testToggleMultipleClasses"});
+	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass4"),{ fileName : "ElementManipulationTest.hx", lineNumber : 238, className : "ElementManipulationTest", methodName : "testToggleMultipleClasses"});
 }
 ElementManipulationTest.prototype.testTagName = function() {
-	massive.munit.Assert.areEqual(this.h1.nodeName.toLowerCase(),"h1",{ fileName : "ElementManipulationTest.hx", lineNumber : 239, className : "ElementManipulationTest", methodName : "testTagName"});
-	massive.munit.Assert.areEqual(this.h2.nodeName.toLowerCase(),"h2",{ fileName : "ElementManipulationTest.hx", lineNumber : 240, className : "ElementManipulationTest", methodName : "testTagName"});
-	massive.munit.Assert.areEqual(this.sampleDocument.nodeName.toLowerCase(),"myxml",{ fileName : "ElementManipulationTest.hx", lineNumber : 241, className : "ElementManipulationTest", methodName : "testTagName"});
+	massive.munit.Assert.areEqual(this.h1.nodeName.toLowerCase(),"h1",{ fileName : "ElementManipulationTest.hx", lineNumber : 244, className : "ElementManipulationTest", methodName : "testTagName"});
+	massive.munit.Assert.areEqual(this.h2.nodeName.toLowerCase(),"h2",{ fileName : "ElementManipulationTest.hx", lineNumber : 245, className : "ElementManipulationTest", methodName : "testTagName"});
+	massive.munit.Assert.areEqual(this.sampleDocument.nodeName.toLowerCase(),"myxml",{ fileName : "ElementManipulationTest.hx", lineNumber : 246, className : "ElementManipulationTest", methodName : "testTagName"});
+}
+ElementManipulationTest.prototype.testValInput = function() {
+	var input = domtools.Tools.parse("<input type='text' value='attr' />").collection[0];
+	input["value"] = "myvalue";
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.val(input),"myvalue",{ fileName : "ElementManipulationTest.hx", lineNumber : 254, className : "ElementManipulationTest", methodName : "testValInput"});
+}
+ElementManipulationTest.prototype.testValOnTextArea = function() {
+	var ta = domtools.Tools.parse("<textarea>test</textarea>").collection[0];
+	ta["value"] = "myvalue";
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.val(ta),"myvalue",{ fileName : "ElementManipulationTest.hx", lineNumber : 262, className : "ElementManipulationTest", methodName : "testValOnTextArea"});
+}
+ElementManipulationTest.prototype.testValOnComment = function() {
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.val(this.comment)," A comment ",{ fileName : "ElementManipulationTest.hx", lineNumber : 268, className : "ElementManipulationTest", methodName : "testValOnComment"});
+}
+ElementManipulationTest.prototype.testValOnTextNode = function() {
+	massive.munit.Assert.areEqual(domtools.ElementManipulation.val(this.text),"Text",{ fileName : "ElementManipulationTest.hx", lineNumber : 274, className : "ElementManipulationTest", methodName : "testValOnTextNode"});
+}
+ElementManipulationTest.prototype.testValOnAttribute = function() {
+	var div = domtools.Tools.parse("<div value='attr'></div>").collection[0];
+	massive.munit.Assert.areEqual("attr",domtools.ElementManipulation.val(div),{ fileName : "ElementManipulationTest.hx", lineNumber : 281, className : "ElementManipulationTest", methodName : "testValOnAttribute"});
 }
 ElementManipulationTest.prototype.__class__ = ElementManipulationTest;
 massive.munit.client.JUnitReportClient = function(p) {
@@ -4344,7 +4375,7 @@ massive.munit.client.PrintClientBase.DEFAULT_ID = "simple";
 massive.munit.client.PrintClient.DEFAULT_ID = "print";
 massive.munit.client.RichPrintClient.DEFAULT_ID = "RichPrintClient";
 QueryStyleTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, testExample : { Test : null}, testExampleThatFailes : { Test : null}}};
-ElementManipulationTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, isElement : { Test : null}, isComment : { Test : null}, isTextNode : { Test : null}, testReadAttr : { Test : null}, testSetAttr : { Test : null}, testRemoveAttr : { Test : null}, testHasClass : { Test : null}, testHasClassMultiple : { Test : null}, testAddClass : { Test : null}, testAddMultipleClasses : { Test : null}, testAddClassThatAlreadyExists : { Test : null}, testRemoveClass : { Test : null}, testRemoveMultipleClasses : { Test : null}, testToggleClass : { Test : null}, testToggleMultipleClasses : { Test : null}, testTagName : { Test : null}}};
+ElementManipulationTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, isElement : { Test : null}, isComment : { Test : null}, isTextNode : { Test : null}, testReadAttr : { Test : null}, testSetAttr : { Test : null}, testRemoveAttr : { Test : null}, testHasClass : { Test : null}, testHasClassMultiple : { Test : null}, testAddClass : { Test : null}, testAddMultipleClasses : { Test : null}, testAddClassThatAlreadyExists : { Test : null}, testRemoveClass : { Test : null}, testRemoveMultipleClasses : { Test : null}, testToggleClass : { Test : null}, testToggleMultipleClasses : { Test : null}, testTagName : { Test : null}, testValInput : { Test : null}, testValOnTextArea : { Test : null}, testValOnComment : { Test : null}, testValOnTextNode : { Test : null}, testValOnAttribute : { Test : null}}};
 massive.munit.client.JUnitReportClient.DEFAULT_ID = "junit";
 massive.munit.util.Timer.arr = new Array();
 EventManagementTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, testExample : { Test : null}, testExampleThatFailes : { Test : null}}};

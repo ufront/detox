@@ -1,4 +1,91 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
+Reflect = function() { }
+Reflect.__name__ = ["Reflect"];
+Reflect.hasField = function(o,field) {
+	if(o.hasOwnProperty != null) return o.hasOwnProperty(field);
+	var arr = Reflect.fields(o);
+	var $it0 = arr.iterator();
+	while( $it0.hasNext() ) {
+		var t = $it0.next();
+		if(t == field) return true;
+	}
+	return false;
+}
+Reflect.field = function(o,field) {
+	var v = null;
+	try {
+		v = o[field];
+	} catch( e ) {
+	}
+	return v;
+}
+Reflect.setField = function(o,field,value) {
+	o[field] = value;
+}
+Reflect.callMethod = function(o,func,args) {
+	return func.apply(o,args);
+}
+Reflect.fields = function(o) {
+	if(o == null) return new Array();
+	var a = new Array();
+	if(o.hasOwnProperty) {
+		for(var i in o) if( o.hasOwnProperty(i) ) a.push(i);
+	} else {
+		var t;
+		try {
+			t = o.__proto__;
+		} catch( e ) {
+			t = null;
+		}
+		if(t != null) o.__proto__ = null;
+		for(var i in o) if( i != "__proto__" ) a.push(i);
+		if(t != null) o.__proto__ = t;
+	}
+	return a;
+}
+Reflect.isFunction = function(f) {
+	return typeof(f) == "function" && f.__name__ == null;
+}
+Reflect.compare = function(a,b) {
+	return a == b?0:a > b?1:-1;
+}
+Reflect.compareMethods = function(f1,f2) {
+	if(f1 == f2) return true;
+	if(!Reflect.isFunction(f1) || !Reflect.isFunction(f2)) return false;
+	return f1.scope == f2.scope && f1.method == f2.method && f1.method != null;
+}
+Reflect.isObject = function(v) {
+	if(v == null) return false;
+	var t = typeof(v);
+	return t == "string" || t == "object" && !v.__enum__ || t == "function" && v.__name__ != null;
+}
+Reflect.deleteField = function(o,f) {
+	if(!Reflect.hasField(o,f)) return false;
+	delete(o[f]);
+	return true;
+}
+Reflect.copy = function(o) {
+	var o2 = { };
+	var _g = 0, _g1 = Reflect.fields(o);
+	while(_g < _g1.length) {
+		var f = _g1[_g];
+		++_g;
+		o2[f] = Reflect.field(o,f);
+	}
+	return o2;
+}
+Reflect.makeVarArgs = function(f) {
+	return function() {
+		var a = new Array();
+		var _g1 = 0, _g = arguments.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			a.push(arguments[i]);
+		}
+		return f(a);
+	};
+}
+Reflect.prototype.__class__ = Reflect;
 if(typeof haxe=='undefined') haxe = {}
 haxe.Log = function() { }
 haxe.Log.__name__ = ["haxe","Log"];
@@ -7,6 +94,12 @@ haxe.Log.trace = function(v,infos) {
 }
 haxe.Log.prototype.__class__ = haxe.Log;
 if(typeof domtools=='undefined') domtools = {}
+domtools.Tools = function() { }
+domtools.Tools.__name__ = ["domtools","Tools"];
+domtools.Tools.find = function(selector) {
+	return new domtools.Query(selector);
+}
+domtools.Tools.prototype.__class__ = domtools.Tools;
 domtools.ElementManipulation = function() { }
 domtools.ElementManipulation.__name__ = ["domtools","ElementManipulation"];
 domtools.ElementManipulation.isElement = function(node) {
@@ -45,41 +138,61 @@ domtools.ElementManipulation.hasClass = function(elm,className) {
 		while(_g < _g1.length) {
 			var name = _g1[_g];
 			++_g;
-			hasClass = domtools.ElementManipulation.testForClass(elm,className);
-			if(hasClass == true) break;
+			hasClass = (" " + domtools.ElementManipulation.attr(elm,"class") + " ").indexOf(" " + name + " ") > -1;
+			if(hasClass == false) break;
 		}
-	} else hasClass = domtools.ElementManipulation.testForClass(elm,className);
+	} else hasClass = (" " + domtools.ElementManipulation.attr(elm,"class") + " ").indexOf(" " + className + " ") > -1;
 	return hasClass;
 }
 domtools.ElementManipulation.addClass = function(elm,className) {
-	if(domtools.ElementManipulation.hasClass(elm,className) == false) {
-		var oldClassName = domtools.ElementManipulation.attr(elm,"class");
-		var newClassName = oldClassName == ""?className:oldClassName + " " + className;
-		domtools.ElementManipulation.setAttr(elm,"class",newClassName);
+	var _g = 0, _g1 = className.split(" ");
+	while(_g < _g1.length) {
+		var name = _g1[_g];
+		++_g;
+		if(domtools.ElementManipulation.hasClass(elm,className) == false) {
+			var oldClassName = domtools.ElementManipulation.attr(elm,"class");
+			var newClassName = oldClassName == ""?className:oldClassName + " " + className;
+			domtools.ElementManipulation.setAttr(elm,"class",newClassName);
+		}
 	}
 	return elm;
 }
 domtools.ElementManipulation.removeClass = function(elm,className) {
 	var classes = domtools.ElementManipulation.attr(elm,"class").split(" ");
-	classes.remove(className);
+	var _g = 0, _g1 = className.split(" ");
+	while(_g < _g1.length) {
+		var name = _g1[_g];
+		++_g;
+		classes.remove(name);
+	}
 	var newClassValue = classes.join(" ");
 	domtools.ElementManipulation.setAttr(elm,"class",newClassValue);
 	return elm;
 }
 domtools.ElementManipulation.toggleClass = function(elm,className) {
-	if(domtools.ElementManipulation.hasClass(elm,className)) domtools.ElementManipulation.removeClass(elm,className); else domtools.ElementManipulation.addClass(elm,className);
+	var _g = 0, _g1 = className.split(" ");
+	while(_g < _g1.length) {
+		var name = _g1[_g];
+		++_g;
+		if(domtools.ElementManipulation.hasClass(elm,name)) domtools.ElementManipulation.removeClass(elm,name); else domtools.ElementManipulation.addClass(elm,name);
+	}
 	return elm;
 }
 domtools.ElementManipulation.tagName = function(elm) {
 	return elm.nodeName.toLowerCase();
 }
-domtools.ElementManipulation.val = function(elm) {
+domtools.ElementManipulation.val = function(node) {
 	var val = "";
-	try {
-		val = elm.value;
-		if(val == null) val = "";
-	} catch( e ) {
-		val = domtools.ElementManipulation.attr(elm,"value");
+	switch(node.nodeType) {
+	case domtools.ElementManipulation.NodeTypeElement:
+		val = Reflect.field(node,"value");
+		if(val == null) {
+			haxe.Log.trace("This should not run",{ fileName : "Tools.hx", lineNumber : 240, className : "domtools.ElementManipulation", methodName : "val"});
+			val = domtools.ElementManipulation.attr(node,"value");
+		}
+		break;
+	default:
+		val = node.nodeValue;
 	}
 	return val;
 }
