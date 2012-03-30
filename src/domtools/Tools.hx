@@ -67,10 +67,21 @@ class ElementManipulation
 	static var NodeTypeElement = 1;
 	static var NodeTypeAttribute = 2;
 	static var NodeTypeText = 3;
+	static var NodeTypeComment = 8;
 
 	public static function isElement(node:Node):Bool
 	{
 		return node.nodeType == NodeTypeElement;
+	}
+
+	public static function isComment(node:Node):Bool
+	{
+		return node.nodeType == NodeTypeComment;
+	}
+
+	public static function isTextNode(node:Node):Bool
+	{
+		return node.nodeType == NodeTypeText;
 	}
 
 	public static function toQuery(n:Node):Query
@@ -110,18 +121,40 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static function hasClass(elm:Node, className:String):Bool
+	private static inline function testForClass(elm:Node, className:String):Bool
 	{
 		return ((" " + attr(elm, "class") + " ").indexOf(" " + className + " ") > -1);
 	}
 
+	public static function hasClass(elm:Node, className:String):Bool
+	{
+		var hasClass = true;
+		if (className.indexOf(' ') > -1)
+		{
+			// There are multiple class names
+			for (name in className.split(' '))
+			{
+				hasClass = testForClass(elm, name);
+				if (hasClass == false) break;
+			}
+		}
+		else 
+		{
+			hasClass = testForClass(elm, className);
+		}
+		return hasClass;
+	}
+
 	public static function addClass(elm:Node, className:String):Node
 	{
-		if (hasClass(elm, className) == false)
+		for (name in className.split(' '))
 		{
-			var oldClassName = attr(elm, "class");
-			var newClassName =  (oldClassName == "") ? className : oldClassName + " " + className;
-			setAttr(elm, "class", newClassName);
+			if (hasClass(elm, className) == false)
+			{
+				var oldClassName = attr(elm, "class");
+				var newClassName =  (oldClassName == "") ? className : oldClassName + " " + className;
+				setAttr(elm, "class", newClassName);
+			}
 		}
 		
 		return elm;
@@ -132,8 +165,13 @@ class ElementManipulation
 		// Get the current list of classes
 		var classes = attr(elm, "class").split(" ");
 
-		// Remove the current one, re-assemble as a string
-		classes.remove(className);
+		for (name in className.split(' '))
+		{
+			// Remove the current one
+			classes.remove(name);
+		}
+
+		// reassemble as a string
 		var newClassValue = classes.join(" ");
 
 		setAttr(elm, "class", newClassValue);
@@ -143,13 +181,16 @@ class ElementManipulation
 
 	public static function toggleClass(elm:Node, className:String):Node
 	{
-		if (hasClass(elm, className))
+		for (name in className.split(' '))
 		{
-			removeClass(elm,className);
-		}
-		else 
-		{
-			addClass(elm,className);
+			if (hasClass(elm, name))
+			{
+				removeClass(elm,name);
+			}
+			else 
+			{
+				addClass(elm,name);
+			}
 		}
 		return elm;
 	}

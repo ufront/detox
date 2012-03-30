@@ -35,8 +35,21 @@ domtools.ElementManipulation.removeAttr = function(elm,attName) {
 	}
 	return elm;
 }
-domtools.ElementManipulation.hasClass = function(elm,className) {
+domtools.ElementManipulation.testForClass = function(elm,className) {
 	return (" " + domtools.ElementManipulation.attr(elm,"class") + " ").indexOf(" " + className + " ") > -1;
+}
+domtools.ElementManipulation.hasClass = function(elm,className) {
+	var hasClass = true;
+	if(className.indexOf(" ") > -1) {
+		var _g = 0, _g1 = className.split(" ");
+		while(_g < _g1.length) {
+			var name = _g1[_g];
+			++_g;
+			hasClass = domtools.ElementManipulation.testForClass(elm,className);
+			if(hasClass == true) break;
+		}
+	} else hasClass = domtools.ElementManipulation.testForClass(elm,className);
+	return hasClass;
 }
 domtools.ElementManipulation.addClass = function(elm,className) {
 	if(domtools.ElementManipulation.hasClass(elm,className) == false) {
