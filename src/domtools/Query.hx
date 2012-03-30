@@ -24,8 +24,8 @@ package domtools;
 import js.w3c.level3.Core;
 import UserAgentContext;
 import CommonJS;
-import domtools.Tools;
-using domtools.Tools;
+import DOMTools;
+using DOMTools;
 
 class Query
 {
@@ -105,7 +105,7 @@ class Query
 		{
 			var node = nodeList.item(i);
 			// Only add if we are allowing elements only or if it is in fact an element
-			if (elementsOnly == false || ElementManipulation.isElement(node))
+			if (elementsOnly == false || domtools.single.ElementManipulation.isElement(node))
 				add(node);
 		}
 		return this;

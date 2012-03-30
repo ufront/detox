@@ -1,5 +1,5 @@
 
-using domtools.Tools;
+using DOMTools;
 
 class Table extends domtools.AbstractCustomElement
 {

@@ -4,10 +4,9 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
-import domtools.Query;
-import domtools.Tools;
 import js.w3c.level3.Core;
-using domtools.Tools;
+
+using DOMTools;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -62,11 +61,6 @@ class ElementManipulationTest
 		parent = sampleDocument.find('.parent').getNode();
 		child = sampleDocument.find('.child').getNode();
 		classTest = sampleDocument.find('#classtest').getNode();
-
-		
-
-
-
 	}
 	
 	@After

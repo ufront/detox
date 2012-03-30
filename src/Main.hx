@@ -2,7 +2,7 @@
 import domtools.Query;
 import domtools.AbstractCustomElement;
 
-using domtools.Tools;
+using DOMTools;
 
 class Main
 {
