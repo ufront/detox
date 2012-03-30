@@ -3628,6 +3628,11 @@ ElementManipulationTest.prototype.testToggleMultipleClasses = function() {
 	massive.munit.Assert.isFalse(domtools.ElementManipulation.hasClass(this.h1,"myclass3"),{ fileName : "ElementManipulationTest.hx", lineNumber : 232, className : "ElementManipulationTest", methodName : "testToggleMultipleClasses"});
 	massive.munit.Assert.isTrue(domtools.ElementManipulation.hasClass(this.h1,"myclass4"),{ fileName : "ElementManipulationTest.hx", lineNumber : 233, className : "ElementManipulationTest", methodName : "testToggleMultipleClasses"});
 }
+ElementManipulationTest.prototype.testTagName = function() {
+	massive.munit.Assert.areEqual(this.h1.nodeName.toLowerCase(),"h1",{ fileName : "ElementManipulationTest.hx", lineNumber : 239, className : "ElementManipulationTest", methodName : "testTagName"});
+	massive.munit.Assert.areEqual(this.h2.nodeName.toLowerCase(),"h2",{ fileName : "ElementManipulationTest.hx", lineNumber : 240, className : "ElementManipulationTest", methodName : "testTagName"});
+	massive.munit.Assert.areEqual(this.sampleDocument.nodeName.toLowerCase(),"myxml",{ fileName : "ElementManipulationTest.hx", lineNumber : 241, className : "ElementManipulationTest", methodName : "testTagName"});
+}
 ElementManipulationTest.prototype.__class__ = ElementManipulationTest;
 massive.munit.client.JUnitReportClient = function(p) {
 	if( p === $_ ) return;
@@ -4339,7 +4344,7 @@ massive.munit.client.PrintClientBase.DEFAULT_ID = "simple";
 massive.munit.client.PrintClient.DEFAULT_ID = "print";
 massive.munit.client.RichPrintClient.DEFAULT_ID = "RichPrintClient";
 QueryStyleTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, testExample : { Test : null}, testExampleThatFailes : { Test : null}}};
-ElementManipulationTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, isElement : { Test : null}, isComment : { Test : null}, isTextNode : { Test : null}, testReadAttr : { Test : null}, testSetAttr : { Test : null}, testRemoveAttr : { Test : null}, testHasClass : { Test : null}, testHasClassMultiple : { Test : null}, testAddClass : { Test : null}, testAddMultipleClasses : { Test : null}, testAddClassThatAlreadyExists : { Test : null}, testRemoveClass : { Test : null}, testRemoveMultipleClasses : { Test : null}, testToggleClass : { Test : null}, testToggleMultipleClasses : { Test : null}}};
+ElementManipulationTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, isElement : { Test : null}, isComment : { Test : null}, isTextNode : { Test : null}, testReadAttr : { Test : null}, testSetAttr : { Test : null}, testRemoveAttr : { Test : null}, testHasClass : { Test : null}, testHasClassMultiple : { Test : null}, testAddClass : { Test : null}, testAddMultipleClasses : { Test : null}, testAddClassThatAlreadyExists : { Test : null}, testRemoveClass : { Test : null}, testRemoveMultipleClasses : { Test : null}, testToggleClass : { Test : null}, testToggleMultipleClasses : { Test : null}, testTagName : { Test : null}}};
 massive.munit.client.JUnitReportClient.DEFAULT_ID = "junit";
 massive.munit.util.Timer.arr = new Array();
 EventManagementTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, testExample : { Test : null}, testExampleThatFailes : { Test : null}}};

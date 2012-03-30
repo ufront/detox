@@ -233,4 +233,12 @@ class ElementManipulationTest
 		Assert.isTrue(h1.hasClass('myclass4'));
 	}
 
+	@Test
+	public function testTagName():Void 
+	{
+		Assert.areEqual(h1.tagName(), "h1");
+		Assert.areEqual(h2.tagName(), "h2");
+		Assert.areEqual(sampleDocument.tagName(), "myxml");
+	}
+
 }
