@@ -16,6 +16,7 @@ class ElementManipulation
 	static var NodeTypeAttribute = 2;
 	static var NodeTypeText = 3;
 	static var NodeTypeComment = 8;
+	static var NodeTypeDocument = 9;
 
 	public static function isElement(node:Node):Bool
 	{
@@ -30,6 +31,11 @@ class ElementManipulation
 	public static function isTextNode(node:Node):Bool
 	{
 		return node.nodeType == NodeTypeText;
+	}
+
+	public static function isDocument(node:Node):Bool
+	{
+		return node.nodeType == NodeTypeDocument;
 	}
 
 	public static function toQuery(n:Node):Query
@@ -174,9 +180,25 @@ class ElementManipulation
 		return val;
 	}
 
-	public static inline function setVal(elm:Node, val:Dynamic)
+	public static function setVal(node:Node, val:Dynamic)
 	{
-		return setAttr(elm, "value", Std.string(val));
+		switch (node.nodeType)
+		{
+			case NodeTypeElement:
+				// Set value with Javascript
+				#if (js && !nodejs)
+				Reflect.setField(node, "value", val);
+				
+				// Set Attr for non client / js targets
+				#else
+				setAttr(elm, "value", Std.string(val));
+				#end
+			default:
+				// For comments, text nodes etc, set the nodeValue directly...
+				node.nodeValue = val;
+		}
+
+		return node;
 	}
 	
 	public static inline function text(elm:Node):String
