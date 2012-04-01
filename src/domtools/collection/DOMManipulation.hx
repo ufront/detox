@@ -147,7 +147,6 @@ class DOMManipulation
 		for (parent in parents)
 		{
 			domtools.single.DOMManipulation.removeChildren(parent, childToRemove, childrenToRemove);
-			domtools.single.DOMManipulation.remove(node);
 		}
 		return parents;
 	}
