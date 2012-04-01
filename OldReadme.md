@@ -1,25 +1,32 @@
+    Everything below here is kept for interests sake - it was my thoughts as I've been writing the library.  It may shine insight on to decisions I've made or on to why things are the way they are.
+
 domtools - HaXe DOM Integration
 ===============================
 
 The idea here is to create a JQuery-like library for haxe, but which wraps native DOM elements.  We can use several features of haxe to make this work really well.
 
 * "Using" - allows us to use custom methods on a standard DOM Node object, without extending or wrapping the object.
-* Dead Code Elimination - if a function is not used, it is not included in the output.  This can keep your output small.
+* Dead Code Elimination - if a function is not used, it is not included in the output.  This can keep your output small (note, this is in theory.  I have no real-world usage stats)
 * Possibility to port to all targets - while this is currently aimed at javascript development, several of the classes could easily be made to work with Haxe XML, by creating a typedef / class that bridges the gap between DOM Nodes and XML Nodes.  Integration with "SelectHx" (https://code.google.com/p/selecthx/) could replicate the functionality of "document.querySelectorAll()".
 
 Similarities to JQuery
 ----------------------
 
 * Similar API - I have tried to replicate the API where possible.  It is not complete yet, but I'm adding things as I need them.  Feel free to make a request.  One key difference is the lack of overloading in haxe.  So instead of having text() and text(string), I have used text() and setText(string), etc.
-* Easy collections - use "new Query('div.myclass')" and you have a collection of all the matching objects, which can be manipulated as a group.
-* Chaining - most methods allow chaining, so you can use "new Query('div.firstElement').next().addClass('secondElement')"
+* Chaining - most methods allow chaining, so you can use "firstElement.next().addClass('secondElement')"
 * Failsafe API - with JQuery, if an element is not found it fails silently - preventing you from having to write too many "if-then" or "try-catch" statements in your code.  I'm aiming for the same here.   
+* API should work identically whether applying to a single Node or a collection
+* Easy collections - use "new Query('div.myclass')" and you have a collection of all the matching objects, which can be manipulated as a group.  In the next section, I'll show you an even easier way.
 
 Advantages over JQuery
 ----------------------
 
-* Can work on individual nodes (thanks to "using"), so it doesn't have to wrap every node.
-* API should work identically whether applying to a single Node or a collection
+* Some really easy "using" mixins for getting started:
+    * "ul#myelement".find()
+    * "ul#myelement li.child".find()
+    * "div".create()
+    * "<div>My Div</div>".parse()
+* Can work on individual elements, don't have to wrap everything in a jQuery object (thanks to "using").
 * You can include only "using" statements for one thing, eg "using ElementManipulation".  This keeps autocomplete from getting too cluttered.
 * Thanks to "dead code elimination", the compile size of the library can be smaller.
 * Native Haxe - API feels more haxe-like.  Should be easier to integrate into existing haxe workflow.
@@ -28,13 +35,15 @@ Advantages over JQuery
 Where JQuery wins
 -----------------
 
-* Cross browser support - I have not tested this cross browser at all.  It almost certainly won't work on IE7 or less.
-* Completeness - currently only ElementManipulation, DOMManipulation, Traversing and Query are completed.  We are still lacking support for Events, Animation and Style.
+* Cross browser support - I have not tested this cross browser.  The unit tests I've written (which don't have full coverage) currently pass on Firefox and Chrome.  Haven't even looked at anything else.  It almost certainly won't work on IE7 or less.
+* Completeness - currently only ElementManipulation, DOMManipulation, Traversing and Query are completed.  Event support is implemented, but not tested.  We are still lacking support for Style and Animation.
 * Testing - JQuery is used on thousands (millions?) of websites, and is thoroughly tested.  This, not so much.  You can help change that!
-* Plugins - JQuery has a lot of plugins, which we obviously can't support here.  However, they have never been easy to get working in haxe, because you have to write an extern for each one.  With this it should be easier to extend your own functionality in a haxe-like way.
+* Plugins - JQuery has a lot of plugins, which we obviously can't support here.  However, they have never been easy to get working in haxe, because you have to write an extern for each one.  With this it should be easier to extend your own functionality in a haxe-like way - either object oriented or through the "using" mixins.
 
 Current Status
 --------------
+
+
 
 * Query - the main object you work with, essentially a collection of Nodes that you can group and manage together.  Working.
 * ElementManipulation - largely working, tested thoroughly on firefox only.
