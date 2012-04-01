@@ -140,6 +140,18 @@ class DOMManipulation
 		return nodesToRemove;
 	}
 
+	/** Remove a child element from the DOM.  Return the parent */
+	static public function removeChildren(parents:Query, ?childrenToRemove:domtools.Query, ?childToRemove:Node)
+	{
+		throw "not implemented yet";
+		for (parent in parents)
+		{
+			domtools.single.DOMManipulation.removeChildren(parent, childToRemove, childrenToRemove);
+			domtools.single.DOMManipulation.remove(node);
+		}
+		return parents;
+	}
+
 	/** Empty the current element of all children. */
 	static public function empty(containers:Query)
 	{

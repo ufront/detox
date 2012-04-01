@@ -137,6 +137,23 @@ class DOMManipulation
 		return childToRemove;
 	}
 
+	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
+	static public function removeChildren(parent:Node, childToRemove:Node, childrenToRemove:Query)
+	{
+		if (childToRemove != null)
+		{
+			parent.removeChild(childToRemove);
+		}
+		if (childrenToRemove != null)
+		{
+			for (child in childrenToRemove)
+			{
+				parent.removeChild(child);
+			}
+		}
+		return parent;
+	}
+
 	/** Empty the current element of all children. */
 	static public function empty(container:Node)
 	{
