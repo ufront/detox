@@ -7,7 +7,7 @@ It makes heavy use of haxe's ["using" mixin](http://haxe.org/manual/using), whic
 
 Here's some code so you can get an idea of what I mean:
 
-```haxe
+```
 
 // You include this at the top of your file
 
@@ -92,10 +92,8 @@ General helpers
 * "div".create();
 * "<div>Some <i>HTML</i> code.</div>".parse();
 
-On a Node or Query (collection of nodes)
-----------------------------------------
-
 Node / Element Manipulation
+---------------------------
 
 * isElement()
 * isComment()
@@ -108,13 +106,13 @@ Node / Element Manipulation
 * setAttr("src", "image.jpg")
 * removeAttr("src")
 * hasClass("myClass")
-  hasClass("myfirstclass mysecondclass")
+* hasClass("myfirstclass mysecondclass")
 * addClass("myClass")
-  addClass("myfirstclass mysecondclass")
+* addClass("myfirstclass mysecondclass")
 * removeClass("myClass")
-  removeClass("myfirstclass mysecondclass")
+* removeClass("myfirstclass mysecondclass")
 * toggleClass("myClass")
-  toggleClass("myfirstclass mysecondclass")
+* toggleClass("myfirstclass mysecondclass")
 * tagName()
 * val()
 * setVal("newValue")
@@ -125,6 +123,7 @@ Node / Element Manipulation
 * clone()
 
 Traversing
+----------
 
 * children()
 * firstChildren() - open to changing name
@@ -136,6 +135,7 @@ Traversing
 * find()
 
 DOM Manipulation
+----------------
 
 * append(newChild)
 * prepend(newChild)
@@ -151,6 +151,7 @@ DOM Manipulation
 * empty()
 
 Event Management
+----------------
 
 For each of these, `eventType` is a String, for example "click", "move", "keyup".  Listener should be `function (e) { trace("Do something..."); }`
 
@@ -188,9 +189,79 @@ For each of these, `eventType` is a String, for example "click", "move", "keyup"
 * ready(listener)
 
 Style
+-----
 
 * Mostly not implemented yet.
 
 Animation
+---------
 
 * Mostly not implemented yet.
+
+Status
+======
+
+* NA: this feature does not apply to this platform
+* NOTIMPLEMENTED: this feature has not been written yet
+* NOTESTS: implemented, but no tests written - no guarantee it works
+* TESTSNOTRUN: implemented, and tests written, but not run yet on this platform.
+* TESTFAIL: implemented, tested, some tests failing
+* GOOD: implemented, tests passing, good to go.
+
+<table>
+<thead>
+    <tr>
+        <th>Feature</th>
+        <th colspan="7">Browser JS</th>
+        <th colspan="5">Other Platforms</th>
+    </tr>
+    <tr>
+        <th></th>
+        <th>Firefox</th>
+        <th>WebKit</th>
+        <th>Opera</th>
+        <th>IE7</th>
+        <th>IE8</th>
+        <th>IE9</th>
+        <th>IE10</th>
+        <th>Flash</th>
+        <th>Neko</th>
+        <th>PHP</th>
+        <th>NodeJS</th>
+        <th>CPP</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <th>Element Manipulation</th>
+        <td colspan="2">GOOD</td>
+        <td colspan="5">TESTSNOTRUN</td>   
+        <td colspan="5">NOTIMPLEMENTED</td>    
+    </tr>
+    <tr>
+        <th>DOM Manipulation</th>
+        <td colspan="7">NOTESTS</td>   
+        <td colspan="5">NOTIMPLEMENTED</td>    
+    </tr>
+    <tr>
+        <th>Traversing</th>
+        <td colspan="7">NOTESTS</td>   
+        <td colspan="5">NOTIMPLEMENTED</td>    
+    </tr>
+    <tr>
+        <th>Event Management</th>
+        <td colspan="7">NOTESTS</td>   
+        <td colspan="5">NA</td>    
+    </tr>
+    <tr>
+        <th>Style</th>
+        <td colspan="7">NOTIMPLEMENTED</td>   
+        <td colspan="5">NA</td>    
+    </tr>
+    <tr>
+        <th>Animation</th>
+        <td colspan="7">NOTIMPLEMENTED</td>   
+        <td colspan="5">NA</td>    
+    </tr>
+</tbody>
+</table>
