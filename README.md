@@ -206,7 +206,8 @@ Status
 * NOTESTS: implemented, but no tests written - no guarantee it works
 * TESTSNOTRUN: implemented, and tests written, but not run yet on this platform.
 * TESTFAIL: implemented, tested, some tests failing
-* GOOD: implemented, tests passing, good to go.
+* OKAY: implemented, tests passing, could do with a few more tests.
+* GOOD: implemented, tests passing, good coverage, good to go.
 
 <table>
 <thead>
@@ -234,7 +235,7 @@ Status
 <tbody>
     <tr>
         <th>Element Manipulation</th>
-        <td colspan="2">GOOD</td>
+        <td colspan="2">OKAY</td>
         <td colspan="5">TESTSNOTRUN</td>   
         <td colspan="5">NOTIMPLEMENTED</td>    
     </tr>
