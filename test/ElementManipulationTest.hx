@@ -24,6 +24,7 @@ class ElementManipulationTest
 	var parent:Node;
 	var child:Node;
 	var classTest:Node;
+	var nullnode:Node;
 	
 	public function new() 
 	{
@@ -61,6 +62,7 @@ class ElementManipulationTest
 		parent = sampleDocument.find('.parent').getNode();
 		child = sampleDocument.find('.child').getNode();
 		classTest = sampleDocument.find('#classtest').getNode();
+		nullnode = null;
 	}
 	
 	@After
@@ -95,11 +97,26 @@ class ElementManipulationTest
 		Assert.isFalse(comment.isTextNode());
 		Assert.isTrue(text.isTextNode());
 	}
+	
+	@Test
+	public function typeCheckOnNull():Void
+	{
+		Assert.isFalse(nullnode.isElement());
+		Assert.isFalse(nullnode.isTextNode());
+		Assert.isFalse(nullnode.isComment());
+		Assert.isFalse(nullnode.isDocument());
+	}
 
 	@Test
 	public function testReadAttr():Void
 	{
 		Assert.areEqual("title", h1.attr("id"));
+	}
+
+	@Test
+	public function testNullReadAttr():Void
+	{
+		Assert.areEqual("", nullnode.attr("id"));
 	}
 
 	@Test
@@ -111,10 +128,24 @@ class ElementManipulationTest
 	}
 
 	@Test
+	public function testNullSetAttr():Void
+	{
+		var result = nullnode.setAttr('id', "test");
+		Assert.areEqual(null, result);
+	}
+
+	@Test
 	public function testRemoveAttr():Void
 	{
 		h1.removeAttr('id');
 		Assert.isFalse(h1.hasAttributes());
+	}
+
+	@Test
+	public function testNullRemoveAttr():Void
+	{
+		var result = nullnode.removeAttr('id');
+		Assert.areEqual(null, result);
 	}
 
 	@Test
@@ -124,6 +155,12 @@ class ElementManipulationTest
 		Assert.isFalse(classTest.hasClass('second'));
 		Assert.isTrue(classTest.hasClass('third'));
 		Assert.isTrue(classTest.hasClass('fourth'));
+	}
+
+	@Test
+	public function testNullHasClass():Void
+	{
+		Assert.isFalse(nullnode.hasClass('second'));
 	}
 
 	@Test
@@ -138,6 +175,13 @@ class ElementManipulationTest
 	{
 		h1.addClass('myclass');
 		Assert.isTrue(h1.hasClass('myclass'));
+	}
+
+	@Test
+	public function testNullAddClass():Void
+	{
+		var result = nullnode.addClass('myclass');
+		Assert.areEqual(null, result);
 	}
 
 	@Test
@@ -207,6 +251,13 @@ class ElementManipulationTest
 	}
 
 	@Test
+	public function testNullRemoveClass():Void
+	{
+		var result = nullnode.removeClass('myclass');
+		Assert.areEqual(null, result);
+	}
+
+	@Test
 	public function testToggleClass():Void
 	{
 		h1.addClass('myclass');
@@ -233,11 +284,26 @@ class ElementManipulationTest
 	}
 
 	@Test
+	public function testNullToggleClass():Void
+	{
+		var result = nullnode.toggleClass('myclass');
+		Assert.areEqual(null, result);
+	}
+
+	@Test
 	public function testTagName():Void 
 	{
 		Assert.areEqual("h1", h1.tagName());
 		Assert.areEqual("h2", h2.tagName());
 		Assert.areEqual("myxml", sampleDocument.tagName());
+	}
+
+	@Test
+	public function testTagNameOfNonElement():Void 
+	{
+		Assert.areEqual("", text.tagName());
+		Assert.areEqual("", comment.tagName());
+		Assert.areEqual("", nullnode.tagName());
 	}
 
 	@Test
@@ -276,11 +342,24 @@ class ElementManipulationTest
 	}
 
 	@Test
+	public function testNullVal():Void
+	{
+		Assert.areEqual("", nullnode.val());
+	}
+
+	@Test
 	public function testSetValInput():Void 
 	{
 		var input = "<input type='text' value='attr' />".parse().getNode();
 		input.setVal("newvalue");
 		Assert.areEqual("newvalue", input.val());
+	}
+
+	@Test
+	public function testNullSetVal():Void
+	{
+		var result = nullnode.setVal("value");
+		Assert.areEqual(null, result);
 	}
 
 	@Test
@@ -305,11 +384,23 @@ class ElementManipulationTest
 	}
 
 	@Test
+	public function testNullText():Void 
+	{
+		Assert.areEqual("", nullnode.text());
+	}
+
+	@Test
 	public function testSetText():Void 
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
 		helloworld.setText("Goodbye Planet");
 		Assert.areEqual("Goodbye Planet", helloworld.innerHTML());
+	}
+
+	@Test
+	public function testNullSetText():Void 
+	{
+		Assert.areEqual(null, nullnode.setText("text"));
 	}
 
 	@Test
@@ -335,6 +426,12 @@ class ElementManipulationTest
 	}
 
 	@Test
+	public function testNullInnerHTML():Void 
+	{
+		Assert.areEqual("", nullnode.innerHTML());
+	}
+
+	@Test
 	public function testInnerHTMLOnNonElements():Void 
 	{
 		Assert.areEqual(" A comment ", comment.innerHTML());
@@ -347,6 +444,12 @@ class ElementManipulationTest
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
 		helloworld.setInnerHTML("Goodbye <i>Cruel</i> Planet");
 		Assert.areEqual("Goodbye <i>Cruel</i> Planet", helloworld.innerHTML());
+	}
+
+	@Test
+	public function testNullSetInnerHTML():Void 
+	{
+		Assert.areEqual(null, nullnode.setInnerHTML("innerhtml"));
 	}
 
 	@Test
@@ -370,6 +473,12 @@ class ElementManipulationTest
 		Assert.areEqual(text.nodeValue, newText.nodeValue);
 		newText.setText("Different");
 		Assert.areNotEqual(text.nodeValue, newText.nodeValue);
+	}
+
+	@Test
+	public function testCloneNullNode():Void 
+	{
+		Assert.areEqual(null, nullnode.clone());
 	}
 
 	@Test
@@ -407,6 +516,26 @@ class ElementManipulationTest
 		Assert.areNotEqual(h1.attr('id'), newH1.attr('id'));
 		Assert.areNotEqual(sampleDocument.innerHTML(), newSampleDoc.innerHTML());
 		Assert.areEqual(h2.text(), newH2.text());
+	}
+
+	@Test function testChaining():Void 
+	{
+		var originalElement:Node = "div".create().setAttr("id", "original");
+		var returnedElement:Node;
+
+		returnedElement = originalElement
+			.setAttr("title", "")
+			.removeAttr("title")
+			.addClass("class")
+			.toggleClass("class")
+			.removeClass("class")
+			.setVal("test")
+			.setText("mytext")
+			.setInnerHTML("myinnerHTML")
+		;
+
+		returnedElement.setAttr("id", "updatedID");
+		Assert.areEqual(originalElement.attr('id'), returnedElement.attr('id'));
 	}
 
 }
