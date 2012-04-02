@@ -301,8 +301,8 @@ class ElementManipulationTest
 	@Test
 	public function testTagNameOfNonElement():Void 
 	{
-		Assert.areEqual("", text.tagName());
-		Assert.areEqual("", comment.tagName());
+		Assert.areEqual("#text", text.tagName());
+		Assert.areEqual("#comment", comment.tagName());
 		Assert.areEqual("", nullnode.tagName());
 	}
 

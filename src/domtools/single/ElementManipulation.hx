@@ -20,22 +20,22 @@ class ElementManipulation
 
 	public static function isElement(node:Node):Bool
 	{
-		return node.nodeType == NodeTypeElement;
+		return node != null && node.nodeType == NodeTypeElement;
 	}
 
 	public static function isComment(node:Node):Bool
 	{
-		return node.nodeType == NodeTypeComment;
+		return node != null && node.nodeType == NodeTypeComment;
 	}
 
 	public static function isTextNode(node:Node):Bool
 	{
-		return node.nodeType == NodeTypeText;
+		return node != null && node.nodeType == NodeTypeText;
 	}
 
 	public static function isDocument(node:Node):Bool
 	{
-		return node.nodeType == NodeTypeDocument;
+		return node != null && node.nodeType == NodeTypeDocument;
 	}
 
 	public static function toQuery(n:Node):Query
@@ -57,7 +57,7 @@ class ElementManipulation
 
 	public static function setAttr(elm:Node, attName:String, attValue:String):Node
 	{
-		if (elm.nodeType == NodeTypeElement)
+		if (elm!= null && elm.nodeType == NodeTypeElement)
 		{
 			var element:Element = cast elm;
 			element.setAttribute(attName, attValue);
@@ -67,7 +67,7 @@ class ElementManipulation
 
 	public static function removeAttr(elm:Node, attName:String):Node
 	{
-		if (elm.nodeType == NodeTypeElement)
+		if (elm!=null && elm.nodeType == NodeTypeElement)
 		{
 			var element:Element = cast elm;
 			element.removeAttribute(attName);
@@ -151,51 +151,58 @@ class ElementManipulation
 
 	public static inline function tagName(elm:Node):String
 	{
-		return elm.nodeName.toLowerCase();
+		return (elm == null) ? "" : elm.nodeName.toLowerCase();
 	}
 
 	public static function val(node:Node):String
 	{
 		var val = "";
 
-		switch (node.nodeType)
+		if (node != null)
 		{
-			case NodeTypeElement:
-				val = Reflect.field(node, 'value');
-				
-				// If the value is null, that means
-				// the element did not have a field
-				// "value".  See if it has an attr
-				// instead.  This will return "" if
-				// it doesn't, which is a sane default
-				// also.
-				if (val == null)
-				{
-					val = attr(node, "value");
-				}
-			default:
-				val = node.nodeValue;
+			switch (node.nodeType)
+			{
+				case NodeTypeElement:
+					val = Reflect.field(node, 'value');
+					
+					// If the value is null, that means
+					// the element did not have a field
+					// "value".  See if it has an attr
+					// instead.  This will return "" if
+					// it doesn't, which is a sane default
+					// also.
+					if (val == null)
+					{
+						val = attr(node, "value");
+					}
+				default:
+					val = node.nodeValue;
+			}
 		}
+			
 
 		return val;
 	}
 
 	public static function setVal(node:Node, val:Dynamic)
 	{
-		switch (node.nodeType)
+		if (node != null)
 		{
-			case NodeTypeElement:
-				// Set value with Javascript
-				#if (js && !nodejs)
-				Reflect.setField(node, "value", val);
-				
-				// Set Attr for non client / js targets
-				#else
-				setAttr(elm, "value", Std.string(val));
-				#end
-			default:
-				// For comments, text nodes etc, set the nodeValue directly...
-				node.nodeValue = val;
+			switch (node.nodeType)
+			{
+				case NodeTypeElement:
+					// Set value with Javascript
+					#if (js && !nodejs)
+					Reflect.setField(node, "value", val);
+					
+					// Set Attr for non client / js targets
+					#else
+					setAttr(elm, "value", Std.string(val));
+					#end
+				default:
+					// For comments, text nodes etc, set the nodeValue directly...
+					node.nodeValue = val;
+			}
 		}
 
 		return node;
@@ -203,44 +210,51 @@ class ElementManipulation
 	
 	public static inline function text(elm:Node):String
 	{
-		return elm.textContent;
+		return (elm == null) ? "" : elm.textContent;
 	}
 	
-	public static inline function setText(elm:Node, text:String):Node
+	public static function setText(elm:Node, text:String):Node
 	{
-		return { elm.textContent = text; elm; };
+		if (elm != null) elm.textContent = text;
+		return elm;
 	}
 
 	public static function innerHTML(elm:Node):String
 	{
 		var ret = "";
-		switch (elm.nodeType)
+		if (elm != null)
 		{
-			case NodeTypeElement:
-				var element:Element = cast elm;
-				ret = element.innerHTML;
-			default:
-				ret = elm.textContent;
+			switch (elm.nodeType)
+			{
+				case NodeTypeElement:
+					var element:Element = cast elm;
+					ret = element.innerHTML;
+				default:
+					ret = elm.textContent;
+			}
 		}
 		return ret;
 	}
 
 	public static function setInnerHTML(elm:Node, html:String):Node
 	{
-		switch (elm.nodeType)
+		if (elm != null)
 		{
-			case NodeTypeElement:
-				var element:Element = cast elm;
-				element.innerHTML = html;
-			default:
-				elm.textContent = html;
+			switch (elm.nodeType)
+			{
+				case NodeTypeElement:
+					var element:Element = cast elm;
+					element.innerHTML = html;
+				default:
+					elm.textContent = html;
+			}
 		}
 		return elm;
 	}
 
 	public static inline function clone(elm:Node, ?deep:Bool = true):Node
 	{
-		return elm.cloneNode(deep);
+		return (elm == null) ? null : elm.cloneNode(deep);
 	}
 
 }
