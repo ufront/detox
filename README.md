@@ -235,8 +235,18 @@ Status
 <tbody>
     <tr>
         <th>Element Manipulation</th>
-        <td colspan="2">OKAY</td>
-        <td colspan="5">TESTSNOTRUN</td>   
+        <td colspan="3">GOOD</td>
+        <td colspan="2">TESTSNOTRUN</td>   
+        <td colspan="1">GOOD</td>
+        <td colspan="1">TESTSNOTRUN</td>  
+        <td colspan="5">NOTIMPLEMENTED</td>    
+    </tr>
+    <tr>
+        <th>Query (Collection)</th>
+        <td colspan="3">GOOD</td>
+        <td colspan="2">TESTSNOTRUN</td>   
+        <td colspan="1">GOOD</td>
+        <td colspan="1">TESTSNOTRUN</td>   
         <td colspan="5">NOTIMPLEMENTED</td>    
     </tr>
     <tr>
