@@ -55,7 +55,7 @@ class Query
 			// 10000 times = 0.06sec
 			// 1000 times = 0.006sec
 			// Incredibly inaccurate but we're not on a scale I'm too worried about.
-			addCollection(nodeList);
+			addNodeList(nodeList);
 		}
 			
 	}
@@ -106,6 +106,20 @@ class Query
 				// Only add if we are allowing elements only or if it is in fact an element
 				if (elementsOnly == false || domtools.single.ElementManipulation.isElement(node))
 					add(node);
+			}
+		}
+		return this;
+	}
+
+	public function addNodeList(nodeList:NodeList, ?elementsOnly = true):Query
+	{
+		for (i in 0...nodeList.length)
+		{
+			var node = nodeList.item(i);
+			// Only add if we are allowing elements only or if it is in fact an element
+			if (elementsOnly == false || domtools.single.ElementManipulation.isElement(node))
+			{
+				add(node);
 			}
 		}
 		return this;

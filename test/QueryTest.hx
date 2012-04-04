@@ -300,16 +300,35 @@ class QueryTest
 	}
 
 	@Test 
-	public function addCollectionNodeList()
+	public function addCollectionElementsOnly()
+	{
+		var q1 = new Query();
+		var q2 = new Query();
+		var q3 = new Query();
+		var nodeList = "table".find().getNode().childNodes;
+		var collection = new Query().addNodeList(nodeList, false);
+		
+		// The default should be true
+		q1.addCollection(collection);
+		q2.addCollection(collection, true);
+		q3.addCollection(collection, false);
+
+		Assert.areEqual(2, q1.length);
+		Assert.areEqual(2, q2.length);
+		Assert.areEqual(5, q3.length);
+	}
+
+	@Test 
+	public function addNodeList()
 	{
 		var q = new Query();
 		var nodeList = Query.document.querySelectorAll("li", null);
-		q.addCollection(nodeList);
+		q.addNodeList(nodeList);
 		Assert.areEqual(6, q.length);
 	}
 
 	@Test 
-	public function addCollectionElementsOnly()
+	public function addNodeListElementsOnly()
 	{
 		var q1 = new Query();
 		var q2 = new Query();
@@ -317,9 +336,9 @@ class QueryTest
 		var nodeList = "table".find().getNode().childNodes;
 		
 		// The default should be true
-		q1.addCollection(nodeList);
-		q2.addCollection(nodeList, true);
-		q3.addCollection(nodeList, false);
+		q1.addNodeList(nodeList);
+		q2.addNodeList(nodeList, true);
+		q3.addNodeList(nodeList, false);
 
 		Assert.areEqual(2, q1.length);
 		Assert.areEqual(2, q2.length);
