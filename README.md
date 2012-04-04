@@ -260,8 +260,8 @@ Status
         <td colspan="5">NOTIMPLEMENTED</td>    
     </tr>
     <tr>
-        <th>Event Management (basics working)</th>
-        <td colspan="7">NOTESTS</td>   
+        <th>Event Management</th>
+        <td colspan="7">NOTESTS (basics working)</td>   
         <td colspan="5">NA</td>    
     </tr>
     <tr>
