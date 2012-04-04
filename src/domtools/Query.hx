@@ -31,7 +31,7 @@ class Query
 {
 	public var collection(default,null):Array<Node>;
 	public var length(get_length,null):Int;
-	public static var document(get_document,null):HTMLDocument;
+	public static var document(get_document,null):DocumentOrElement;
 	public static var window(get_window,null):Window;
 
 	public function new(?selector:String = "", ?node:Node = null, ?collection:Iterable<Node>)
@@ -48,14 +48,14 @@ class Query
 		}
 		else if (selector != "")
 		{
-			var nodeList = CommonJS.getAll(selector);
+			var nodeList = document.querySelectorAll(selector, null);
 			
 			// performance cost of this operation
 			// 1000000 times = 6sec;
 			// 10000 times = 0.06sec
 			// 1000 times = 0.006sec
 			// Incredibly inaccurate but we're not on a scale I'm too worried about.
-			addNodeList(nodeList);
+			addCollection(nodeList);
 		}
 			
 	}
@@ -87,44 +87,59 @@ class Query
 
 	public inline function add(node:Node):Query
 	{
-		return { collection.push(node); this; }
-	}
-
-	public function addCollection(collection:Iterable<Node>):Query
-	{
-		for (node in collection)
+		if (node != null)
 		{
-			this.collection.push(node);
+			if (Lambda.has(collection, node) == false)
+			{
+				collection.push(node);
+			}
 		}
 		return this;
 	}
 
-	public function addNodeList(nodeList:NodeList, ?elementsOnly = true):Query
+	public function addCollection(collection:Iterable<Node>, ?elementsOnly = true):Query
 	{
-		for (i in 0...nodeList.length)
+		if (collection != null)
 		{
-			var node = nodeList.item(i);
-			// Only add if we are allowing elements only or if it is in fact an element
-			if (elementsOnly == false || domtools.single.ElementManipulation.isElement(node))
-				add(node);
+			for (node in collection)
+			{
+				// Only add if we are allowing elements only or if it is in fact an element
+				if (elementsOnly == false || domtools.single.ElementManipulation.isElement(node))
+					add(node);
+			}
 		}
 		return this;
 	}
 
-	public inline function removeFromCollection(node:Node):Query
+	public function removeFromCollection(?node:Node, ?nodeCollection:Query):Query
 	{
-		return { collection.remove(node); this; }
+		if (node != null)
+		{
+			collection.remove(node);
+		}
+		if (nodeCollection != null)
+		{
+			for (n in nodeCollection)
+			{
+				collection.remove(n);
+			}
+		}
+		return this;
 	}
 
 	public inline function each(f : Node -> Void):Query
 	{
-		return { Lambda.iter(collection, f); this; } 
+		if (f != null) { Lambda.iter(collection, f); }
+		return this; 
 	}
 
 	/** Use a function to return a filtered list. In future might allow a selector as well. */
 	public inline function filter(fn:Node->Bool)
 	{
-		return new Query(Lambda.filter(collection, fn));
+		return (fn != null) ? 
+			new Query(Lambda.filter(collection, fn))
+			 : 
+			this.clone();
 	}
 
 	public function clone():Query
@@ -163,13 +178,34 @@ class Query
 		return untyped __js__("window");
 	}
 
-	static inline function get_document():HTMLDocument
+	static inline function get_document():DocumentOrElement
 	{
-		return untyped __js__("document");
+		if (document == null) 
+		{
+			// Sensible default: window.document in JS
+			document = untyped __js__("document");
+		}
+		return document;
+	}
+
+	public static function setDocument(newDocument:Node)
+	{
+		// Only change the document if it has the right NodeType
+		if (newDocument.nodeType == Node.DOCUMENT_NODE 
+			|| newDocument.nodeType == Node.ELEMENT_NODE)
+		{
+			// Because of the NodeType we can safely use this node as our document
+			document = untyped newDocument;
+		}
 	}
 }
 
 typedef Node = js.w3c.level3.Core.Node;
 typedef Event = js.w3c.level3.Events.Event;
+
+typedef DocumentOrElement = {> Node,
+	var querySelector:DOMString->Dynamic->Element;
+	var querySelectorAll:DOMString->Dynamic->NodeList;
+}
 
 import domtools.Tools;

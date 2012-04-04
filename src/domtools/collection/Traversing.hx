@@ -13,7 +13,7 @@ class Traversing
 			if (domtools.single.ElementManipulation.isElement(node))
 			{
 				// Add any child elements
-				children.addNodeList(node.childNodes, elementsOnly);
+				children.addCollection(node.childNodes, elementsOnly);
 			}
 		}
 		return children;
@@ -114,7 +114,7 @@ class Traversing
 			if (domtools.single.ElementManipulation.isElement(node))
 			{
 				var element:Element = cast node;
-				newQuery.addNodeList(element.querySelectorAll(selector));
+				newQuery.addCollection(element.querySelectorAll(selector));
 			}
 		}
 		return newQuery;

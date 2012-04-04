@@ -4,6 +4,7 @@ import AnimationTest;
 import DOMManipulationTest;
 import StyleTest;
 import QueryStyleTest;
+import ToolsTest;
 import QueryTraversingTest;
 import TraversingTest;
 import EventManagementTest;
@@ -12,6 +13,7 @@ import QueryAnimationTest;
 import QueryDOMManipulationTest;
 import QueryElementManipulationTest;
 import ElementManipulationTest;
+import QueryTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -29,6 +31,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(DOMManipulationTest);
 		add(StyleTest);
 		add(QueryStyleTest);
+		add(ToolsTest);
 		add(QueryTraversingTest);
 		add(TraversingTest);
 		add(EventManagementTest);
@@ -37,5 +40,6 @@ class TestSuite extends massive.munit.TestSuite
 		add(QueryDOMManipulationTest);
 		add(QueryElementManipulationTest);
 		add(ElementManipulationTest);
+		add(QueryTest);
 	}
 }
