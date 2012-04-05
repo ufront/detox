@@ -133,14 +133,4 @@ class ElementManipulation
 		return query;
 	}
 
-	public static function clone(query:Query, ?deep:Bool = true):Query
-	{
-		var newQuery = new Query();
-		for (node in query)
-		{
-			newQuery.add(domtools.single.ElementManipulation.clone(node));
-		}
-		return newQuery;
-	}
-
 }

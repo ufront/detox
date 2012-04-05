@@ -156,12 +156,12 @@ class Query
 			this.clone();
 	}
 
-	public function clone():Query
+	public function clone(?deep:Bool = true):Query
 	{
 		var q = new Query();
 		for (node in this)
 		{
-			q.add(node.cloneNode(true));
+			q.add(node.cloneNode(deep));
 		}
 		return q;
 	}
