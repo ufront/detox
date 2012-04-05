@@ -30,7 +30,7 @@ class DOMManipulation
 		{
 			parent.appendChild(childNode);
 		}
-		else if (childCollection != null)
+		if (childCollection != null)
 		{
 			for (child in childCollection)
 			{
@@ -48,7 +48,7 @@ class DOMManipulation
 		{
 			insertThisBefore(newChildNode, parent.firstChild);
 		}
-		else if (newChildCollection != null)
+		if (newChildCollection != null)
 		{
 			domtools.collection.DOMManipulation.insertThisBefore(newChildCollection, parent.firstChild);
 		}
@@ -63,7 +63,7 @@ class DOMManipulation
 		{
 			append(parentNode, child);
 		}
-		else if (parentCollection != null)
+		if (parentCollection != null)
 		{
 			domtools.collection.DOMManipulation.append(parentCollection, child);
 		}
@@ -83,7 +83,7 @@ class DOMManipulation
 		{
 			targetNode.parentNode.insertBefore(content, targetNode);
 		}
-		else if (targetCollection != null)
+		if (targetCollection != null)
 		{
 			var firstChildUsed = false;
 			for (target in targetCollection)
@@ -116,7 +116,7 @@ class DOMManipulation
 		{
 			insertThisBefore(contentNode, target);
 		}
-		else if (contentQuery != null)
+		if (contentQuery != null)
 		{
 			domtools.collection.DOMManipulation.insertThisBefore(contentQuery, target);
 		}
@@ -129,7 +129,7 @@ class DOMManipulation
 		{
 			insertThisAfter(contentNode, target);
 		}
-		else if (contentQuery != null)
+		if (contentQuery != null)
 		{
 			domtools.collection.DOMManipulation.insertThisAfter(contentQuery, target);
 		}
