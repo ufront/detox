@@ -506,4 +506,76 @@ class QueryTest
 		}
 	}
 
+	@Test 
+	public function create() 
+	{
+		var div:Node = Query.create("div");
+		Assert.areEqual("div", div.tagName());
+		Assert.areEqual("", div.innerHTML());
+	}
+
+	@Test 
+	public function createBadInput() 
+	{
+		var elm:Node = Query.create("non-existent-element");
+		Assert.areEqual("non-existent-element", elm.tagName());
+		Assert.areEqual("", elm.innerHTML());
+
+		var bad = Query.create("non existent element");
+		Assert.isNull(bad);
+	}
+
+	@Test 
+	public function createNullInput() 
+	{
+		var bad = Query.create(null);
+		Assert.isNull(bad);
+	}
+
+	@Test 
+	public function parse() 
+	{
+		var q = Query.parse("<div id='test'>Hello</div>");
+
+		Assert.areEqual('div', q.tagName());
+		Assert.areEqual('test', q.attr('id'));
+		Assert.areEqual('Hello', q.innerHTML());
+	}
+
+	@Test 
+	public function parseMultiple() 
+	{
+		var q = Query.parse("<div id='test1'>Hello</div><div id='test2'>World</div>");
+
+		Assert.areEqual(2, q.length);
+		Assert.areEqual("div div", q.tagNames().join(' '));
+	}
+
+	@Test 
+	public function parseTextOnly() 
+	{
+		var q3 = Query.parse("text only");
+
+		Assert.areEqual(Node.TEXT_NODE, q3.getNode().nodeType);
+		Assert.areEqual("text only", q3.getNode().nodeValue);
+	}
+
+	@Test 
+	public function parseNull() 
+	{
+		var q = Query.parse(null);
+		Assert.areEqual(0, q.length);
+	}
+
+	@Test 
+	public function parseBrokenHTML() 
+	{
+		// this passes.  It looks like the browser fixes it up as best it can.
+		// Should this really be in the unit tests then?
+		var q = Query.parse("<p>My <b>Broken Paragraph</p>");
+		trace (q);
+		trace (q.innerHTML());
+		Assert.areEqual(1, q.length);
+	}
+
 }
