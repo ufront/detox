@@ -173,7 +173,14 @@ class Query
 
 	public static inline function create(name:String):Element
 	{
-		return untyped __js__("document").createElement(name);
+		var elm:Element = null;
+		try {
+			elm = untyped __js__("document").createElement(name);
+		} catch (e:Dynamic)
+		{
+			elm = null;
+		}
+		return elm;
 	}
 
 	public static inline function parse(html:String):Query
