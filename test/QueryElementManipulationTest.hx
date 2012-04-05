@@ -372,4 +372,10 @@ class QueryElementManipulationTest
 		Assert.areEqual(0, 1);
 	}
 
+	@Test 
+	public function chaining()
+	{
+		Assert.areEqual(0, 1);
+	}
+
 }
