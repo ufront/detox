@@ -1,11 +1,10 @@
 package;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
 
-import domtools.Tools;
-using domtools.Tools;
+import DOMTools;
+import domtools.Query;
+using DOMTools;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -34,13 +33,47 @@ class ToolsTest
 	@Before
 	public function setup():Void
 	{
-		// trace ("Setup");
+		var sampleDocument = "<myxml>
+			<h1>Title</h1>
+			<p>One</p>
+			<p>Two</p>
+			<div></div>
+		</myxml>".parse();
+		Query.setDocument(sampleDocument.getNode());
 	}
 	
 	@After
 	public function tearDown():Void
 	{
 		// trace ("Tear Down");
+	}
+
+	//
+	// These are just a basic wrapper on some Query functions (new, create, parse)
+	// There are unit tests there, so just test that they work from a string.
+	// 
+
+	@Test 
+	public function find()
+	{
+		Assert.areEqual(1, "h1".find().length);
+		Assert.areEqual(2, "p".find().length);
+	}
+
+	@Test 
+	public function create()
+	{
+		Assert.areEqual("DIV", "div".create().nodeName);
+		Assert.areEqual("P", "p".create().nodeName);
+		Assert.isNull("non element".create());
+	}
+
+	@Test
+	public function parse()
+	{
+		Assert.areEqual(2, "<p>One</p><div>Two</div>".parse().length);
+		var str = "my text node";
+		Assert.areEqual(1, str.parse().length);
 	}
 
 }
