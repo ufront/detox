@@ -14,12 +14,15 @@ class Traversing
 	static public function children(query:Query, ?elementsOnly = true)
 	{
 		var children = new Query();
-		for (node in query)
+		if (query != null)
 		{
-			if (domtools.single.ElementManipulation.isElement(node))
+			for (node in query)
 			{
-				// Add any child elements
-				children.addNodeList(node.childNodes, elementsOnly);
+				if (domtools.single.ElementManipulation.isElement(node))
+				{
+					// Add any child elements
+					children.addNodeList(node.childNodes, elementsOnly);
+				}
 			}
 		}
 		return children;
@@ -28,17 +31,20 @@ class Traversing
 	static public function firstChildren(query:Query, ?elementsOnly = true)
 	{
 		var children = new Query();
-		for (node in query)
+		if (query != null)
 		{
-			if (domtools.single.ElementManipulation.isElement(node))
+			for (node in query)
 			{
-				// Add first child node that is an element
-				var e = node.firstChild;
-				while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(e) == false)
+				if (domtools.single.ElementManipulation.isElement(node))
 				{
-					e = e.nextSibling;
+					// Add first child node that is an element
+					var e = node.firstChild;
+					while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(e) == false)
+					{
+						e = e.nextSibling;
+					}
+					if (e != null) children.add(e);
 				}
-				if (e != null) children.add(e);
 			}
 		}
 		return children;
@@ -47,17 +53,20 @@ class Traversing
 	static public function lastChildren(query:Query, ?elementsOnly = true)
 	{
 		var children = new Query();
-		for (node in query)
+		if (query != null)
 		{
-			if (domtools.single.ElementManipulation.isElement(node))
+			for (node in query)
 			{
-				// Add first child node that is an element
-				var e = node.lastChild;
-				while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(e) == false)
+				if (domtools.single.ElementManipulation.isElement(node))
 				{
-					e = e.previousSibling;
+					// Add first child node that is an element
+					var e = node.lastChild;
+					while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(e) == false)
+					{
+						e = e.previousSibling;
+					}
+					if (e != null) children.add(e);
 				}
-				if (e != null) children.add(e);
 			}
 		}
 		return children;
@@ -67,47 +76,82 @@ class Traversing
 	static public function parent(query:Query)
 	{
 		var parents = new Query();
-		for (node in query)
+		if (query != null)
 		{
-			if (node.parentNode != null)
-				parents.add(node.parentNode);
+			for (node in query)
+			{
+				if (node.parentNode != null && node != domtools.Query.document)
+					parents.add(node.parentNode);
+			}
 		}
 		return parents;
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
-	static public function ancestors(query:Query)
+	static public function ancestors(query:Query):Query
 	{
 		// start with the direct parents
-		var ancestors = parent(query);
-
-		// then add the parents of the parents, recursively
-		if (ancestors.length > 0)
+		var ancestorList = parent(query);
+		
+		// If there is at least one parent
+		// Then recurse and add all ancestors of that parent
+		if (ancestorList.length > 0)
 		{
-			ancestors.addCollection(parent(ancestors));
+			ancestorList.addCollection(ancestors(ancestorList));
 		}
 
-		return ancestors;
+		// Then pass the list back up the line...
+		return ancestorList;
 	}
 
-	static public function next(query:Query)
+	static public function next(query:Query, ?elementsOnly:Bool = true)
 	{
 		var siblings = new Query();
-		for (node in query)
+		if (query != null)
 		{
-			var sibling = node.nextSibling;
-			if (sibling != null) siblings.add(sibling);
+			for (node in query)
+			{
+				// Get the next sibling
+				var sibling = node.nextSibling;
+
+				// If it's not null, but isn't an element, and we want an element,
+				// keep going.
+				while (sibling != null 
+					&& sibling.nodeType != Node.ELEMENT_NODE
+					&& elementsOnly )
+				{
+					sibling = sibling.nextSibling;
+				}
+
+				// if we found a match, add it to our group
+				if (sibling != null) siblings.add(sibling);
+			}
 		}
 		return siblings;
 	}
 
-	static public function prev(query:Query)
+	static public function prev(query:Query, ?elementsOnly:Bool = true)
 	{
 		var siblings = new Query();
-		for (node in query)
+		if (query != null)
 		{
-			var sibling = node.previousSibling;
-			if (sibling != null) siblings.add(sibling);
+			for (node in query)
+			{
+				// get the previous sibling
+				var sibling = node.previousSibling;
+
+				// If it's not null, but isn't an element, and we want an element,
+				// keep going.
+				while (sibling != null  
+					&& sibling.nodeType != Node.ELEMENT_NODE
+					&& elementsOnly)
+				{
+					sibling = sibling.previousSibling;
+				}
+
+				// if we found a match, add it to our group
+				if (sibling != null) siblings.add(sibling);
+			}
 		}
 		return siblings;
 	}
@@ -115,12 +159,15 @@ class Traversing
 	static public function find(query:Query, selector:String)
 	{
 		var newQuery = new Query();
-		for (node in query)
+		if (query != null && selector != null && selector != "")
 		{
-			if (domtools.single.ElementManipulation.isElement(node))
+			for (node in query)
 			{
-				var element:Element = cast node;
-				newQuery.addNodeList(element.querySelectorAll(selector));
+				if (domtools.single.ElementManipulation.isElement(node))
+				{
+					var element:Element = cast node;
+					newQuery.addNodeList(element.querySelectorAll(selector));
+				}
 			}
 		}
 		return newQuery;

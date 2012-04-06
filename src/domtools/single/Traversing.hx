@@ -69,7 +69,7 @@ class Traversing
 	/** Gets the direct parents of each element in the collection. */
 	static public function parent(node:Node)
 	{
-		return (node.parentNode != null) ? node.parentNode : null;
+		return (node.parentNode != null && node != domtools.Query.document) ? node.parentNode : null;
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
