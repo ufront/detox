@@ -66,6 +66,7 @@ class ToolsTest
 		Assert.areEqual("DIV", "div".create().nodeName);
 		Assert.areEqual("P", "p".create().nodeName);
 		Assert.isNull("non element".create());
+		Assert.isNull("".create());
 	}
 
 	@Test
@@ -74,6 +75,7 @@ class ToolsTest
 		Assert.areEqual(2, "<p>One</p><div>Two</div>".parse().length);
 		var str = "my text node";
 		Assert.areEqual(1, str.parse().length);
+		Assert.areEqual(0, "".parse().length);
 	}
 
 }

@@ -533,6 +533,13 @@ class QueryTest
 	}
 
 	@Test 
+	public function createEmptyString() 
+	{
+		var bad = Query.create("");
+		Assert.isNull(bad);
+	}
+
+	@Test 
 	public function parse() 
 	{
 		var q = Query.parse("<div id='test'>Hello</div>");
@@ -568,14 +575,38 @@ class QueryTest
 	}
 
 	@Test 
+	public function parseEmptyString() 
+	{
+		var q = Query.parse("");
+		Assert.areEqual(0, q.length);
+	}
+
+	@Test 
 	public function parseBrokenHTML() 
 	{
 		// this passes.  It looks like the browser fixes it up as best it can.
 		// Should this really be in the unit tests then?
 		var q = Query.parse("<p>My <b>Broken Paragraph</p>");
-		trace (q);
-		trace (q.innerHTML());
 		Assert.areEqual(1, q.length);
+	}
+
+	@Test 
+	public function setDocument()
+	{
+		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
+		Query.setDocument(node);
+		Assert.areEqual("My Element", "b".find().innerHTML());
+	}
+
+	@Test 
+	public function setDocument_null()
+	{
+		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
+		Query.setDocument(node);
+		Query.setDocument(null);
+
+		// The document should still be 'node', because null is rejected.
+		Assert.areEqual("My Element", "b".find().innerHTML());
 	}
 
 }

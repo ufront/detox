@@ -212,11 +212,14 @@ class Query
 	public static function setDocument(newDocument:Node)
 	{
 		// Only change the document if it has the right NodeType
-		if (newDocument.nodeType == Node.DOCUMENT_NODE 
-			|| newDocument.nodeType == Node.ELEMENT_NODE)
+		if (newDocument != null)
 		{
-			// Because of the NodeType we can safely use this node as our document
-			document = untyped newDocument;
+			if (newDocument.nodeType == Node.DOCUMENT_NODE 
+				|| newDocument.nodeType == Node.ELEMENT_NODE)
+			{
+				// Because of the NodeType we can safely use this node as our document
+				document = untyped newDocument;
+			}
 		}
 	}
 }

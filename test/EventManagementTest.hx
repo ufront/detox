@@ -4,8 +4,8 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
-import domtools.Tools;
-using domtools.Tools;
+import DOMTools;
+using DOMTools;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 

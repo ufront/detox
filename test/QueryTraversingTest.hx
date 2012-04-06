@@ -44,4 +44,52 @@ class QueryTraversingTest
 		// trace ("Tear Down");
 	}
 
+	@Test 
+	public function children()
+	{
+		Assert.areEqual(0, 1);
+	}
+
+	@Test 
+	public function firstChildren()
+	{
+		Assert.areEqual(0, 1);
+	}
+
+	@Test 
+	public function lastChildren()
+	{
+		Assert.areEqual(0, 1);
+	}
+
+	@Test 
+	public function parent()
+	{
+		Assert.areEqual(0, 1);
+	}
+
+	@Test 
+	public function ancestors()
+	{
+		Assert.areEqual(0, 1);
+	}
+
+	@Test 
+	public function next()
+	{
+		Assert.areEqual(0, 1);
+	}
+
+	@Test 
+	public function prev()
+	{
+		Assert.areEqual(0, 1);
+	}
+
+	@Test 
+	public function find()
+	{
+		Assert.areEqual(0, 1);
+	}
+
 }
