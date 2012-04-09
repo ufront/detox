@@ -167,6 +167,7 @@ class ElementManipulationTest
 	public function testHasClassMultiple():Void
 	{
 		Assert.isTrue(classTest.hasClass('third first'));
+		Assert.isTrue(classTest.hasClass('third   first'));
 		Assert.isFalse(classTest.hasClass('fourth second third'));
 	}
 

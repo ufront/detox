@@ -2,8 +2,9 @@ package;
 
 import massive.munit.Assert;
 
-import domtools.Tools;
-using domtools.Tools;
+import domtools.Query;
+import DOMTools;
+using DOMTools;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -27,17 +28,55 @@ class QueryElementManipulationTest
 	{
 		// trace ("AfterClass");
 	}
+
+	public var sampleDocument:Query;
+	public var h1:Query;
+	public var lists:Query;
+	public var listItems:Query;
+	public var pickme:Query;
+	public var emptyNode:Query;
+	public var nonElements:Query;
+	public var textNodes:Query;
+	public var commentNodes:Query;
+	public var emptyCollection:Query;
+	public var nullQuery:Query;
 	
 	@Before
 	public function setup():Void
 	{
-		var sampleDocument = "<myxml>
-			<ul id='a'>
+		sampleDocument = "<myxml>
+			<h1>Title</h1>
+			<ul id='a' title='first'>
 				<li id='a1'>1</li>
-				<li id='a2'>2</li>
+				<li id='a2' class='pickme'>2</li>
 				<li id='a3'>3</li>
 			</ul>
+			<ul id='b' title='second'>
+				<li id='b1'>1</li>
+				<li id='b2' class='pickme'>2</li>
+				<li id='b3'>3</li>
+			</ul>
+			<div class='empty'></div>
+			<div id='nonelements'>Start<!--Comment1-->End<!--Comment2--></div>
 		</myxml>".parse();
+
+		Query.setDocument(sampleDocument.getNode());
+
+		h1 = "h1".find();
+		lists = "ul".find();
+		listItems = "li".find();
+		pickme = "li.pickme".find();
+		emptyNode = ".empty".find();
+		nonElements = "#nonelements".find().children(false);
+		textNodes = nonElements.filter(function (node) {
+			return node.isTextNode();
+		});
+
+		commentNodes = nonElements.filter(function (node) {
+			return node.isComment();
+		});
+		emptyCollection = new Query();
+		nullQuery = null;
 	}
 	
 	@After
@@ -49,205 +88,358 @@ class QueryElementManipulationTest
 	@Test 
 	public function attr()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("first", "#a".find().attr('title'));
+		Assert.areEqual("second", "#b".find().attr('title'));
+		Assert.areEqual("pickme", "#b2".find().attr('class'));
 	}
 
 	@Test 
 	public function attrOnNull()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", nullQuery.attr('id'));
 	}
 
 	@Test 
 	public function attrOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", emptyCollection.attr('id'));
 	}
 
 	@Test 
 	public function attrDoesNotExist()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", "#a".find().attr('doesnotexist'));
+		Assert.areEqual("", "#a".find().attr('bad attribute name'));
 	}
 
 	@Test 
 	public function attrOnMultiple()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("first", lists.attr('title'));
+		Assert.areEqual("a2", pickme.attr('id'));
 	}
 
 	@Test 
 	public function setAttr()
 	{
-		Assert.areEqual(0, 1);
+		"#a".find().setAttr('title', '1st');
+		"#b2".find().setAttr('class', 'dontpickme');
+		Assert.areEqual("1st", "#a".find().attr('title'));
+		Assert.areEqual("second", "#b".find().attr('title'));
+		Assert.areEqual("dontpickme", "#b2".find().attr('class'));
 	}
 
 	@Test 
 	public function setAttrMultiple()
 	{
-		Assert.areEqual(0, 1);
+		lists.setAttr('title', 'thesame');
+		Assert.areEqual('thesame', "#a".find().attr('title'));
+		Assert.areEqual('thesame', "#b".find().attr('title'));
 	}
 
 	@Test 
 	public function setAttrOnNull()
 	{
-		Assert.areEqual(0, 1);
+		nullQuery.setAttr('id', 'myID');
+		Assert.areEqual("", nullQuery.attr('id'));
 	}
 
 	@Test 
 	public function setAttrOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		emptyCollection.setAttr('id', 'myID');
+		Assert.areEqual("", emptyCollection.attr('id'));
 	}
 
 	@Test 
 	public function removeAttr()
 	{
-		Assert.areEqual(0, 1);
+		lists.removeAttr('title');
+		Assert.areEqual('', "#a".find().attr('title'));
+		Assert.areEqual('', "#b".find().attr('title'));
 	}
 
 	@Test 
 	public function removeAttrOnNull()
 	{
-		Assert.areEqual(0, 1);
+		nullQuery.removeAttr('id');
+		Assert.areEqual("", nullQuery.attr('id'));
 	}
 
 	@Test 
 	public function removeAttrOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		emptyCollection.removeAttr('id');
+		Assert.areEqual("", emptyCollection.attr('id'));
 	}
 
 	@Test 
 	public function removeAttrThatDoesNotExist()
 	{
-		Assert.areEqual(0, 1);
+		lists.removeAttr('attrdoesnotexist');
+		lists.removeAttr('attr bad input');
+		Assert.areEqual('', "#a".find().attr('attrdoesnotexist'));
+		Assert.areEqual('', "#b".find().attr('attrdoesnotexist'));
+		Assert.areEqual('', "#a".find().attr('attr bad input'));
+		Assert.areEqual('', "#b".find().attr('attr bad input'));
 	}
 
 	@Test 
 	public function hasClass()
 	{
-		Assert.areEqual(0, 1);
+		Assert.isFalse("#a1".find().hasClass('pickme'));
+		Assert.isTrue("#a2".find().hasClass('pickme'));
 	}
 
 	@Test 
 	public function hasClassOnNull()
 	{
-		Assert.areEqual(0, 1);
+		Assert.isFalse(nullQuery.hasClass('myclass'));
 	}
 
 	@Test 
 	public function hasClassOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		Assert.isFalse(emptyCollection.hasClass('myclass'));
+	}
+
+	@Test 
+	public function hasClassMultiple()
+	{
+		Assert.isFalse(lists.hasClass('pickme'));
+		Assert.isTrue(pickme.hasClass('pickme'));
+
+		// Try a collection with some of each... 
+		// It should only return true if all things are true
+		var q = new Query();
+		q.addCollection(lists);
+		q.addCollection(pickme);
+		Assert.isFalse(q.hasClass('pickme'));
+	}
+
+	@Test public function hasClassMultipleClassNames()
+	{
+		var q = "<p>My Paragraph</p>".parse();
+
+		q.addClass('first');
+		q.addClass('second');
+		q.addClass('fourth');
+
+		// single tests
+		Assert.isTrue(q.hasClass('first'));
+		Assert.isTrue(q.hasClass('second'));
+		Assert.isFalse(q.hasClass('third'));
+		Assert.isTrue(q.hasClass('fourth'));
+
+		// multiple true
+		Assert.isTrue(q.hasClass('first second'));
+		Assert.isTrue(q.hasClass('second first'));
+		Assert.isTrue(q.hasClass('second  first'));
+		Assert.isTrue(q.hasClass('second fourth first'));
+
+		// multiple false
+		Assert.isFalse(q.hasClass('third fifth'));
+
+		// multiple mixed
+		Assert.isFalse(q.hasClass('first second third'));
+		Assert.isFalse(q.hasClass('third fourth'));
 	}
 
 	@Test 
 	public function addClass()
 	{
-		Assert.areEqual(0, 1);
+		Assert.isFalse(h1.hasClass("first"));
+		h1.addClass('first');
+		Assert.isTrue(h1.hasClass("first"));
+		
+		Assert.isFalse(h1.hasClass("second"));
+		h1.addClass('second');
+		Assert.isTrue(h1.hasClass("second"));
+
+		Assert.areEqual("first second", h1.attr('class'));
+	}
+
+	@Test 
+	public function addClassMultipleClasses()
+	{
+		Assert.isFalse(h1.hasClass("first"));
+		Assert.isFalse(h1.hasClass("second"));
+		h1.addClass('first second');
+		Assert.isTrue(h1.hasClass("first"));
+		Assert.isTrue(h1.hasClass("second"));
+
+		Assert.areEqual("first second", h1.attr('class'));
 	}
 
 	@Test 
 	public function addClassThatAlreadyExists()
 	{
-		Assert.areEqual(0, 1);
+		Assert.isFalse(h1.hasClass("test"));
+		h1.addClass('test');
+		Assert.areEqual("test", h1.attr('class'));
+
+		// now add it again and check it doesn't double up
+		h1.addClass('test');
+		Assert.areEqual("test", h1.attr('class'));
 	}
 
 	@Test 
 	public function addClassOnNull()
 	{
-		Assert.areEqual(0, 1);
+		nullQuery.addClass('myclass');
+		Assert.isFalse(nullQuery.hasClass('myclass'));
 	}
 
 	@Test 
 	public function addClassOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		emptyCollection.addClass('myclass');
+		Assert.isFalse(emptyCollection.hasClass('myclass'));
 	}
 
 	@Test 
 	public function removeClass()
 	{
-		Assert.areEqual(0, 1);
+		Assert.isFalse(h1.hasClass("first"));
+		h1.addClass('first');
+		Assert.areEqual("first", h1.attr('class'));
+		
+		Assert.isFalse(h1.hasClass("second"));
+		h1.addClass('second');
+		Assert.areEqual("first second", h1.attr('class'));
+	}
+
+	@Test public function removeClassMultipleClassNames()
+	{
+		h1.addClass('first');
+		h1.addClass('second');
+		h1.addClass('fourth');
+		h1.addClass('fifth');
+		Assert.isTrue(h1.hasClass("first"));
+		Assert.isTrue(h1.hasClass("second"));
+		Assert.isFalse(h1.hasClass("third"));
+		Assert.isTrue(h1.hasClass("fourth"));
+
+		h1.removeClass('fourth fifth first');
+
+		Assert.areEqual("second", h1.attr('class'));
 	}
 
 	@Test 
 	public function removeClassWhereSomeDoNotExist()
 	{
-		Assert.areEqual(0, 1);
+		Assert.isFalse(h1.hasClass("third"));
+		h1.removeClass('third');
+		Assert.isFalse(h1.hasClass("third"));
+
+
+		h1.addClass('first');
+		h1.addClass('second');
+		h1.addClass('fourth');
+		h1.addClass('fifth');
+		Assert.isTrue(h1.hasClass("first"));
+		Assert.isTrue(h1.hasClass("second"));
+		Assert.isFalse(h1.hasClass("third"));
+		Assert.isTrue(h1.hasClass("fourth"));
+
+		h1.removeClass('fourth fifth third first');
+
+		Assert.areEqual("second", h1.attr('class'));
 	}
 
 	@Test 
 	public function removeClassOnNull()
 	{
-		Assert.areEqual(0, 1);
+		nullQuery.removeClass('myclass');
+		Assert.isFalse(nullQuery.hasClass('myclass'));
 	}
 
 	@Test 
 	public function removeClassOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		emptyCollection.removeClass('myclass');
+		Assert.isFalse(emptyCollection.hasClass('myclass'));
 	}
 
 	@Test 
 	public function toggleClass()
 	{
-		Assert.areEqual(0, 1);
+		// It doesn't exist, toggle it on
+		Assert.isFalse(h1.hasClass('first'));
+		h1.toggleClass('first');
+		Assert.isTrue(h1.hasClass('first'));
+
+		// it does exist, toggle it off
+		Assert.isTrue(h1.hasClass('first'));
+		h1.toggleClass('first');
+		Assert.isFalse(h1.hasClass('first'));
+
+		Assert.areEqual("", h1.attr('class'));
+	}
+
+	@Test public function toggleClassMultipleClassNames()
+	{
+		h1.toggleClass('first second fourth fifth');
+		Assert.isTrue(h1.hasClass('first second fourth fifth'));
+		Assert.isFalse(h1.hasClass('third'));
+
+		h1.toggleClass('second third fourth');
+		Assert.isTrue(h1.hasClass('first third fifth'));
+		Assert.isFalse(h1.hasClass('second fourth'));
+
+		Assert.areEqual('first fifth third', h1.attr('class'));
 	}
 
 	@Test 
 	public function toggleClassOnNull()
 	{
-		Assert.areEqual(0, 1);
+		nullQuery.toggleClass('myclass');
+		Assert.isFalse(nullQuery.hasClass('myclass'));
+
+		// no matter which side of the toggle this should return false
+		nullQuery.toggleClass('myclass');
+		Assert.isFalse(nullQuery.hasClass('myclass'));
 	}
 
 	@Test 
 	public function toggleClassOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		emptyCollection.toggleClass('myclass');
+		Assert.isFalse(emptyCollection.hasClass('myclass'));
+
+		// no matter which side of the toggle this should return false
+		emptyCollection.toggleClass('myclass');
+		Assert.isFalse(emptyCollection.hasClass('myclass'));
 	}
 
 	@Test 
 	public function tagName()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("h1", h1.tagName());
+		Assert.areEqual("ul", "#a".find().tagName());
+		Assert.areEqual("div", emptyNode.tagName());
 	}
 
 	@Test 
 	public function tagNameOnNull()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", nullQuery.tagName());
 	}
 
 	@Test 
 	public function tagNameOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", emptyCollection.tagName());
 	}
 
 	@Test 
 	public function tagNameOnMultiple()
 	{
-		Assert.areEqual(0, 1);
-	}
+		var q = new Query();
+		q.addCollection(lists);
+		q.addCollection(listItems);
 
-	@Test 
-	public function tagNames()
-	{
-		Assert.areEqual(0, 1);
-	}
-
-	@Test 
-	public function tagNamesOnNull()
-	{
-		Assert.areEqual(0, 1);
-	}
-
-	@Test 
-	public function tagNamesOnEmpty()
-	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("ul", q.tagName());
 	}
 
 	@Test 
@@ -255,21 +447,31 @@ class QueryElementManipulationTest
 	{
 		// The actual reading of "val" is done in single.ElementManipulation
 		// and we already have unit tests for that.
-
+		// Keep this simple:
 		// Make sure it reads the first Node in the set.
-		Assert.areEqual(0, 1);
+
+		var input1 = "<input type='text' value='attr' />".parse().getNode();
+		Reflect.setField(input1, "value", "value1");
+		input1.setVal("value1");
+		var input2 = "<input type='text' value='attr' />".parse().getNode();
+		input2.setVal("value2");
+		Reflect.setField(input2, "value", "value2");
+
+		var q = new Query().add(input1).add(input2);
+
+		Assert.areEqual("value1", q.val());
 	}
 
 	@Test 
 	public function valOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", emptyCollection.val());
 	}
 
 	@Test 
 	public function valOnNull()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", nullQuery.val());
 	}
 
 	@Test 
@@ -277,105 +479,149 @@ class QueryElementManipulationTest
 	{
 		// The actual setting of "val" is done in single.ElementManipulation
 		// and we already have unit tests for that.
-
+		// Keep this simple:
 		// Make sure it sets for every element
-		Assert.areEqual(0, 1);
+
+
+		var input1 = "<input type='text' value='attr' />".parse().getNode();
+		var input2 = "<input type='text' value='attr' />".parse().getNode();
+		Reflect.setField(input1, "value", "value1");
+		Reflect.setField(input2, "value", "value2");
+
+		var q = new Query().add(input1).add(input2);
+		q.setVal("newValue");
+
+		Assert.areEqual("newValue", q.val());
+		Assert.areEqual("newValue", q.getNode(0).val());
+		Assert.areEqual("newValue", q.getNode(1).val());
 	}
 
 	@Test 
 	public function setValOnNull()
 	{
-		Assert.areEqual(0, 1);
+		nullQuery.setVal("newvalue");
+		Assert.areEqual("", nullQuery.val());
 	}
 
 	@Test 
 	public function setValOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		emptyCollection.setVal("newvalue");
+		Assert.areEqual("", emptyCollection.val());
 	}
 
 	@Test 
 	public function textOnSingle()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("Title", h1.text());
+		Assert.areEqual("StartEnd", "#nonelements".find().text());
 	}
 
 	@Test 
 	public function textOnMultiple()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("22", pickme.text());
+		Assert.areEqual("123123", listItems.text());
+		Assert.areEqual("StartEnd", textNodes.text());
+		Assert.areEqual("Comment1Comment2", commentNodes.text());
+		Assert.areEqual("StartComment1EndComment2", "#nonelements".find().children(false).text());
 	}
 
 	@Test 
 	public function textOnNull()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", nullQuery.text());
 	}
 
 	@Test 
 	public function textOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", emptyCollection.text());
 	}
 
 	@Test 
 	public function setText()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("123123", listItems.text());
+		listItems.setText('a');
+		Assert.areEqual("aaaaaa", listItems.text());
 	}
 
 	@Test 
 	public function setTextOnNull()
 	{
-		Assert.areEqual(0, 1);
+		nullQuery.setText("My New Text");
+		Assert.areEqual("", nullQuery.text());
 	}
 
 	@Test 
 	public function setTextOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		emptyCollection.setText("My New Text");
+		Assert.areEqual("", emptyCollection.text());
 	}
 
 	@Test 
 	public function innerHTML()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("123123", listItems.innerHTML());
+
+		var html = "#nonelements".find().innerHTML();
+		Assert.areEqual("Start<!--Comment1-->End<!--Comment2-->", html);
+
+		Assert.isTrue('#a'.find().innerHTML().indexOf('</li>') > -1);
 	}
 
 	@Test 
 	public function innerHTMLOnNull()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", nullQuery.innerHTML());
 	}
 
 	@Test 
 	public function innerHTMLOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("", emptyCollection.innerHTML());
 	}
 
 	@Test 
 	public function setInnerHTML()
 	{
-		Assert.areEqual(0, 1);
+		Assert.areEqual("123123", listItems.innerHTML());
+		listItems.setInnerHTML('a');
+		Assert.areEqual("aaaaaa", listItems.innerHTML());
+
+		// Check this is actually creating elements
+		listItems.setInnerHTML('<a href="#">Link</a>');
+		Assert.areEqual(listItems.length, "a".find().length);
 	}
 
 	@Test 
 	public function setInnerHTMLOnNull()
 	{
-		Assert.areEqual(0, 1);
+		nullQuery.setInnerHTML("My Inner HTML");
+		Assert.areEqual("", nullQuery.innerHTML());
 	}
 
 	@Test 
 	public function setInnerHTMLOnEmpty()
 	{
-		Assert.areEqual(0, 1);
+		emptyCollection.setInnerHTML("My Inner HTML");
+		Assert.areEqual("", emptyCollection.innerHTML());
 	}
 
 	@Test 
 	public function chaining()
 	{
-		Assert.areEqual(0, 1);
+		// Run every possible chaining command
+		var returnValue = lists.setAttr("title", "hey").removeAttr("title")
+			.addClass("mylist").removeClass("mylist").toggleClass("mylist")
+			.setVal("value").setText("text").setInnerHTML("html");
+		
+		// Check that we're still looking at the same thing
+		Assert.areEqual(2, returnValue.length);
+		Assert.areEqual("a", returnValue.eq(0).attr('id'));
+		Assert.areEqual("b", returnValue.eq(1).attr('id'));
 	}
 
 }

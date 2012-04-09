@@ -313,7 +313,7 @@ class QueryTest
 		q2.addCollection(collection, true);
 		q3.addCollection(collection, false);
 
-		Assert.areEqual(2, q1.length);
+		Assert.areEqual(5, q1.length);
 		Assert.areEqual(2, q2.length);
 		Assert.areEqual(5, q3.length);
 	}
@@ -555,7 +555,8 @@ class QueryTest
 		var q = Query.parse("<div id='test1'>Hello</div><div id='test2'>World</div>");
 
 		Assert.areEqual(2, q.length);
-		Assert.areEqual("div div", q.tagNames().join(' '));
+		Assert.areEqual("div", q.eq(0).tagName());
+		Assert.areEqual("div", q.eq(1).tagName());
 	}
 
 	@Test 

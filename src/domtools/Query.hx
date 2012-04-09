@@ -42,11 +42,11 @@ class Query
 		{
 			add(node);
 		}
-		else if (collection != null)
+		if (collection != null)
 		{
 			addCollection(collection);
 		}
-		else if (selector != "")
+		if (selector != "")
 		{
 			var nodeList = document.querySelectorAll(selector, null);
 			
@@ -97,7 +97,7 @@ class Query
 		return this;
 	}
 
-	public function addCollection(collection:Iterable<Node>, ?elementsOnly = true):Query
+	public function addCollection(collection:Iterable<Node>, ?elementsOnly = false):Query
 	{
 		if (collection != null)
 		{
@@ -148,12 +148,21 @@ class Query
 	}
 
 	/** Use a function to return a filtered list. In future might allow a selector as well. */
-	public inline function filter(fn:Node->Bool)
+	public function filter(fn:Node->Bool)
 	{
-		return (fn != null) ? 
-			new Query(Lambda.filter(collection, fn))
-			 : 
-			this.clone();
+		var newCollection:Query;
+
+		if (fn != null)
+		{
+			var filtered = Lambda.filter(collection, fn);
+			newCollection = new Query(filtered);
+		}
+		else 
+		{
+			newCollection = new Query(collection);
+		}
+
+		return newCollection;
 	}
 
 	public function clone(?deep:Bool = true):Query

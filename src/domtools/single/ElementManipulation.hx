@@ -91,8 +91,8 @@ class ElementManipulation
 		var hasClass = true;
 		if (className.indexOf(' ') > -1)
 		{
-			// There are multiple class names
-			for (name in className.split(' '))
+			var anyWhitespace = ~/\s+/g;
+			for (name in anyWhitespace.split(className))
 			{
 				hasClass = testForClass(elm, name);
 				if (hasClass == false) break;
@@ -216,12 +216,35 @@ class ElementManipulation
 	
 	public static inline function text(elm:Node):String
 	{
-		return (elm == null) ? "" : elm.textContent;
+		var text = "";
+		if (elm != null) 
+		{
+			if (isElement(elm))
+			{
+				text = elm.textContent;
+			}
+			else 
+			{
+				text = elm.nodeValue;
+			}
+		}
+		return text;
 	}
 	
 	public static function setText(elm:Node, text:String):Node
 	{
-		if (elm != null) elm.textContent = text;
+		if (elm != null)
+		{
+			if (isElement(elm))
+			{
+				elm.textContent = text;
+			}
+			else 
+			{
+				elm.nodeValue = text;
+			}
+			
+		} 
 		return elm;
 	}
 
