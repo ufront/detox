@@ -32,13 +32,21 @@ class DOMManipulation
 		var firstChildUsed = false;
 		for (parent in parentCollection)
 		{
-			// if the first child has been used, then clone whichever of these is not null
-			childNode = (firstChildUsed || childNode == null) ? childNode : childNode.cloneNode(true);
-			childCollection = (firstChildUsed || childCollection == null) ? childCollection : childCollection.clone();
+			if (firstChildUsed)
+			{
+				// first time through use the actual nodes without cloning.
+				firstChildUsed = true;
+			}
+			else 
+			{
+				// clone these so we can attach to every element in collection
+				if (childNode != null) childNode = childNode.cloneNode(true);
+				if (childCollection != null) childCollection = childCollection.clone(true);
+			}
 
 			// now run the append from before
 			domtools.single.DOMManipulation.prepend(parent, childNode, childCollection);
-			firstChildUsed = true;
+			
 		}
 		return parentCollection;
 	}
@@ -98,10 +106,42 @@ class DOMManipulation
 		return content;
 	}
 
-	static public inline function insertThisAfter(content:Query, ?targetNode:Node = null, ?targetCollection:Query = null)
+	static public function insertThisAfter(content:Query, ?targetNode:Node = null, ?targetCollection:Query = null)
 	{
+		if (targetNode != null)
+		{
+			// because we are adding many, the target is changing.
+			var currentTarget:Node = targetNode;
+
+			// insert this collection of content into a single parent
+			for (childToAdd in content)
+			{
+				// insert a single child just before a single target
+				domtools.single.DOMManipulation.insertThisAfter(childToAdd, currentTarget);
+
+				// target the next one to go after this one
+				currentTarget = childToAdd;
+			}
+		}
+		else if (targetCollection != null)
+		{
+			// insert this collection of content just before this collection of targets
+			var firstChildUsed = false;
+			var childCollection = content;
+			for (target in targetCollection)
+			{
+				// if the first childCollection has been used, then clone it
+				childCollection = (firstChildUsed) ? childCollection : childCollection.clone();
+
+				// insert the (possibly cloned) collection into a single target node
+				insertThisAfter(childCollection, target);
+
+				// mark as used so next time we clone the children
+				firstChildUsed = true;
+			}
+		}
 		// insert content (collection) after target (node or collection)
-		return insertThisBefore(content, targetNode.nextSibling, domtools.collection.Traversing.next(targetCollection));
+		return content;
 	}
 
 	static public inline function beforeThisInsert(target:Query, contentNode:Node, contentCollection:Query)
