@@ -12,18 +12,18 @@ class DOMManipulation
 	/** Append the specified child to all nodes in this collection, cloning when necessary */
 	static public function append(parentCollection:Query, ?childNode:Node = null, ?childCollection:Query = null)
 	{
-		var firstChildUsed = true;
+		var firstChildUsed = false;
 		if (parentCollection != null)
 		{
 			for (parent in parentCollection)
 			{
 				// if the first child has been used, then clone whichever of these is not null
-				childNode = (firstChildUsed || childNode == null) ? childNode : childNode.cloneNode(true);
-				childCollection = (firstChildUsed || childCollection == null) ? childCollection : childCollection.clone();
+				childNode = (firstChildUsed && childNode != null) ? childNode.cloneNode(true) : childNode;
+				childCollection = (firstChildUsed && childCollection != null) ? childCollection.clone() : childCollection;
 
 				// now run the append from before
 				domtools.single.DOMManipulation.append(parent, childNode, childCollection);
-				firstChildUsed = false;
+				firstChildUsed = true;
 			}
 		}
 		return parentCollection;
@@ -37,7 +37,7 @@ class DOMManipulation
 		{
 			for (parent in parentCollection)
 			{
-				if (firstChildUsed)
+				if (firstChildUsed == false)
 				{
 					// first time through use the actual nodes without cloning.
 					firstChildUsed = true;
@@ -51,7 +51,6 @@ class DOMManipulation
 
 				// now run the prepend from single.DOMManipulation
 				domtools.single.DOMManipulation.prepend(parent, childNode, childCollection);
-				
 			}
 		}
 		return parentCollection;
