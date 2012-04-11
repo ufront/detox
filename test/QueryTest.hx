@@ -124,14 +124,11 @@ class QueryTest
 	{
 		var arr = ["#a1".find().getNode(), "#b2".find().getNode(), "#a3".find().getNode()];
 		var query = lists;
-		var nodelist = Query.document.querySelectorAll("li", null);
 
 		var q1 = new Query(arr);
 		var q2 = new Query(query);
-		var q3 = new Query(nodelist);
 		Assert.areEqual(3, q1.length);
 		Assert.areEqual(2, q2.length);
-		Assert.areEqual(6, q3.length);
 	}
 
 	@Test 
