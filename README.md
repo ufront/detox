@@ -236,7 +236,9 @@ Status
     <tr>
         <th>Element Manipulation</th>
         <td colspan="3">GOOD</td>
-        <td colspan="4">TESTSNOTRUN</td>   
+        <td colspan="2">TESTSNOTRUN</td>   
+        <td colspan="1">GOOD</td>
+        <td colspan="1">TESTSNOTRUN</td>   
         <td colspan="5">NOTIMPLEMENTED</td>    
     </tr>
     <tr>
@@ -249,14 +251,18 @@ Status
     </tr>
     <tr>
         <th>DOM Manipulation</th>
-        <td colspan="1">OKAY (most tests written)</td>  
-        <td colspan="6">TESTSNOTRUN</td>   
+        <td colspan="3">GOOD</td>
+        <td colspan="2">TESTSNOTRUN</td>   
+        <td colspan="1">GOOD</td>
+        <td colspan="1">TESTSNOTRUN</td>   
         <td colspan="5">NOTIMPLEMENTED</td>    
     </tr>
     <tr>
         <th>Traversing</th>
+        <td colspan="3">GOOD</td>
+        <td colspan="2">TESTSNOTRUN</td>   
         <td colspan="1">GOOD</td>
-        <td colspan="6">TESTSNOTRUN</td>   
+        <td colspan="1">TESTSNOTRUN</td>   
         <td colspan="5">NOTIMPLEMENTED</td>    
     </tr>
     <tr>
