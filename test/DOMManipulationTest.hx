@@ -78,9 +78,9 @@ class DOMManipulationTest
 		b = "#b".find().getNode();
 		a2 = "#a2".find().getNode();
 		nonElements = "#nonelements".find().getNode();
-		textNode1 = nonElements.children().getNode(0);
-		comment = nonElements.children().getNode(1);
-		textNode2 = nonElements.children().getNode(2);
+		textNode1 = nonElements.children(false).getNode(0);
+		comment = nonElements.children(false).getNode(1);
+		textNode2 = nonElements.children(false).getNode(2);
 		emptyNode = "#empty".find().getNode();
 		nullNode = null;
 

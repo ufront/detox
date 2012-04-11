@@ -13,15 +13,18 @@ class DOMManipulation
 	static public function append(parentCollection:Query, ?childNode:Node = null, ?childCollection:Query = null)
 	{
 		var firstChildUsed = true;
-		for (parent in parentCollection)
+		if (parentCollection != null)
 		{
-			// if the first child has been used, then clone whichever of these is not null
-			childNode = (firstChildUsed || childNode == null) ? childNode : childNode.cloneNode(true);
-			childCollection = (firstChildUsed || childCollection == null) ? childCollection : childCollection.clone();
+			for (parent in parentCollection)
+			{
+				// if the first child has been used, then clone whichever of these is not null
+				childNode = (firstChildUsed || childNode == null) ? childNode : childNode.cloneNode(true);
+				childCollection = (firstChildUsed || childCollection == null) ? childCollection : childCollection.clone();
 
-			// now run the append from before
-			domtools.single.DOMManipulation.append(parent, childNode, childCollection);
-			firstChildUsed = false;
+				// now run the append from before
+				domtools.single.DOMManipulation.append(parent, childNode, childCollection);
+				firstChildUsed = false;
+			}
 		}
 		return parentCollection;
 	}
@@ -30,23 +33,26 @@ class DOMManipulation
 	static public function prepend(parentCollection:Query, ?childNode:Node = null, ?childCollection:Query = null)
 	{
 		var firstChildUsed = false;
-		for (parent in parentCollection)
+		if (parentCollection != null)
 		{
-			if (firstChildUsed)
+			for (parent in parentCollection)
 			{
-				// first time through use the actual nodes without cloning.
-				firstChildUsed = true;
-			}
-			else 
-			{
-				// clone these so we can attach to every element in collection
-				if (childNode != null) childNode = childNode.cloneNode(true);
-				if (childCollection != null) childCollection = childCollection.clone(true);
-			}
+				if (firstChildUsed)
+				{
+					// first time through use the actual nodes without cloning.
+					firstChildUsed = true;
+				}
+				else 
+				{
+					// clone these so we can attach to every element in collection
+					if (childNode != null) childNode = childNode.cloneNode(true);
+					if (childCollection != null) childCollection = childCollection.clone(true);
+				}
 
-			// now run the append from before
-			domtools.single.DOMManipulation.prepend(parent, childNode, childCollection);
-			
+				// now run the prepend from single.DOMManipulation
+				domtools.single.DOMManipulation.prepend(parent, childNode, childCollection);
+				
+			}
 		}
 		return parentCollection;
 	}
@@ -71,36 +77,46 @@ class DOMManipulation
 	/** Prepend this node to the specified parent */
 	static public inline function prependTo(children:Query, ?parentNode:Node = null, ?parentCollection:Query = null)
 	{
-		// add this collection of children to a single parent Node
-		return insertThisBefore(children, parentNode.firstChild, domtools.collection.Traversing.firstChildren(parentCollection));
+		if (children != null)
+		{
+			children.collection.reverse();
+			for (child in children)
+			{
+				domtools.single.DOMManipulation.prependTo(child, parentNode, parentCollection);
+			}
+		}
+		return children;
 	}
 
 	static public function insertThisBefore(content:Query, ?targetNode:Node = null, ?targetCollection:Query = null)
 	{
-		if (targetNode != null)
+		if (content != null)
 		{
-			// insert this collection of content into a single parent
-			for (childToAdd in content)
+			if (targetNode != null)
 			{
-				// insert a single child just before a single target
-				domtools.single.DOMManipulation.insertThisBefore(childToAdd, targetNode);
+				// insert this collection of content into a single parent
+				for (childToAdd in content)
+				{
+					// insert a single child just before a single target
+					domtools.single.DOMManipulation.insertThisBefore(childToAdd, targetNode);
+				}
 			}
-		}
-		else if (targetCollection != null)
-		{
-			// insert this collection of content just before this collection of targets
-			var firstChildUsed = false;
-			var childCollection = content;
-			for (target in targetCollection)
+			if (targetCollection != null)
 			{
-				// if the first childCollection has been used, then clone it
-				childCollection = (firstChildUsed) ? childCollection : childCollection.clone();
+				// insert this collection of content just before this collection of targets
+				var firstChildUsed = false;
+				var childCollection = content;
+				for (target in targetCollection)
+				{
+					// if the first childCollection has been used, then clone it
+					childCollection = (firstChildUsed) ? childCollection.clone() : childCollection;
 
-				// insert the (possibly cloned) collection into a single target node
-				insertThisBefore(childCollection, target);
+					// insert the (possibly cloned) collection into a single target node
+					insertThisBefore(childCollection, target);
 
-				// mark as used so next time we clone the children
-				firstChildUsed = true;
+					// mark as used so next time we clone the children
+					firstChildUsed = true;
+				}
 			}
 		}
 		return content;
@@ -108,43 +124,46 @@ class DOMManipulation
 
 	static public function insertThisAfter(content:Query, ?targetNode:Node = null, ?targetCollection:Query = null)
 	{
-		if (targetNode != null)
+		if (content != null)
 		{
-			// because we are adding many, the target is changing.
-			var currentTarget:Node = targetNode;
-
-			// insert this collection of content into a single parent
-			for (childToAdd in content)
+			if (targetNode != null)
 			{
-				// insert a single child just before a single target
-				domtools.single.DOMManipulation.insertThisAfter(childToAdd, currentTarget);
+				// because we are adding many, the target is changing.
+				var currentTarget:Node = targetNode;
 
-				// target the next one to go after this one
-				currentTarget = childToAdd;
+				// insert this collection of content into a single parent
+				for (childToAdd in content)
+				{
+					// insert a single child just before a single target
+					domtools.single.DOMManipulation.insertThisAfter(childToAdd, currentTarget);
+
+					// target the next one to go after this one
+					currentTarget = childToAdd;
+				}
 			}
-		}
-		else if (targetCollection != null)
-		{
-			// insert this collection of content just before this collection of targets
-			var firstChildUsed = false;
-			var childCollection = content;
-			for (target in targetCollection)
+			else if (targetCollection != null)
 			{
-				// if the first childCollection has been used, then clone it
-				childCollection = (firstChildUsed) ? childCollection : childCollection.clone();
+				// insert this collection of content just before this collection of targets
+				var firstChildUsed = false;
+				var childCollection = content;
+				for (target in targetCollection)
+				{
+					// if the first childCollection has been used, then clone it
+					childCollection = (firstChildUsed) ? childCollection.clone() : childCollection;
 
-				// insert the (possibly cloned) collection into a single target node
-				insertThisAfter(childCollection, target);
+					// insert the (possibly cloned) collection into a single target node
+					insertThisAfter(childCollection, target);
 
-				// mark as used so next time we clone the children
-				firstChildUsed = true;
+					// mark as used so next time we clone the children
+					firstChildUsed = true;
+				}
 			}
 		}
 		// insert content (collection) after target (node or collection)
 		return content;
 	}
 
-	static public inline function beforeThisInsert(target:Query, contentNode:Node, contentCollection:Query)
+	static public inline function beforeThisInsert(target:Query, ?contentNode:Node, ?contentCollection:Query)
 	{
 		if (contentNode != null)
 		{
@@ -160,7 +179,7 @@ class DOMManipulation
 		return target;
 	}
 
-	static public inline function afterThisInsert(target:Query, contentNode:Node, contentCollection:Query)
+	static public inline function afterThisInsert(target:Query, ?contentNode:Node, ?contentCollection:Query)
 	{
 		if (contentNode != null)
 		{
@@ -179,32 +198,41 @@ class DOMManipulation
 	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
 	static public function remove(nodesToRemove:Query)
 	{
-		for (node in nodesToRemove)
+		if (nodesToRemove != null)
 		{
-			domtools.single.DOMManipulation.remove(node);
+			for (node in nodesToRemove)
+			{
+				domtools.single.DOMManipulation.remove(node);
+			}
 		}
 		return nodesToRemove;
 	}
 
 	/** Remove a child element from the DOM.  Return the parent */
-	static public function removeChildren(parents:Query, ?childrenToRemove:domtools.Query, ?childToRemove:Node)
+	static public function removeChildren(parents:Query, ?childToRemove:Node, ?childrenToRemove:domtools.Query)
 	{
-		throw "not implemented yet";
-		for (parent in parents)
+		if (parents != null)
 		{
-			domtools.single.DOMManipulation.removeChildren(parent, childToRemove, childrenToRemove);
+			for (parent in parents)
+			{
+				domtools.single.DOMManipulation.removeChildren(parent, childToRemove, childrenToRemove);
+			}
 		}
+			
 		return parents;
 	}
 
 	/** Empty the current element of all children. */
 	static public function empty(containers:Query)
 	{
-		for (container in containers)
+		if (containers != null)
 		{
-			while (container.hasChildNodes())
+			for (container in containers)
 			{
-				container.removeChild(container.firstChild);
+				while (container.hasChildNodes())
+				{
+					container.removeChild(container.firstChild);
+				}
 			}
 		}
 		
