@@ -183,18 +183,21 @@ class Query
 	public static inline function create(name:String):Element
 	{
 		var elm:Element = null;
-		try {
-			elm = untyped __js__("document").createElement(name);
-		} catch (e:Dynamic)
+		if (name != null)
 		{
-			elm = null;
+			try {
+				elm = untyped __js__("document").createElement(name);
+			} catch (e:Dynamic)
+			{
+				elm = null;
+			}
 		}
 		return elm;
 	}
 
 	public static inline function parse(html:String):Query
 	{
-		return Query.create("div").setInnerHTML(html).children(false);
+		return (html != null) ? Query.create("div").setInnerHTML(html).children(false) : new Query();
 	}
 
 	/*public static inline function create(str:String):Query
