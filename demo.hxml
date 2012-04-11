@@ -1,0 +1,21 @@
+#
+# TODO List Demo
+#
+
+# This library is needed to supply our DOM types.  
+# This would usually be imported automatically if we use "-lib domtools"
+-lib xirsys_stdjs 
+
+# Classpaths used for demo
+# cp for this demo
+-cp demo/todo
+# cp for "domtools"  Usually you would use "-lib domtools"
+-cp src/
+
+# The main class for our todo
+-main Main 						
+-js demo/todo/build/main-uncompressed.js
+
+# These two options should keep our code size right down
+--dead-code-elimination
+#-cmd haxelib run jsmin demo/todo/build/main-uncompressed.js demo/todo/build/main.js 3
