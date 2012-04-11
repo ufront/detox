@@ -7,6 +7,7 @@
 package domtools;
 
 import js.w3c.level3.Core;
+import js.w3c.level3.Events;
 import CommonJS; 
 import domtools.Query;
 
@@ -66,5 +67,19 @@ class Tools
 	public static function parse(html:String)
 	{
 		return Query.parse(html);
+	} 
+
+	/**
+	* A helper function that lets you do this in an event listener:
+	* e.target.toNode().toggleClass('selected')
+	*/
+	public static function toNode(eventHandler:EventTarget)
+	{
+		var elm:Node;
+		try {
+			elm = cast eventHandler;
+		} catch (e:Dynamic) { elm = null; }
+
+		return elm;
 	} 
 }
