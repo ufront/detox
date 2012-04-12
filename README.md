@@ -43,7 +43,7 @@ for (thisChild in myParent.children())
 
 // Or manipulate it like this:
 
-var mylink = "a".create;                // Create <a></a>
+var mylink = "a".create();              // Create <a></a>
 mylink.setText("My Link");              // <a>My Link</a>
 mylink.setAttr("href", "#");            // <a href="#">My Link</a>
 myLink.setInnerHTML("Hi <i>There</i>"); // <a href="#">Hi <i>There</i></a>
@@ -81,6 +81,27 @@ Future Aims
 -----------
 
 * Target all targets using haxe's built in XML support.  We can use SelectHXML for find().  Obviously style, animation and events won't make much sense on the server side, but certainly the general DOM manipulation and traversing will. 
+
+Demos
+=====
+
+Here are some very basic demos to show how it works.  Currently they are working in 
+both Firefox and Webkit, though our EventManagement code is not IE-friendly yet.  But
+none of you would be using IE, would you?
+
+*Todo List*
+
+* Code: https://github.com/jasononeil/domtools/tree/gh-pages/demo/todo
+* Example: http://jasononeil.github.com/domtools/demo/todo/build/
+* Demonstrates: Basic usage.  Creating elements, manipulating elements, reading from 
+  a form, traversing and moving things around the DOM.
+
+*Growl-Like Notifications*
+
+* Code: https://github.com/jasononeil/domtools/tree/gh-pages/demo/growl
+* Example: http://jasononeil.github.com/domtools/demo/growl/build/
+* Demonstrates: Basic usage as above.  Mostly demonstrates "Widgets" - how we can make
+  our own custom classes in haxe that are closely tied to Elements on our HTML page.
 
 Full Usage
 ==========
