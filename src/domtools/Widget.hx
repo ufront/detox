@@ -13,15 +13,14 @@ import domtools.Query;
 
 class Widget extends Query
 {
-	/** Create a new element of type "name", and add it to the collection.  
+	/** Create a new widget by parsing some "template" html, and use that as our collection.
 	When your class extends this, it will automatically work with the domtools API (through using).  
 	Therefore your class can have very tight integration between haxe features and the DOM. */
-	public function new(name:String)
+	public function new(template:String)
 	{
 		super();
 
-		var elm = Query.create(name);
-		
-		this.add(elm);
+		var q = Query.parse(template);
+		this.collection = q.collection;
 	}
 }
