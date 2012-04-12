@@ -397,7 +397,6 @@ domtools.single.EventManagement.__name__ = ["domtools","single","EventManagement
 domtools.single.EventManagement.on = function(target,eventType,listener) {
 	var elm = target;
 	elm.addEventListener(eventType,listener,false);
-	haxe.Log.trace("add",{ fileName : "EventManagement.hx", lineNumber : 131, className : "domtools.single.EventManagement", methodName : "on"});
 	return target;
 }
 domtools.single.EventManagement.submit = function(target,listener) {
