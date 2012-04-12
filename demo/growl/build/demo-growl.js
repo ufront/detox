@@ -29,7 +29,7 @@ domtools.Query.create = function(name) {
 	if(name != null) try {
 		elm = document.createElement(name);
 	} catch( e ) {
-		haxe.Log.trace("broken",{ fileName : "Query.hx", lineNumber : 192, className : "domtools.Query", methodName : "create"});
+		haxe.Log.trace("broken",{ fileName : "Query.hx", lineNumber : 215, className : "domtools.Query", methodName : "create"});
 		elm = null;
 	}
 	return elm;
