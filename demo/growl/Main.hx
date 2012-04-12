@@ -26,6 +26,8 @@ class Main
 
 			// Append this widget to our notifications area
 			"#notifications".find().prepend(n);
+
+			e.preventDefault();
 		});
 
 		// When the "Notify + Progress" button is clicked

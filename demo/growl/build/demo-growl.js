@@ -1780,6 +1780,7 @@ Main.run = function(e) {
 	domtools.collection.EventManagement.on(form,"submit",function(e1) {
 		var n = new Notification(domtools.collection.ElementManipulation.val(titleInput),domtools.collection.ElementManipulation.val(commentInput));
 		domtools.collection.DOMManipulation.prepend(domtools.Tools.find("#notifications"),null,n);
+		e1.preventDefault();
 	});
 	domtools.collection.EventManagement.on(domtools.Tools.find("#notifyWithProgress"),"click",function(e1) {
 		var n = new Notification(domtools.collection.ElementManipulation.val(titleInput),domtools.collection.ElementManipulation.val(commentInput));
