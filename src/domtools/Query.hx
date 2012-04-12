@@ -180,24 +180,43 @@ class Query
 		return collection.length;
 	}
 
-	public static inline function create(name:String):Element
+	public static inline function create(name:String):Node
 	{
-		var elm:Element = null;
+		var elm:Node = null;
 		if (name != null)
 		{
 			try {
 				elm = untyped __js__("document").createElement(name);
 			} catch (e:Dynamic)
 			{
+				trace ("broken");
 				elm = null;
 			}
 		}
 		return elm;
 	}
 
-	public static inline function parse(html:String):Query
+	public static function parse(html:String):Query
 	{
-		return (html != null) ? Query.create("div").setInnerHTML(html).children(false) : new Query();
+		var q:Query ;
+		if (html != null)
+		{
+			var n:Node = Query.create('div');
+			//
+			// TODO: report this bug to haxe mailing list.
+			// this is allowed:
+			// n.setInnerHTML("");
+			// But this doesn't get swapped out to it's "using" function
+			// Presumably because this class is a dependency of the DOMTools?
+			// Either way haxe shouldn't do that...
+			domtools.single.ElementManipulation.setInnerHTML(n, html);
+			q = domtools.single.Traversing.children(n, false);
+		}
+		else 
+		{
+			q = new Query();
+		}
+		return q;
 	}
 
 	/*public static inline function create(str:String):Query
