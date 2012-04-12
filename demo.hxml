@@ -1,0 +1,36 @@
+#
+# TODO List Demo
+#
+
+# Use our library.
+-lib domtools 
+
+# Classpaths used for demo
+-cp demo/todo
+
+# The main class for our todo
+-main Main 						
+-js demo/todo/build/demo-todo.js
+
+# This should keep our code size down
+--dead-code-elimination
+
+
+--next
+
+#
+# Growl Notifications Demo
+#
+
+# Use our library.
+-lib domtools 
+
+# Classpaths used for demo
+-cp demo/growl
+
+# The main class for our todo
+-main Main 						
+-js demo/growl/build/demo-growl.js
+
+# This should keep our code size down
+--dead-code-elimination
