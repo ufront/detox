@@ -6,7 +6,7 @@
 	<tag v="xml" />
 	<tag v="js" />
 	<description>A simple library that eases DOM work in haxe.  It aims to be similar to jQuery, but more haxe-like, and hopefully one day portable to targets other than client side js.</description>
-	<version name="0.6.1.1">More major changes, API breakages.  Added lots of unit tests, should be getting more reliable.  See README on github for where it's up to.  Should settle on a stable API soon.</version>
+	<version name="0.7.0.0">Added many more unit tests.  These functions now work reliably cross browser: Element Manipulation, Traversing, DOM Manipulation, Collections, Widgets.  Event Management mostly works in Firefox / Webkit, though is broken in IE.  This version fixes many bugs, and introduces some changes to the API.  See the README on Github for more details.  Demos also on Github.</version>
 	<depends name="xirsys_stdjs"/>
 	<depends name="jsmin"/>
 </project>
