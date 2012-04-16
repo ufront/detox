@@ -1,0 +1,16 @@
+#
+# Widget Notification
+#
+
+# Classpaths used for demo
+-cp demo/widgettemplate
+
+# The main class for our todo
+-main Main 						
+-js demo/widgettemplate/build/demo-widgettemplate.js
+
+# Use our library.
+-lib domtools 
+
+# This should keep our code size down
+--dead-code-elimination

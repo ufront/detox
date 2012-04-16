@@ -34,3 +34,4 @@
 
 # This should keep our code size down
 --dead-code-elimination
+
