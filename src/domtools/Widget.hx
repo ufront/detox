@@ -34,6 +34,7 @@ import js.w3c.level3.Core.Document;
 import CommonJS;
 import domtools.Query;
 
+
 class Widget extends Query
 {
 	/** Create a new widget by parsing some "template" html, and use that as our collection.
@@ -46,4 +47,5 @@ class Widget extends Query
 		var q = Query.parse(template);
 		this.collection = q.collection;
 	}
+
 }
