@@ -11,7 +11,7 @@ class Main
 
 	public static function run(e)
 	{
-		var view = new ContactView();
+		var view = new ContactView("Jason", "jason.oneil@gmail.com", 24);
 		var view2 = new mypackage.EmailView();
 		"body".find().append(view);
 		"body".find().append(view2);

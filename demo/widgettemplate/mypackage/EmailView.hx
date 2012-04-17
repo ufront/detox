@@ -3,7 +3,7 @@ import domtools.Widget;
 
 class EmailView extends Widget 
 {
-	static var tpl = domtools.Macros.loadTemplate();
+	static var tpl = Widget.loadTemplate();
 
 	public function new()
 	{
