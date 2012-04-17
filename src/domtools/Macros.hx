@@ -2,6 +2,7 @@ package domtools;
 
 import haxe.macro.Expr;
 import haxe.macro.Context;
+using StringTools;
 
 class Macros 
 {
@@ -11,6 +12,9 @@ class Macros
 	#if (js || macro)
 	@:macro public static function loadTemplate( ?fileName : Expr )
 	{
+		var p = Context.currentPos();
+
+		// Get the name of the file passed to the macro
 		var templateFile = switch( fileName.expr ) 
 		{
 			case EConst(c):
@@ -21,17 +25,29 @@ class Macros
 						null;
 				}
 			default: null;
-		}
+		} 
 
+		// If no file was passed, look for a file in the same spot but with ".tpl"
+		// instead of ".hx" at the end.
 		if( templateFile == null ) {
-			// classFile = path/to/Class.hx
-			// templateFile = classFile.replace('.hx', '.tpl')
-			//
-			templateFile = "default.tpl";
+			var currentFile = Context.getPosInfos(p).file;
+			templateFile = ~/\.hx$/.replace(currentFile, ".tpl");
 		}
 
-		var f = try neko.io.File.getContent(Context.resolvePath(templateFile)) catch( e : Dynamic ) Context.error(Std.string(e), fileName.pos);
-		var p = Context.currentPos();
+		var f:String;
+
+		try 
+		{
+			// Try to read the specified file
+			f = neko.io.File.getContent(Context.resolvePath(templateFile));
+		} 
+		catch( e : Dynamic ) 
+		{
+			// If it fails, give an error message at compile time
+			var errorMessage = "Could not load template: " + templateFile;
+			Context.error(errorMessage, p);
+		}
+
 		return { expr : EConst(CString(f)), pos : p };
 	}
 	#end
