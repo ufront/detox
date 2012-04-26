@@ -34,9 +34,9 @@ import js.w3c.level3.Core;
 class Traversing
 {
 	/** Return a new collection of all child nodes of the current collection. */
-	static public function children(query:Query, ?elementsOnly = true)
+	static public function children(query:DOMCollection, ?elementsOnly = true)
 	{
-		var children = new Query();
+		var children = new DOMCollection();
 		if (query != null)
 		{
 			for (node in query)
@@ -51,9 +51,9 @@ class Traversing
 		return children;
 	}
 
-	static public function firstChildren(query:Query, ?elementsOnly = true)
+	static public function firstChildren(query:DOMCollection, ?elementsOnly = true)
 	{
-		var children = new Query();
+		var children = new DOMCollection();
 		if (query != null)
 		{
 			for (node in query)
@@ -73,9 +73,9 @@ class Traversing
 		return children;
 	}
 
-	static public function lastChildren(query:Query, ?elementsOnly = true)
+	static public function lastChildren(query:DOMCollection, ?elementsOnly = true)
 	{
-		var children = new Query();
+		var children = new DOMCollection();
 		if (query != null)
 		{
 			for (node in query)
@@ -96,14 +96,14 @@ class Traversing
 	}
 
 	/** Gets the direct parents of each element in the collection. */
-	static public function parent(query:Query)
+	static public function parent(query:DOMCollection)
 	{
-		var parents = new Query();
+		var parents = new DOMCollection();
 		if (query != null)
 		{
 			for (node in query)
 			{
-				if (node.parentNode != null && node != domtools.Query.document)
+				if (node.parentNode != null && node != domtools.DOMCollection.document)
 					parents.add(node.parentNode);
 			}
 		}
@@ -111,7 +111,7 @@ class Traversing
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
-	static public function ancestors(query:Query):Query
+	static public function ancestors(query:DOMCollection):DOMCollection
 	{
 		// start with the direct parents
 		var ancestorList = parent(query);
@@ -127,9 +127,9 @@ class Traversing
 		return ancestorList;
 	}
 
-	static public function next(query:Query, ?elementsOnly:Bool = true)
+	static public function next(query:DOMCollection, ?elementsOnly:Bool = true)
 	{
-		var siblings = new Query();
+		var siblings = new DOMCollection();
 		if (query != null)
 		{
 			for (node in query)
@@ -153,9 +153,9 @@ class Traversing
 		return siblings;
 	}
 
-	static public function prev(query:Query, ?elementsOnly:Bool = true)
+	static public function prev(query:DOMCollection, ?elementsOnly:Bool = true)
 	{
-		var siblings = new Query();
+		var siblings = new DOMCollection();
 		if (query != null)
 		{
 			for (node in query)
@@ -179,9 +179,9 @@ class Traversing
 		return siblings;
 	}
 
-	static public function find(query:Query, selector:String)
+	static public function find(query:DOMCollection, selector:String)
 	{
-		var newQuery = new Query();
+		var newDOMCollection = new DOMCollection();
 		if (query != null && selector != null && selector != "")
 		{
 			for (node in query)
@@ -189,10 +189,10 @@ class Traversing
 				if (domtools.single.ElementManipulation.isElement(node))
 				{
 					var element:Element = cast node;
-					newQuery.addNodeList(element.querySelectorAll(selector));
+					newDOMCollection.addNodeList(element.querySelectorAll(selector));
 				}
 			}
 		}
-		return newQuery;
+		return newDOMCollection;
 	}
 }

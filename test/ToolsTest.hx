@@ -3,7 +3,7 @@ package;
 import massive.munit.Assert;
 
 import DOMTools;
-import domtools.Query;
+import domtools.DOMCollection;
 using DOMTools;
 
 /**
@@ -39,7 +39,7 @@ class ToolsTest
 			<p>Two</p>
 			<div></div>
 		</myxml>".parse();
-		Query.setDocument(sampleDocument.getNode());
+		DOMCollection.setDocument(sampleDocument.getNode());
 	}
 	
 	@After
@@ -49,7 +49,7 @@ class ToolsTest
 	}
 
 	//
-	// These are just a basic wrapper on some Query functions (new, create, parse)
+	// These are just a basic wrapper on some DOMCollection functions (new, create, parse)
 	// There are unit tests there, so just test that they work from a string.
 	// 
 

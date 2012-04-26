@@ -47,32 +47,32 @@ class ElementManipulation
 	static var NodeTypeComment = 8;
 	static var NodeTypeDocument = 9;
 
-	public static function isElement(node:Node):Bool
+	public static function isElement(node:DOMNode):Bool
 	{
 		return node != null && node.nodeType == NodeTypeElement;
 	}
 
-	public static function isComment(node:Node):Bool
+	public static function isComment(node:DOMNode):Bool
 	{
 		return node != null && node.nodeType == NodeTypeComment;
 	}
 
-	public static function isTextNode(node:Node):Bool
+	public static function isTextNode(node:DOMNode):Bool
 	{
 		return node != null && node.nodeType == NodeTypeText;
 	}
 
-	public static function isDocument(node:Node):Bool
+	public static function isDocument(node:DOMNode):Bool
 	{
 		return node != null && node.nodeType == NodeTypeDocument;
 	}
 
-	public static function toQuery(n:Node):Query
+	public static function toQuery(n:DOMNode):DOMCollection
 	{
-		return new Query(n);
+		return new DOMCollection(n);
 	}
 
-	public static function attr(elm:Node, attName:String):String
+	public static function attr(elm:DOMNode, attName:String):String
 	{
 		var ret = "";
 		if (isElement(elm))
@@ -84,7 +84,7 @@ class ElementManipulation
 		return ret;
 	}
 
-	public static function setAttr(elm:Node, attName:String, attValue:String):Node
+	public static function setAttr(elm:DOMNode, attName:String, attValue:String):DOMNode
 	{
 		if (elm!= null && elm.nodeType == NodeTypeElement)
 		{
@@ -94,7 +94,7 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static function removeAttr(elm:Node, attName:String):Node
+	public static function removeAttr(elm:DOMNode, attName:String):DOMNode
 	{
 		if (elm!=null && elm.nodeType == NodeTypeElement)
 		{
@@ -104,12 +104,12 @@ class ElementManipulation
 		return elm;
 	}
 
-	private static inline function testForClass(elm:Node, className:String):Bool
+	private static inline function testForClass(elm:DOMNode, className:String):Bool
 	{
 		return ((" " + attr(elm, "class") + " ").indexOf(" " + className + " ") > -1);
 	}
 
-	public static function hasClass(elm:Node, className:String):Bool
+	public static function hasClass(elm:DOMNode, className:String):Bool
 	{
 		var hasClass = true;
 		if (className.indexOf(' ') > -1)
@@ -128,7 +128,7 @@ class ElementManipulation
 		return hasClass;
 	}
 
-	public static function addClass(elm:Node, className:String):Node
+	public static function addClass(elm:DOMNode, className:String):DOMNode
 	{
 		for (name in className.split(' '))
 		{
@@ -143,7 +143,7 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static function removeClass(elm:Node, className:String):Node
+	public static function removeClass(elm:DOMNode, className:String):DOMNode
 	{
 		// Get the current list of classes
 		var classes = attr(elm, "class").split(" ");
@@ -162,7 +162,7 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static function toggleClass(elm:Node, className:String):Node
+	public static function toggleClass(elm:DOMNode, className:String):DOMNode
 	{
 		for (name in className.split(' '))
 		{
@@ -178,12 +178,12 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static inline function tagName(elm:Node):String
+	public static inline function tagName(elm:DOMNode):String
 	{
 		return (elm == null) ? "" : elm.nodeName.toLowerCase();
 	}
 
-	public static function val(node:Node):String
+	public static function val(node:DOMNode):String
 	{
 		var val = "";
 
@@ -213,7 +213,7 @@ class ElementManipulation
 		return val;
 	}
 
-	public static function setVal(node:Node, val:Dynamic)
+	public static function setVal(node:DOMNode, val:Dynamic)
 	{
 		if (node != null)
 		{
@@ -237,7 +237,7 @@ class ElementManipulation
 		return node;
 	}
 	
-	public static inline function text(elm:Node):String
+	public static inline function text(elm:DOMNode):String
 	{
 		var text = "";
 		if (elm != null) 
@@ -254,7 +254,7 @@ class ElementManipulation
 		return text;
 	}
 	
-	public static function setText(elm:Node, text:String):Node
+	public static function setText(elm:DOMNode, text:String):DOMNode
 	{
 		if (elm != null)
 		{
@@ -271,7 +271,7 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static function innerHTML(elm:Node):String
+	public static function innerHTML(elm:DOMNode):String
 	{
 		var ret = "";
 		if (elm != null)
@@ -288,7 +288,7 @@ class ElementManipulation
 		return ret;
 	}
 
-	public static function setInnerHTML(elm:Node, html:String):Node
+	public static function setInnerHTML(elm:DOMNode, html:String):DOMNode
 	{
 		if (elm != null)
 		{
@@ -304,7 +304,7 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static inline function clone(elm:Node, ?deep:Bool = true):Node
+	public static inline function clone(elm:DOMNode, ?deep:Bool = true):DOMNode
 	{
 		return (elm == null) ? null : elm.cloneNode(deep);
 	}

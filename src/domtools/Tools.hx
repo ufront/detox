@@ -32,7 +32,7 @@ package domtools;
 import js.w3c.level3.Core;
 import js.w3c.level3.Events;
 import CommonJS; 
-import domtools.Query;
+import domtools.DOMCollection;
 
 /** 
 * Designed to be used with "using domtools.Tools;" this gives you access
@@ -71,7 +71,7 @@ class Tools
 	*/
 	public static function find(selector:String)
 	{
-		return new Query(selector);
+		return new DOMCollection(selector);
 	} 
 
 	/**
@@ -80,7 +80,7 @@ class Tools
 	*/
 	public static function create(elmName:String)
 	{
-		return Query.create(elmName);
+		return DOMCollection.create(elmName);
 	}
 
 	/**
@@ -89,7 +89,7 @@ class Tools
 	*/
 	public static function parse(html:String)
 	{
-		return Query.parse(html);
+		return DOMCollection.parse(html);
 	} 
 
 	/**
@@ -98,7 +98,7 @@ class Tools
 	*/
 	public static function toNode(eventHandler:EventTarget)
 	{
-		var elm:Node;
+		var elm:DOMNode;
 		try {
 			elm = cast eventHandler;
 		} catch (e:Dynamic) { elm = null; }

@@ -45,19 +45,20 @@ package domtools;
 * - parse()
 **/
 import js.w3c.level3.Core;
+import domtools.DOMNode;
 import UserAgentContext;
 import CommonJS;
 import DOMTools;
 using DOMTools;
 
-class Query
+class DOMCollection
 {
 	public var collection(default,null):Array<Node>;
 	public var length(get_length,null):Int;
 	public static var document(get_document,null):DocumentOrElement;
 	public static var window(get_window,null):Window;
 
-	public function new(?selector:String = "", ?node:Node = null, ?collection:Iterable<Node>)
+	public function new(?selector:String = "", ?node:DOMNode = null, ?collection:Iterable<Node>)
 	{
 		this.collection = new Array();
 
@@ -95,7 +96,7 @@ class Query
 
 	public inline function eq(?i:Int = 0)
 	{
-		return new Query(getNode(i));
+		return new DOMCollection(getNode(i));
 	}
 
 	public inline function first()
@@ -108,7 +109,7 @@ class Query
 		return eq(this.length - 1);
 	}
 
-	public inline function add(node:Node):Query
+	public inline function add(node:DOMNode):DOMCollection
 	{
 		if (node != null)
 		{
@@ -120,7 +121,7 @@ class Query
 		return this;
 	}
 
-	public function addCollection(collection:Iterable<Node>, ?elementsOnly = false):Query
+	public function addCollection(collection:Iterable<Node>, ?elementsOnly = false):DOMCollection
 	{
 		if (collection != null)
 		{
@@ -134,7 +135,7 @@ class Query
 		return this;
 	}
 
-	public function addNodeList(nodeList:NodeList, ?elementsOnly = true):Query
+	public function addNodeList(nodeList:NodeList, ?elementsOnly = true):DOMCollection
 	{
 		for (i in 0...nodeList.length)
 		{
@@ -148,7 +149,7 @@ class Query
 		return this;
 	}
 
-	public function removeFromCollection(?node:Node, ?nodeCollection:Query):Query
+	public function removeFromCollection(?node:DOMNode, ?nodeCollection:DOMCollection):DOMCollection
 	{
 		if (node != null)
 		{
@@ -164,33 +165,33 @@ class Query
 		return this;
 	}
 
-	public inline function each(f : Node -> Void):Query
+	public inline function each(f : Node -> Void):DOMCollection
 	{
 		if (f != null) { Lambda.iter(collection, f); }
 		return this; 
 	}
 
 	/** Use a function to return a filtered list. In future might allow a selector as well. */
-	public function filter(fn:Node->Bool)
+	public function filter(fn:DOMNode->Bool)
 	{
-		var newCollection:Query;
+		var newCollection:DOMCollection;
 
 		if (fn != null)
 		{
 			var filtered = Lambda.filter(collection, fn);
-			newCollection = new Query(filtered);
+			newCollection = new DOMCollection(filtered);
 		}
 		else 
 		{
-			newCollection = new Query(collection);
+			newCollection = new DOMCollection(collection);
 		}
 
 		return newCollection;
 	}
 
-	public function clone(?deep:Bool = true):Query
+	public function clone(?deep:Bool = true):DOMCollection
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		for (node in this)
 		{
 			q.add(node.cloneNode(deep));
@@ -203,9 +204,9 @@ class Query
 		return collection.length;
 	}
 
-	public static inline function create(name:String):Node
+	public static inline function create(name:String):DOMNode
 	{
-		var elm:Node = null;
+		var elm:DOMNode = null;
 		if (name != null)
 		{
 			try {
@@ -219,12 +220,12 @@ class Query
 		return elm;
 	}
 
-	public static function parse(html:String):Query
+	public static function parse(html:String):DOMCollection
 	{
-		var q:Query ;
+		var q:DOMCollection ;
 		if (html != null)
 		{
-			var n:Node = Query.create('div');
+			var n:DOMNode = DOMCollection.create('div');
 			//
 			// TODO: report this bug to haxe mailing list.
 			// this is allowed:
@@ -237,14 +238,14 @@ class Query
 		}
 		else 
 		{
-			q = new Query();
+			q = new DOMCollection();
 		}
 		return q;
 	}
 
-	/*public static inline function create(str:String):Query
+	/*public static inline function create(str:String):DOMCollection
 	{
-		return new Query(Query.createElement(str));
+		return new DOMCollection(DOMCollection.createElement(str));
 	}*/
 
 
@@ -263,7 +264,7 @@ class Query
 		return document;
 	}
 
-	public static function setDocument(newDocument:Node)
+	public static function setDocument(newDocument:DOMNode)
 	{
 		// Only change the document if it has the right NodeType
 		if (newDocument != null)
@@ -277,13 +278,3 @@ class Query
 		}
 	}
 }
-
-typedef Node = js.w3c.level3.Core.Node;
-typedef Event = js.w3c.level3.Events.Event;
-
-typedef DocumentOrElement = {> Node,
-	var querySelector:DOMString->Dynamic->Element;
-	var querySelectorAll:DOMString->Dynamic->NodeList;
-}
-
-import domtools.Tools;

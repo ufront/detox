@@ -32,12 +32,12 @@ package domtools.collection;
 class ElementManipulation
 {
 	/** Assume we're operating on the first element. */
-	public static function attr(query:Query, attName:String):String
+	public static function attr(query:DOMCollection, attName:String):String
 	{
 		return (query != null && query.length > 0) ? domtools.single.ElementManipulation.attr(query.getNode(), attName) : "";
 	}
 
-	public static function setAttr(query:Query, attName:String, attValue:String):Query
+	public static function setAttr(query:DOMCollection, attName:String, attValue:String):DOMCollection
 	{
 		if (query != null)
 		{
@@ -49,7 +49,7 @@ class ElementManipulation
 		return query;
 	}
 
-	public static function removeAttr(query:Query, attName:String):Query
+	public static function removeAttr(query:DOMCollection, attName:String):DOMCollection
 	{
 		if (query != null)
 		{
@@ -62,7 +62,7 @@ class ElementManipulation
 	}
 
 	/** Checks if every element in the collection has the given class */
-	public static function hasClass(query:Query, className:String):Bool
+	public static function hasClass(query:DOMCollection, className:String):Bool
 	{
 		var result = false;
 
@@ -85,7 +85,7 @@ class ElementManipulation
 		return result;
 	}
 
-	public static function addClass(query:Query, className:String):Query
+	public static function addClass(query:DOMCollection, className:String):DOMCollection
 	{
 		if (query != null)
 		{
@@ -97,7 +97,7 @@ class ElementManipulation
 		return query;
 	}
 
-	public static function removeClass(query:Query, className:String):Query
+	public static function removeClass(query:DOMCollection, className:String):DOMCollection
 	{
 		if (query != null)
 		{
@@ -109,7 +109,7 @@ class ElementManipulation
 		return query;
 	}
 
-	public static function toggleClass(query:Query, className:String):Query
+	public static function toggleClass(query:DOMCollection, className:String):DOMCollection
 	{
 		if (query != null)
 		{
@@ -121,17 +121,17 @@ class ElementManipulation
 		return query;
 	}
 
-	public static inline function tagName(query:Query):String
+	public static inline function tagName(query:DOMCollection):String
 	{
 		return (query != null && query.length > 0) ? domtools.single.ElementManipulation.tagName(query.getNode()) : "";
 	}
 
-	public static function val(query:Query):String
+	public static function val(query:DOMCollection):String
 	{
 		return (query != null && query.length > 0) ? domtools.single.ElementManipulation.val(query.getNode()) : "";
 	}
 
-	public static function setVal(query:Query, val:Dynamic)
+	public static function setVal(query:DOMCollection, val:Dynamic)
 	{
 		var value = Std.string(val);
 		if (query != null)
@@ -144,7 +144,7 @@ class ElementManipulation
 		return query;
 	}
 	
-	public static function text(query:Query):String
+	public static function text(query:DOMCollection):String
 	{
 		var text = "";
 		if (query != null)
@@ -157,7 +157,7 @@ class ElementManipulation
 		return text;
 	}
 	
-	public static function setText(query:Query, text:String):Query
+	public static function setText(query:DOMCollection, text:String):DOMCollection
 	{
 		if (query != null)
 		{
@@ -169,7 +169,7 @@ class ElementManipulation
 		return query;
 	}
 
-	public static function innerHTML(query:Query):String
+	public static function innerHTML(query:DOMCollection):String
 	{
 		var ret = "";
 		if (query != null)
@@ -182,7 +182,7 @@ class ElementManipulation
 		return ret;
 	}
 
-	public static function setInnerHTML(query:Query, html:String):Query
+	public static function setInnerHTML(query:DOMCollection, html:String):DOMCollection
 	{
 		if (query != null)
 		{

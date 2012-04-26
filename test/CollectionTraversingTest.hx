@@ -4,14 +4,15 @@ import massive.munit.Assert;
 
 import DOMTools;
 using DOMTools;
-import domtools.Query;
+import domtools.DOMCollection;
+import domtools.DOMNode;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
 * This is an example test class can be used as a template for writing normal and async tests 
 * Refer to munit command line tool for more information (haxelib run munit)
 */
-class QueryTraversingTest 
+class CollectionTraversingTest 
 {
 	public function new() 
 	{
@@ -29,9 +30,9 @@ class QueryTraversingTest
 		// trace ("AfterClass");
 	}
 
-	var sampleDocument:Query;
-	var nullQuery:Query;
-	var emptyQuery:Query;
+	var sampleDocument:DOMCollection;
+	var nullDOMCollection:DOMCollection;
+	var emptyDOMCollection:DOMCollection;
 	
 	@Before
 	public function setup():Void
@@ -62,10 +63,10 @@ class QueryTraversingTest
 				</div>
 			</div>
 		</myxml>".parse();
-		nullQuery = null;
-		emptyQuery = new Query();
+		nullDOMCollection = null;
+		emptyDOMCollection = new DOMCollection();
 
-		Query.setDocument(sampleDocument.getNode());
+		DOMCollection.setDocument(sampleDocument.getNode());
 
 	}
 	
@@ -94,7 +95,7 @@ class QueryTraversingTest
 	@Test 
 	public function children_onNull()
 	{
-		Assert.areEqual(0, nullQuery.children().length);
+		Assert.areEqual(0, nullDOMCollection.children().length);
 	}
 
 	@Test 
@@ -108,7 +109,7 @@ class QueryTraversingTest
 	@Test 
 	public function children_onEmptyCollection()
 	{
-		Assert.areEqual(0, emptyQuery.children().length);
+		Assert.areEqual(0, emptyDOMCollection.children().length);
 	}
 
 	@Test 
@@ -132,7 +133,7 @@ class QueryTraversingTest
 	@Test 
 	public function firstChildren_onNull()
 	{
-		Assert.areEqual(0, nullQuery.firstChildren().length);
+		Assert.areEqual(0, nullDOMCollection.firstChildren().length);
 	}
 
 	@Test 
@@ -146,7 +147,7 @@ class QueryTraversingTest
 	@Test 
 	public function firstChildren_onEmptyCollection()
 	{
-		Assert.areEqual(0, emptyQuery.firstChildren().length);
+		Assert.areEqual(0, emptyDOMCollection.firstChildren().length);
 	}
 
 	@Test 
@@ -170,13 +171,13 @@ class QueryTraversingTest
 	@Test 
 	public function lastChildren_onNull()
 	{
-		Assert.areEqual(0, nullQuery.lastChildren().length);
+		Assert.areEqual(0, nullDOMCollection.lastChildren().length);
 	}
 
 	@Test 
 	public function lastChildren_onEmptyCollection()
 	{
-		Assert.areEqual(0, emptyQuery.lastChildren().length);
+		Assert.areEqual(0, emptyDOMCollection.lastChildren().length);
 	}
 
 	@Test 
@@ -197,21 +198,21 @@ class QueryTraversingTest
 	@Test 
 	public function parent_onNull()
 	{
-		Assert.areEqual(0, nullQuery.parent().length);
+		Assert.areEqual(0, nullDOMCollection.parent().length);
 	}
 
 	@Test 
 	public function parent_onEmptyCollection()
 	{
-		Assert.areEqual(0, emptyQuery.parent().length);
+		Assert.areEqual(0, emptyDOMCollection.parent().length);
 	}
 
 	@Test 
 	public function parent_onElementWithNoParent()
 	{
 		// eg Document
-		var doc:Node = untyped __js__('document');
-		var q = new Query(doc);
+		var doc:DOMNode = untyped __js__('document');
+		var q = new DOMCollection(doc);
 		Assert.areEqual(0, q.parent().length);
 	}
 
@@ -230,21 +231,21 @@ class QueryTraversingTest
 	@Test 
 	public function ancestors_onNull()
 	{
-		Assert.areEqual(0, nullQuery.ancestors().length);
+		Assert.areEqual(0, nullDOMCollection.ancestors().length);
 	}
 
 	@Test 
 	public function ancestors_onEmptyCollection()
 	{
-		Assert.areEqual(0, emptyQuery.ancestors().length);
+		Assert.areEqual(0, emptyDOMCollection.ancestors().length);
 	}
 
 	@Test 
 	public function ancestors_onElementWithNoParents()
 	{
 		// eg Document
-		var doc:Node = untyped __js__('document');
-		var q = new Query(doc);
+		var doc:DOMNode = untyped __js__('document');
+		var q = new DOMCollection(doc);
 		var a = q.ancestors();
 		Assert.areEqual(0, a.length);
 	}
@@ -261,19 +262,19 @@ class QueryTraversingTest
 	@Test 
 	public function next_onNull()
 	{
-		Assert.areEqual(0, nullQuery.next().length);
+		Assert.areEqual(0, nullDOMCollection.next().length);
 	}
 
 	@Test 
 	public function next_onEmpty()
 	{
-		Assert.areEqual(0, emptyQuery.next().length);
+		Assert.areEqual(0, emptyDOMCollection.next().length);
 	}
 
 	@Test 
 	public function next_onLast()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		q.addCollection('#a4'.find()); // no next()
 		q.addCollection('#b4'.find()); // no next()
 		q.addCollection('#b3'.find()); // next() = '#b4'
@@ -304,19 +305,19 @@ class QueryTraversingTest
 	@Test 
 	public function prev_onNull()
 	{
-		Assert.areEqual(0, nullQuery.prev().length);
+		Assert.areEqual(0, nullDOMCollection.prev().length);
 	}
 
 	@Test 
 	public function prev_onEmpty()
 	{
-		Assert.areEqual(0, emptyQuery.prev().length);
+		Assert.areEqual(0, emptyDOMCollection.prev().length);
 	}
 
 	@Test 
 	public function prev_onFirst()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		q.addCollection('#a1'.find()); // no prev()
 		q.addCollection('#b1'.find()); // no prev()
 		q.addCollection('#b2'.find()); // prev() = '#b1'
@@ -347,13 +348,13 @@ class QueryTraversingTest
 	@Test 
 	public function find_onNull()
 	{
-		Assert.areEqual(0, nullQuery.find('li').length);
+		Assert.areEqual(0, nullDOMCollection.find('li').length);
 	}
 
 	@Test 
 	public function find_onEmpty()
 	{
-		Assert.areEqual(0, emptyQuery.find('li').length);
+		Assert.areEqual(0, emptyDOMCollection.find('li').length);
 	}
 
 	@Test 

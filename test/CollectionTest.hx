@@ -2,7 +2,8 @@ package;
 
 import massive.munit.Assert;
 
-import domtools.Query;
+import domtools.DOMCollection;
+import domtools.DOMNode;
 using DOMTools;
 
 /**
@@ -10,7 +11,7 @@ using DOMTools;
 * This is an example test class can be used as a template for writing normal and async tests 
 * Refer to munit command line tool for more information (haxelib run munit)
 */
-class QueryTest 
+class CollectionTest 
 {
 	
 	public function new() 
@@ -29,12 +30,12 @@ class QueryTest
 		// trace ("AfterClass");
 	}
 
-	var sampleDocument:Query;
-	var h1:Query;
-	var lists:Query;
-	var list1:Query;
-	var list2:Query;
-	var listItems:Query;
+	var sampleDocument:DOMCollection;
+	var h1:DOMCollection;
+	var lists:DOMCollection;
+	var list1:DOMCollection;
+	var list2:DOMCollection;
+	var listItems:DOMCollection;
 	
 	@Before
 	public function setup():Void
@@ -77,7 +78,7 @@ class QueryTest
 		</table>
 		</myxml>".parse();
 
-		Query.setDocument(sampleDocument.getNode());
+		DOMCollection.setDocument(sampleDocument.getNode());
 
 		h1 = "h1".find();
 		lists = "ul".find();
@@ -95,16 +96,16 @@ class QueryTest
 	@Test 
 	public function createEmptyQuery()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		Assert.areEqual(0, q.length);
 	}
 
 	@Test 
 	public function createQueryFromSelector()
 	{
-		var q1 = new Query("div");
-		var q2 = new Query("li");
-		var q3 = new Query("table > *");
+		var q1 = new DOMCollection("div");
+		var q2 = new DOMCollection("li");
+		var q3 = new DOMCollection("table > *");
 		Assert.areEqual(1, q1.length);
 		Assert.areEqual(6, q2.length);
 		Assert.areEqual(2, q3.length);
@@ -113,8 +114,8 @@ class QueryTest
 	@Test 
 	public function createQueryFromNode()
 	{
-		var q1 = new Query(h1.getNode());
-		var q2 = new Query(list1.getNode());
+		var q1 = new DOMCollection(h1.getNode());
+		var q2 = new DOMCollection(list1.getNode());
 		Assert.areEqual(1, q1.length);
 		Assert.areEqual(1, q2.length);
 	}
@@ -125,8 +126,8 @@ class QueryTest
 		var arr = ["#a1".find().getNode(), "#b2".find().getNode(), "#a3".find().getNode()];
 		var query = lists;
 
-		var q1 = new Query(arr);
-		var q2 = new Query(query);
+		var q1 = new DOMCollection(arr);
+		var q2 = new DOMCollection(query);
 		Assert.areEqual(3, q1.length);
 		Assert.areEqual(2, q2.length);
 	}
@@ -146,7 +147,7 @@ class QueryTest
 	public function iteratorOnEmpty()
 	{
 		var total = 0;
-		for (i in new Query())
+		for (i in new DOMCollection())
 		{
 			total++;
 		}
@@ -157,7 +158,7 @@ class QueryTest
 	public function getNodeFirst()
 	{
 		// if we can access the nodeType property, then we know we're on a Node 
-		Assert.areEqual(Node.ELEMENT_NODE, h1.getNode().nodeType);
+		Assert.areEqual(DOMNode.ELEMENT_NODE, h1.getNode().nodeType);
 	}
 
 	@Test 
@@ -169,7 +170,7 @@ class QueryTest
 	@Test 
 	public function getNodeFromEmpty()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		Assert.isNull(q.getNode());
 	}
 
@@ -211,7 +212,7 @@ class QueryTest
 	@Test 
 	public function firstOnEmpty()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		Assert.areEqual(0, q.first().length);
 		Assert.areEqual("", q.first().attr("id"));
 	}
@@ -226,7 +227,7 @@ class QueryTest
 	@Test 
 	public function lastOnEmpty()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		Assert.areEqual(0, q.last().length);
 		Assert.areEqual("", q.last().attr("id"));
 	}
@@ -234,7 +235,7 @@ class QueryTest
 	@Test 
 	public function add()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		Assert.areEqual(0, q.length);
 		
 		q.add(h1.getNode());
@@ -247,7 +248,7 @@ class QueryTest
 	@Test 
 	public function addNull()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		q.add(null);
 		Assert.areEqual(0, q.length);
 	}
@@ -255,7 +256,7 @@ class QueryTest
 	@Test 
 	public function addAlreadyInCollection()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		Assert.areEqual(0, q.length);
 		
 		q.add(h1.getNode());
@@ -269,7 +270,7 @@ class QueryTest
 	@Test 
 	public function addCollection()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		var arr = ["h1".create(), "h2".create(), "h3".create()];
 		q.addCollection(arr);
 
@@ -279,8 +280,8 @@ class QueryTest
 	@Test 
 	public function addCollectionNull()
 	{
-		var q = new Query();
-		var arr:Array<Node> = null;
+		var q = new DOMCollection();
+		var arr:Array<DOMNode> = null;
 		q.addCollection(arr);
 		
 		Assert.areEqual(0, q.length);
@@ -289,7 +290,7 @@ class QueryTest
 	@Test 
 	public function addCollectionWithNull()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		var arr = ["h1".create(), null, "h3".create()];
 		q.addCollection(arr);
 		
@@ -299,11 +300,11 @@ class QueryTest
 	@Test 
 	public function addCollectionElementsOnly()
 	{
-		var q1 = new Query();
-		var q2 = new Query();
-		var q3 = new Query();
+		var q1 = new DOMCollection();
+		var q2 = new DOMCollection();
+		var q3 = new DOMCollection();
 		var nodeList = "table".find().getNode().childNodes;
-		var collection = new Query().addNodeList(nodeList, false);
+		var collection = new DOMCollection().addNodeList(nodeList, false);
 		
 		// The default should be true
 		q1.addCollection(collection);
@@ -318,8 +319,8 @@ class QueryTest
 	@Test 
 	public function addNodeList()
 	{
-		var q = new Query();
-		var nodeList = Query.document.querySelectorAll("li", null);
+		var q = new DOMCollection();
+		var nodeList = DOMCollection.document.querySelectorAll("li", null);
 		q.addNodeList(nodeList);
 		Assert.areEqual(6, q.length);
 	}
@@ -327,9 +328,9 @@ class QueryTest
 	@Test 
 	public function addNodeListElementsOnly()
 	{
-		var q1 = new Query();
-		var q2 = new Query();
-		var q3 = new Query();
+		var q1 = new DOMCollection();
+		var q2 = new DOMCollection();
+		var q3 = new DOMCollection();
 		var nodeList = "table".find().getNode().childNodes;
 		
 		// The default should be true
@@ -415,7 +416,7 @@ class QueryTest
 	@Test 
 	public function eachOnEmpty()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		var total = 0;
 		q.each(function (li) {
 			// Count the total number of times this function is called
@@ -451,7 +452,7 @@ class QueryTest
 	@Test 
 	public function filterOnEmpty()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		var total = 0;
 
 		var filteredList = q.filter(function (li) {
@@ -506,7 +507,7 @@ class QueryTest
 	@Test 
 	public function create() 
 	{
-		var div:Node = Query.create("div");
+		var div:DOMNode = DOMCollection.create("div");
 		Assert.areEqual("div", div.tagName());
 		Assert.areEqual("", div.innerHTML());
 	}
@@ -514,32 +515,32 @@ class QueryTest
 	@Test 
 	public function createBadInput() 
 	{
-		var elm:Node = Query.create("non-existent-element");
+		var elm:DOMNode = DOMCollection.create("non-existent-element");
 		Assert.areEqual("non-existent-element", elm.tagName());
 		Assert.areEqual("", elm.innerHTML());
 
-		var bad = Query.create("non existent element");
+		var bad = DOMCollection.create("non existent element");
 		Assert.isNull(bad);
 	}
 
 	@Test 
 	public function createNullInput() 
 	{
-		var bad = Query.create(null);
+		var bad = DOMCollection.create(null);
 		Assert.isNull(bad);
 	}
 
 	@Test 
 	public function createEmptyString() 
 	{
-		var bad = Query.create("");
+		var bad = DOMCollection.create("");
 		Assert.isNull(bad);
 	}
 
 	@Test 
 	public function parse() 
 	{
-		var q = Query.parse("<div id='test'>Hello</div>");
+		var q = DOMCollection.parse("<div id='test'>Hello</div>");
 
 		Assert.areEqual('div', q.tagName());
 		Assert.areEqual('test', q.attr('id'));
@@ -549,7 +550,7 @@ class QueryTest
 	@Test 
 	public function parseMultiple() 
 	{
-		var q = Query.parse("<div id='test1'>Hello</div><div id='test2'>World</div>");
+		var q = DOMCollection.parse("<div id='test1'>Hello</div><div id='test2'>World</div>");
 
 		Assert.areEqual(2, q.length);
 		Assert.areEqual("div", q.eq(0).tagName());
@@ -559,23 +560,23 @@ class QueryTest
 	@Test 
 	public function parseTextOnly() 
 	{
-		var q3 = Query.parse("text only");
+		var q3 = DOMCollection.parse("text only");
 
-		Assert.areEqual(Node.TEXT_NODE, q3.getNode().nodeType);
+		Assert.areEqual(DOMNode.TEXT_NODE, q3.getNode().nodeType);
 		Assert.areEqual("text only", q3.getNode().nodeValue);
 	}
 
 	@Test 
 	public function parseNull() 
 	{
-		var q = Query.parse(null);
+		var q = DOMCollection.parse(null);
 		Assert.areEqual(0, q.length);
 	}
 
 	@Test 
 	public function parseEmptyString() 
 	{
-		var q = Query.parse("");
+		var q = DOMCollection.parse("");
 		Assert.areEqual(0, q.length);
 	}
 
@@ -587,14 +588,14 @@ class QueryTest
 		// (or dangerous enough) use case for us to think about correcting
 		// these inconsistencies.
 		// This test merely checks that it doesn't throw an error.
-		var q = Query.parse("<p>My <b>Broken Paragraph</p>");
+		var q = DOMCollection.parse("<p>My <b>Broken Paragraph</p>");
 	}
 
 	@Test 
 	public function setDocument()
 	{
 		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
-		Query.setDocument(node);
+		DOMCollection.setDocument(node);
 		Assert.areEqual("My Element", "b".find().innerHTML());
 	}
 
@@ -602,8 +603,8 @@ class QueryTest
 	public function setDocument_null()
 	{
 		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
-		Query.setDocument(node);
-		Query.setDocument(null);
+		DOMCollection.setDocument(node);
+		DOMCollection.setDocument(null);
 
 		// The document should still be 'node', because null is rejected.
 		Assert.areEqual("My Element", "b".find().innerHTML());

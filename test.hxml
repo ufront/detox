@@ -28,13 +28,14 @@
 -cp test
 -js build/js_test.js
 
-#--next
+--next
 
 # Neko
-#-main TestMain
-#-lib munit
-#-lib hamcrest
-#-cp src
+-main TestMain
+-lib munit
+-lib hamcrest
+-lib selecthxml
+-cp src
 
-#-cp test
-#-neko build/neko_test.n
+-cp test
+-neko build/neko_test.n

@@ -12,7 +12,7 @@ using domtools.Tools;
 * This is an example test class can be used as a template for writing normal and async tests 
 * Refer to munit command line tool for more information (haxelib run munit)
 */
-class QueryAnimationTest 
+class CollectionStyleTest 
 {
 	private var timer:Timer;
 	

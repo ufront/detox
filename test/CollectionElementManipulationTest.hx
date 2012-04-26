@@ -2,7 +2,7 @@ package;
 
 import massive.munit.Assert;
 
-import domtools.Query;
+import domtools.DOMCollection;
 import DOMTools;
 using DOMTools;
 
@@ -11,7 +11,7 @@ using DOMTools;
 * This is an example test class can be used as a template for writing normal and async tests 
 * Refer to munit command line tool for more information (haxelib run munit)
 */
-class QueryElementManipulationTest 
+class CollectionElementManipulationTest 
 {
 	public function new() 
 	{
@@ -29,17 +29,17 @@ class QueryElementManipulationTest
 		// trace ("AfterClass");
 	}
 
-	public var sampleDocument:Query;
-	public var h1:Query;
-	public var lists:Query;
-	public var listItems:Query;
-	public var pickme:Query;
-	public var emptyNode:Query;
-	public var nonElements:Query;
-	public var textNodes:Query;
-	public var commentNodes:Query;
-	public var emptyCollection:Query;
-	public var nullQuery:Query;
+	public var sampleDocument:DOMCollection;
+	public var h1:DOMCollection;
+	public var lists:DOMCollection;
+	public var listItems:DOMCollection;
+	public var pickme:DOMCollection;
+	public var emptyNode:DOMCollection;
+	public var nonElements:DOMCollection;
+	public var textNodes:DOMCollection;
+	public var commentNodes:DOMCollection;
+	public var emptyCollection:DOMCollection;
+	public var nullDOMCollection:DOMCollection;
 	
 	@Before
 	public function setup():Void
@@ -60,7 +60,7 @@ class QueryElementManipulationTest
 			<div id='nonelements'>Start<!--Comment1-->End<!--Comment2--></div>
 		</myxml>".parse();
 
-		Query.setDocument(sampleDocument.getNode());
+		DOMCollection.setDocument(sampleDocument.getNode());
 
 		h1 = "h1".find();
 		lists = "ul".find();
@@ -75,8 +75,8 @@ class QueryElementManipulationTest
 		commentNodes = nonElements.filter(function (node) {
 			return node.isComment();
 		});
-		emptyCollection = new Query();
-		nullQuery = null;
+		emptyCollection = new DOMCollection();
+		nullDOMCollection = null;
 	}
 	
 	@After
@@ -96,7 +96,7 @@ class QueryElementManipulationTest
 	@Test 
 	public function attrOnNull()
 	{
-		Assert.areEqual("", nullQuery.attr('id'));
+		Assert.areEqual("", nullDOMCollection.attr('id'));
 	}
 
 	@Test 
@@ -140,8 +140,8 @@ class QueryElementManipulationTest
 	@Test 
 	public function setAttrOnNull()
 	{
-		nullQuery.setAttr('id', 'myID');
-		Assert.areEqual("", nullQuery.attr('id'));
+		nullDOMCollection.setAttr('id', 'myID');
+		Assert.areEqual("", nullDOMCollection.attr('id'));
 	}
 
 	@Test 
@@ -162,8 +162,8 @@ class QueryElementManipulationTest
 	@Test 
 	public function removeAttrOnNull()
 	{
-		nullQuery.removeAttr('id');
-		Assert.areEqual("", nullQuery.attr('id'));
+		nullDOMCollection.removeAttr('id');
+		Assert.areEqual("", nullDOMCollection.attr('id'));
 	}
 
 	@Test 
@@ -194,7 +194,7 @@ class QueryElementManipulationTest
 	@Test 
 	public function hasClassOnNull()
 	{
-		Assert.isFalse(nullQuery.hasClass('myclass'));
+		Assert.isFalse(nullDOMCollection.hasClass('myclass'));
 	}
 
 	@Test 
@@ -211,7 +211,7 @@ class QueryElementManipulationTest
 
 		// Try a collection with some of each... 
 		// It should only return true if all things are true
-		var q = new Query();
+		var q = new DOMCollection();
 		q.addCollection(lists);
 		q.addCollection(pickme);
 		Assert.isFalse(q.hasClass('pickme'));
@@ -286,8 +286,8 @@ class QueryElementManipulationTest
 	@Test 
 	public function addClassOnNull()
 	{
-		nullQuery.addClass('myclass');
-		Assert.isFalse(nullQuery.hasClass('myclass'));
+		nullDOMCollection.addClass('myclass');
+		Assert.isFalse(nullDOMCollection.hasClass('myclass'));
 	}
 
 	@Test 
@@ -350,8 +350,8 @@ class QueryElementManipulationTest
 	@Test 
 	public function removeClassOnNull()
 	{
-		nullQuery.removeClass('myclass');
-		Assert.isFalse(nullQuery.hasClass('myclass'));
+		nullDOMCollection.removeClass('myclass');
+		Assert.isFalse(nullDOMCollection.hasClass('myclass'));
 	}
 
 	@Test 
@@ -393,12 +393,12 @@ class QueryElementManipulationTest
 	@Test 
 	public function toggleClassOnNull()
 	{
-		nullQuery.toggleClass('myclass');
-		Assert.isFalse(nullQuery.hasClass('myclass'));
+		nullDOMCollection.toggleClass('myclass');
+		Assert.isFalse(nullDOMCollection.hasClass('myclass'));
 
 		// no matter which side of the toggle this should return false
-		nullQuery.toggleClass('myclass');
-		Assert.isFalse(nullQuery.hasClass('myclass'));
+		nullDOMCollection.toggleClass('myclass');
+		Assert.isFalse(nullDOMCollection.hasClass('myclass'));
 	}
 
 	@Test 
@@ -423,7 +423,7 @@ class QueryElementManipulationTest
 	@Test 
 	public function tagNameOnNull()
 	{
-		Assert.areEqual("", nullQuery.tagName());
+		Assert.areEqual("", nullDOMCollection.tagName());
 	}
 
 	@Test 
@@ -435,7 +435,7 @@ class QueryElementManipulationTest
 	@Test 
 	public function tagNameOnMultiple()
 	{
-		var q = new Query();
+		var q = new DOMCollection();
 		q.addCollection(lists);
 		q.addCollection(listItems);
 
@@ -457,7 +457,7 @@ class QueryElementManipulationTest
 		input2.setVal("value2");
 		Reflect.setField(input2, "value", "value2");
 
-		var q = new Query().add(input1).add(input2);
+		var q = new DOMCollection().add(input1).add(input2);
 
 		Assert.areEqual("value1", q.val());
 	}
@@ -471,7 +471,7 @@ class QueryElementManipulationTest
 	@Test 
 	public function valOnNull()
 	{
-		Assert.areEqual("", nullQuery.val());
+		Assert.areEqual("", nullDOMCollection.val());
 	}
 
 	@Test 
@@ -488,7 +488,7 @@ class QueryElementManipulationTest
 		Reflect.setField(input1, "value", "value1");
 		Reflect.setField(input2, "value", "value2");
 
-		var q = new Query().add(input1).add(input2);
+		var q = new DOMCollection().add(input1).add(input2);
 		q.setVal("newValue");
 
 		Assert.areEqual("newValue", q.val());
@@ -499,8 +499,8 @@ class QueryElementManipulationTest
 	@Test 
 	public function setValOnNull()
 	{
-		nullQuery.setVal("newvalue");
-		Assert.areEqual("", nullQuery.val());
+		nullDOMCollection.setVal("newvalue");
+		Assert.areEqual("", nullDOMCollection.val());
 	}
 
 	@Test 
@@ -530,7 +530,7 @@ class QueryElementManipulationTest
 	@Test 
 	public function textOnNull()
 	{
-		Assert.areEqual("", nullQuery.text());
+		Assert.areEqual("", nullDOMCollection.text());
 	}
 
 	@Test 
@@ -550,8 +550,8 @@ class QueryElementManipulationTest
 	@Test 
 	public function setTextOnNull()
 	{
-		nullQuery.setText("My New Text");
-		Assert.areEqual("", nullQuery.text());
+		nullDOMCollection.setText("My New Text");
+		Assert.areEqual("", nullDOMCollection.text());
 	}
 
 	@Test 
@@ -575,7 +575,7 @@ class QueryElementManipulationTest
 	@Test 
 	public function innerHTMLOnNull()
 	{
-		Assert.areEqual("", nullQuery.innerHTML());
+		Assert.areEqual("", nullDOMCollection.innerHTML());
 	}
 
 	@Test 
@@ -599,8 +599,8 @@ class QueryElementManipulationTest
 	@Test 
 	public function setInnerHTMLOnNull()
 	{
-		nullQuery.setInnerHTML("My Inner HTML");
-		Assert.areEqual("", nullQuery.innerHTML());
+		nullDOMCollection.setInnerHTML("My Inner HTML");
+		Assert.areEqual("", nullDOMCollection.innerHTML());
 	}
 
 	@Test 

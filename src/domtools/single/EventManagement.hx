@@ -101,7 +101,7 @@ class EventManagement
 	}
 
 	/** Trigger an event, as if it has actually happened 
-	public static function trigger(target:Node, eventString:String):Node
+	public static function trigger(target:DOMNode, eventString:String):DOMNode
 	{
 		if (ElementManipulation.isElement(target))
 		{
@@ -137,13 +137,13 @@ class EventManagement
 	}*/
 
 	/** Trigger the handler for the event, but don't emulate the event itself */
-	public static function triggerHandler(target:Node, event:String):Node
+	public static function triggerHandler(target:DOMNode, event:String):DOMNode
 	{
 		return target;
 	}
 
 	/** add an event listener */
-	public static function on(target:Node, eventType:String, listener:Event->Void):Node
+	public static function on(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
 	{
 		var elm:Element = cast target;
 
@@ -154,7 +154,7 @@ class EventManagement
 		return target;
 	}
 
-	public static function off(target:Node, eventType:String, listener:Event->Void):Node
+	public static function off(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
 	{
 		var elm:Element = cast target;
 
@@ -167,7 +167,7 @@ class EventManagement
 	}
 
 	/** Attach an event but only let it run once */
-	public static function one(target:Node, eventType:String, listener:Event->Void):Node
+	public static function one(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
 	{
 		var fn:Event->Void = null;
 		fn = function (e:Event)
@@ -179,57 +179,57 @@ class EventManagement
 		return target;
 	}
 
-	public static inline function mousedown(target:Node, listener:Event->Void):Node
+	public static inline function mousedown(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "mousedown", listener);
 	}
 
-	public static inline function mouseenter(target:Node, listener:Event->Void):Node
+	public static inline function mouseenter(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "mouseover", listener);
 	}
 
-	public static inline function mouseleave(target:Node, listener:Event->Void):Node
+	public static inline function mouseleave(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "mouseout", listener);
 	}
 
-	public static inline function mousemove(target:Node, listener:Event->Void):Node
+	public static inline function mousemove(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "mousemove", listener);
 	}
 
-	public static inline function mouseout(target:Node, listener:Event->Void):Node
+	public static inline function mouseout(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "mouseout", listener);
 	}
 
-	public static inline function mouseover(target:Node, listener:Event->Void):Node
+	public static inline function mouseover(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "mouseover", listener);
 	}
 
-	public static inline function mouseup(target:Node, listener:Event->Void):Node
+	public static inline function mouseup(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "mouseup", listener);
 	}
 
-	public static inline function keydown(target:Node, listener:Event->Void):Node
+	public static inline function keydown(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "keydown", listener);
 	}
 
-	public static inline function keypress(target:Node, listener:Event->Void):Node
+	public static inline function keypress(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "keypress", listener);
 	}
 
-	public static inline function keyup(target:Node, listener:Event->Void):Node
+	public static inline function keyup(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "keyup", listener);
 	}
 
-	public static function hover(target:Node, listener1:Event->Void, ?listener2:Event->Void = null):Node
+	public static function hover(target:DOMNode, listener1:Event->Void, ?listener2:Event->Void = null):DOMNode
 	{
 		mouseenter(target, listener1);
 
@@ -246,12 +246,12 @@ class EventManagement
 		return target;
 	}
 
-	public static inline function submit(target:Node, listener:Event->Void):Node
+	public static inline function submit(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "submit", listener);
 	}
 
-	public static function toggleClick(target:Node, listenerFirstClick:Event->Void, listenerSecondClick:Event->Void):Node
+	public static function toggleClick(target:DOMNode, listenerFirstClick:Event->Void, listenerSecondClick:Event->Void):DOMNode
 	{
 		// Wrap the first click function to run once, then remove itself and add the second click function
 		var fn1:Event->Void = null;
@@ -278,72 +278,72 @@ class EventManagement
 		return target;
 	}
 
-	public static inline function blur(target:Node, listener:Event->Void):Node
+	public static inline function blur(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "blur", listener);
 	}
 
-	public static inline function change(target:Node, listener:Event->Void):Node
+	public static inline function change(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "change", listener);
 	}
 
-	public static inline function click(target:Node, listener:Event->Void):Node
+	public static inline function click(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "click", listener);
 	}
 
-	public static inline function dblclick(target:Node, listener:Event->Void):Node
+	public static inline function dblclick(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "dblclick", listener);
 	}
 
-	public static inline function focus(target:Node, listener:Event->Void):Node
+	public static inline function focus(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "focus", listener);
 	}
 
-	public static inline function focusIn(target:Node, listener:Event->Void):Node
+	public static inline function focusIn(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "focusIn", listener);
 	}
 
-	public static inline function focusOut(target:Node, listener:Event->Void):Node
+	public static inline function focusOut(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "focusOut", listener);
 	}
 
-	public static inline function resize(target:Node, listener:Event->Void):Node
+	public static inline function resize(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "resize", listener);
 	}
 
-	public static inline function scroll(target:Node, listener:Event->Void):Node
+	public static inline function scroll(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "scroll", listener);
 	}
 
-	public static inline function select(target:Node, listener:Event->Void):Node
+	public static inline function select(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "select", listener);
 	}
 
-	public static inline function load(target:Node, listener:Event->Void):Node
+	public static inline function load(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "load", listener);
 	}
 
-	public static inline function unload(target:Node, listener:Event->Void):Node
+	public static inline function unload(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "unload", listener);
 	}
 
-	public static inline function error(target:Node, listener:Event->Void):Node
+	public static inline function error(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "error", listener);
 	}
 
-	public static inline function ready(target:Node, listener:Event->Void):Node
+	public static inline function ready(target:DOMNode, listener:Event->Void):DOMNode
 	{
 		return on(target, "ready", listener);
 	}

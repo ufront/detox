@@ -50,23 +50,23 @@ Functionality to implement:
 
 class Style
 {
-	public static function getComputedStyle(node:Node)
+	public static function getComputedStyle(node:DOMNode)
 	{
 		var style:CSSStyleDeclaration = null;
 		if (ElementManipulation.isElement(node))
 		{
-			//style = Query.window.getComputedStyle(cast node).width;
+			//style = DOMCollection.window.getComputedStyle(cast node).width;
 		}
 		return style;
 	}
 
 	
-	public static function css(node:Node, property:String)
+	public static function css(node:DOMNode, property:String)
 	{
 		getComputedStyle(node).getPropertyValue("property");
 	}
 
-	public static function setCSS(node:Node, property:String, value:String)
+	public static function setCSS(node:DOMNode, property:String, value:String)
 	{
 		if (ElementManipulation.isElement(node))
 		{
@@ -76,7 +76,7 @@ class Style
 	}
 
 	/** Get the current computed width for the first element in the set of matched elements, including padding but not border. */
-	public static function innerWidth(node:Node):Int
+	public static function innerWidth(node:DOMNode):Int
 	{
 		var style = getComputedStyle(cast node);
 		if (style != null)

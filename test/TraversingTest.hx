@@ -6,7 +6,8 @@ import massive.munit.async.AsyncFactory;
 
 import DOMTools;
 using DOMTools;
-import domtools.Query;
+import domtools.DOMCollection;
+import domtools.DOMNode;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -33,15 +34,15 @@ class TraversingTest
 		// trace ("AfterClass");
 	}
 
-	public var sampleDocument:Node;
-	public var h1:Node;
-	public var a:Node;
-	public var b:Node;
-	public var emptyNode:Node;
-	public var nullNode:Node;
-	public var textNode1:Node;
-	public var textNode2:Node;
-	public var commentNode:Node;
+	public var sampleDocument:DOMNode;
+	public var h1:DOMNode;
+	public var a:DOMNode;
+	public var b:DOMNode;
+	public var emptyNode:DOMNode;
+	public var nullNode:DOMNode;
+	public var textNode1:DOMNode;
+	public var textNode2:DOMNode;
+	public var commentNode:DOMNode;
 	
 	@Before
 	public function setup():Void
@@ -72,7 +73,7 @@ class TraversingTest
 				</div>
 			</div>
 		</myxml>".parse().getNode();
-		Query.setDocument(sampleDocument);
+		DOMCollection.setDocument(sampleDocument);
 
 		h1 = "h1".find().getNode();
 		a = "#a".find().getNode();
@@ -217,7 +218,7 @@ class TraversingTest
 	@Test 
 	public function parentOnParentNull()
 	{
-		var doc:Node = untyped __js__('document');
+		var doc:DOMNode = untyped __js__('document');
 		Assert.isNull(doc.parent());
 		Assert.isNull(sampleDocument.parent());
 	}
@@ -246,7 +247,7 @@ class TraversingTest
 	@Test 
 	public function ancestorsOnParentNull()
 	{
-		var doc:Node = untyped __js__('document');
+		var doc:DOMNode = untyped __js__('document');
 		Assert.areEqual(0, doc.ancestors().length);
 		Assert.areEqual(0, sampleDocument.ancestors().length);
 	}

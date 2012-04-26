@@ -32,7 +32,7 @@ package domtools.collection;
 class Style
 {
 	
-	public static function setCSS(collection:Query, property:String, value:String)
+	public static function setCSS(collection:DOMCollection, property:String, value:String)
 	{
 		for (node in collection)
 		{

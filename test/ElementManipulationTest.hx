@@ -5,7 +5,7 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
 import js.w3c.level3.Core;
-
+import domtools.DOMNode;
 using DOMTools;
 
 /**
@@ -15,16 +15,16 @@ using DOMTools;
 */
 class ElementManipulationTest 
 {
-	var sampleDocument:Node;
-	var h1:Node;
-	var h2:Node;
-	var comment:Node;
-	var text:Node;
+	var sampleDocument:DOMNode;
+	var h1:DOMNode;
+	var h2:DOMNode;
+	var comment:DOMNode;
+	var text:DOMNode;
 
-	var parent:Node;
-	var child:Node;
-	var classTest:Node;
-	var nullnode:Node;
+	var parent:DOMNode;
+	var child:DOMNode;
+	var classTest:DOMNode;
+	var nullnode:DOMNode;
 	
 	public function new() 
 	{
@@ -521,8 +521,8 @@ class ElementManipulationTest
 
 	@Test function testChaining():Void 
 	{
-		var originalElement:Node = "div".create().setAttr("id", "original");
-		var returnedElement:Node;
+		var originalElement:DOMNode = "div".create().setAttr("id", "original");
+		var returnedElement:DOMNode;
 
 		returnedElement = originalElement
 			.setAttr("title", "")

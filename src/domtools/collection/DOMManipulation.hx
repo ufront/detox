@@ -33,7 +33,7 @@ import js.w3c.level3.Core;
 class DOMManipulation
 {
 	/** Append the specified child to all nodes in this collection, cloning when necessary */
-	static public function append(parentCollection:Query, ?childNode:Node = null, ?childCollection:Query = null)
+	static public function append(parentCollection:DOMCollection, ?childNode:DOMNode = null, ?childCollection:DOMCollection = null)
 	{
 		var firstChildUsed = false;
 		if (parentCollection != null)
@@ -53,7 +53,7 @@ class DOMManipulation
 	}
 
 	/** Prepend the specified child to this node */
-	static public function prepend(parentCollection:Query, ?childNode:Node = null, ?childCollection:Query = null)
+	static public function prepend(parentCollection:DOMCollection, ?childNode:DOMNode = null, ?childCollection:DOMCollection = null)
 	{
 		var firstChildUsed = false;
 		if (parentCollection != null)
@@ -80,7 +80,7 @@ class DOMManipulation
 	}
 
 	/** Append this node to the specified parent */
-	static public function appendTo(children:Query, ?parentNode:Node = null, ?parentCollection:Query = null)
+	static public function appendTo(children:DOMCollection, ?parentNode:DOMNode = null, ?parentCollection:DOMCollection = null)
 	{
 		if (parentNode != null)
 		{
@@ -97,7 +97,7 @@ class DOMManipulation
 	}
 
 	/** Prepend this node to the specified parent */
-	static public inline function prependTo(children:Query, ?parentNode:Node = null, ?parentCollection:Query = null)
+	static public inline function prependTo(children:DOMCollection, ?parentNode:DOMNode = null, ?parentCollection:DOMCollection = null)
 	{
 		if (children != null)
 		{
@@ -110,7 +110,7 @@ class DOMManipulation
 		return children;
 	}
 
-	static public function insertThisBefore(content:Query, ?targetNode:Node = null, ?targetCollection:Query = null)
+	static public function insertThisBefore(content:DOMCollection, ?targetNode:DOMNode = null, ?targetCollection:DOMCollection = null)
 	{
 		if (content != null)
 		{
@@ -144,14 +144,14 @@ class DOMManipulation
 		return content;
 	}
 
-	static public function insertThisAfter(content:Query, ?targetNode:Node = null, ?targetCollection:Query = null)
+	static public function insertThisAfter(content:DOMCollection, ?targetNode:DOMNode = null, ?targetCollection:DOMCollection = null)
 	{
 		if (content != null)
 		{
 			if (targetNode != null)
 			{
 				// because we are adding many, the target is changing.
-				var currentTarget:Node = targetNode;
+				var currentTarget:DOMNode = targetNode;
 
 				// insert this collection of content into a single parent
 				for (childToAdd in content)
@@ -185,7 +185,7 @@ class DOMManipulation
 		return content;
 	}
 
-	static public inline function beforeThisInsert(target:Query, ?contentNode:Node, ?contentCollection:Query)
+	static public inline function beforeThisInsert(target:DOMCollection, ?contentNode:DOMNode, ?contentCollection:DOMCollection)
 	{
 		if (contentNode != null)
 		{
@@ -201,7 +201,7 @@ class DOMManipulation
 		return target;
 	}
 
-	static public inline function afterThisInsert(target:Query, ?contentNode:Node, ?contentCollection:Query)
+	static public inline function afterThisInsert(target:DOMCollection, ?contentNode:DOMNode, ?contentCollection:DOMCollection)
 	{
 		if (contentNode != null)
 		{
@@ -218,7 +218,7 @@ class DOMManipulation
 	}
 
 	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
-	static public function remove(nodesToRemove:Query)
+	static public function remove(nodesToRemove:DOMCollection)
 	{
 		if (nodesToRemove != null)
 		{
@@ -231,7 +231,7 @@ class DOMManipulation
 	}
 
 	/** Remove a child element from the DOM.  Return the parent */
-	static public function removeChildren(parents:Query, ?childToRemove:Node, ?childrenToRemove:domtools.Query)
+	static public function removeChildren(parents:DOMCollection, ?childToRemove:DOMNode, ?childrenToRemove:domtools.DOMCollection)
 	{
 		if (parents != null)
 		{
@@ -245,7 +245,7 @@ class DOMManipulation
 	}
 
 	/** Empty the current element of all children. */
-	static public function empty(containers:Query)
+	static public function empty(containers:DOMCollection)
 	{
 		if (containers != null)
 		{

@@ -120,7 +120,7 @@ Node / Element Manipulation
 * isComment()
 * isTextNode()
 * isDocument()
-* toQuery() - Element Only
+* toCollection() - Element Only
 * get() - Get first Node out of query
 * get(1) - Get second Node out of query
 * attr("src")

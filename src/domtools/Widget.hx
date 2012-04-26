@@ -33,9 +33,9 @@ package domtools;
 import js.w3c.level3.Core;
 import js.w3c.level3.Core.Document;
 import CommonJS;
-import domtools.Query;
+import domtools.DOMCollection;
 
-class Widget extends Query
+class Widget extends DOMCollection
 #else 
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -52,7 +52,7 @@ class Widget
 	{
 		super();
 
-		var q = Query.parse(template);
+		var q = DOMCollection.parse(template);
 		this.collection = q.collection;
 	}
 	#end

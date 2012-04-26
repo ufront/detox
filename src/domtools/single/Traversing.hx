@@ -46,9 +46,9 @@ import js.w3c.level3.Core;
 class Traversing
 {
 	/** Return a collection of all child nodes of the current node. */
-	static public function children(node:Node, ?elementsOnly = true)
+	static public function children(node:DOMNode, ?elementsOnly = true)
 	{
-		var children = new Query();
+		var children = new DOMCollection();
 		if (node != null && ElementManipulation.isElement(node))
 		{
 			// Add any child elements
@@ -57,9 +57,9 @@ class Traversing
 		return children;
 	}
 
-	static public function firstChildren(node:Node, ?elementsOnly = true)
+	static public function firstChildren(node:DOMNode, ?elementsOnly = true)
 	{
-		var firstChild:Node = null;
+		var firstChild:DOMNode = null;
 		if (node != null && ElementManipulation.isElement(node))
 		{
 			// Add first child node that is an element
@@ -73,9 +73,9 @@ class Traversing
 		return firstChild;
 	}
 
-	static public function lastChildren(node:Node, ?elementsOnly = true)
+	static public function lastChildren(node:DOMNode, ?elementsOnly = true)
 	{
-		var lastChild:Node = null;
+		var lastChild:DOMNode = null;
 		if (node != null && ElementManipulation.isElement(node))
 		{
 			// Add first child node that is an element
@@ -90,16 +90,16 @@ class Traversing
 	}
 
 	/** Gets the direct parents of each element in the collection. */
-	static public function parent(node:Node)
+	static public function parent(node:DOMNode)
 	{
-		return (node != null && node.parentNode != null && node != domtools.Query.document) ? node.parentNode : null;
+		return (node != null && node.parentNode != null && node != domtools.DOMCollection.document) ? node.parentNode : null;
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
-	static public function ancestors(node:Node):Query
+	static public function ancestors(node:DOMNode):DOMCollection
 	{
 		// start with the direct parents
-		var ancestorsList:Query = new Query();
+		var ancestorsList:DOMCollection = new DOMCollection();
 		var parent = parent(node);
 		ancestorsList.add(parent);
 
@@ -113,7 +113,7 @@ class Traversing
 		return ancestorsList;
 	}
 
-	static public function next(node:Node, ?elementsOnly:Bool = true)
+	static public function next(node:DOMNode, ?elementsOnly:Bool = true)
 	{
 		// Get the next sibling
 		var sibling = (node != null) ? node.nextSibling : null;
@@ -134,7 +134,7 @@ class Traversing
 		return sibling;
 	}
 
-	static public function prev(node:Node, ?elementsOnly:Bool = true)
+	static public function prev(node:DOMNode, ?elementsOnly:Bool = true)
 	{
 		// Get the next sibling
 		var sibling = (node != null) ? node.previousSibling : null;
@@ -155,15 +155,15 @@ class Traversing
 		return sibling;
 	}
 
-	static public function find(node:Node, selector:String)
+	static public function find(node:DOMNode, selector:String)
 	{
-		var newQuery = new Query();
+		var newDOMCollection = new DOMCollection();
 		if (node != null && ElementManipulation.isElement(node))
 		{
 			var element:Element = cast node;
-			newQuery.addNodeList(element.querySelectorAll(selector));
+			newDOMCollection.addNodeList(element.querySelectorAll(selector));
 		}
-		return newQuery;
+		return newDOMCollection;
 	}
 }
 

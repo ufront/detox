@@ -2,18 +2,18 @@ import massive.munit.TestSuite;
 
 import AnimationTest;
 import DOMManipulationTest;
+import CollectionTraversingTest;
+import CollectionTest;
 import StyleTest;
-import QueryStyleTest;
 import ToolsTest;
-import QueryTraversingTest;
+import CollectionDOMManipulationTest;
+import CollectionStyleTest;
 import TraversingTest;
 import EventManagementTest;
-import QueryEventManagementTest;
-import QueryAnimationTest;
-import QueryDOMManipulationTest;
-import QueryElementManipulationTest;
+import CollectionAnimationTest;
+import CollectionElementManipulationTest;
+import CollectionEventManagementTest;
 import ElementManipulationTest;
-import QueryTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -29,17 +29,17 @@ class TestSuite extends massive.munit.TestSuite
 
 		add(AnimationTest);
 		add(DOMManipulationTest);
+		add(CollectionTraversingTest);
+		add(CollectionTest);
 		add(StyleTest);
-		add(QueryStyleTest);
 		add(ToolsTest);
-		add(QueryTraversingTest);
+		add(CollectionDOMManipulationTest);
+		add(CollectionStyleTest);
 		add(TraversingTest);
 		add(EventManagementTest);
-		add(QueryEventManagementTest);
-		add(QueryAnimationTest);
-		add(QueryDOMManipulationTest);
-		add(QueryElementManipulationTest);
+		add(CollectionAnimationTest);
+		add(CollectionElementManipulationTest);
+		add(CollectionEventManagementTest);
 		add(ElementManipulationTest);
-		add(QueryTest);
 	}
 }

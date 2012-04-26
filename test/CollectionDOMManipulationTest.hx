@@ -6,14 +6,15 @@ import massive.munit.async.AsyncFactory;
 
 import DOMTools;
 using DOMTools;
-import domtools.Query;
+import domtools.DOMCollection;
+import domtools.DOMNode;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
 * This is an example test class can be used as a template for writing normal and async tests 
 * Refer to munit command line tool for more information (haxelib run munit)
 */
-class QueryDOMManipulationTest 
+class CollectionDOMManipulationTest 
 {
 	private var timer:Timer;
 	
@@ -33,30 +34,30 @@ class QueryDOMManipulationTest
 		// trace ("AfterClass");
 	}
 	
-	public var sampleDocument:Query;
-	public var h1:Query;
-	public var h1Node:Node;
-	public var lists:Query;
-	public var a:Node;
-	public var b:Node;
-	public var a2:Node;
-	public var pickme:Query;
-	public var nonElements:Query;
-	public var textNode1:Node;
-	public var comment:Node;
-	public var textNode2:Node;
-	public var emptyNode:Node;
-	public var nullNode:Node;
-	public var nullQuery:Query;
+	public var sampleDocument:DOMCollection;
+	public var h1:DOMCollection;
+	public var h1Node:DOMNode;
+	public var lists:DOMCollection;
+	public var a:DOMNode;
+	public var b:DOMNode;
+	public var a2:DOMNode;
+	public var pickme:DOMCollection;
+	public var nonElements:DOMCollection;
+	public var textNode1:DOMNode;
+	public var comment:DOMNode;
+	public var textNode2:DOMNode;
+	public var emptyNode:DOMNode;
+	public var nullNode:DOMNode;
+	public var nullDOMCollection:DOMCollection;
 
-	public var sampleNode:Node;
-	public var sampleListItems:Query;
-	public var sampleListItemNode:Node;
-	public var sampleQuery:Query;
-	public var insertSiblingContentNode:Node;
-	public var insertSiblingContentQuery:Query;
-	public var insertSiblingTargetNode:Node;
-	public var insertSiblingTargetQuery:Query;
+	public var sampleNode:DOMNode;
+	public var sampleListItems:DOMCollection;
+	public var sampleListItemNode:DOMNode;
+	public var sampleDOMCollection:DOMCollection;
+	public var insertSiblingContentNode:DOMNode;
+	public var insertSiblingContentDOMCollection:DOMCollection;
+	public var insertSiblingTargetNode:DOMNode;
+	public var insertSiblingTargetDOMCollection:DOMCollection;
 	
 	@Before
 	public function setup():Void
@@ -77,7 +78,7 @@ class QueryDOMManipulationTest
 			<div id='empty'></div>
 		</myxml>".parse();
 
-		Query.setDocument(sampleDocument.getNode());
+		DOMCollection.setDocument(sampleDocument.getNode());
 
 		h1 = "h1".find();
 		h1Node = "h1".find().getNode();
@@ -92,18 +93,18 @@ class QueryDOMManipulationTest
 		textNode2 = nonElements.children(false).getNode(2);
 		emptyNode = "#empty".find().getNode();
 		nullNode = null;
-		nullQuery = null;
+		nullDOMCollection = null;
 
 		sampleNode = "<i>Element</i>".parse().getNode();
 		sampleListItems = "<li class='sample'>Sample1</li><li class='sample'>Sample2</li>".parse();
 		sampleListItemNode = sampleListItems.getNode();
-		sampleQuery = "<div class='1'><i class='target'></i></div><div class='2'><i class='target'></i></div>".parse();
-		sampleDocument.append(sampleQuery);
+		sampleDOMCollection = "<div class='1'><i class='target'></i></div><div class='2'><i class='target'></i></div>".parse();
+		sampleDocument.append(sampleDOMCollection);
 
-		insertSiblingTargetQuery = sampleQuery.find('i.target');
-		insertSiblingTargetNode = sampleQuery.first().find('i.target').getNode();
-		insertSiblingContentQuery = "<b class='content'>1</b><b class='content'>2</b>".parse();
-		insertSiblingContentNode = insertSiblingContentQuery.getNode(0);
+		insertSiblingTargetDOMCollection = sampleDOMCollection.find('i.target');
+		insertSiblingTargetNode = sampleDOMCollection.first().find('i.target').getNode();
+		insertSiblingContentDOMCollection = "<b class='content'>1</b><b class='content'>2</b>".parse();
+		insertSiblingContentNode = insertSiblingContentDOMCollection.getNode(0);
 	}
 	
 	@After
@@ -147,7 +148,7 @@ class QueryDOMManipulationTest
 	@Test 
 	public function append_onNull()
 	{
-		nullQuery.append(h1);
+		nullDOMCollection.append(h1);
 		Assert.areEqual(sampleDocument.getNode(), h1Node.parentNode);
 	}
 
@@ -156,7 +157,7 @@ class QueryDOMManipulationTest
 	{
 		var before = h1.innerHTML();
 		h1.append(nullNode);
-		h1.append(nullQuery);
+		h1.append(nullDOMCollection);
 		Assert.areEqual(before, h1.innerHTML());
 	}
 
@@ -197,14 +198,14 @@ class QueryDOMManipulationTest
 	{
 		var before = h1.innerHTML();
 		h1.prepend(nullNode);
-		h1.prepend(nullQuery);
+		h1.prepend(nullDOMCollection);
 		Assert.areEqual(before, h1.innerHTML());
 	}
 
 	@Test
 	public function prepend_onNull()
 	{
-		nullQuery.prepend(h1);
+		nullDOMCollection.prepend(h1);
 		Assert.areEqual(sampleDocument.getNode(), h1Node.parentNode);
 	}
 
@@ -244,7 +245,7 @@ class QueryDOMManipulationTest
 	@Test 
 	public function appendTo_null()
 	{
-		h1.appendTo(nullQuery);
+		h1.appendTo(nullDOMCollection);
 		h1.appendTo(nullNode);
 		Assert.areEqual(sampleDocument.getNode(), h1Node.parentNode);
 	}
@@ -253,8 +254,8 @@ class QueryDOMManipulationTest
 	public function appendTo_onNull()
 	{
 		var before = h1.innerHTML();
-		nullQuery.appendTo(h1);
-		nullQuery.appendTo(h1Node);
+		nullDOMCollection.appendTo(h1);
+		nullDOMCollection.appendTo(h1Node);
 		Assert.areEqual(before, h1.innerHTML());
 	}
 
@@ -294,7 +295,7 @@ class QueryDOMManipulationTest
 	@Test 
 	public function prependTo_null()
 	{
-		h1.prependTo(nullQuery);
+		h1.prependTo(nullDOMCollection);
 		h1.prependTo(nullNode);
 		Assert.areEqual(sampleDocument.getNode(), h1Node.parentNode);
 	}
@@ -303,8 +304,8 @@ class QueryDOMManipulationTest
 	public function prependTo_OnNull()
 	{
 		var before = h1.innerHTML();
-		nullQuery.prependTo(h1);
-		nullQuery.prependTo(h1Node);
+		nullDOMCollection.prependTo(h1);
+		nullDOMCollection.prependTo(h1Node);
 		Assert.areEqual(before, h1.innerHTML());
 	}
 
@@ -345,8 +346,8 @@ class QueryDOMManipulationTest
 	public function insertThisBefore_onNull()
 	{
 		var before = lists.innerHTML();
-		nullQuery.insertThisBefore(pickme);
-		nullQuery.insertThisBefore(pickme.getNode(0));
+		nullDOMCollection.insertThisBefore(pickme);
+		nullDOMCollection.insertThisBefore(pickme.getNode(0));
 		Assert.areEqual(before, lists.innerHTML());
 	}
 
@@ -355,7 +356,7 @@ class QueryDOMManipulationTest
 	{
 		var before = sampleDocument.innerHTML();
 		h1.insertThisBefore(nullNode);
-		h1.insertThisBefore(nullQuery);
+		h1.insertThisBefore(nullDOMCollection);
 		Assert.areEqual(before, sampleDocument.innerHTML());
 	}
 
@@ -397,7 +398,7 @@ class QueryDOMManipulationTest
 	{
 		var before = sampleDocument.innerHTML();
 		h1.insertThisAfter(nullNode);
-		h1.insertThisAfter(nullQuery);
+		h1.insertThisAfter(nullDOMCollection);
 		Assert.areEqual(before, sampleDocument.innerHTML());
 	}
 
@@ -405,8 +406,8 @@ class QueryDOMManipulationTest
 	public function insertThisAfter_onNull()
 	{
 		var before = lists.innerHTML();
-		nullQuery.insertThisAfter(pickme);
-		nullQuery.insertThisAfter(pickme.getNode(0));
+		nullDOMCollection.insertThisAfter(pickme);
+		nullDOMCollection.insertThisAfter(pickme.getNode(0));
 		Assert.areEqual(before, lists.innerHTML());
 	}
 
@@ -447,7 +448,7 @@ class QueryDOMManipulationTest
 	{
 		var before = lists.innerHTML();
 		pickme.beforeThisInsert(nullNode);
-		pickme.beforeThisInsert(nullQuery);
+		pickme.beforeThisInsert(nullDOMCollection);
 		Assert.areEqual(before, lists.innerHTML());
 	}
 
@@ -455,7 +456,7 @@ class QueryDOMManipulationTest
 	public function beforeThisInsert_onNull()
 	{
 		var before = sampleDocument.innerHTML();
-		nullQuery.beforeThisInsert(h1);
+		nullDOMCollection.beforeThisInsert(h1);
 		Assert.areEqual(before, sampleDocument.innerHTML());
 	}
 
@@ -495,7 +496,7 @@ class QueryDOMManipulationTest
 	public function afterThisInsert_onNull()
 	{
 		var before = sampleDocument.innerHTML();
-		nullQuery.afterThisInsert(h1);
+		nullDOMCollection.afterThisInsert(h1);
 		Assert.areEqual(before, sampleDocument.innerHTML());
 	}
 
@@ -504,7 +505,7 @@ class QueryDOMManipulationTest
 	{
 		var before = lists.innerHTML();
 		pickme.afterThisInsert(nullNode);
-		pickme.afterThisInsert(nullQuery);
+		pickme.afterThisInsert(nullDOMCollection);
 		Assert.areEqual(before, lists.innerHTML());
 	}
 
@@ -512,7 +513,7 @@ class QueryDOMManipulationTest
 	public function remove_onNull()
 	{
 		var before = sampleDocument.innerHTML();
-		nullQuery.remove();
+		nullDOMCollection.remove();
 		Assert.areEqual(before, sampleDocument.innerHTML());
 	}
 
@@ -525,7 +526,7 @@ class QueryDOMManipulationTest
 		Assert.areEqual("Start<!--Comment-->End", nonElements.innerHTML());
 
 		// Set up a crazy group of things
-		var q = new Query();
+		var q = new DOMCollection();
 
 		q.add(comment);
 		q.add(textNode2);
@@ -579,7 +580,7 @@ class QueryDOMManipulationTest
 	{
 		var before = h1.innerHTML();
 		h1.removeChildren(nullNode);
-		h1.removeChildren(nullQuery);
+		h1.removeChildren(nullDOMCollection);
 		Assert.areEqual(before, h1.innerHTML());
 	}
 
@@ -587,8 +588,8 @@ class QueryDOMManipulationTest
 	public function removeChildren_onNull()
 	{
 		var before = sampleDocument.innerHTML();
-		nullQuery.removeChildren(h1);
-		nullQuery.removeChildren(h1Node);
+		nullDOMCollection.removeChildren(h1);
+		nullDOMCollection.removeChildren(h1Node);
 		Assert.areEqual(before, sampleDocument.innerHTML());
 		Assert.areEqual(sampleDocument.getNode(), h1Node.parentNode);
 	}
@@ -607,7 +608,7 @@ class QueryDOMManipulationTest
 	public function empty_onNull()
 	{
 		var before = sampleDocument.innerHTML();
-		nullQuery.empty();
+		nullDOMCollection.empty();
 		Assert.areEqual(before, sampleDocument.innerHTML());
 	}
 
