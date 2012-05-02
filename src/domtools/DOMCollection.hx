@@ -44,21 +44,25 @@ package domtools;
 * - create()
 * - parse()
 **/
+#if js
 import js.w3c.level3.Core;
-import domtools.DOMNode;
 import UserAgentContext;
 import CommonJS;
+#end
+import domtools.DOMNode;
 import DOMTools;
 using DOMTools;
 
 class DOMCollection
 {
-	public var collection(default,null):Array<Node>;
+	public var collection(default,null):Array<DOMNode>;
 	public var length(get_length,null):Int;
 	public static var document(get_document,null):DocumentOrElement;
+	#if js
 	public static var window(get_window,null):Window;
+	#end
 
-	public function new(?selector:String = "", ?node:DOMNode = null, ?collection:Iterable<Node>)
+	public function new(?selector:String = "", ?node:DOMNode = null, ?collection:Iterable<DOMNode>)
 	{
 		this.collection = new Array();
 
@@ -73,13 +77,7 @@ class DOMCollection
 		if (selector != "")
 		{
 			var nodeList = document.querySelectorAll(selector, null);
-			
-			// performance cost of this operation
-			// 1000000 times = 6sec;
-			// 10000 times = 0.06sec
-			// 1000 times = 0.006sec
-			// Incredibly inaccurate but we're not on a scale I'm too worried about.
-			addNodeList(nodeList);
+			addNodeList(cast nodeList);
 		}
 			
 	}
@@ -121,7 +119,7 @@ class DOMCollection
 		return this;
 	}
 
-	public function addCollection(collection:Iterable<Node>, ?elementsOnly = false):DOMCollection
+	public function addCollection(collection:Iterable<DOMNode>, ?elementsOnly = false):DOMCollection
 	{
 		if (collection != null)
 		{
@@ -135,6 +133,7 @@ class DOMCollection
 		return this;
 	}
 
+	#if js
 	public function addNodeList(nodeList:NodeList, ?elementsOnly = true):DOMCollection
 	{
 		for (i in 0...nodeList.length)
@@ -148,6 +147,13 @@ class DOMCollection
 		}
 		return this;
 	}
+	#else 
+	public function addNodeList(nodeList:Iterable<DOMNode>, ?elementsOnly = true):DOMCollection
+	{
+		addCollection(nodeList, elementsOnly);
+		return this;
+	}
+	#end
 
 	public function removeFromCollection(?node:DOMNode, ?nodeCollection:DOMCollection):DOMCollection
 	{
@@ -165,7 +171,7 @@ class DOMCollection
 		return this;
 	}
 
-	public inline function each(f : Node -> Void):DOMCollection
+	public inline function each(f : DOMNode -> Void):DOMCollection
 	{
 		if (f != null) { Lambda.iter(collection, f); }
 		return this; 
@@ -248,11 +254,12 @@ class DOMCollection
 		return new DOMCollection(DOMCollection.createElement(str));
 	}*/
 
-
+	#if js
 	static inline function get_window():Window
 	{
 		return untyped __js__("window");
 	}
+	#end
 
 	static inline function get_document():DocumentOrElement
 	{
@@ -269,8 +276,8 @@ class DOMCollection
 		// Only change the document if it has the right NodeType
 		if (newDocument != null)
 		{
-			if (newDocument.nodeType == Node.DOCUMENT_NODE 
-				|| newDocument.nodeType == Node.ELEMENT_NODE)
+			if (newDocument.nodeType == DOMNode.DOCUMENT_NODE 
+				|| newDocument.nodeType == DOMNode.ELEMENT_NODE)
 			{
 				// Because of the NodeType we can safely use this node as our document
 				document = untyped newDocument;

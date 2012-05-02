@@ -29,7 +29,7 @@
 
 package domtools.collection;
 
-import js.w3c.level3.Core;
+import domtools.DOMNode;
 
 class Traversing
 {
@@ -44,7 +44,11 @@ class Traversing
 				if (domtools.single.ElementManipulation.isElement(node))
 				{
 					// Add any child elements
+					#if js
 					children.addNodeList(node.childNodes, elementsOnly);
+					#else 
+					children.addCollection(cast node.childNodes, elementsOnly);
+					#end
 				}
 			}
 		}
@@ -62,11 +66,11 @@ class Traversing
 				{
 					// Add first child node that is an element
 					var e = node.firstChild;
-					while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(e) == false)
+					while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(cast e) == false)
 					{
 						e = e.nextSibling;
 					}
-					if (e != null) children.add(e);
+					if (e != null) children.add(cast e);
 				}
 			}
 		}
@@ -83,10 +87,10 @@ class Traversing
 				if (domtools.single.ElementManipulation.isElement(node))
 				{
 					// Add first child node that is an element
-					var e = node.lastChild;
+					var e:DOMNode = node.lastChild;
 					while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(e) == false)
 					{
-						e = e.previousSibling;
+						e = cast e.previousSibling;
 					}
 					if (e != null) children.add(e);
 				}
@@ -104,7 +108,7 @@ class Traversing
 			for (node in query)
 			{
 				if (node.parentNode != null && node != domtools.DOMCollection.document)
-					parents.add(node.parentNode);
+					parents.add(cast node.parentNode);
 			}
 		}
 		return parents;
@@ -140,14 +144,14 @@ class Traversing
 				// If it's not null, but isn't an element, and we want an element,
 				// keep going.
 				while (sibling != null 
-					&& sibling.nodeType != Node.ELEMENT_NODE
+					&& sibling.nodeType != DOMNode.ELEMENT_NODE
 					&& elementsOnly )
 				{
 					sibling = sibling.nextSibling;
 				}
 
 				// if we found a match, add it to our group
-				if (sibling != null) siblings.add(sibling);
+				if (sibling != null) siblings.add(cast sibling);
 			}
 		}
 		return siblings;
@@ -166,14 +170,14 @@ class Traversing
 				// If it's not null, but isn't an element, and we want an element,
 				// keep going.
 				while (sibling != null  
-					&& sibling.nodeType != Node.ELEMENT_NODE
+					&& sibling.nodeType != DOMNode.ELEMENT_NODE
 					&& elementsOnly)
 				{
 					sibling = sibling.previousSibling;
 				}
 
 				// if we found a match, add it to our group
-				if (sibling != null) siblings.add(sibling);
+				if (sibling != null) siblings.add(cast sibling);
 			}
 		}
 		return siblings;
@@ -188,8 +192,12 @@ class Traversing
 			{
 				if (domtools.single.ElementManipulation.isElement(node))
 				{
-					var element:Element = cast node;
+					var element:DOMElement = cast node;
+					#if js
 					newDOMCollection.addNodeList(element.querySelectorAll(selector));
+					#else 
+					throw "not implemented";
+					#end
 				}
 			}
 		}

@@ -304,7 +304,7 @@ class CollectionTest
 		var q2 = new DOMCollection();
 		var q3 = new DOMCollection();
 		var nodeList = "table".find().getNode().childNodes;
-		var collection = new DOMCollection().addNodeList(nodeList, false);
+		var collection = new DOMCollection().addNodeList(cast nodeList, false);
 		
 		// The default should be true
 		q1.addCollection(collection);
@@ -321,7 +321,7 @@ class CollectionTest
 	{
 		var q = new DOMCollection();
 		var nodeList = DOMCollection.document.querySelectorAll("li", null);
-		q.addNodeList(nodeList);
+		q.addNodeList(cast nodeList);
 		Assert.areEqual(6, q.length);
 	}
 
@@ -334,9 +334,9 @@ class CollectionTest
 		var nodeList = "table".find().getNode().childNodes;
 		
 		// The default should be true
-		q1.addNodeList(nodeList);
-		q2.addNodeList(nodeList, true);
-		q3.addNodeList(nodeList, false);
+		q1.addNodeList(cast nodeList);
+		q2.addNodeList(cast nodeList, true);
+		q3.addNodeList(cast nodeList, false);
 
 		Assert.areEqual(2, q1.length);
 		Assert.areEqual(2, q2.length);

@@ -29,7 +29,8 @@
 
 package domtools.collection;
 
-import js.w3c.level3.Core;
+#if js
+import domtools.DOMNode;
 import js.w3c.level3.Events;
 
 class EventManagement
@@ -204,3 +205,4 @@ class EventManagement
 		return on(target, "ready", listener);
 	}
 }
+#end

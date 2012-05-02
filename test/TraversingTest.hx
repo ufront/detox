@@ -9,14 +9,8 @@ using DOMTools;
 import domtools.DOMCollection;
 import domtools.DOMNode;
 
-/**
-* Auto generated ExampleTest for MassiveUnit. 
-* This is an example test class can be used as a template for writing normal and async tests 
-* Refer to munit command line tool for more information (haxelib run munit)
-*/
 class TraversingTest 
 {
-	private var timer:Timer;
 	
 	public function new() 
 	{

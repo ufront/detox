@@ -29,7 +29,8 @@
 
 package domtools.single;
 
-import js.w3c.level3.Core;
+#if js
+import domtools.DOMNode;
 import js.w3c.level3.Events;
 /*
 JQuery has these methods.  I'll try break them down into core functionality and implementations of specific events
@@ -105,7 +106,7 @@ class EventManagement
 	{
 		if (ElementManipulation.isElement(target))
 		{
-			var elm:Element = cast target;
+			var elm:DOMElement = cast target;
 
 			var event;
 			var useW3EventModel:Bool = untyped __js__('document.createEvent');
@@ -145,7 +146,7 @@ class EventManagement
 	/** add an event listener */
 	public static function on(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
 	{
-		var elm:Element = cast target;
+		var elm:DOMElement = cast target;
 
 		// eventType, listener, useCapture.  For info on useCapture, see http://blog.seankoole.com/addeventlistener-explaining-usecapture
 		// will not work on IE8 or below.  Can't be bothered adding at the moment.
@@ -156,7 +157,7 @@ class EventManagement
 
 	public static function off(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
 	{
-		var elm:Element = cast target;
+		var elm:DOMElement = cast target;
 
 		// eventType, listener, useCapture.  For info on useCapture, see http://blog.seankoole.com/addeventlistener-explaining-usecapture
 		// will not work on IE8 or below.  Can't be bothered adding at the moment.
@@ -349,3 +350,4 @@ class EventManagement
 	}
 
 }
+#end

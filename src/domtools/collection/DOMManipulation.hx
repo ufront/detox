@@ -29,7 +29,7 @@
 
 package domtools.collection;
 
-import js.w3c.level3.Core;
+import domtools.DOMNode;
 class DOMManipulation
 {
 	/** Append the specified child to all nodes in this collection, cloning when necessary */
@@ -134,7 +134,7 @@ class DOMManipulation
 					childCollection = (firstChildUsed) ? childCollection.clone() : childCollection;
 
 					// insert the (possibly cloned) collection into a single target node
-					insertThisBefore(childCollection, target);
+					insertThisBefore(cast childCollection, cast target);
 
 					// mark as used so next time we clone the children
 					firstChildUsed = true;
@@ -253,7 +253,7 @@ class DOMManipulation
 			{
 				while (container.hasChildNodes())
 				{
-					container.removeChild(container.firstChild);
+					container.removeChild(cast container.firstChild);
 				}
 			}
 		}

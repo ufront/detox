@@ -29,9 +29,11 @@
 
 package domtools;
 
+#if js
 import js.w3c.level3.Core;
 import js.w3c.level3.Events;
 import CommonJS; 
+#end
 import domtools.DOMCollection;
 
 /** 
@@ -92,11 +94,12 @@ class Tools
 		return DOMCollection.parse(html);
 	} 
 
+	#if js
 	/**
 	* A helper function that lets you do this in an event listener:
 	* e.target.toNode().toggleClass('selected')
 	*/
-	public static function toNode(eventHandler:EventTarget)
+	public static function toDOMNode(eventHandler:EventTarget)
 	{
 		var elm:DOMNode;
 		try {
@@ -105,4 +108,5 @@ class Tools
 
 		return elm;
 	} 
+	#end
 }

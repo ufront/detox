@@ -4,7 +4,6 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
-import js.w3c.level3.Core;
 import domtools.DOMNode;
 using DOMTools;
 
@@ -57,8 +56,8 @@ class ElementManipulationTest
 		sampleDocument = html.parse().getNode();
 		h1 = sampleDocument.find('h1').getNode();
 		h2 = sampleDocument.find('h2').getNode();
-		comment = sampleDocument.find('.containscomment').getNode().firstChild;
-		text = sampleDocument.find('.containstext').getNode().firstChild;
+		comment = sampleDocument.find('.containscomment').getNode().firstChildren();
+		text = sampleDocument.find('.containstext').getNode().firstChildren();
 		parent = sampleDocument.find('.parent').getNode();
 		child = sampleDocument.find('.child').getNode();
 		classTest = sampleDocument.find('#classtest').getNode();

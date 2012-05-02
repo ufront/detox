@@ -29,7 +29,8 @@
 
 package domtools.single;
 
-import js.w3c.level3.Core;
+import domtools.DOMNode;
+
 /*
 JQuery has these classes, let's copy:
 
@@ -77,7 +78,7 @@ class ElementManipulation
 		var ret = "";
 		if (isElement(elm))
 		{
-			var element:Element = cast elm;
+			var element:DOMElement = cast elm;
 			ret = element.getAttribute(attName);
 			if (ret == null) ret = "";
 		}
@@ -88,7 +89,7 @@ class ElementManipulation
 	{
 		if (elm!= null && elm.nodeType == NodeTypeElement)
 		{
-			var element:Element = cast elm;
+			var element:DOMElement = cast elm;
 			element.setAttribute(attName, attValue);
 		}
 		return elm;
@@ -98,7 +99,7 @@ class ElementManipulation
 	{
 		if (elm!=null && elm.nodeType == NodeTypeElement)
 		{
-			var element:Element = cast elm;
+			var element:DOMElement = cast elm;
 			element.removeAttribute(attName);
 		}
 		return elm;
@@ -226,7 +227,7 @@ class ElementManipulation
 					
 					// Set Attr for non client / js targets
 					#else
-					setAttr(elm, "value", Std.string(val));
+					setAttr(node, "value", Std.string(val));
 					#end
 				default:
 					// For comments, text nodes etc, set the nodeValue directly...
@@ -279,8 +280,12 @@ class ElementManipulation
 			switch (elm.nodeType)
 			{
 				case NodeTypeElement:
-					var element:Element = cast elm;
+					var element:DOMElement = cast elm;
+					#if js
 					ret = element.innerHTML;
+					#else 
+					ret = element.inner_html;
+					#end
 				default:
 					ret = elm.textContent;
 			}
@@ -295,8 +300,12 @@ class ElementManipulation
 			switch (elm.nodeType)
 			{
 				case NodeTypeElement:
-					var element:Element = cast elm;
+					var element:DOMElement = cast elm;
+					#if js
 					element.innerHTML = html;
+					#else 
+					element.inner_html = html;
+					#end
 				default:
 					elm.textContent = html;
 			}

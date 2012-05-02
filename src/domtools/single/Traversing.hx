@@ -29,7 +29,7 @@
 
 package domtools.single;
 
-import js.w3c.level3.Core;
+import domtools.DOMNode;
 /*
 	parentsUntil(selector)
 	nextAll
@@ -52,7 +52,12 @@ class Traversing
 		if (node != null && ElementManipulation.isElement(node))
 		{
 			// Add any child elements
+			#if js
 			children.addNodeList(node.childNodes, elementsOnly);
+			#else 
+			throw "not implemented";
+			#end
+
 		}
 		return children;
 	}
@@ -64,35 +69,44 @@ class Traversing
 		{
 			// Add first child node that is an element
 			var e = node.firstChild;
-			while (elementsOnly == true && e != null && ElementManipulation.isElement(e) == false)
+			while (elementsOnly == true && e != null && ElementManipulation.isElement(cast e) == false)
 			{
 				e = e.nextSibling;
 			}
-			if (e != null) firstChild = e;
+			if (e != null) firstChild = cast e;
 		}
 		return firstChild;
 	}
 
-	static public function lastChildren(node:DOMNode, ?elementsOnly = true)
+	static public function lastChildren(node:DOMNode, ?elementsOnly = true):DOMNode
 	{
 		var lastChild:DOMNode = null;
 		if (node != null && ElementManipulation.isElement(node))
 		{
-			// Add first child node that is an element
+			// Add last child node that is an element
 			var e = node.lastChild;
-			while (elementsOnly == true && e != null && ElementManipulation.isElement(e) == false)
+			while (elementsOnly == true && e != null && ElementManipulation.isElement(cast e) == false)
 			{
-				e = e.previousSibling;
+				e = cast e.previousSibling;
 			}
-			if (e != null) lastChild = e;
+			if (e != null) lastChild = cast e;
 		}
-		return lastChild;
+		return cast lastChild;
 	}
 
 	/** Gets the direct parents of each element in the collection. */
 	static public function parent(node:DOMNode)
 	{
-		return (node != null && node.parentNode != null && node != domtools.DOMCollection.document) ? node.parentNode : null;
+		var p:DOMNode = null;
+		if (node != null && node.parentNode != null && node != domtools.DOMCollection.document)
+		{
+			#if js
+			p = node.parentNode;
+			#else
+			p = cast node.parentNode;
+			#end
+		}
+		return p;
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
@@ -113,7 +127,7 @@ class Traversing
 		return ancestorsList;
 	}
 
-	static public function next(node:DOMNode, ?elementsOnly:Bool = true)
+	static public function next(node:DOMNode, ?elementsOnly:Bool = true):DOMNode
 	{
 		// Get the next sibling
 		var sibling = (node != null) ? node.nextSibling : null;
@@ -123,7 +137,7 @@ class Traversing
 		// but this "nextSibling" isn't an element 
 		while (sibling != null 
 			&& elementsOnly
-			&& sibling.nodeType != Node.ELEMENT_NODE)
+			&& sibling.nodeType != DOMNode.ELEMENT_NODE)
 		{
 			// find the next sibling down the line.
 			// If there is none, this will return null, which is okay.
@@ -131,10 +145,10 @@ class Traversing
 		}
 
 		// This will either be null or the next valid sibling
-		return sibling;
+		return cast sibling;
 	}
 
-	static public function prev(node:DOMNode, ?elementsOnly:Bool = true)
+	static public function prev(node:DOMNode, ?elementsOnly:Bool = true):DOMNode
 	{
 		// Get the next sibling
 		var sibling = (node != null) ? node.previousSibling : null;
@@ -144,7 +158,7 @@ class Traversing
 		// but this "previousSibling" isn't an element 
 		while (sibling != null 
 			&& elementsOnly
-			&& sibling.nodeType != Node.ELEMENT_NODE)
+			&& sibling.nodeType != DOMNode.ELEMENT_NODE)
 		{
 			// find the prev sibling up the line.
 			// If there is none, this will return null, which is okay.
@@ -152,7 +166,7 @@ class Traversing
 		}
 
 		// This will either be null or the previous valid sibling
-		return sibling;
+		return cast sibling;
 	}
 
 	static public function find(node:DOMNode, selector:String)
@@ -160,8 +174,12 @@ class Traversing
 		var newDOMCollection = new DOMCollection();
 		if (node != null && ElementManipulation.isElement(node))
 		{
-			var element:Element = cast node;
+			var element:DOMElement = cast node;
+			#if js
 			newDOMCollection.addNodeList(element.querySelectorAll(selector));
+			#else 
+			throw "not implemented";
+			#end
 		}
 		return newDOMCollection;
 	}
