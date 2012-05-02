@@ -56,8 +56,8 @@ class ElementManipulationTest
 		sampleDocument = html.parse().getNode();
 		h1 = sampleDocument.find('h1').getNode();
 		h2 = sampleDocument.find('h2').getNode();
-		comment = sampleDocument.find('.containscomment').getNode().firstChildren();
-		text = sampleDocument.find('.containstext').getNode().firstChildren();
+		comment = cast sampleDocument.find('.containscomment').getNode().firstChild;
+		text = cast sampleDocument.find('.containstext').getNode().firstChild;
 		parent = sampleDocument.find('.parent').getNode();
 		child = sampleDocument.find('.child').getNode();
 		classTest = sampleDocument.find('#classtest').getNode();
