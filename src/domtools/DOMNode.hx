@@ -9,10 +9,8 @@ typedef DocumentOrElement = {> DOMNode,
 	var querySelector:String->Dynamic->DOMElement;
 	var querySelectorAll:String->Dynamic->NodeList;
 }
-
 #else 
 typedef DOMNode = Xml;
-import selecthxml.engine.XmlDom;
 typedef DOMElement = DOMNode;
 typedef DocumentOrElement = DOMNode;
 #end
