@@ -14,7 +14,7 @@ import domtools.DOMNode;
 */
 class DOMManipulationTest 
 {
-	
+	#if js
 	public function new() 
 	{
 	}
@@ -566,5 +566,6 @@ class DOMManipulationTest
 			.remove().removeChildren().empty();
 
 	}
+	#end
 
 }

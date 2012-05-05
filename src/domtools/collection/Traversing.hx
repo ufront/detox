@@ -30,6 +30,7 @@
 package domtools.collection;
 
 import domtools.DOMNode;
+#if !js using domtools.XMLWrapper; #end
 
 class Traversing
 {
@@ -47,7 +48,7 @@ class Traversing
 					#if js
 					children.addNodeList(node.childNodes, elementsOnly);
 					#else 
-					children.addCollection(cast node.childNodes, elementsOnly);
+					children.addCollection(node, elementsOnly);
 					#end
 				}
 			}
@@ -65,10 +66,10 @@ class Traversing
 				if (domtools.single.ElementManipulation.isElement(node))
 				{
 					// Add first child node that is an element
-					var e = node.firstChild;
+					var e = #if js node.firstChild #else node.firstChild() #end;
 					while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(cast e) == false)
 					{
-						e = e.nextSibling;
+						e = #if js e.nextSibling; #else  e = e.nextSibling(); #end
 					}
 					if (e != null) children.add(cast e);
 				}
@@ -87,10 +88,14 @@ class Traversing
 				if (domtools.single.ElementManipulation.isElement(node))
 				{
 					// Add first child node that is an element
-					var e:DOMNode = node.lastChild;
+					var e = #if js node.lastChild #else node.lastChild() #end;
 					while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(e) == false)
 					{
-						e = cast e.previousSibling;
+						#if js
+						e = e.previousSibling;
+						#else 
+						e = e.previousSibling();
+						#end
 					}
 					if (e != null) children.add(e);
 				}
@@ -139,15 +144,15 @@ class Traversing
 			for (node in query)
 			{
 				// Get the next sibling
-				var sibling = node.nextSibling;
-
+				var sibling = #if js node.nextSibling #else node.nextSibling() #end ;
+				
 				// If it's not null, but isn't an element, and we want an element,
 				// keep going.
 				while (sibling != null 
-					&& sibling.nodeType != DOMNode.ELEMENT_NODE
+					&& sibling.nodeType != domtools.DOMType.ELEMENT_NODE
 					&& elementsOnly )
 				{
-					sibling = sibling.nextSibling;
+					sibling = #if js sibling.nextSibling #else sibling.nextSibling() #end;
 				}
 
 				// if we found a match, add it to our group
@@ -165,15 +170,15 @@ class Traversing
 			for (node in query)
 			{
 				// get the previous sibling
-				var sibling = node.previousSibling;
+				var sibling = #if js node.previousSibling #else node.previousSibling() #end;
 
 				// If it's not null, but isn't an element, and we want an element,
 				// keep going.
 				while (sibling != null  
-					&& sibling.nodeType != DOMNode.ELEMENT_NODE
+					&& sibling.nodeType != domtools.DOMType.ELEMENT_NODE
 					&& elementsOnly)
 				{
-					sibling = sibling.previousSibling;
+					sibling = #if js sibling.previousSibling #else sibling.previousSibling() #end;
 				}
 
 				// if we found a match, add it to our group
@@ -192,11 +197,12 @@ class Traversing
 			{
 				if (domtools.single.ElementManipulation.isElement(node))
 				{
-					var element:DOMElement = cast node;
 					#if js
+					var element:DOMElement = cast node;
 					newDOMCollection.addNodeList(element.querySelectorAll(selector));
 					#else 
-					throw "not implemented";
+					var results = selecthxml.SelectDom.runtimeSelect(node, selector);
+					newDOMCollection.addCollection(results);
 					#end
 				}
 			}

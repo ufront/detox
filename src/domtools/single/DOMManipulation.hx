@@ -30,6 +30,8 @@
 package domtools.single;
 
 import domtools.DOMNode;
+#if !js using domtools.XMLWrapper; #end
+
 /*
 wrap()
 unwrap
@@ -159,14 +161,16 @@ class DOMManipulation
 		{
 			if (targetNode != null)
 			{
-				if (targetNode.nextSibling != null)
+				var next = #if js targetNode.nextSibling #else targetNode.nextSibling() #end;
+				if (next != null)
 				{
-					var parent:DOMNode = cast targetNode.parentNode;
-					parent.insertBefore(cast content, cast targetNode.nextSibling);
+					var parent:DOMNode = #if js targetNode.parentNode #else targetNode.parentNode() #end;
+					var next = #if js targetNode.nextSibling #else targetNode.nextSibling() #end;
+					parent.insertBefore(content, next);
 				}
 				else 
 				{
-					var parent:DOMNode = cast targetNode.parentNode;
+					var parent:DOMNode = #if js targetNode.parentNode #else targetNode.parentNode() #end;
 					parent.appendChild(cast content);
 				}
 			}
@@ -178,18 +182,20 @@ class DOMManipulation
 					// clone the child if we've already used it
 					var childToInsert = (firstChildUsed) ? cast content.cloneNode(true) : cast content;
 					
-					if (target.nextSibling != null)
+					var next = #if js target.nextSibling #else target.nextSibling() #end;
+					if (next != null)
 					{
 						// add the (possibly cloned) child after.the target
 						// (that is, before the targets next sibling)
-						var parent:DOMNode = cast target.parentNode;
-						parent.insertBefore(cast childToInsert, cast target.nextSibling);
+						var parent:DOMNode = #if js target.parentNode #else target.parentNode() #end;
+						var next = #if js target.nextSibling #else target.nextSibling() #end;
+						parent.insertBefore(childToInsert, next);
 					}
 					else 
 					{
 						// add the (possibly cloned) child after the target
 						// by appending it to the very end of the parent
-						append(cast target.parentNode, cast childToInsert);
+						append(target.parentNode#if !js () #end, cast childToInsert);
 					}
 					
 					firstChildUsed = true;
@@ -249,7 +255,7 @@ class DOMManipulation
 	{
 		if (parent != null)
 		{
-			if (childToRemove != null && childToRemove.parentNode == parent)
+			if (childToRemove != null && childToRemove.parentNode #if !js () #end == parent)
 			{
 				parent.removeChild(cast childToRemove);
 			}
@@ -257,7 +263,7 @@ class DOMManipulation
 			{
 				for (child in childrenToRemove)
 				{
-					if (child.parentNode == parent)
+					if (child.parentNode #if !js () #end == parent)
 					{
 						parent.removeChild(cast child);
 					}

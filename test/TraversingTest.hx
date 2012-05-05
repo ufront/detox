@@ -11,7 +11,7 @@ import domtools.DOMNode;
 
 class TraversingTest 
 {
-	
+	#if js
 	public function new() 
 	{
 	}
@@ -347,5 +347,5 @@ class TraversingTest
 		Assert.areEqual('a1', a.children().attr('id'));
 		Assert.areEqual('myxml', a.ancestors().tagName());
 	}
-
+	#end
 }

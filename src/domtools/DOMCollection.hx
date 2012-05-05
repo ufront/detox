@@ -52,6 +52,7 @@ import CommonJS;
 import domtools.DOMNode;
 import DOMTools;
 using DOMTools;
+#if !js using domtools.XMLWrapper; #end
 
 class DOMCollection
 {
@@ -76,7 +77,11 @@ class DOMCollection
 		}
 		if (selector != "")
 		{
+			#if js 
 			var nodeList = document.querySelectorAll(selector, null);
+			#else  
+			var nodeList = document.find(selector);
+			#end
 			addNodeList(cast nodeList);
 		}
 			
@@ -109,7 +114,7 @@ class DOMCollection
 
 	public inline function add(node:DOMNode):DOMCollection
 	{
-		if (node != null)
+		if (node != null)   
 		{
 			if (Lambda.has(collection, node) == false)
 			{
@@ -216,7 +221,11 @@ class DOMCollection
 		if (name != null)
 		{
 			try {
+				#if js
 				elm = untyped __js__("document").createElement(name);
+				#else 
+				elm = Xml.createElement(name);
+				#end
 			} catch (e:Dynamic)
 			{
 				trace ("broken");
@@ -265,8 +274,12 @@ class DOMCollection
 	{
 		if (document == null) 
 		{
+			#if js 
 			// Sensible default: window.document in JS
 			document = untyped __js__("document");
+			#else 
+			document = Xml.parse("<html></html>");
+			#end
 		}
 		return document;
 	}
@@ -276,8 +289,8 @@ class DOMCollection
 		// Only change the document if it has the right NodeType
 		if (newDocument != null)
 		{
-			if (newDocument.nodeType == DOMNode.DOCUMENT_NODE 
-				|| newDocument.nodeType == DOMNode.ELEMENT_NODE)
+			if (newDocument.nodeType == domtools.DOMType.DOCUMENT_NODE
+				|| newDocument.nodeType == domtools.DOMType.ELEMENT_NODE)
 			{
 				// Because of the NodeType we can safely use this node as our document
 				document = untyped newDocument;

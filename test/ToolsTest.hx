@@ -63,9 +63,11 @@ class ToolsTest
 	@Test 
 	public function create()
 	{
-		Assert.areEqual("DIV", "div".create().nodeName);
-		Assert.areEqual("P", "p".create().nodeName);
+		Assert.areEqual(#if js "DIV" #else "div" #end, "div".create().nodeName);
+		Assert.areEqual(#if js "P" #else "p" #end, "p".create().nodeName);
+		trace("non element".create());
 		Assert.isNull("non element".create());
+		trace ("".create());
 		Assert.isNull("".create());
 	}
 

@@ -30,6 +30,7 @@
 package domtools.single;
 
 import domtools.DOMNode;
+#if !js using domtools.XMLWrapper; #end
 
 /*
 JQuery has these classes, let's copy:
@@ -50,22 +51,22 @@ class ElementManipulation
 
 	public static function isElement(node:DOMNode):Bool
 	{
-		return node != null && node.nodeType == NodeTypeElement;
+		return node != null && node.nodeType == domtools.DOMType.ELEMENT_NODE;
 	}
 
 	public static function isComment(node:DOMNode):Bool
 	{
-		return node != null && node.nodeType == NodeTypeComment;
+		return node != null && node.nodeType == domtools.DOMType.COMMENT_NODE;
 	}
 
 	public static function isTextNode(node:DOMNode):Bool
 	{
-		return node != null && node.nodeType == NodeTypeText;
+		return node != null && node.nodeType == domtools.DOMType.TEXT_NODE;
 	}
 
 	public static function isDocument(node:DOMNode):Bool
 	{
-		return node != null && node.nodeType == NodeTypeDocument;
+		return node != null && node.nodeType == domtools.DOMType.DOCUMENT_NODE;
 	}
 
 	public static function toQuery(n:DOMNode):DOMCollection
@@ -79,7 +80,11 @@ class ElementManipulation
 		if (isElement(elm))
 		{
 			var element:DOMElement = cast elm;
+			#if js
 			ret = element.getAttribute(attName);
+			#else 
+			ret = element.get(attName);
+			#end 
 			if (ret == null) ret = "";
 		}
 		return ret;
@@ -87,20 +92,28 @@ class ElementManipulation
 
 	public static function setAttr(elm:DOMNode, attName:String, attValue:String):DOMNode
 	{
-		if (elm!= null && elm.nodeType == NodeTypeElement)
+		if (elm!= null && elm.nodeType == domtools.DOMType.ELEMENT_NODE)
 		{
 			var element:DOMElement = cast elm;
+			#if js
 			element.setAttribute(attName, attValue);
+			#else 
+			element.set(attName, attValue);
+			#end 
 		}
 		return elm;
 	}
 
 	public static function removeAttr(elm:DOMNode, attName:String):DOMNode
 	{
-		if (elm!=null && elm.nodeType == NodeTypeElement)
+		if (elm!=null && elm.nodeType == domtools.DOMType.ELEMENT_NODE)
 		{
 			var element:DOMElement = cast elm;
+			#if js 
 			element.removeAttribute(attName);
+			#else 
+			element.remove(attName);
+			#end 
 		}
 		return elm;
 	}
@@ -192,7 +205,7 @@ class ElementManipulation
 		{
 			switch (node.nodeType)
 			{
-				case NodeTypeElement:
+				case domtools.DOMType.ELEMENT_NODE:
 					val = Reflect.field(node, 'value');
 					
 					// If the value is null, that means
@@ -220,7 +233,7 @@ class ElementManipulation
 		{
 			switch (node.nodeType)
 			{
-				case NodeTypeElement:
+				case DOMType.ELEMENT_NODE:
 					// Set value with Javascript
 					#if (js && !nodejs)
 					Reflect.setField(node, "value", val);
@@ -245,7 +258,7 @@ class ElementManipulation
 		{
 			if (isElement(elm))
 			{
-				text = elm.textContent;
+				text = #if js elm.textContent #else elm.textContent() #end;
 			}
 			else 
 			{
@@ -261,7 +274,11 @@ class ElementManipulation
 		{
 			if (isElement(elm))
 			{
+				#if js
 				elm.textContent = text;
+				#else 
+				elm.setTextContent(text);
+				#end
 			}
 			else 
 			{
@@ -279,15 +296,16 @@ class ElementManipulation
 		{
 			switch (elm.nodeType)
 			{
-				case NodeTypeElement:
+				case domtools.DOMType.ELEMENT_NODE:
 					var element:DOMElement = cast elm;
 					#if js
 					ret = element.innerHTML;
 					#else 
-					ret = element.inner_html;
+					ret = element.innerHTML();
 					#end
 				default:
-					ret = elm.textContent;
+					ret = #if js elm.textContent #else elm.textContent() #end; 
+
 			}
 		}
 		return ret;
@@ -299,15 +317,19 @@ class ElementManipulation
 		{
 			switch (elm.nodeType)
 			{
-				case NodeTypeElement:
+				case domtools.DOMType.ELEMENT_NODE:
 					var element:DOMElement = cast elm;
 					#if js
 					element.innerHTML = html;
 					#else 
-					element.inner_html = html;
+					elm.setInnerHTML(html);
 					#end
 				default:
+					#if js
 					elm.textContent = html;
+					#else 
+					elm.setTextContent(html);
+					#end
 			}
 		}
 		return elm;

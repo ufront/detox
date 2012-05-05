@@ -13,7 +13,7 @@ using DOMTools;
 */
 class CollectionTest 
 {
-	
+	#if js
 	public function new() 
 	{
 	}
@@ -609,5 +609,5 @@ class CollectionTest
 		// The document should still be 'node', because null is rejected.
 		Assert.areEqual("My Element", "b".find().innerHTML());
 	}
-
+	#end
 }

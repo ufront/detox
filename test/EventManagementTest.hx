@@ -1,8 +1,6 @@
 package;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
 
 import DOMTools;
 using DOMTools;
@@ -14,7 +12,6 @@ using DOMTools;
 */
 class EventManagementTest 
 {
-	private var timer:Timer;
 	
 	public function new() 
 	{

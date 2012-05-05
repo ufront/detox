@@ -13,6 +13,7 @@ using DOMTools;
 */
 class CollectionElementManipulationTest 
 {
+	#if js 
 	public function new() 
 	{
 	}
@@ -623,5 +624,5 @@ class CollectionElementManipulationTest
 		Assert.areEqual("a", returnValue.eq(0).attr('id'));
 		Assert.areEqual("b", returnValue.eq(1).attr('id'));
 	}
-
+	#end
 }

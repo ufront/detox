@@ -1,8 +1,6 @@
 package;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
 
 import domtools.Tools;
 using domtools.Tools;
@@ -13,9 +11,7 @@ using domtools.Tools;
 * Refer to munit command line tool for more information (haxelib run munit)
 */
 class CollectionStyleTest 
-{
-	private var timer:Timer;
-	
+{	
 	public function new() 
 	{
 	}

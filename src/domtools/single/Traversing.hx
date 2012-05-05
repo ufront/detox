@@ -30,6 +30,8 @@
 package domtools.single;
 
 import domtools.DOMNode;
+#if !js using domtools.XMLWrapper; #end
+
 /*
 	parentsUntil(selector)
 	nextAll
@@ -55,7 +57,8 @@ class Traversing
 			#if js
 			children.addNodeList(node.childNodes, elementsOnly);
 			#else 
-			throw "not implemented";
+			// With Xml, "node" itself is iterable, so we can just pass that
+			children.addNodeList(node);
 			#end
 
 		}
@@ -68,10 +71,10 @@ class Traversing
 		if (node != null && ElementManipulation.isElement(node))
 		{
 			// Add first child node that is an element
-			var e = node.firstChild;
+			var e = #if js node.firstChild #else node.firstChild() #end;
 			while (elementsOnly == true && e != null && ElementManipulation.isElement(cast e) == false)
 			{
-				e = e.nextSibling;
+				e = #if js e.nextSibling #else e.nextSibling() #end;
 			}
 			if (e != null) firstChild = cast e;
 		}
@@ -84,10 +87,10 @@ class Traversing
 		if (node != null && ElementManipulation.isElement(node))
 		{
 			// Add last child node that is an element
-			var e = node.lastChild;
+			var e = #if js node.lastChild #else node.lastChild() #end;
 			while (elementsOnly == true && e != null && ElementManipulation.isElement(cast e) == false)
 			{
-				e = cast e.previousSibling;
+				e = #if js e.previousSibling #else e.previousSibling() #end;
 			}
 			if (e != null) lastChild = cast e;
 		}
@@ -102,8 +105,8 @@ class Traversing
 		{
 			#if js
 			p = node.parentNode;
-			#else
-			p = cast node.parentNode;
+			#else 
+			p = node.parentNode();
 			#end
 		}
 		return p;
@@ -129,19 +132,20 @@ class Traversing
 
 	static public function next(node:DOMNode, ?elementsOnly:Bool = true):DOMNode
 	{
-		// Get the next sibling
-		var sibling = (node != null) ? node.nextSibling : null;
+		// Get the next sibling if we're not null already
+		var sibling = (node != null) 
+			? #if js node.nextSibling #else node.nextSibling() #end : null;
 
 		// While this "nextSibling" actually still exists
 		// and if we only want elements
 		// but this "nextSibling" isn't an element 
 		while (sibling != null 
 			&& elementsOnly
-			&& sibling.nodeType != DOMNode.ELEMENT_NODE)
+			&& sibling.nodeType != DOMType.ELEMENT_NODE)
 		{
 			// find the next sibling down the line.
 			// If there is none, this will return null, which is okay.
-			sibling = sibling.nextSibling;
+			sibling = #if js sibling.nextSibling #else sibling.nextSibling() #end ;
 		}
 
 		// This will either be null or the next valid sibling
@@ -150,19 +154,24 @@ class Traversing
 
 	static public function prev(node:DOMNode, ?elementsOnly:Bool = true):DOMNode
 	{
-		// Get the next sibling
-		var sibling = (node != null) ? node.previousSibling : null;
+		// Get the previous sibling if it's not already null
+		var sibling = (node != null) 
+			? #if js node.previousSibling #else node.previousSibling() #end : null;
 
 		// While this "previousSibling" actually still exists
 		// and if we only want elements
 		// but this "previousSibling" isn't an element 
 		while (sibling != null 
 			&& elementsOnly
-			&& sibling.nodeType != DOMNode.ELEMENT_NODE)
+			&& sibling.nodeType != domtools.DOMType.ELEMENT_NODE)
 		{
 			// find the prev sibling up the line.
 			// If there is none, this will return null, which is okay.
+			#if js 
 			sibling = sibling.previousSibling;
+			#else 
+			sibling = sibling.previousSibling();
+			#end
 		}
 
 		// This will either be null or the previous valid sibling
@@ -174,11 +183,12 @@ class Traversing
 		var newDOMCollection = new DOMCollection();
 		if (node != null && ElementManipulation.isElement(node))
 		{
-			var element:DOMElement = cast node;
 			#if js
+			var element:DOMElement = cast node;
 			newDOMCollection.addNodeList(element.querySelectorAll(selector));
 			#else 
-			throw "not implemented";
+			var results = selecthxml.SelectDom.runtimeSelect(node, selector);
+			newDOMCollection.addNodeList(results);
 			#end
 		}
 		return newDOMCollection;

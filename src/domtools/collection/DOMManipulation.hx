@@ -30,6 +30,8 @@
 package domtools.collection;
 
 import domtools.DOMNode;
+#if !js using domtools.XMLWrapper; #end
+
 class DOMManipulation
 {
 	/** Append the specified child to all nodes in this collection, cloning when necessary */

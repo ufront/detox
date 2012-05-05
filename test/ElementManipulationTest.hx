@@ -1,8 +1,6 @@
 package;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
 
 import domtools.DOMNode;
 using DOMTools;
@@ -64,6 +62,7 @@ class ElementManipulationTest
 		nullnode = null;
 	}
 	
+	#if js
 	@After
 	public function tearDown():Void
 	{
@@ -537,5 +536,5 @@ class ElementManipulationTest
 		returnedElement.setAttr("id", "updatedID");
 		Assert.areEqual(originalElement.attr('id'), returnedElement.attr('id'));
 	}
-
+	#end
 }

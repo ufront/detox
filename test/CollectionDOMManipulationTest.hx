@@ -1,8 +1,6 @@
 package;
 
-import massive.munit.util.Timer;
 import massive.munit.Assert;
-import massive.munit.async.AsyncFactory;
 
 import DOMTools;
 using DOMTools;
@@ -16,12 +14,7 @@ import domtools.DOMNode;
 */
 class CollectionDOMManipulationTest 
 {
-	private var timer:Timer;
-	
-	public function new() 
-	{
-	}
-	
+	#if js 
 	@BeforeClass
 	public function beforeClass():Void
 	{
@@ -647,5 +640,6 @@ class CollectionDOMManipulationTest
 			.remove().removeChildren().empty();
 
 	}
+	#end
 	
 }

@@ -14,6 +14,7 @@ import domtools.DOMNode;
 */
 class CollectionTraversingTest 
 {
+	#if js
 	public function new() 
 	{
 	}
@@ -377,5 +378,5 @@ class CollectionTraversingTest
 		var q = "ul".find();
 		Assert.areEqual(0, q.find('video').length);
 	}
-
+	#end
 }
