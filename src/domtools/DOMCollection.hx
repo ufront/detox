@@ -46,7 +46,6 @@ package domtools;
 **/
 #if js
 import js.w3c.level3.Core;
-import UserAgentContext;
 import CommonJS;
 #end
 import domtools.DOMNode;

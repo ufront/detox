@@ -78,7 +78,7 @@ class CollectionTest
 		</table>
 		</myxml>".parse();
 
-		DOMCollection.setDocument(sampleDocument.getNode());
+		DOMTools.setDocument(sampleDocument.getNode());
 
 		h1 = "h1".find();
 		lists = "ul".find();
@@ -320,7 +320,7 @@ class CollectionTest
 	public function addNodeList()
 	{
 		var q = new DOMCollection();
-		var nodeList = DOMCollection.document.querySelectorAll("li", null);
+		var nodeList = DOMTools.document.querySelectorAll("li", null);
 		q.addNodeList(cast nodeList);
 		Assert.areEqual(6, q.length);
 	}
@@ -507,7 +507,7 @@ class CollectionTest
 	@Test 
 	public function create() 
 	{
-		var div:DOMNode = DOMCollection.create("div");
+		var div:DOMNode = DOMTools.create("div");
 		Assert.areEqual("div", div.tagName());
 		Assert.areEqual("", div.innerHTML());
 	}
@@ -515,32 +515,32 @@ class CollectionTest
 	@Test 
 	public function createBadInput() 
 	{
-		var elm:DOMNode = DOMCollection.create("non-existent-element");
+		var elm:DOMNode = DOMTools.create("non-existent-element");
 		Assert.areEqual("non-existent-element", elm.tagName());
 		Assert.areEqual("", elm.innerHTML());
 
-		var bad = DOMCollection.create("non existent element");
+		var bad = DOMTools.create("non existent element");
 		Assert.isNull(bad);
 	}
 
 	@Test 
 	public function createNullInput() 
 	{
-		var bad = DOMCollection.create(null);
+		var bad = DOMTools.create(null);
 		Assert.isNull(bad);
 	}
 
 	@Test 
 	public function createEmptyString() 
 	{
-		var bad = DOMCollection.create("");
+		var bad = DOMTools.create("");
 		Assert.isNull(bad);
 	}
 
 	@Test 
 	public function parse() 
 	{
-		var q = DOMCollection.parse("<div id='test'>Hello</div>");
+		var q = DOMTools.parse("<div id='test'>Hello</div>");
 
 		Assert.areEqual('div', q.tagName());
 		Assert.areEqual('test', q.attr('id'));
@@ -550,7 +550,7 @@ class CollectionTest
 	@Test 
 	public function parseMultiple() 
 	{
-		var q = DOMCollection.parse("<div id='test1'>Hello</div><div id='test2'>World</div>");
+		var q = DOMTools.parse("<div id='test1'>Hello</div><div id='test2'>World</div>");
 
 		Assert.areEqual(2, q.length);
 		Assert.areEqual("div", q.eq(0).tagName());
@@ -560,7 +560,7 @@ class CollectionTest
 	@Test 
 	public function parseTextOnly() 
 	{
-		var q3 = DOMCollection.parse("text only");
+		var q3 = DOMTools.parse("text only");
 
 		Assert.areEqual(DOMNode.TEXT_NODE, q3.getNode().nodeType);
 		Assert.areEqual("text only", q3.getNode().nodeValue);
@@ -569,14 +569,14 @@ class CollectionTest
 	@Test 
 	public function parseNull() 
 	{
-		var q = DOMCollection.parse(null);
+		var q = DOMTools.parse(null);
 		Assert.areEqual(0, q.length);
 	}
 
 	@Test 
 	public function parseEmptyString() 
 	{
-		var q = DOMCollection.parse("");
+		var q = DOMTools.parse("");
 		Assert.areEqual(0, q.length);
 	}
 
@@ -588,14 +588,14 @@ class CollectionTest
 		// (or dangerous enough) use case for us to think about correcting
 		// these inconsistencies.
 		// This test merely checks that it doesn't throw an error.
-		var q = DOMCollection.parse("<p>My <b>Broken Paragraph</p>");
+		var q = DOMTools.parse("<p>My <b>Broken Paragraph</p>");
 	}
 
 	@Test 
 	public function setDocument()
 	{
 		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
-		DOMCollection.setDocument(node);
+		DOMTools.setDocument(node);
 		Assert.areEqual("My Element", "b".find().innerHTML());
 	}
 
@@ -603,8 +603,8 @@ class CollectionTest
 	public function setDocument_null()
 	{
 		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
-		DOMCollection.setDocument(node);
-		DOMCollection.setDocument(null);
+		DOMTools.setDocument(node);
+		DOMTools.setDocument(null);
 
 		// The document should still be 'node', because null is rejected.
 		Assert.areEqual("My Element", "b".find().innerHTML());

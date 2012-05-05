@@ -67,7 +67,7 @@ class CollectionTraversingTest
 		nullDOMCollection = null;
 		emptyDOMCollection = new DOMCollection();
 
-		DOMCollection.setDocument(sampleDocument.getNode());
+		DOMTools.setDocument(sampleDocument.getNode());
 
 	}
 	

@@ -71,7 +71,7 @@ class CollectionDOMManipulationTest
 			<div id='empty'></div>
 		</myxml>".parse();
 
-		DOMCollection.setDocument(sampleDocument.getNode());
+		DOMTools.setDocument(sampleDocument.getNode());
 
 		h1 = "h1".find();
 		h1Node = "h1".find().getNode();

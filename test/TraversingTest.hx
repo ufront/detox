@@ -67,7 +67,7 @@ class TraversingTest
 				</div>
 			</div>
 		</myxml>".parse().getNode();
-		DOMCollection.setDocument(sampleDocument);
+		DOMTools.setDocument(sampleDocument);
 
 		h1 = "h1".find().getNode();
 		a = "#a".find().getNode();

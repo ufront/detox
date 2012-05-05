@@ -136,6 +136,21 @@ class Traversing
 		return ancestorList;
 	}
 
+	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
+	static public function descendants(query:DOMCollection, ?elementsOnly:Bool = true):DOMCollection
+	{
+		var descendantList = new domtools.DOMCollection();
+
+		for (node in query)
+		{
+			var l = domtools.single.Traversing.descendants(node, elementsOnly);
+			descendantList.addCollection(l);
+		}
+
+		// Then pass the list back up the line...
+		return descendantList;
+	}
+
 	static public function next(query:DOMCollection, ?elementsOnly:Bool = true)
 	{
 		var siblings = new DOMCollection();

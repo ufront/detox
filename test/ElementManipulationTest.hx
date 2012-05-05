@@ -54,15 +54,14 @@ class ElementManipulationTest
 		sampleDocument = html.parse().getNode();
 		h1 = sampleDocument.find('h1').getNode();
 		h2 = sampleDocument.find('h2').getNode();
-		comment = cast sampleDocument.find('.containscomment').getNode().firstChild;
-		text = cast sampleDocument.find('.containstext').getNode().firstChild;
+		comment = sampleDocument.find('.containscomment').getNode().firstChild#if !js () #end;
+		text = sampleDocument.find('.containstext').getNode().firstChild#if !js () #end;
 		parent = sampleDocument.find('.parent').getNode();
 		child = sampleDocument.find('.child').getNode();
 		classTest = sampleDocument.find('#classtest').getNode();
 		nullnode = null;
 	}
 	
-	#if js
 	@After
 	public function tearDown():Void
 	{
@@ -136,7 +135,13 @@ class ElementManipulationTest
 	public function testRemoveAttr():Void
 	{
 		h1.removeAttr('id');
+		#if js
 		Assert.isFalse(h1.hasAttributes());
+		#else 
+		var i = 0;
+		for (attr in h1.attributes()) i++;
+		Assert.areEqual(0, i);
+		#end
 	}
 
 	@Test
@@ -536,5 +541,4 @@ class ElementManipulationTest
 		returnedElement.setAttr("id", "updatedID");
 		Assert.areEqual(originalElement.attr('id'), returnedElement.attr('id'));
 	}
-	#end
 }

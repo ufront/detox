@@ -130,6 +130,24 @@ class Traversing
 		return ancestorsList;
 	}
 
+	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
+	static public function descendants(node:DOMNode, ?elementsOnly:Bool = true):DOMCollection
+	{
+		var descendantList = new domtools.DOMCollection();
+
+		for (child in children(node, elementsOnly))
+		{
+			// Add this child
+			descendantList.add(child);
+
+			// Add it's descendants (recurse)
+			descendantList.addCollection(descendants(child, elementsOnly));
+		}
+
+		// Then pass the list back up the line...
+		return descendantList;
+	}
+
 	static public function next(node:DOMNode, ?elementsOnly:Bool = true):DOMNode
 	{
 		// Get the next sibling if we're not null already
@@ -188,7 +206,7 @@ class Traversing
 			newDOMCollection.addNodeList(element.querySelectorAll(selector));
 			#else 
 			var results = selecthxml.SelectDom.runtimeSelect(node, selector);
-			newDOMCollection.addNodeList(results);
+			newDOMCollection.addCollection(results);
 			#end
 		}
 		return newDOMCollection;

@@ -1,5 +1,6 @@
 package domtools;
 import domtools.DOMNode;
+import domtools.DOMCollection;
 
 class XMLWrapper
 {
@@ -75,19 +76,59 @@ class XMLWrapper
 		return sibling;
 	}
 
+	static public function empty(xml:Xml)
+	{
+		while (xml.firstChild() != null)
+		{
+			xml.removeChild(xml.firstChild());
+		}
+	}
+
 	static public function textContent(xml:Xml)
 	{
-		return "Not working";
+		var ret = "";
+		if (xml.nodeType == domtools.DOMType.ELEMENT_NODE || xml.nodeType == domtools.DOMType.DOCUMENT_NODE)
+		{
+			var allDescendants:DOMCollection;
+			var textDescendants:DOMCollection;
+			
+			allDescendants = domtools.single.Traversing.descendants(xml, false);
+			
+			textDescendants = allDescendants.filter(function(x:Xml)
+			{
+				return x.nodeType == domtools.DOMType.TEXT_NODE;
+			});
+			
+			
+			var s = new StringBuf();
+			for (textNode in textDescendants)
+			{
+				s.add(textNode.toString());
+			}
+			
+			ret = s.toString();
+		}
+		else 
+		{
+			ret = xml.nodeValue;
+		}
+		return ret;
 	}
 
 	static public function setTextContent(xml:DOMNode, text:String)
 	{
-		for (child in xml)
+		// if element or document
+		if (xml.nodeType == domtools.DOMType.ELEMENT_NODE || xml.nodeType == domtools.DOMType.DOCUMENT_NODE)
 		{
-			xml.removeChild(child);
+			empty(xml);
+			var textNode = Xml.createPCData(text);
+			xml.addChild(textNode);
 		}
-		var textNode = Xml.createPCData(text);
-		xml.addChild(textNode);
+		else 
+		{
+			xml.nodeValue = text;
+		}
+		
 		return text;
 	}
 
@@ -104,10 +145,9 @@ class XMLWrapper
 	static public function setInnerHTML(xml:DOMNode, html:String)
 	{
 		var xmlDocNode = Xml.parse(html);
-		for (child in xml)
-		{
-		 	xml.removeChild(child);
-		}
+
+		empty(xml);
+
 		// Just doing `for (child in xmlDocNode) xml.addChild(child)` seems to break things
 		// Basically, If there are 2 children, the loop only runs once.  I think the way the
 		// iterator works must break when you change the number of children half way through 

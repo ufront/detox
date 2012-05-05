@@ -52,7 +52,7 @@ class Widget
 	{
 		super();
 
-		var q = DOMCollection.parse(template);
+		var q = DOMTools.parse(template);
 		this.collection = q.collection;
 	}
 	#end

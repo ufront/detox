@@ -33,6 +33,7 @@ package domtools;
 import js.w3c.level3.Core;
 import js.w3c.level3.Events;
 import CommonJS; 
+import UserAgentContext;
 #end
 import domtools.DOMCollection;
 import domtools.DOMNode;
@@ -154,7 +155,7 @@ class Tools
 
 	/*public static inline function create(str:String):DOMCollection
 	{
-		return new DOMCollection(DOMCollection.createElement(str));
+		return new DOMCollection(DOMTools.createElement(str));
 	}*/
 
 	#if js

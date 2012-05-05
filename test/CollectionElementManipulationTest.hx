@@ -61,7 +61,7 @@ class CollectionElementManipulationTest
 			<div id='nonelements'>Start<!--Comment1-->End<!--Comment2--></div>
 		</myxml>".parse();
 
-		DOMCollection.setDocument(sampleDocument.getNode());
+		DOMTools.setDocument(sampleDocument.getNode());
 
 		h1 = "h1".find();
 		lists = "ul".find();

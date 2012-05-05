@@ -194,7 +194,28 @@ class ElementManipulation
 
 	public static inline function tagName(elm:DOMNode):String
 	{
+		#if js
 		return (elm == null) ? "" : elm.nodeName.toLowerCase();
+		#else 
+		var ret = "";
+		// Make XML behaviour mimic the JS DOM behaviour
+		if (elm != null)
+		{
+			ret = switch (elm.nodeType)
+			{
+				case domtools.DOMType.ELEMENT_NODE:
+					elm.nodeName.toLowerCase();
+				case domtools.DOMType.DOCUMENT_NODE:
+					"#document";
+				case domtools.DOMType.TEXT_NODE:
+					"#text";
+				case domtools.DOMType.COMMENT_NODE:
+					"#comment";
+			}
+			
+		}
+		return ret;
+		#end
 	}
 
 	public static function val(node:DOMNode):String
