@@ -35,6 +35,7 @@ import js.w3c.level3.Events;
 import CommonJS; 
 #end
 import domtools.DOMCollection;
+import domtools.DOMNode;
 
 /** 
 * Designed to be used with "using domtools.Tools;" this gives you access
@@ -62,6 +63,9 @@ import domtools.DOMCollection;
 
 class Tools 
 {
+	public static var document(get_document,null):DocumentOrElement;
+	#if js public static var window(get_window,null):Window; #end
+
 	function new()
 	{
 		
@@ -80,9 +84,28 @@ class Tools
 	* A helper function that lets you do this:
 	* "div".create().setAttr("id","myElm");
 	*/
-	public static function create(elmName:String)
+	public static function create(name:String)
 	{
-		return DOMCollection.create(elmName);
+		var elm:DOMNode = null;
+		if (name != null)
+		{
+			#if js
+			try {
+				elm = untyped __js__("document").createElement(name);
+			} catch (e:Dynamic)
+			{
+				elm = null;
+			}
+			#else 
+			// Haxe doesn't validate the name, so we should.
+			// I'm going to use a simplified (but not entirely accurate) validation.  See:
+			// http://stackoverflow.com/questions/3158274/what-would-be-a-regex-for-valid-xml-names
+			var valid = ~/[a-zA-Z_:]([a-zA-Z0-9_:.])*/;
+			// If it is valid, create, if it's not, return null
+			elm = (valid.match(name)) ? Xml.createElement(name) : null;
+			#end
+		}
+		return elm;
 	}
 
 	/**
@@ -91,7 +114,25 @@ class Tools
 	*/
 	public static function parse(html:String)
 	{
-		return DOMCollection.parse(html);
+		var q:DOMCollection ;
+		if (html != null)
+		{
+			var n:DOMNode = DOMTools.create('div');
+			//
+			// TODO: report this bug to haxe mailing list.
+			// this is allowed:
+			// n.setInnerHTML("");
+			// But this doesn't get swapped out to it's "using" function
+			// Presumably because this class is a dependency of the DOMTools?
+			// Either way haxe shouldn't do that...
+			domtools.single.ElementManipulation.setInnerHTML(n, html);
+			q = domtools.single.Traversing.children(n, false);
+		}
+		else 
+		{
+			q = new DOMCollection();
+		}
+		return q;
 	} 
 
 	#if js
@@ -109,4 +150,44 @@ class Tools
 		return elm;
 	} 
 	#end
+
+	/*public static inline function create(str:String):DOMCollection
+	{
+		return new DOMCollection(DOMCollection.createElement(str));
+	}*/
+
+	#if js
+	static inline function get_window():Window
+	{
+		return untyped __js__("window");
+	}
+	#end
+
+	static inline function get_document():DocumentOrElement
+	{
+		if (document == null) 
+		{
+			#if js 
+			// Sensible default: window.document in JS
+			document = untyped __js__("document");
+			#else 
+			document = Xml.parse("<html></html>");
+			#end
+		}
+		return document;
+	}
+
+	public static function setDocument(newDocument:DOMNode)
+	{
+		// Only change the document if it has the right NodeType
+		if (newDocument != null)
+		{
+			if (newDocument.nodeType == domtools.DOMType.DOCUMENT_NODE
+				|| newDocument.nodeType == domtools.DOMType.ELEMENT_NODE)
+			{
+				// Because of the NodeType we can safely use this node as our document
+				document = untyped newDocument;
+			}
+		}
+	}
 }

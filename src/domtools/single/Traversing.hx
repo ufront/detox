@@ -101,7 +101,7 @@ class Traversing
 	static public function parent(node:DOMNode)
 	{
 		var p:DOMNode = null;
-		if (node != null && node.parentNode != null && node != domtools.DOMCollection.document)
+		if (node != null && node.parentNode != null && node != DOMTools.document)
 		{
 			#if js
 			p = node.parentNode;

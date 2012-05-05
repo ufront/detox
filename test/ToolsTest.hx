@@ -39,7 +39,7 @@ class ToolsTest
 			<p>Two</p>
 			<div></div>
 		</myxml>".parse();
-		DOMCollection.setDocument(sampleDocument.getNode());
+		DOMTools.setDocument(sampleDocument.getNode());
 	}
 	
 	@After

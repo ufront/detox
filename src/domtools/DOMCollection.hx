@@ -58,10 +58,6 @@ class DOMCollection
 {
 	public var collection(default,null):Array<DOMNode>;
 	public var length(get_length,null):Int;
-	public static var document(get_document,null):DocumentOrElement;
-	#if js
-	public static var window(get_window,null):Window;
-	#end
 
 	public function new(?selector:String = "", ?node:DOMNode = null, ?collection:Iterable<DOMNode>)
 	{
@@ -78,9 +74,9 @@ class DOMCollection
 		if (selector != "")
 		{
 			#if js 
-			var nodeList = document.querySelectorAll(selector, null);
+			var nodeList = DOMTools.document.querySelectorAll(selector, null);
 			#else  
-			var nodeList = document.find(selector);
+			var nodeList = DOMTools.document.find(selector);
 			#end
 			addNodeList(cast nodeList);
 		}
@@ -213,88 +209,5 @@ class DOMCollection
 	inline function get_length():Int
 	{
 		return collection.length;
-	}
-
-	public static inline function create(name:String):DOMNode
-	{
-		var elm:DOMNode = null;
-		if (name != null)
-		{
-			try {
-				#if js
-				elm = untyped __js__("document").createElement(name);
-				#else 
-				elm = Xml.createElement(name);
-				#end
-			} catch (e:Dynamic)
-			{
-				trace ("broken");
-				elm = null;
-			}
-		}
-		return elm;
-	}
-
-	public static function parse(html:String):DOMCollection
-	{
-		var q:DOMCollection ;
-		if (html != null)
-		{
-			var n:DOMNode = DOMCollection.create('div');
-			//
-			// TODO: report this bug to haxe mailing list.
-			// this is allowed:
-			// n.setInnerHTML("");
-			// But this doesn't get swapped out to it's "using" function
-			// Presumably because this class is a dependency of the DOMTools?
-			// Either way haxe shouldn't do that...
-			domtools.single.ElementManipulation.setInnerHTML(n, html);
-			q = domtools.single.Traversing.children(n, false);
-		}
-		else 
-		{
-			q = new DOMCollection();
-		}
-		return q;
-	}
-
-	/*public static inline function create(str:String):DOMCollection
-	{
-		return new DOMCollection(DOMCollection.createElement(str));
-	}*/
-
-	#if js
-	static inline function get_window():Window
-	{
-		return untyped __js__("window");
-	}
-	#end
-
-	static inline function get_document():DocumentOrElement
-	{
-		if (document == null) 
-		{
-			#if js 
-			// Sensible default: window.document in JS
-			document = untyped __js__("document");
-			#else 
-			document = Xml.parse("<html></html>");
-			#end
-		}
-		return document;
-	}
-
-	public static function setDocument(newDocument:DOMNode)
-	{
-		// Only change the document if it has the right NodeType
-		if (newDocument != null)
-		{
-			if (newDocument.nodeType == domtools.DOMType.DOCUMENT_NODE
-				|| newDocument.nodeType == domtools.DOMType.ELEMENT_NODE)
-			{
-				// Because of the NodeType we can safely use this node as our document
-				document = untyped newDocument;
-			}
-		}
 	}
 }
