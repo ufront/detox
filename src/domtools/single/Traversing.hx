@@ -58,7 +58,7 @@ class Traversing
 			children.addNodeList(node.childNodes, elementsOnly);
 			#else 
 			// With Xml, "node" itself is iterable, so we can just pass that
-			children.addNodeList(node);
+			children.addCollection(node);
 			#end
 
 		}

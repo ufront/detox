@@ -116,7 +116,7 @@ class Tools
 	public static function parse(html:String)
 	{
 		var q:DOMCollection ;
-		if (html != null)
+		if (html != null && html != "")
 		{
 			var n:DOMNode = DOMTools.create('div');
 			//

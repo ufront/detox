@@ -106,16 +106,25 @@ class XMLWrapper
 		var xmlDocNode = Xml.parse(html);
 		for (child in xml)
 		{
-			xml.removeChild(child);
+		 	xml.removeChild(child);
 		}
+		// Just doing `for (child in xmlDocNode) xml.addChild(child)` seems to break things
+		// Basically, If there are 2 children, the loop only runs once.  I think the way the
+		// iterator works must break when you change the number of children half way through 
+		// a loop.  As a workaround, add all children to a List, then move them
+		var list = new List();
 		for (child in xmlDocNode)
 		{
-			xml.addChild(child);
+			list.add(child);
+		}
+		for (child in list)
+		{
+		 	xml.addChild(cloneNode(child));
 		}
 		return html;
 	}
 
-	static public function cloneNode(xml:DOMNode, deep:Bool)
+	static public function cloneNode(xml:DOMNode, ?deep:Bool = true)
 	{
 		return Xml.parse(xml.toString()).firstChild();
 	}

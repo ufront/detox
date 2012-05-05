@@ -65,9 +65,7 @@ class ToolsTest
 	{
 		Assert.areEqual(#if js "DIV" #else "div" #end, "div".create().nodeName);
 		Assert.areEqual(#if js "P" #else "p" #end, "p".create().nodeName);
-		trace("non element".create());
 		Assert.isNull("non element".create());
-		trace ("".create());
 		Assert.isNull("".create());
 	}
 
@@ -75,8 +73,7 @@ class ToolsTest
 	public function parse()
 	{
 		Assert.areEqual(2, "<p>One</p><div>Two</div>".parse().length);
-		var str = "my text node";
-		Assert.areEqual(1, str.parse().length);
+		Assert.areEqual(1, "my text node".parse().length);
 		Assert.areEqual(0, "".parse().length);
 	}
 
