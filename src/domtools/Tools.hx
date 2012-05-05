@@ -100,7 +100,8 @@ class Tools
 			// Haxe doesn't validate the name, so we should.
 			// I'm going to use a simplified (but not entirely accurate) validation.  See:
 			// http://stackoverflow.com/questions/3158274/what-would-be-a-regex-for-valid-xml-names
-			var valid = ~/[a-zA-Z_:]([a-zA-Z0-9_:.])*/;
+			var valid = ~/^[a-zA-Z_:]([a-zA-Z0-9_:\.])*$/;
+
 			// If it is valid, create, if it's not, return null
 			elm = (valid.match(name)) ? Xml.createElement(name) : null;
 			#end
