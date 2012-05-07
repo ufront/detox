@@ -14,7 +14,6 @@ import domtools.DOMNode;
 */
 class CollectionDOMManipulationTest 
 {
-	#if js 
 	@BeforeClass
 	public function beforeClass():Void
 	{
@@ -142,7 +141,7 @@ class CollectionDOMManipulationTest
 	public function append_onNull()
 	{
 		nullDOMCollection.append(h1);
-		Assert.areEqual(sampleDocument.getNode(), h1Node.parentNode);
+		Assert.areEqual(sampleDocument.getNode(), h1Node.parents());
 	}
 
 	@Test 
@@ -199,7 +198,7 @@ class CollectionDOMManipulationTest
 	public function prepend_onNull()
 	{
 		nullDOMCollection.prepend(h1);
-		Assert.areEqual(sampleDocument.getNode(), h1Node.parentNode);
+		Assert.areEqual(sampleDocument.getNode(), h1Node.parents());
 	}
 
 	@Test 
@@ -240,7 +239,7 @@ class CollectionDOMManipulationTest
 	{
 		h1.appendTo(nullDOMCollection);
 		h1.appendTo(nullNode);
-		Assert.areEqual(sampleDocument.getNode(), h1Node.parentNode);
+		Assert.areEqual(sampleDocument.getNode(), h1Node.parents());
 	}
 
 	@Test 
@@ -290,7 +289,7 @@ class CollectionDOMManipulationTest
 	{
 		h1.prependTo(nullDOMCollection);
 		h1.prependTo(nullNode);
-		Assert.areEqual(sampleDocument.getNode(), h1Node.parentNode);
+		Assert.areEqual(sampleDocument.getNode(), h1Node.parents());
 	}
 
 	@Test 
@@ -584,7 +583,7 @@ class CollectionDOMManipulationTest
 		nullDOMCollection.removeChildren(h1);
 		nullDOMCollection.removeChildren(h1Node);
 		Assert.areEqual(before, sampleDocument.innerHTML());
-		Assert.areEqual(sampleDocument.getNode(), h1Node.parentNode);
+		Assert.areEqual(sampleDocument.getNode(), h1Node.parents());
 	}
 
 	@Test 
@@ -640,6 +639,5 @@ class CollectionDOMManipulationTest
 			.remove().removeChildren().empty();
 
 	}
-	#end
 	
 }

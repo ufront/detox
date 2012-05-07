@@ -32,7 +32,8 @@ class XMLWrapper
 	static public inline function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
 	{
 		var targetIndex = 0;
-		while (xml.iterator().hasNext() && xml.iterator().next() != target)
+		var iter = xml.iterator();
+		while (iter.hasNext() && iter.next() != target)
 		{
 			targetIndex++;
 		}

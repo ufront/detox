@@ -78,7 +78,7 @@ class DOMManipulation
 			{
 				if (parent.hasChildNodes())
 				{
-					insertThisBefore(cast newChildNode, cast parent.firstChild);
+					insertThisBefore(newChildNode, parent.firstChild#if !js () #end);
 				}
 				else 
 				{
@@ -87,7 +87,7 @@ class DOMManipulation
 			}
 			if (newChildCollection != null)
 			{
-				domtools.collection.DOMManipulation.insertThisBefore(cast newChildCollection, cast parent.firstChild);
+				domtools.collection.DOMManipulation.insertThisBefore(newChildCollection, parent.firstChild#if !js () #end);
 			}
 		}
 
@@ -103,7 +103,7 @@ class DOMManipulation
 		}
 		if (parentCollection != null)
 		{
-			domtools.collection.DOMManipulation.append(cast parentCollection, cast child);
+			domtools.collection.DOMManipulation.append(parentCollection, child);
 		}
 
 		return child;
@@ -116,11 +116,11 @@ class DOMManipulation
 		{
 			if (parentNode.hasChildNodes())
 			{
-				insertThisBefore(cast child, cast parentNode.firstChild, cast parentCollection);
+				insertThisBefore(child, parentNode.firstChild#if !js () #end, parentCollection);
 			}
 			else 
 			{
-				append(cast parentNode, cast child);
+				append(parentNode, child);
 			}
 		}
 		if (parentCollection != null)
@@ -136,7 +136,11 @@ class DOMManipulation
 		{
 			if (targetNode != null)
 			{
-				var parent:DOMNode = cast targetNode.parentNode;
+				#if js
+				var parent:DOMNode = targetNode.parentNode;
+				#else 
+				var parent:DOMNode = targetNode.parent;
+				#end
 				parent.insertBefore(content, targetNode);
 			}
 			if (targetCollection != null)
@@ -145,7 +149,11 @@ class DOMManipulation
 				for (target in targetCollection)
 				{
 					var childToInsert = (firstChildUsed) ? content.cloneNode(true) : content;
-					var parent:DOMNode = cast target.parentNode;
+					#if js
+					var parent:DOMNode = target.parentNode;
+					#else 
+					var parent:DOMNode = target.parent;
+					#end
 					parent.insertBefore(childToInsert, target);
 					
 					firstChildUsed = true;
@@ -171,7 +179,7 @@ class DOMManipulation
 				else 
 				{
 					var parent:DOMNode = #if js targetNode.parentNode #else targetNode.parentNode() #end;
-					parent.appendChild(cast content);
+					parent.appendChild(content);
 				}
 			}
 			if (targetCollection != null)
@@ -180,7 +188,7 @@ class DOMManipulation
 				for (target in targetCollection)
 				{
 					// clone the child if we've already used it
-					var childToInsert = (firstChildUsed) ? cast content.cloneNode(true) : cast content;
+					var childToInsert = (firstChildUsed) ? content.cloneNode(true) : content;
 					
 					var next = #if js target.nextSibling #else target.nextSibling() #end;
 					if (next != null)
@@ -195,7 +203,7 @@ class DOMManipulation
 					{
 						// add the (possibly cloned) child after the target
 						// by appending it to the very end of the parent
-						append(target.parentNode#if !js () #end, cast childToInsert);
+						append(target.parentNode#if !js () #end, childToInsert);
 					}
 					
 					firstChildUsed = true;
@@ -242,12 +250,24 @@ class DOMManipulation
 	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
 	static public function remove(childToRemove:DOMNode)
 	{
-		if (childToRemove != null && childToRemove.parentNode != null)
+
+		if (childToRemove != null 
+			#if js && childToRemove.parentNode != null
+			#else && childToRemove.parent != null #end)
 		{
-			var parent:DOMNode = cast childToRemove.parentNode;
-			parent.removeChild(cast childToRemove);
+			#if js
+			var parent:DOMNode = childToRemove.parentNode;
+			#else 
+			var parent:DOMNode = childToRemove.parent;
+			#end
+			parent.removeChild(childToRemove);
 		}
 		return childToRemove;
+	}
+
+	static public inline function removeFromDOM(nodesToRemove:DOMNode)
+	{
+		return remove(nodesToRemove);
 	}
 
 	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
@@ -257,7 +277,7 @@ class DOMManipulation
 		{
 			if (childToRemove != null && childToRemove.parentNode #if !js () #end == parent)
 			{
-				parent.removeChild(cast childToRemove);
+				parent.removeChild(childToRemove);
 			}
 			if (childrenToRemove != null)
 			{
@@ -265,7 +285,7 @@ class DOMManipulation
 				{
 					if (child.parentNode #if !js () #end == parent)
 					{
-						parent.removeChild(cast child);
+						parent.removeChild(child);
 					}
 				}
 			}
@@ -280,7 +300,7 @@ class DOMManipulation
 		{
 			while (container.hasChildNodes())
 			{
-				container.removeChild(cast container.firstChild);
+				container.removeChild(container.firstChild#if !js()#end);
 			}
 		}
 		return container;

@@ -136,7 +136,7 @@ class DOMManipulation
 					childCollection = (firstChildUsed) ? childCollection.clone() : childCollection;
 
 					// insert the (possibly cloned) collection into a single target node
-					insertThisBefore(cast childCollection, cast target);
+					insertThisBefore(childCollection, target);
 
 					// mark as used so next time we clone the children
 					firstChildUsed = true;
@@ -232,6 +232,11 @@ class DOMManipulation
 		return nodesToRemove;
 	}
 
+	static public inline function removeFromDOM(nodesToRemove:DOMCollection)
+	{
+		return remove(nodesToRemove);
+	}
+
 	/** Remove a child element from the DOM.  Return the parent */
 	static public function removeChildren(parents:DOMCollection, ?childToRemove:DOMNode, ?childrenToRemove:domtools.DOMCollection)
 	{
@@ -253,10 +258,12 @@ class DOMManipulation
 		{
 			for (container in containers)
 			{
-				while (container.hasChildNodes())
-				{
-					container.removeChild(cast container.firstChild);
-				}
+				#if js 
+				while (container.hasChildNodes()) 
+					container.removeChild(container.firstChild);
+				#else 
+				container.empty();
+				#end
 			}
 		}
 		

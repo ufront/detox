@@ -14,7 +14,6 @@ import domtools.DOMNode;
 */
 class DOMManipulationTest 
 {
-	#if js
 	public function new() 
 	{
 	}
@@ -87,7 +86,7 @@ class DOMManipulationTest
 
 		sampleNode = "<i>Element</i>".parse().getNode();
 		sampleListItem = "<li class='sample'>Sample</li>".parse().getNode();
-		sampleDOMCollection = "<div class='1'><i class='target'></i></div><div class='2'><i class='target'></i></div>".parse();
+		sampleDOMCollection = "<p class='1'><i class='target'></i></p><p class='2'><i class='target'></i></p>".parse();
 		sampleDocument.append(sampleDOMCollection);
 
 		insertSiblingTargetDOMCollection = sampleDOMCollection.find('i.target');
@@ -119,12 +118,12 @@ class DOMManipulationTest
 	{
 		emptyNode.append(sampleNode);
 		Assert.areEqual(1, emptyNode.children().length);
-		Assert.areEqual(0, emptyNode.find("div").length);
+		Assert.areEqual(1, emptyNode.find("i").length);
 
 		emptyNode.append(sampleDOMCollection);
 
 		Assert.areEqual(3, emptyNode.children().length);
-		Assert.areEqual(2, emptyNode.find("div").length);
+		Assert.areEqual(2, emptyNode.find("p").length);
 		Assert.areEqual(sampleDOMCollection.getNode(0), emptyNode.children().getNode(1));
 		Assert.areEqual(sampleDOMCollection.getNode(1), emptyNode.children().getNode(2));
 	}
@@ -133,7 +132,7 @@ class DOMManipulationTest
 	public function appendOnNull()
 	{
 		nullNode.append(sampleNode);
-		Assert.isNotNull(sampleNode.parent());
+		Assert.isNotNull(sampleNode.parents());
 	}
 
 	@Test 
@@ -161,12 +160,12 @@ class DOMManipulationTest
 	{
 		emptyNode.append(sampleNode);
 		Assert.areEqual(1, emptyNode.children().length);
-		Assert.areEqual(0, emptyNode.find("div").length);
+		Assert.areEqual(1, emptyNode.find("i").length);
 
 		emptyNode.prepend(sampleDOMCollection);
 
 		Assert.areEqual(3, emptyNode.children().length);
-		Assert.areEqual(2, emptyNode.find("div").length);
+		Assert.areEqual(2, emptyNode.find("p").length);
 		Assert.areEqual(sampleDOMCollection.getNode(0), emptyNode.children().getNode(0));
 		Assert.areEqual(sampleDOMCollection.getNode(1), emptyNode.children().getNode(1));
 	}
@@ -175,7 +174,7 @@ class DOMManipulationTest
 	public function prependOnNull()
 	{
 		nullNode.prepend(sampleNode);
-		Assert.isNotNull(sampleNode.parent());
+		Assert.isNotNull(sampleNode.parents());
 	}
 
 	@Test 
@@ -235,7 +234,7 @@ class DOMManipulationTest
 	public function appendTo_Null()
 	{
 		emptyNode.appendTo(null);
-		Assert.isNotNull(emptyNode.parent());
+		Assert.isNotNull(emptyNode.parents());
 	}
 
 	@Test 
@@ -287,7 +286,7 @@ class DOMManipulationTest
 	public function prependTo_Null()
 	{
 		emptyNode.prependTo(null);
-		Assert.isNotNull(emptyNode.parent());
+		Assert.isNotNull(emptyNode.parents());
 	}
 
 	@Test 
@@ -340,7 +339,7 @@ class DOMManipulationTest
 	public function insertThisBefore_Null()
 	{
 		a2.insertThisBefore(nullNode);
-		Assert.areEqual(a, a2.parentNode);
+		Assert.areEqual(a, a2.parents());
 	}
 
 	@Test 
@@ -393,7 +392,7 @@ class DOMManipulationTest
 	public function insertThisAfter_Null()
 	{
 		a2.insertThisAfter(nullNode);
-		Assert.areEqual(a, a2.parentNode);
+		Assert.areEqual(a, a2.parents());
 	}
 
 	@Test 
@@ -422,14 +421,14 @@ class DOMManipulationTest
 	public function beforeThisInsert_OnNull()
 	{
 		nullNode.beforeThisInsert(a2);
-		Assert.areEqual(a, a2.parentNode);
+		Assert.areEqual(a, a2.parents());
 	}
 
 	@Test 
 	public function beforeThisInsert_Null()
 	{
 		a2.beforeThisInsert(nullNode);
-		Assert.isNull(nullNode.parent());
+		Assert.isNull(nullNode.parents());
 	}
 
 	@Test 
@@ -458,7 +457,7 @@ class DOMManipulationTest
 	public function afterThisInsert_OnNull()
 	{
 		nullNode.afterThisInsert(a2);
-		Assert.areEqual(a, a2.parentNode);
+		Assert.areEqual(a, a2.parents());
 	}
 
 	@Test 
@@ -470,16 +469,16 @@ class DOMManipulationTest
 	}
 
 	@Test 
-	public function remove()
+	public function removeFromDOM()
 	{
 		Assert.areEqual(3, a.children().length);
-		"#a1".find().getNode().remove();
+		"#a1".find().getNode().removeFromDOM();
 
 		Assert.areEqual(2, a.children().length);
-		"#a2".find().getNode().remove();
+		"#a2".find().getNode().removeFromDOM();
 
 		Assert.areEqual(1, a.children().length);
-		"#a3".find().getNode().remove();
+		"#a3".find().getNode().removeFromDOM();
 
 		Assert.areEqual(0, a.children().length);
 	}
@@ -487,7 +486,7 @@ class DOMManipulationTest
 	@Test 
 	public function remove_onNull()
 	{
-		Assert.areEqual(null, nullNode.remove());
+		Assert.areEqual(null, nullNode.removeFromDOM());
 	}
 
 	@Test 
@@ -563,9 +562,8 @@ class DOMManipulationTest
 			.appendTo().prependTo()
 			.insertThisBefore().insertThisAfter()
 			.beforeThisInsert().afterThisInsert()
-			.remove().removeChildren().empty();
+			.removeFromDOM().removeChildren().empty();
 
 	}
-	#end
 
 }
