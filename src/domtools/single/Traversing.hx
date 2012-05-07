@@ -58,7 +58,7 @@ class Traversing
 			children.addNodeList(node.childNodes, elementsOnly);
 			#else 
 			// With Xml, "node" itself is iterable, so we can just pass that
-			children.addCollection(node);
+			children.addCollection(node, elementsOnly);
 			#end
 
 		}
@@ -110,6 +110,13 @@ class Traversing
 			#end
 		}
 		return p;
+	}
+
+	/** This is identical to parents() but it's necessary to use this on non 
+	JS platforms if you want to have null-safety etc. */
+	static inline public function parents(node:DOMNode)
+	{
+		return parent(node);
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
@@ -205,6 +212,10 @@ class Traversing
 			var element:DOMElement = cast node;
 			newDOMCollection.addNodeList(element.querySelectorAll(selector));
 			#else 
+			// This next line is a workaround to a bug in selecthxml
+			// See http://code.google.com/p/selecthxml/issues/detail?id=2
+			// And http://code.google.com/p/selecthxml/issues/detail?id=3
+			selecthxml.SelectDom.runtimeSelect(Xml.createDocument(), "a");
 			var results = selecthxml.SelectDom.runtimeSelect(node, selector);
 			newDOMCollection.addCollection(results);
 			#end

@@ -11,7 +11,6 @@ import domtools.DOMNode;
 
 class TraversingTest 
 {
-	#if js
 	public function new() 
 	{
 	}
@@ -196,25 +195,33 @@ class TraversingTest
 	@Test 
 	public function parent()
 	{
-		Assert.areEqual(a, "#a1".find().getNode().parent());
-		Assert.isTrue(".level4".find().getNode().parent().hasClass('level3'));
-		Assert.areEqual("nonElements", textNode1.parent().attr('id'));
-		Assert.areEqual("nonElements", textNode2.parent().attr('id'));
-		Assert.areEqual("nonElements", commentNode.parent().attr('id'));
+		Assert.areEqual(a, "#a1".find().getNode().parents());
+		Assert.isTrue(".level4".find().getNode().parents().hasClass('level3'));
+		Assert.areEqual("nonElements", textNode1.parents().attr('id'));
+		Assert.areEqual("nonElements", textNode2.parents().attr('id'));
+		Assert.areEqual("nonElements", commentNode.parents().attr('id'));
 	}
 
 	@Test 
 	public function parentOnNull()
 	{
-		Assert.isNull(nullNode.parent());
+		// When we use XML, parent is already a method of the object,
+		// so our "using DOMTools" parents() doesn't get called.
+		// As a result, we loose null-safety.  The workaround is to 
+		// use parents() instead.
+		Assert.isNull(nullNode.parents());
 	}
 
 	@Test 
 	public function parentOnParentNull()
 	{
+		#if js
 		var doc:DOMNode = untyped __js__('document');
-		Assert.isNull(doc.parent());
-		Assert.isNull(sampleDocument.parent());
+		#else 
+		var doc = Xml.createDocument();
+		#end
+		Assert.isNull(doc.parents());
+		Assert.isNull(sampleDocument.parents());
 	}
 
 	@Test 
@@ -241,7 +248,11 @@ class TraversingTest
 	@Test 
 	public function ancestorsOnParentNull()
 	{
+		#if js 
 		var doc:DOMNode = untyped __js__('document');
+		#else
+		var doc = Xml.createDocument(); 
+		#end 
 		Assert.areEqual(0, doc.ancestors().length);
 		Assert.areEqual(0, sampleDocument.ancestors().length);
 	}
@@ -306,7 +317,10 @@ class TraversingTest
 		Assert.isNull(lastLi.prev());
 	}
 
-	@Test 
+	@Test
+	// PLATFORM INCONSISTENCY:
+	// querySelectorAll() does not include the current element in the search
+	// find() from selecthxml does.  So the count in the final Assert differs
 	public function find()
 	{
 		Assert.areNotEqual(0, sampleDocument.find('*').length);
@@ -317,7 +331,12 @@ class TraversingTest
 		var recursive = "#recursive".find().getNode();
 		Assert.areEqual(1, recursive.find('.level4').length);
 		Assert.areEqual(1, recursive.find('.level4').length);
+		trace ("Platform inconsistency here");
+		#if js 
 		Assert.areEqual(3, recursive.find('div').length);
+		#else 
+		Assert.areEqual(4, recursive.find('div').length);
+		#end
 	}
 
 	@Test 
@@ -349,11 +368,10 @@ class TraversingTest
 	@Test 
 	public function chaining()
 	{
-		Assert.areEqual('b', a.firstChildren().lastChildren(false).parent().parent().next().attr('id'));
-		Assert.areEqual('a', b.firstChildren().lastChildren(false).parent().parent().prev().attr('id'));
+		Assert.areEqual('b', a.firstChildren().lastChildren(false).parents().parents().next().attr('id'));
+		Assert.areEqual('a', b.firstChildren().lastChildren(false).parents().parents().prev().attr('id'));
 		Assert.areEqual('a1', a.find('li').attr('id'));
 		Assert.areEqual('a1', a.children().attr('id'));
 		Assert.areEqual('myxml', a.ancestors().tagName());
 	}
-	#end
 }

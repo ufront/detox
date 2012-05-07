@@ -76,6 +76,9 @@ class DOMCollection
 			var nodeList = DOMTools.document.querySelectorAll(selector, null);
 			addNodeList(nodeList);
 			#else  
+			// This next line is a workaround to a bug in selecthxml
+			// See http://code.google.com/p/selecthxml/issues/detail?id=2
+			// And http://code.google.com/p/selecthxml/issues/detail?id=3
 			var nodeList = DOMTools.document.find(selector);
 			addCollection(nodeList);
 			#end

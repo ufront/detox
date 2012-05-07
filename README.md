@@ -303,3 +303,9 @@ Status
     </tr>
 </tbody>
 </table>
+
+Platform Inconsistencies
+========================
+
+* Selecthxml (non-JS targets) find() includes the root element, querySelectorAll (js target) does not.
+* On XML based targets (non JS), parent is an Node, not a function that returns a Node.  It is not null-safe.  Use parents() instead to be safe and consistent across platforms.

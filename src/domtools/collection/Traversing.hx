@@ -119,6 +119,13 @@ class Traversing
 		return parents;
 	}
 
+	/** This is identical to parents() but it's necessary to use this on non 
+	JS platforms if you want to have null-safety etc. */
+	static inline public function parents(query:DOMCollection)
+	{
+		return parent(query);
+	}
+
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
 	static public function ancestors(query:DOMCollection):DOMCollection
 	{
@@ -216,6 +223,9 @@ class Traversing
 					var element:DOMElement = cast node;
 					newDOMCollection.addNodeList(element.querySelectorAll(selector));
 					#else 
+					// This next line is a workaround to a bug in selecthxml
+					// See http://code.google.com/p/selecthxml/issues/detail?id=2
+					// And http://code.google.com/p/selecthxml/issues/detail?id=3
 					var results = selecthxml.SelectDom.runtimeSelect(node, selector);
 					newDOMCollection.addCollection(results);
 					#end
