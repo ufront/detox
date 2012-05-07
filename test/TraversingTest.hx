@@ -331,7 +331,7 @@ class TraversingTest
 		var recursive = "#recursive".find().getNode();
 		Assert.areEqual(1, recursive.find('.level4').length);
 		Assert.areEqual(1, recursive.find('.level4').length);
-		trace ("Platform inconsistency here");
+		trace ("Platform inconsistency here, see README");
 		#if js 
 		Assert.areEqual(3, recursive.find('div').length);
 		#else 

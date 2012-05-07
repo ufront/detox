@@ -113,7 +113,11 @@ class Traversing
 			for (node in query)
 			{
 				if (node.parentNode != null && node != DOMTools.document)
-					parents.add(cast node.parentNode);
+					#if js
+					parents.add(node.parentNode);
+					#else 
+					parents.add(node.parent);
+					#end
 			}
 		}
 		return parents;

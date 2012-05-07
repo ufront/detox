@@ -14,7 +14,6 @@ import domtools.DOMNode;
 */
 class CollectionTraversingTest 
 {
-	#if js
 	public function new() 
 	{
 	}
@@ -212,7 +211,11 @@ class CollectionTraversingTest
 	public function parent_onElementWithNoParent()
 	{
 		// eg Document
+		#if js 
 		var doc:DOMNode = untyped __js__('document');
+		#else 
+		var doc = Xml.createDocument();
+		#end
 		var q = new DOMCollection(doc);
 		Assert.areEqual(0, q.parent().length);
 	}
@@ -245,7 +248,11 @@ class CollectionTraversingTest
 	public function ancestors_onElementWithNoParents()
 	{
 		// eg Document
+		#if js
 		var doc:DOMNode = untyped __js__('document');
+		#else 
+		var doc = Xml.createDocument();
+		#end
 		var q = new DOMCollection(doc);
 		var a = q.ancestors();
 		Assert.areEqual(0, a.length);
@@ -378,5 +385,4 @@ class CollectionTraversingTest
 		var q = "ul".find();
 		Assert.areEqual(0, q.find('video').length);
 	}
-	#end
 }
