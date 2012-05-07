@@ -144,7 +144,14 @@ class XMLWrapper
 
 	static public function setInnerHTML(xml:DOMNode, html:String)
 	{
-		var xmlDocNode = Xml.parse(html);
+		var xmlDocNode:Xml = null;
+		try {
+			xmlDocNode = Xml.parse(html);
+		} catch (e:Dynamic)
+		{
+			xmlDocNode = Xml.createDocument();
+		}
+		
 
 		empty(xml);
 

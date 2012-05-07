@@ -13,7 +13,6 @@ using DOMTools;
 */
 class CollectionTest 
 {
-	#if js
 	public function new() 
 	{
 	}
@@ -158,7 +157,7 @@ class CollectionTest
 	public function getNodeFirst()
 	{
 		// if we can access the nodeType property, then we know we're on a Node 
-		Assert.areEqual(DOMNode.ELEMENT_NODE, h1.getNode().nodeType);
+		Assert.areEqual(domtools.DOMType.ELEMENT_NODE, h1.getNode().nodeType);
 	}
 
 	@Test 
@@ -303,8 +302,12 @@ class CollectionTest
 		var q1 = new DOMCollection();
 		var q2 = new DOMCollection();
 		var q3 = new DOMCollection();
+		#if js
 		var nodeList = "table".find().getNode().childNodes;
-		var collection = new DOMCollection().addNodeList(cast nodeList, false);
+		#else 
+		var nodeList = "table".find().getNode();
+		#end
+		var collection = new DOMCollection().addNodeList(nodeList, false);
 		
 		// The default should be true
 		q1.addCollection(collection);
@@ -320,7 +323,11 @@ class CollectionTest
 	public function addNodeList()
 	{
 		var q = new DOMCollection();
+		#if js 
 		var nodeList = DOMTools.document.querySelectorAll("li", null);
+		#else
+		var nodeList = DOMTools.document.find("li");
+		#end 
 		q.addNodeList(cast nodeList);
 		Assert.areEqual(6, q.length);
 	}
@@ -331,12 +338,17 @@ class CollectionTest
 		var q1 = new DOMCollection();
 		var q2 = new DOMCollection();
 		var q3 = new DOMCollection();
+
+		#if js
 		var nodeList = "table".find().getNode().childNodes;
+		#else 
+		var nodeList = "table".find().getNode();
+		#end
 		
 		// The default should be true
-		q1.addNodeList(cast nodeList);
-		q2.addNodeList(cast nodeList, true);
-		q3.addNodeList(cast nodeList, false);
+		q1.addNodeList(nodeList);
+		q2.addNodeList(nodeList, true);
+		q3.addNodeList(nodeList, false);
 
 		Assert.areEqual(2, q1.length);
 		Assert.areEqual(2, q2.length);
@@ -503,111 +515,4 @@ class CollectionTest
 			Assert.isTrue(li.hasClass('newlistitem'));
 		}
 	}
-
-	@Test 
-	public function create() 
-	{
-		var div:DOMNode = DOMTools.create("div");
-		Assert.areEqual("div", div.tagName());
-		Assert.areEqual("", div.innerHTML());
-	}
-
-	@Test 
-	public function createBadInput() 
-	{
-		var elm:DOMNode = DOMTools.create("non-existent-element");
-		Assert.areEqual("non-existent-element", elm.tagName());
-		Assert.areEqual("", elm.innerHTML());
-
-		var bad = DOMTools.create("non existent element");
-		Assert.isNull(bad);
-	}
-
-	@Test 
-	public function createNullInput() 
-	{
-		var bad = DOMTools.create(null);
-		Assert.isNull(bad);
-	}
-
-	@Test 
-	public function createEmptyString() 
-	{
-		var bad = DOMTools.create("");
-		Assert.isNull(bad);
-	}
-
-	@Test 
-	public function parse() 
-	{
-		var q = DOMTools.parse("<div id='test'>Hello</div>");
-
-		Assert.areEqual('div', q.tagName());
-		Assert.areEqual('test', q.attr('id'));
-		Assert.areEqual('Hello', q.innerHTML());
-	}
-
-	@Test 
-	public function parseMultiple() 
-	{
-		var q = DOMTools.parse("<div id='test1'>Hello</div><div id='test2'>World</div>");
-
-		Assert.areEqual(2, q.length);
-		Assert.areEqual("div", q.eq(0).tagName());
-		Assert.areEqual("div", q.eq(1).tagName());
-	}
-
-	@Test 
-	public function parseTextOnly() 
-	{
-		var q3 = DOMTools.parse("text only");
-
-		Assert.areEqual(DOMNode.TEXT_NODE, q3.getNode().nodeType);
-		Assert.areEqual("text only", q3.getNode().nodeValue);
-	}
-
-	@Test 
-	public function parseNull() 
-	{
-		var q = DOMTools.parse(null);
-		Assert.areEqual(0, q.length);
-	}
-
-	@Test 
-	public function parseEmptyString() 
-	{
-		var q = DOMTools.parse("");
-		Assert.areEqual(0, q.length);
-	}
-
-	@Test 
-	public function parseBrokenHTML() 
-	{
-		// This passes in most browsers, but it's not entirely consistent
-		// in it's behaviour.  However, I don't think it's a common enough
-		// (or dangerous enough) use case for us to think about correcting
-		// these inconsistencies.
-		// This test merely checks that it doesn't throw an error.
-		var q = DOMTools.parse("<p>My <b>Broken Paragraph</p>");
-	}
-
-	@Test 
-	public function setDocument()
-	{
-		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
-		DOMTools.setDocument(node);
-		Assert.areEqual("My Element", "b".find().innerHTML());
-	}
-
-	@Test 
-	public function setDocument_null()
-	{
-		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
-		DOMTools.setDocument(node);
-		DOMTools.setDocument(null);
-
-		// The document should still be 'node', because null is rejected.
-		Assert.areEqual("My Element", "b".find().innerHTML());
-	}
-	#end
 }

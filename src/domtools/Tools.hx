@@ -119,7 +119,7 @@ class Tools
 		var q:DOMCollection ;
 		if (html != null && html != "")
 		{
-			var n:DOMNode = DOMTools.create('div');
+			var n:DOMNode = create('div');
 			//
 			// TODO: report this bug to haxe mailing list.
 			// this is allowed:
