@@ -321,6 +321,14 @@ class TraversingTest
 	}
 
 	@Test 
+	public function findTwice() 
+	{
+		var length1 = "#recursive".find().length;
+		var length2 = "#recursive".find().length;
+		Assert.areEqual(length1, length2);
+	}
+
+	@Test 
 	public function findOnNull()
 	{
 		Assert.areEqual(0, nullNode.find('*').length);

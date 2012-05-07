@@ -74,10 +74,11 @@ class DOMCollection
 		{
 			#if js 
 			var nodeList = DOMTools.document.querySelectorAll(selector, null);
+			addNodeList(nodeList);
 			#else  
 			var nodeList = DOMTools.document.find(selector);
+			addCollection(nodeList);
 			#end
-			addNodeList(cast nodeList);
 		}
 			
 	}

@@ -13,7 +13,6 @@ using DOMTools;
 */
 class CollectionElementManipulationTest 
 {
-	#if js 
 	public function new() 
 	{
 	}
@@ -41,6 +40,9 @@ class CollectionElementManipulationTest
 	public var commentNodes:DOMCollection;
 	public var emptyCollection:DOMCollection;
 	public var nullDOMCollection:DOMCollection;
+	public var a:DOMCollection;
+	public var b:DOMCollection;
+	public var b2:DOMCollection;
 	
 	@Before
 	public function setup():Void
@@ -58,7 +60,7 @@ class CollectionElementManipulationTest
 				<li id='b3'>3</li>
 			</ul>
 			<div class='empty'></div>
-			<div id='nonelements'>Start<!--Comment1-->End<!--Comment2--></div>
+			<div class='nonelements'>Start<!--Comment1-->End<!--Comment2--></div>
 		</myxml>".parse();
 
 		DOMTools.setDocument(sampleDocument.getNode());
@@ -68,7 +70,7 @@ class CollectionElementManipulationTest
 		listItems = "li".find();
 		pickme = "li.pickme".find();
 		emptyNode = ".empty".find();
-		nonElements = "#nonelements".find().children(false);
+		nonElements = ".nonelements".find().children(false);
 		textNodes = nonElements.filter(function (node) {
 			return node.isTextNode();
 		});
@@ -78,6 +80,9 @@ class CollectionElementManipulationTest
 		});
 		emptyCollection = new DOMCollection();
 		nullDOMCollection = null;
+		a = "#a".find();
+		b = "#b".find();
+		b2 = "#b2".find();
 	}
 	
 	@After
@@ -89,9 +94,9 @@ class CollectionElementManipulationTest
 	@Test 
 	public function attr()
 	{
-		Assert.areEqual("first", "#a".find().attr('title'));
-		Assert.areEqual("second", "#b".find().attr('title'));
-		Assert.areEqual("pickme", "#b2".find().attr('class'));
+		Assert.areEqual("first", a.attr('title'));
+		Assert.areEqual("second", b.attr('title'));
+		Assert.areEqual("pickme", b2.attr('class'));
 	}
 
 	@Test 
@@ -109,8 +114,8 @@ class CollectionElementManipulationTest
 	@Test 
 	public function attrDoesNotExist()
 	{
-		Assert.areEqual("", "#a".find().attr('doesnotexist'));
-		Assert.areEqual("", "#a".find().attr('bad attribute name'));
+		Assert.areEqual("", a.attr('doesnotexist'));
+		Assert.areEqual("", a.attr('bad attribute name'));
 	}
 
 	@Test 
@@ -123,19 +128,19 @@ class CollectionElementManipulationTest
 	@Test 
 	public function setAttr()
 	{
-		"#a".find().setAttr('title', '1st');
-		"#b2".find().setAttr('class', 'dontpickme');
-		Assert.areEqual("1st", "#a".find().attr('title'));
-		Assert.areEqual("second", "#b".find().attr('title'));
-		Assert.areEqual("dontpickme", "#b2".find().attr('class'));
+		a.setAttr('title', '1st');
+		b2.setAttr('class', 'dontpickme');
+		Assert.areEqual("1st", a.attr('title'));
+		Assert.areEqual("second", b.attr('title'));
+		Assert.areEqual("dontpickme", b2.attr('class'));
 	}
 
 	@Test 
 	public function setAttrMultiple()
 	{
 		lists.setAttr('title', 'thesame');
-		Assert.areEqual('thesame', "#a".find().attr('title'));
-		Assert.areEqual('thesame', "#b".find().attr('title'));
+		Assert.areEqual('thesame', a.attr('title'));
+		Assert.areEqual('thesame', b.attr('title'));
 	}
 
 	@Test 
@@ -156,8 +161,8 @@ class CollectionElementManipulationTest
 	public function removeAttr()
 	{
 		lists.removeAttr('title');
-		Assert.areEqual('', "#a".find().attr('title'));
-		Assert.areEqual('', "#b".find().attr('title'));
+		Assert.areEqual('', a.attr('title'));
+		Assert.areEqual('', b.attr('title'));
 	}
 
 	@Test 
@@ -179,10 +184,10 @@ class CollectionElementManipulationTest
 	{
 		lists.removeAttr('attrdoesnotexist');
 		lists.removeAttr('attr bad input');
-		Assert.areEqual('', "#a".find().attr('attrdoesnotexist'));
-		Assert.areEqual('', "#b".find().attr('attrdoesnotexist'));
-		Assert.areEqual('', "#a".find().attr('attr bad input'));
-		Assert.areEqual('', "#b".find().attr('attr bad input'));
+		Assert.areEqual('', a.attr('attrdoesnotexist'));
+		Assert.areEqual('', b.attr('attrdoesnotexist'));
+		Assert.areEqual('', a.attr('attr bad input'));
+		Assert.areEqual('', b.attr('attr bad input'));
 	}
 
 	@Test 
@@ -417,7 +422,7 @@ class CollectionElementManipulationTest
 	public function tagName()
 	{
 		Assert.areEqual("h1", h1.tagName());
-		Assert.areEqual("ul", "#a".find().tagName());
+		Assert.areEqual("ul", a.tagName());
 		Assert.areEqual("div", emptyNode.tagName());
 	}
 
@@ -486,8 +491,15 @@ class CollectionElementManipulationTest
 
 		var input1 = "<input type='text' value='attr' />".parse().getNode();
 		var input2 = "<input type='text' value='attr' />".parse().getNode();
+		#if js
+		// On Javascript this behaviour works with the javascript field "value"
 		Reflect.setField(input1, "value", "value1");
 		Reflect.setField(input2, "value", "value2");
+		#else 
+		// On other platforms, we use attributes
+		input1.setAttr("value", "value1");
+		input2.setAttr("value", "value2");
+		#end
 
 		var q = new DOMCollection().add(input1).add(input2);
 		q.setVal("newValue");
@@ -511,11 +523,11 @@ class CollectionElementManipulationTest
 		Assert.areEqual("", emptyCollection.val());
 	}
 
-	@Test 
+	@Test
 	public function textOnSingle()
 	{
 		Assert.areEqual("Title", h1.text());
-		Assert.areEqual("StartEnd", "#nonelements".find().text());
+		Assert.areEqual("StartEnd", ".nonelements".find().text());
 	}
 
 	@Test 
@@ -525,7 +537,7 @@ class CollectionElementManipulationTest
 		Assert.areEqual("123123", listItems.text());
 		Assert.areEqual("StartEnd", textNodes.text());
 		Assert.areEqual("Comment1Comment2", commentNodes.text());
-		Assert.areEqual("StartComment1EndComment2", "#nonelements".find().children(false).text());
+		Assert.areEqual("StartComment1EndComment2", ".nonelements".find().children(false).text());
 	}
 
 	@Test 
@@ -563,14 +575,14 @@ class CollectionElementManipulationTest
 	}
 
 	@Test 
-	public function innerHTML()
+	public function innerHTML() 
 	{
 		Assert.areEqual("123123", listItems.innerHTML());
 
-		var html = "#nonelements".find().innerHTML();
+		var html = ".nonelements".find().innerHTML();
 		Assert.areEqual("Start<!--Comment1-->End<!--Comment2-->", html);
 
-		Assert.isTrue('#a'.find().innerHTML().indexOf('</li>') > -1);
+		Assert.isTrue(a.innerHTML().indexOf('</li>') > -1);
 	}
 
 	@Test 
@@ -594,7 +606,7 @@ class CollectionElementManipulationTest
 
 		// Check this is actually creating elements
 		listItems.setInnerHTML('<a href="#">Link</a>');
-		Assert.areEqual(listItems.length, "a".find().length);
+		Assert.areEqual(listItems.length, listItems.find("a").length);
 	}
 
 	@Test 
@@ -624,5 +636,4 @@ class CollectionElementManipulationTest
 		Assert.areEqual("a", returnValue.eq(0).attr('id'));
 		Assert.areEqual("b", returnValue.eq(1).attr('id'));
 	}
-	#end
 }

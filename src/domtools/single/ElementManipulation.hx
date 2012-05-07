@@ -227,6 +227,7 @@ class ElementManipulation
 			switch (node.nodeType)
 			{
 				case domtools.DOMType.ELEMENT_NODE:
+					#if js
 					val = Reflect.field(node, 'value');
 					
 					// If the value is null, that means
@@ -239,6 +240,9 @@ class ElementManipulation
 					{
 						val = attr(node, "value");
 					}
+					#else 
+					val = attr(node, "value");
+					#end
 				default:
 					val = node.nodeValue;
 			}
@@ -256,7 +260,7 @@ class ElementManipulation
 			{
 				case DOMType.ELEMENT_NODE:
 					// Set value with Javascript
-					#if (js && !nodejs)
+					#if js
 					Reflect.setField(node, "value", val);
 					
 					// Set Attr for non client / js targets

@@ -314,7 +314,11 @@ class ElementManipulationTest
 	public function testValInput():Void 
 	{
 		var input = "<input type='text' value='attr' />".parse().getNode();
+		#if js 
 		Reflect.setField(input, "value", "myvalue");
+		#else 
+		input.setAttr("value", "myvalue"); 
+		#end
 		Assert.areEqual("myvalue", input.val());
 	}
 
@@ -322,7 +326,11 @@ class ElementManipulationTest
 	public function testValOnTextArea():Void 
 	{
 		var ta = "<textarea>test</textarea>".parse().getNode();
+		#if js 
 		Reflect.setField(ta, "value", "myvalue");
+		#else 
+		ta.setAttr("value", "myvalue");
+		#end
 		Assert.areEqual("myvalue", ta.val());
 	}
 
