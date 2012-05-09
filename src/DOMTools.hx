@@ -64,7 +64,8 @@ typedef CollectionDOMManipulation = domtools.collection.DOMManipulation;
 typedef SingleTraversing = domtools.single.Traversing;
 typedef CollectionTraversing = domtools.collection.Traversing;
 
-
+typedef DOMNode = domtools.DOMNode;
+typedef DOMCollection = domtools.DOMCollection;
 // 
 // Client JS only classes
 // 
