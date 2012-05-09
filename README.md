@@ -76,11 +76,10 @@ Basic Aims
 * Be very haxe-like and easy to use.
 * Provide a base for building HTML/JS widgets using haxe classes.
 * Be null-safe, that is, if something is missing fail silently, don't throw errors.
-
-Future Aims
------------
-
-* Target all targets using haxe's built in XML support.  We can use SelectHXML for find().  Obviously style, animation and events won't make much sense on the server side, but certainly the general DOM manipulation and traversing will. 
+* Provide a cross-platform friendly way of working with XML / DOM trees.  This is 
+  implemented using Haxe's Xml class and SelectHXML for the selection engine.  Obviously 
+  style, animation and events won't make much sense on the server side, but certainly the 
+  general DOM manipulation and traversing can work.
 
 Demos
 =====
@@ -150,6 +149,7 @@ Traversing
 * firstChildren() - open to changing name
 * lastChildren() - open to changing name
 * parent()
+* parents() - on Xml targets, "parent" is already taken.  Use parents() for a null-safe option.
 * ancestors()
 * next()
 * prev()
@@ -246,7 +246,7 @@ Status
         <th>IE8</th>
         <th>IE9</th>
         <th>IE10</th>
-        <th>Flash</th>
+        <th>Flash 9+</th>
         <th>Neko</th>
         <th>PHP</th>
         <th>NodeJS</th>
@@ -260,7 +260,11 @@ Status
         <td colspan="2">TESTSNOTRUN</td>   
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="5">NOTIMPLEMENTED</td>    
+        <td colspan="1">TESTSFAIL</td>
+        <td colspan="1">GOOD</td>
+        <td colspan="1">TESTSNOTRUN</td>
+        <td colspan="1">NOTIMPLEMENTED</td>
+        <td colspan="1">TESTSNOTRUN</td>
     </tr>
     <tr>
         <th>Query (Collection)</th>
@@ -268,7 +272,11 @@ Status
         <td colspan="2">TESTSNOTRUN</td>   
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="5">NOTIMPLEMENTED</td>    
+        <td colspan="1">TESTSFAIL</td>
+        <td colspan="1">GOOD</td>
+        <td colspan="1">TESTSNOTRUN</td>
+        <td colspan="1">NOTIMPLEMENTED</td>
+        <td colspan="1">TESTSNOTRUN</td>
     </tr>
     <tr>
         <th>DOM Manipulation</th>
@@ -276,7 +284,11 @@ Status
         <td colspan="2">TESTSNOTRUN</td>   
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="5">NOTIMPLEMENTED</td>    
+        <td colspan="1">TESTSFAIL</td>
+        <td colspan="1">GOOD</td>
+        <td colspan="1">TESTSNOTRUN</td>
+        <td colspan="1">NOTIMPLEMENTED</td>
+        <td colspan="1">TESTSNOTRUN</td>
     </tr>
     <tr>
         <th>Traversing</th>
@@ -284,7 +296,11 @@ Status
         <td colspan="2">TESTSNOTRUN</td>   
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="5">NOTIMPLEMENTED</td>    
+        <td colspan="1">TESTSFAIL</td>
+        <td colspan="1">GOOD</td>
+        <td colspan="1">TESTSNOTRUN</td>
+        <td colspan="1">NOTIMPLEMENTED</td>
+        <td colspan="1">TESTSNOTRUN</td>
     </tr>
     <tr>
         <th>Event Management</th>
