@@ -366,20 +366,15 @@ class ElementManipulation
 		return (elm == null) ? null : elm.cloneNode(deep);
 	}
 
+	#if js
+	// JS doesn't have a built in toString() method
 	public static inline function toString(elm:DOMNode, ?deep:Bool = true):DOMNode
 	{
-		#if js
-		
 		var div = DOMTools.create("div");
 		domtools.single.DOMManipulation.append(div, clone(elm));
 		return innerHTML(div);
-
-		#else 
-		
-		elm.toString();
-		
-		#end
 	}
+	#end
 
 }
 

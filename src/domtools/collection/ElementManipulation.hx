@@ -194,4 +194,18 @@ class ElementManipulation
 		return query;
 	}
 
+	public static inline function toString(collection:DOMCollection, ?deep:Bool = true):DOMNode
+	{
+		var str = "";
+		for (node in collection)
+		{
+			#if js
+			str += domtools.single.ElementManipulation.toString(node);
+			#else 
+			str += node.toString();
+			#end
+		}
+		return str;
+	}
+
 }
