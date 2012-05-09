@@ -30,6 +30,7 @@
 package domtools.single;
 
 import domtools.DOMNode;
+import domtools.DOMType;
 #if !js using domtools.XMLWrapper; #end
 
 /*
@@ -363,6 +364,21 @@ class ElementManipulation
 	public static inline function clone(elm:DOMNode, ?deep:Bool = true):DOMNode
 	{
 		return (elm == null) ? null : elm.cloneNode(deep);
+	}
+
+	public static inline function toString(elm:DOMNode, ?deep:Bool = true):DOMNode
+	{
+		#if js
+		
+		var div = DOMTools.create("div");
+		domtools.single.DOMManipulation.append(div, clone(elm));
+		return innerHTML(div);
+
+		#else 
+		
+		elm.toString();
+		
+		#end
 	}
 
 }
