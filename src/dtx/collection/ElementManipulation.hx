@@ -194,16 +194,19 @@ class ElementManipulation
 		return query;
 	}
 
-	public static inline function toString(collection:DOMCollection, ?deep:Bool = true):String
+	public static inline function html(collection:DOMCollection):String
 	{
 		var str = "";
-		for (node in collection)
+		if (collection != null)
 		{
-			#if js
-			str += dtx.single.ElementManipulation.toString(node);
-			#else 
-			str += node.toString();
-			#end
+			for (node in collection)
+			{
+				#if js
+				str += dtx.single.ElementManipulation.html(node);
+				#else 
+				str += node.toString();
+				#end
+			}
 		}
 		return str;
 	}

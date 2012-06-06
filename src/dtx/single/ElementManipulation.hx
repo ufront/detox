@@ -370,15 +370,17 @@ class ElementManipulation
 		return (elm == null) ? null : elm.cloneNode(deep);
 	}
 
-	#if js
-	// JS doesn't have a built in toString() method
-	public static inline function toString(elm:DOMNode, ?deep:Bool = true):String
+	// JS doesn't have a built in html() method
+	public static inline function html(elm:DOMNode):String
 	{
+		#if js
 		var div = DTX.create("div");
 		dtx.single.DOMManipulation.append(div, clone(elm));
 		return innerHTML(div);
+		#else 
+		return (elm != null) ? elm.toString() : "";
+		#end
 	}
-	#end
 
 }
 

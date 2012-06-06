@@ -479,6 +479,27 @@ class ElementManipulationTest
 	}
 
 	@Test
+	public function testHtml():Void 
+	{
+		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
+		Assert.areEqual("<div>Hello <i>World</i></div>", helloworld.html());
+		Assert.areEqual("<i>World</i>", helloworld.find("i").html());
+	}
+
+	@Test
+	public function testNullHtml():Void 
+	{
+		Assert.areEqual("", nullnode.html());
+	}
+
+	@Test
+	public function testHtmlOnNonElements():Void 
+	{
+		Assert.areEqual("<!-- A comment -->", comment.html());
+		Assert.areEqual("Text", text.html());
+	}
+
+	@Test
 	public function testCloneTextNode():Void 
 	{
 		var newText = text.clone();

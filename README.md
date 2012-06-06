@@ -140,7 +140,7 @@ Node / Element Manipulation
 * setText()
 * innerHTML()
 * setInnerHTML()
-* toString() - get the full XML/HTML of this node and it's children
+* html() - get the full XML/HTML of this node and it's children
 * clone()
 
 Traversing

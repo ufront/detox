@@ -624,6 +624,29 @@ class CollectionElementManipulationTest
 	}
 
 	@Test 
+	public function html() 
+	{
+		Assert.areEqual('<li id="a1">1</li><li class="pickme" id="a2">2</li><li id="a3">3</li><li id="b1">1</li><li class="pickme" id="b2">2</li><li id="b3">3</li>', listItems.html());
+
+		var html = ".nonelements".find().html();
+		Assert.areEqual('<div class="nonelements">Start<!--Comment1-->End<!--Comment2--></div>', html);
+
+		Assert.isTrue(a.html().indexOf('</li>') > -1);
+	}
+
+	@Test 
+	public function htmlOnNull()
+	{
+		Assert.areEqual("", nullDOMCollection.html());
+	}
+
+	@Test 
+	public function htmlOnEmpty()
+	{
+		Assert.areEqual("", emptyCollection.html());
+	}
+
+	@Test 
 	public function chaining()
 	{
 		// Run every possible chaining command
