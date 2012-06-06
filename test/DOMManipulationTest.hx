@@ -2,10 +2,10 @@ package;
 
 import massive.munit.Assert;
 
-import DOMTools;
-using DOMTools;
-import domtools.DOMCollection;
-import domtools.DOMNode;
+import DTX;
+using DTX;
+import dtx.DOMCollection;
+import dtx.DOMNode;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -70,7 +70,7 @@ class DOMManipulationTest
 			<div id='empty'></div>
 		</myxml>".parse().getNode();
 
-		DOMTools.setDocument(sampleDocument);
+		DTX.setDocument(sampleDocument);
 
 		h1 = "h1".find().getNode();
 		lists = "ul".find();

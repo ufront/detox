@@ -27,11 +27,11 @@
 * 
 ****/
 
-package domtools.single;
+package dtx.single;
 
-import domtools.DOMNode;
-import domtools.DOMType;
-#if !js using domtools.XMLWrapper; #end
+import dtx.DOMNode;
+import dtx.DOMType;
+#if !js using dtx.XMLWrapper; #end
 
 /*
 JQuery has these classes, let's copy:
@@ -52,22 +52,22 @@ class ElementManipulation
 
 	public static function isElement(node:DOMNode):Bool
 	{
-		return node != null && node.nodeType == domtools.DOMType.ELEMENT_NODE;
+		return node != null && node.nodeType == dtx.DOMType.ELEMENT_NODE;
 	}
 
 	public static function isComment(node:DOMNode):Bool
 	{
-		return node != null && node.nodeType == domtools.DOMType.COMMENT_NODE;
+		return node != null && node.nodeType == dtx.DOMType.COMMENT_NODE;
 	}
 
 	public static function isTextNode(node:DOMNode):Bool
 	{
-		return node != null && node.nodeType == domtools.DOMType.TEXT_NODE;
+		return node != null && node.nodeType == dtx.DOMType.TEXT_NODE;
 	}
 
 	public static function isDocument(node:DOMNode):Bool
 	{
-		return node != null && node.nodeType == domtools.DOMType.DOCUMENT_NODE;
+		return node != null && node.nodeType == dtx.DOMType.DOCUMENT_NODE;
 	}
 
 	public static function toQuery(n:DOMNode):DOMCollection
@@ -93,7 +93,7 @@ class ElementManipulation
 
 	public static function setAttr(elm:DOMNode, attName:String, attValue:String):DOMNode
 	{
-		if (elm!= null && elm.nodeType == domtools.DOMType.ELEMENT_NODE)
+		if (elm!= null && elm.nodeType == dtx.DOMType.ELEMENT_NODE)
 		{
 			var element:DOMElement = cast elm;
 			#if js
@@ -107,7 +107,7 @@ class ElementManipulation
 
 	public static function removeAttr(elm:DOMNode, attName:String):DOMNode
 	{
-		if (elm!=null && elm.nodeType == domtools.DOMType.ELEMENT_NODE)
+		if (elm!=null && elm.nodeType == dtx.DOMType.ELEMENT_NODE)
 		{
 			var element:DOMElement = cast elm;
 			#if js 
@@ -129,8 +129,12 @@ class ElementManipulation
 		var hasClass = true;
 		if (className.indexOf(' ') > -1)
 		{
+			#if !flash8 
 			var anyWhitespace = ~/\s+/g;
 			for (name in anyWhitespace.split(className))
+			#else 
+			for (name in className.split(" "))
+			#end
 			{
 				hasClass = testForClass(elm, name);
 				if (hasClass == false) break;
@@ -204,13 +208,13 @@ class ElementManipulation
 		{
 			ret = switch (elm.nodeType)
 			{
-				case domtools.DOMType.ELEMENT_NODE:
+				case dtx.DOMType.ELEMENT_NODE:
 					elm.nodeName.toLowerCase();
-				case domtools.DOMType.DOCUMENT_NODE:
+				case dtx.DOMType.DOCUMENT_NODE:
 					"#document";
-				case domtools.DOMType.TEXT_NODE:
+				case dtx.DOMType.TEXT_NODE:
 					"#text";
-				case domtools.DOMType.COMMENT_NODE:
+				case dtx.DOMType.COMMENT_NODE:
 					"#comment";
 			}
 			
@@ -227,7 +231,7 @@ class ElementManipulation
 		{
 			switch (node.nodeType)
 			{
-				case domtools.DOMType.ELEMENT_NODE:
+				case dtx.DOMType.ELEMENT_NODE:
 					#if js
 					val = Reflect.field(node, 'value');
 					
@@ -322,7 +326,7 @@ class ElementManipulation
 		{
 			switch (elm.nodeType)
 			{
-				case domtools.DOMType.ELEMENT_NODE:
+				case dtx.DOMType.ELEMENT_NODE:
 					var element:DOMElement = cast elm;
 					#if js
 					ret = element.innerHTML;
@@ -343,7 +347,7 @@ class ElementManipulation
 		{
 			switch (elm.nodeType)
 			{
-				case domtools.DOMType.ELEMENT_NODE:
+				case dtx.DOMType.ELEMENT_NODE:
 					var element:DOMElement = cast elm;
 					#if js
 					element.innerHTML = html;
@@ -368,10 +372,10 @@ class ElementManipulation
 
 	#if js
 	// JS doesn't have a built in toString() method
-	public static inline function toString(elm:DOMNode, ?deep:Bool = true):DOMNode
+	public static inline function toString(elm:DOMNode, ?deep:Bool = true):String
 	{
-		var div = DOMTools.create("div");
-		domtools.single.DOMManipulation.append(div, clone(elm));
+		var div = DTX.create("div");
+		dtx.single.DOMManipulation.append(div, clone(elm));
 		return innerHTML(div);
 	}
 	#end

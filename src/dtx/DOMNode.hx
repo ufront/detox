@@ -1,4 +1,4 @@
-package domtools;
+package dtx;
 
 #if js
 import js.w3c.level3.Core;

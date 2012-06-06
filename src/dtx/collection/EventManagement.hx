@@ -27,10 +27,10 @@
 * 
 ****/
 
-package domtools.collection;
+package dtx.collection;
 
 #if js
-import domtools.DOMNode;
+import dtx.DOMNode;
 import js.w3c.level3.Events;
 
 class EventManagement
@@ -39,7 +39,7 @@ class EventManagement
 	{
 		for (target in targetCollection)
 		{
-			domtools.single.EventManagement.on(target, eventType, listener);
+			dtx.single.EventManagement.on(target, eventType, listener);
 		}
 		return targetCollection;
 	}
@@ -48,7 +48,7 @@ class EventManagement
 	{
 		for (target in targetCollection)
 		{
-			domtools.single.EventManagement.off(target, eventType, listener);
+			dtx.single.EventManagement.off(target, eventType, listener);
 		}
 		return targetCollection;
 	}
@@ -57,7 +57,7 @@ class EventManagement
 	{
 		for (target in targetCollection)
 		{
-			domtools.single.EventManagement.one(target, eventType, listener);
+			dtx.single.EventManagement.one(target, eventType, listener);
 		}
 		return targetCollection;
 	}
@@ -116,7 +116,7 @@ class EventManagement
 	{
 		for (node in targetCollection)
 		{
-			domtools.single.EventManagement.hover(node, listener1, listener2);
+			dtx.single.EventManagement.hover(node, listener1, listener2);
 		}
 		return targetCollection;
 	}
@@ -130,7 +130,7 @@ class EventManagement
 	{
 		for (target in targetCollection)
 		{
-			domtools.single.EventManagement.toggleClick(target, listenerFirstClick, listenerSecondClick);
+			dtx.single.EventManagement.toggleClick(target, listenerFirstClick, listenerSecondClick);
 		}
 		return targetCollection;
 	}

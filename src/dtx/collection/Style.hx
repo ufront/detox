@@ -27,6 +27,16 @@
 * 
 ****/
 
-package domtools.collection;
+package dtx.collection;
 
-// Nothing yet.
+class Style
+{
+	
+	public static function setCSS(collection:DOMCollection, property:String, value:String)
+	{
+		for (node in collection)
+		{
+			dtx.single.Style.setCSS(node, property, value);
+		}
+	}
+}

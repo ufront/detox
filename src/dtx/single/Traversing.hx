@@ -27,10 +27,10 @@
 * 
 ****/
 
-package domtools.single;
+package dtx.single;
 
-import domtools.DOMNode;
-#if !js using domtools.XMLWrapper; #end
+import dtx.DOMNode;
+#if !js using dtx.XMLWrapper; #end
 
 /*
 	parentsUntil(selector)
@@ -101,7 +101,7 @@ class Traversing
 	static public function parent(node:DOMNode)
 	{
 		var p:DOMNode = null;
-		if (node != null && node.parentNode != null && node != DOMTools.document)
+		if (node != null && node.parentNode != null && node != DTX.document)
 		{
 			#if js
 			p = node.parentNode;
@@ -140,7 +140,7 @@ class Traversing
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
 	static public function descendants(node:DOMNode, ?elementsOnly:Bool = true):DOMCollection
 	{
-		var descendantList = new domtools.DOMCollection();
+		var descendantList = new dtx.DOMCollection();
 
 		for (child in children(node, elementsOnly))
 		{
@@ -188,7 +188,7 @@ class Traversing
 		// but this "previousSibling" isn't an element 
 		while (sibling != null 
 			&& elementsOnly
-			&& sibling.nodeType != domtools.DOMType.ELEMENT_NODE)
+			&& sibling.nodeType != dtx.DOMType.ELEMENT_NODE)
 		{
 			// find the prev sibling up the line.
 			// If there is none, this will return null, which is okay.

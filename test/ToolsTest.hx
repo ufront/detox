@@ -2,10 +2,10 @@ package;
 
 import massive.munit.Assert;
 
-import DOMTools;
-import domtools.DOMCollection;
-import domtools.DOMNode;
-using DOMTools;
+import DTX;
+import dtx.DOMCollection;
+import dtx.DOMNode;
+using DTX;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -40,7 +40,7 @@ class ToolsTest
 			<p>Two</p>
 			<div></div>
 		</myxml>".parse();
-		DOMTools.setDocument(sampleDocument.getNode());
+		DTX.setDocument(sampleDocument.getNode());
 	}
 	
 	@After
@@ -81,7 +81,7 @@ class ToolsTest
 	@Test 
 	public function create() 
 	{
-		var div:DOMNode = DOMTools.create("div");
+		var div:DOMNode = DTX.create("div");
 		Assert.areEqual("div", div.tagName());
 		Assert.areEqual("", div.innerHTML());
 	}
@@ -89,32 +89,32 @@ class ToolsTest
 	@Test 
 	public function createBadInput() 
 	{
-		var elm:DOMNode = DOMTools.create("actual_element");
+		var elm:DOMNode = DTX.create("actual_element");
 		Assert.areEqual("actual_element", elm.tagName());
 		Assert.areEqual("", elm.innerHTML());
 
-		var bad = DOMTools.create("non existent element");
+		var bad = DTX.create("non existent element");
 		Assert.isNull(bad);
 	}
 
 	@Test 
 	public function createNullInput() 
 	{
-		var bad = DOMTools.create(null);
+		var bad = DTX.create(null);
 		Assert.isNull(bad);
 	}
 
 	@Test 
 	public function createEmptyString() 
 	{
-		var bad = DOMTools.create("");
+		var bad = DTX.create("");
 		Assert.isNull(bad);
 	}
 
 	@Test 
 	public function parse() 
 	{
-		var q = DOMTools.parse("<div id='test'>Hello</div>");
+		var q = DTX.parse("<div id='test'>Hello</div>");
 
 		Assert.areEqual('div', q.tagName());
 		Assert.areEqual('test', q.attr('id'));
@@ -124,7 +124,7 @@ class ToolsTest
 	@Test 
 	public function parseMultiple() 
 	{
-		var q = DOMTools.parse("<div id='test1'>Hello</div><div id='test2'>World</div>");
+		var q = DTX.parse("<div id='test1'>Hello</div><div id='test2'>World</div>");
 
 		Assert.areEqual(2, q.length);
 		Assert.areEqual("div", q.eq(0).tagName());
@@ -134,23 +134,23 @@ class ToolsTest
 	@Test 
 	public function parseTextOnly() 
 	{
-		var q3 = DOMTools.parse("text only");
+		var q3 = DTX.parse("text only");
 
-		Assert.areEqual(domtools.DOMType.TEXT_NODE, q3.getNode().nodeType);
+		Assert.areEqual(dtx.DOMType.TEXT_NODE, q3.getNode().nodeType);
 		Assert.areEqual("text only", q3.getNode().nodeValue);
 	}
 
 	@Test 
 	public function parseNull() 
 	{
-		var q = DOMTools.parse(null);
+		var q = DTX.parse(null);
 		Assert.areEqual(0, q.length);
 	}
 
 	@Test 
 	public function parseEmptyString() 
 	{
-		var q = DOMTools.parse("");
+		var q = DTX.parse("");
 		Assert.areEqual(0, q.length);
 	}
 
@@ -162,14 +162,14 @@ class ToolsTest
 		// (or dangerous enough) use case for us to think about correcting
 		// these inconsistencies.
 		// This test merely checks that it doesn't throw an error.
-		var q = DOMTools.parse("<p>My <b>Broken Paragraph</p>");
+		var q = DTX.parse("<p>My <b>Broken Paragraph</p>");
 	}
 
 	@Test 
 	public function setDocument()
 	{
 		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
-		DOMTools.setDocument(node);
+		DTX.setDocument(node);
 		Assert.areEqual("My Element", "b".find().innerHTML());
 	}
 
@@ -177,8 +177,8 @@ class ToolsTest
 	public function setDocument_null()
 	{
 		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
-		DOMTools.setDocument(node);
-		DOMTools.setDocument(null);
+		DTX.setDocument(node);
+		DTX.setDocument(null);
 
 		// The document should still be 'node', because null is rejected.
 		Assert.areEqual("My Element", "b".find().innerHTML());

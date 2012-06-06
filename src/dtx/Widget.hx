@@ -27,13 +27,13 @@
 * 
 ****/
 
-package domtools;
+package dtx;
 
 #if js
 import js.w3c.level3.Core;
 import js.w3c.level3.Core.Document;
 import CommonJS;
-import domtools.DOMCollection;
+import dtx.DOMCollection;
 
 class Widget extends DOMCollection
 #else 
@@ -46,13 +46,13 @@ class Widget
 {
 	#if js
 	/** Create a new widget by parsing some "template" html, and use that as our collection.
-	When your class extends this, it will automatically work with the domtools API (through using).  
+	When your class extends this, it will automatically work with the dtx API (through using).  
 	Therefore your class can have very tight integration between haxe features and the DOM. */
 	public function new(template:String)
 	{
 		super();
 
-		var q = DOMTools.parse(template);
+		var q = DTX.parse(template);
 		this.collection = q.collection;
 	}
 	#end

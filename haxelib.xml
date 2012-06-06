@@ -1,4 +1,4 @@
-<project name="domtools" url="https://github.com/jasononeil/domtools" license="BSD">
+<project name="dtx" url="https://github.com/jasononeil/dtx" license="BSD">
 	<user name="jason"/>
 	<tag v="js" />
 	<tag v="dom" />

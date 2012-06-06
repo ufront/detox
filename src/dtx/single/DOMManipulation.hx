@@ -27,10 +27,10 @@
 * 
 ****/
 
-package domtools.single;
+package dtx.single;
 
-import domtools.DOMNode;
-#if !js using domtools.XMLWrapper; #end
+import dtx.DOMNode;
+#if !js using dtx.XMLWrapper; #end
 
 /*
 wrap()
@@ -87,7 +87,7 @@ class DOMManipulation
 			}
 			if (newChildCollection != null)
 			{
-				domtools.collection.DOMManipulation.insertThisBefore(newChildCollection, parent.firstChild#if !js () #end);
+				dtx.collection.DOMManipulation.insertThisBefore(newChildCollection, parent.firstChild#if !js () #end);
 			}
 		}
 
@@ -103,7 +103,7 @@ class DOMManipulation
 		}
 		if (parentCollection != null)
 		{
-			domtools.collection.DOMManipulation.append(parentCollection, child);
+			dtx.collection.DOMManipulation.append(parentCollection, child);
 		}
 
 		return child;
@@ -125,7 +125,7 @@ class DOMManipulation
 		}
 		if (parentCollection != null)
 		{
-			domtools.collection.DOMManipulation.prepend(parentCollection, child);
+			dtx.collection.DOMManipulation.prepend(parentCollection, child);
 		}
 		return child;
 	}
@@ -223,7 +223,7 @@ class DOMManipulation
 			}
 			if (contentQuery != null)
 			{
-				domtools.collection.DOMManipulation.insertThisBefore(contentQuery, target);
+				dtx.collection.DOMManipulation.insertThisBefore(contentQuery, target);
 			}
 		}
 
@@ -240,7 +240,7 @@ class DOMManipulation
 			}
 			if (contentQuery != null)
 			{
-				domtools.collection.DOMManipulation.insertThisAfter(contentQuery, target);
+				dtx.collection.DOMManipulation.insertThisAfter(contentQuery, target);
 			}
 		}
 		

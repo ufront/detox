@@ -27,7 +27,7 @@
 * 
 ****/
 
-package domtools;
+package dtx;
 
 /**
 * new() - runs a new query, creates a new collection. Alternatively pass DOM Node
@@ -47,11 +47,12 @@ package domtools;
 #if js
 import js.w3c.level3.Core;
 import CommonJS;
+#else 
+using dtx.XMLWrapper; 
 #end
-import domtools.DOMNode;
-import DOMTools;
-using DOMTools;
-#if !js using domtools.XMLWrapper; #end
+import dtx.DOMNode;
+import DTX;
+using DTX;
 
 class DOMCollection
 {
@@ -73,17 +74,17 @@ class DOMCollection
 		if (selector != "")
 		{
 			#if js 
-			var nodeList = DOMTools.document.querySelectorAll(selector, null);
+			var nodeList = DTX.document.querySelectorAll(selector, null);
 			addNodeList(nodeList);
 			#else  
 			// This next line is a workaround to a bug in selecthxml
 			// See http://code.google.com/p/selecthxml/issues/detail?id=2
 			// And http://code.google.com/p/selecthxml/issues/detail?id=3
-			var nodeList = DOMTools.document.find(selector);
+			selecthxml.SelectDom.runtimeSelect(Xml.createDocument(), "a");
+			var nodeList = selecthxml.SelectDom.runtimeSelect(DTX.document, selector);
 			addCollection(nodeList);
 			#end
 		}
-			
 	}
 
 	public inline function iterator()
@@ -130,7 +131,7 @@ class DOMCollection
 			for (node in collection)
 			{
 				// Only add if we are allowing elements only or if it is in fact an element
-				if (elementsOnly == false || domtools.single.ElementManipulation.isElement(node))
+				if (elementsOnly == false || dtx.single.ElementManipulation.isElement(node))
 					add(node);
 			}
 		}
@@ -144,7 +145,7 @@ class DOMCollection
 		{
 			var node = nodeList.item(i);
 			// Only add if we are allowing elements only or if it is in fact an element
-			if (elementsOnly == false || domtools.single.ElementManipulation.isElement(node))
+			if (elementsOnly == false || dtx.single.ElementManipulation.isElement(node))
 			{
 				add(node);
 			}

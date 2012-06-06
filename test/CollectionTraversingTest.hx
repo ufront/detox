@@ -2,10 +2,10 @@ package;
 
 import massive.munit.Assert;
 
-import DOMTools;
-using DOMTools;
-import domtools.DOMCollection;
-import domtools.DOMNode;
+import DTX;
+using DTX;
+import dtx.DOMCollection;
+import dtx.DOMNode;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -66,7 +66,7 @@ class CollectionTraversingTest
 		nullDOMCollection = null;
 		emptyDOMCollection = new DOMCollection();
 
-		DOMTools.setDocument(sampleDocument.getNode());
+		DTX.setDocument(sampleDocument.getNode());
 
 	}
 	

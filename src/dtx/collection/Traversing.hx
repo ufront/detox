@@ -27,10 +27,10 @@
 * 
 ****/
 
-package domtools.collection;
+package dtx.collection;
 
-import domtools.DOMNode;
-#if !js using domtools.XMLWrapper; #end
+import dtx.DOMNode;
+#if !js using dtx.XMLWrapper; #end
 
 class Traversing
 {
@@ -42,7 +42,7 @@ class Traversing
 		{
 			for (node in query)
 			{
-				if (domtools.single.ElementManipulation.isElement(node))
+				if (dtx.single.ElementManipulation.isElement(node))
 				{
 					// Add any child elements
 					#if js
@@ -63,11 +63,11 @@ class Traversing
 		{
 			for (node in query)
 			{
-				if (domtools.single.ElementManipulation.isElement(node))
+				if (dtx.single.ElementManipulation.isElement(node))
 				{
 					// Add first child node that is an element
 					var e = #if js node.firstChild #else node.firstChild() #end;
-					while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(cast e) == false)
+					while (elementsOnly == true && e != null && dtx.single.ElementManipulation.isElement(cast e) == false)
 					{
 						e = #if js e.nextSibling; #else  e = e.nextSibling(); #end
 					}
@@ -85,11 +85,11 @@ class Traversing
 		{
 			for (node in query)
 			{
-				if (domtools.single.ElementManipulation.isElement(node))
+				if (dtx.single.ElementManipulation.isElement(node))
 				{
 					// Add first child node that is an element
 					var e = #if js node.lastChild #else node.lastChild() #end;
-					while (elementsOnly == true && e != null && domtools.single.ElementManipulation.isElement(e) == false)
+					while (elementsOnly == true && e != null && dtx.single.ElementManipulation.isElement(e) == false)
 					{
 						#if js
 						e = e.previousSibling;
@@ -112,7 +112,7 @@ class Traversing
 		{
 			for (node in query)
 			{
-				if (node.parentNode != null && node != DOMTools.document)
+				if (node.parentNode != null && node != DTX.document)
 					#if js
 					parents.add(node.parentNode);
 					#else 
@@ -150,11 +150,11 @@ class Traversing
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
 	static public function descendants(query:DOMCollection, ?elementsOnly:Bool = true):DOMCollection
 	{
-		var descendantList = new domtools.DOMCollection();
+		var descendantList = new dtx.DOMCollection();
 
 		for (node in query)
 		{
-			var l = domtools.single.Traversing.descendants(node, elementsOnly);
+			var l = dtx.single.Traversing.descendants(node, elementsOnly);
 			descendantList.addCollection(l);
 		}
 
@@ -175,7 +175,7 @@ class Traversing
 				// If it's not null, but isn't an element, and we want an element,
 				// keep going.
 				while (sibling != null 
-					&& sibling.nodeType != domtools.DOMType.ELEMENT_NODE
+					&& sibling.nodeType != dtx.DOMType.ELEMENT_NODE
 					&& elementsOnly )
 				{
 					sibling = #if js sibling.nextSibling #else sibling.nextSibling() #end;
@@ -201,7 +201,7 @@ class Traversing
 				// If it's not null, but isn't an element, and we want an element,
 				// keep going.
 				while (sibling != null  
-					&& sibling.nodeType != domtools.DOMType.ELEMENT_NODE
+					&& sibling.nodeType != dtx.DOMType.ELEMENT_NODE
 					&& elementsOnly)
 				{
 					sibling = #if js sibling.previousSibling #else sibling.previousSibling() #end;
@@ -221,7 +221,7 @@ class Traversing
 		{
 			for (node in query)
 			{
-				if (domtools.single.ElementManipulation.isElement(node))
+				if (dtx.single.ElementManipulation.isElement(node))
 				{
 					#if js
 					var element:DOMElement = cast node;

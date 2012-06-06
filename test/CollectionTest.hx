@@ -2,9 +2,9 @@ package;
 
 import massive.munit.Assert;
 
-import domtools.DOMCollection;
-import domtools.DOMNode;
-using DOMTools;
+import dtx.DOMCollection;
+import dtx.DOMNode;
+using DTX;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -77,7 +77,7 @@ class CollectionTest
 		</table>
 		</myxml>".parse();
 
-		DOMTools.setDocument(sampleDocument.getNode());
+		DTX.setDocument(sampleDocument.getNode());
 
 		h1 = "h1".find();
 		lists = "ul".find();
@@ -157,7 +157,7 @@ class CollectionTest
 	public function getNodeFirst()
 	{
 		// if we can access the nodeType property, then we know we're on a Node 
-		Assert.areEqual(domtools.DOMType.ELEMENT_NODE, h1.getNode().nodeType);
+		Assert.areEqual(dtx.DOMType.ELEMENT_NODE, h1.getNode().nodeType);
 	}
 
 	@Test 
@@ -324,9 +324,9 @@ class CollectionTest
 	{
 		var q = new DOMCollection();
 		#if js 
-		var nodeList = DOMTools.document.querySelectorAll("li", null);
+		var nodeList = DTX.document.querySelectorAll("li", null);
 		#else
-		var nodeList = DOMTools.document.find("li");
+		var nodeList = DTX.document.find("li");
 		#end 
 		q.addNodeList(cast nodeList);
 		Assert.areEqual(6, q.length);

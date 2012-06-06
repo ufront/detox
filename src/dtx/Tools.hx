@@ -27,7 +27,7 @@
 * 
 ****/
 
-package domtools;
+package dtx;
 
 #if js
 import js.w3c.level3.Core;
@@ -35,11 +35,11 @@ import js.w3c.level3.Events;
 import CommonJS; 
 import UserAgentContext;
 #end
-import domtools.DOMCollection;
-import domtools.DOMNode;
+import dtx.DOMCollection;
+import dtx.DOMNode;
 
 /** 
-* Designed to be used with "using domtools.Tools;" this gives you access
+* Designed to be used with "using dtx.Tools;" this gives you access
 * to all of the classes defined in this module.  These include
 *   - ElementManipulation
 *   - DOMManipulation
@@ -97,14 +97,18 @@ class Tools
 			{
 				elm = null;
 			}
-			#else 
+			#elseif !flash8
 			// Haxe doesn't validate the name, so we should.
 			// I'm going to use a simplified (but not entirely accurate) validation.  See:
 			// http://stackoverflow.com/questions/3158274/what-would-be-a-regex-for-valid-xml-names
-			var valid = ~/^[a-zA-Z_:]([a-zA-Z0-9_:\.])*$/;
-
+			
 			// If it is valid, create, if it's not, return null
+			var valid = ~/^[a-zA-Z_:]([a-zA-Z0-9_:\.])*$/;
 			elm = (valid.match(name)) ? Xml.createElement(name) : null;
+			#else 
+			// Flash 8 can't do Regex, so just try pass the name
+			//var valid = ~/^[a-zA-Z_:]([a-zA-Z0-9_:\.])*$/;
+			elm = Xml.createElement(name);
 			#end
 		}
 		return elm;
@@ -125,10 +129,10 @@ class Tools
 			// this is allowed:
 			// n.setInnerHTML("");
 			// But this doesn't get swapped out to it's "using" function
-			// Presumably because this class is a dependency of the DOMTools?
+			// Presumably because this class is a dependency of the DTX?
 			// Either way haxe shouldn't do that...
-			domtools.single.ElementManipulation.setInnerHTML(n, html);
-			q = domtools.single.Traversing.children(n, false);
+			dtx.single.ElementManipulation.setInnerHTML(n, html);
+			q = dtx.single.Traversing.children(n, false);
 		}
 		else 
 		{
@@ -155,7 +159,7 @@ class Tools
 
 	/*public static inline function create(str:String):DOMCollection
 	{
-		return new DOMCollection(DOMTools.createElement(str));
+		return new DOMCollection(DTX.createElement(str));
 	}*/
 
 	#if js
@@ -184,8 +188,8 @@ class Tools
 		// Only change the document if it has the right NodeType
 		if (newDocument != null)
 		{
-			if (newDocument.nodeType == domtools.DOMType.DOCUMENT_NODE
-				|| newDocument.nodeType == domtools.DOMType.ELEMENT_NODE)
+			if (newDocument.nodeType == dtx.DOMType.DOCUMENT_NODE
+				|| newDocument.nodeType == dtx.DOMType.ELEMENT_NODE)
 			{
 				// Because of the NodeType we can safely use this node as our document
 				document = untyped newDocument;

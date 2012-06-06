@@ -2,8 +2,8 @@ package;
 
 import massive.munit.Assert;
 
-import domtools.DOMNode;
-using DOMTools;
+import dtx.DOMNode;
+using DTX;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 

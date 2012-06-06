@@ -27,10 +27,10 @@
 * 
 ****/
 
-package domtools.single;
+package dtx.single;
 
 #if js
-import domtools.DOMNode;
+import dtx.DOMNode;
 import js.w3c.level3.Events;
 /*
 JQuery has these methods.  I'll try break them down into core functionality and implementations of specific events

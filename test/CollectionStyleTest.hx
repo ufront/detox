@@ -2,8 +2,8 @@ package;
 
 import massive.munit.Assert;
 
-import domtools.Tools;
-using domtools.Tools;
+import dtx.Tools;
+using dtx.Tools;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 

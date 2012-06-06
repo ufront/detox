@@ -27,6 +27,63 @@
 * 
 ****/
 
-package domtools.single;
+/**
+* This file wraps all the dtx functionality into 
+* one module, so it's easy to use at once.
+* 
+* The aim is that pretty much all of our main usage can
+* be included with this line at the top of your file:
+*     
+*    using DTX;
+*/
 
-// Nothing yet.
+// None of our actual code is defined in this file.
+// However, by using `typedef = dtx.Tools`
+// We can include that class with haxe's "using" magic.
+
+// dtx.Tools provides 3 handy functions:
+// 
+//    "div".create();
+//    "<b>Some Text</b>".parse();
+//    "#title".find();
+typedef DTX = dtx.Tools;
+
+// 
+// Core classes
+// 
+
+// Include ElementManipulation
+typedef SingleElementManipulation = dtx.single.ElementManipulation;
+typedef CollectionElementManipulation = dtx.collection.ElementManipulation;
+
+// Include DOMManipulation
+typedef SingleDOMManipulation = dtx.single.DOMManipulation;
+typedef CollectionDOMManipulation = dtx.collection.DOMManipulation;
+
+// Include Traversing
+typedef SingleTraversing = dtx.single.Traversing;
+typedef CollectionTraversing = dtx.collection.Traversing;
+
+typedef DOMNode = dtx.DOMNode;
+typedef DOMCollection = dtx.DOMCollection;
+// 
+// Client JS only classes
+// 
+
+#if (js && !nodejs)
+
+// Include Style
+typedef SingleStyle = dtx.single.Style;
+typedef CollectionStyle = dtx.collection.Style;
+
+// Include Animation
+//typedef SingleAnimation = dtx.single.Animation;
+//typedef CollectionAnimation = dtx.collection.Animation;
+
+// Include EventManagement
+typedef SingleEventManagement = dtx.single.EventManagement;
+typedef CollectionEventManagement = dtx.collection.EventManagement;
+
+#end
+
+

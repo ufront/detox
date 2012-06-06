@@ -1,6 +1,6 @@
-package domtools;
-import domtools.DOMNode;
-import domtools.DOMCollection;
+package dtx;
+import dtx.DOMNode;
+import dtx.DOMCollection;
 
 class XMLWrapper
 {
@@ -88,16 +88,16 @@ class XMLWrapper
 	static public function textContent(xml:Xml)
 	{
 		var ret = "";
-		if (xml.nodeType == domtools.DOMType.ELEMENT_NODE || xml.nodeType == domtools.DOMType.DOCUMENT_NODE)
+		if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
 		{
 			var allDescendants:DOMCollection;
 			var textDescendants:DOMCollection;
 			
-			allDescendants = domtools.single.Traversing.descendants(xml, false);
+			allDescendants = dtx.single.Traversing.descendants(xml, false);
 			
 			textDescendants = allDescendants.filter(function(x:Xml)
 			{
-				return x.nodeType == domtools.DOMType.TEXT_NODE;
+				return x.nodeType == dtx.DOMType.TEXT_NODE;
 			});
 			
 			
@@ -119,7 +119,7 @@ class XMLWrapper
 	static public function setTextContent(xml:DOMNode, text:String)
 	{
 		// if element or document
-		if (xml.nodeType == domtools.DOMType.ELEMENT_NODE || xml.nodeType == domtools.DOMType.DOCUMENT_NODE)
+		if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
 		{
 			empty(xml);
 			var textNode = Xml.createPCData(text);

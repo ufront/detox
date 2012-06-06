@@ -4,10 +4,10 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
-import DOMTools;
-using DOMTools;
-import domtools.DOMCollection;
-import domtools.DOMNode;
+import DTX;
+using DTX;
+import dtx.DOMCollection;
+import dtx.DOMNode;
 
 class TraversingTest 
 {
@@ -66,7 +66,7 @@ class TraversingTest
 				</div>
 			</div>
 		</myxml>".parse().getNode();
-		DOMTools.setDocument(sampleDocument);
+		DTX.setDocument(sampleDocument);
 
 		h1 = "h1".find().getNode();
 		a = "#a".find().getNode();
@@ -206,7 +206,7 @@ class TraversingTest
 	public function parentOnNull()
 	{
 		// When we use XML, parent is already a method of the object,
-		// so our "using DOMTools" parents() doesn't get called.
+		// so our "using DTX" parents() doesn't get called.
 		// As a result, we loose null-safety.  The workaround is to 
 		// use parents() instead.
 		Assert.isNull(nullNode.parents());

@@ -27,14 +27,14 @@
 * 
 ****/
 
-package domtools.collection;
+package dtx.collection;
 
 class ElementManipulation
 {
 	/** Assume we're operating on the first element. */
 	public static function attr(query:DOMCollection, attName:String):String
 	{
-		return (query != null && query.length > 0) ? domtools.single.ElementManipulation.attr(query.getNode(), attName) : "";
+		return (query != null && query.length > 0) ? dtx.single.ElementManipulation.attr(query.getNode(), attName) : "";
 	}
 
 	public static function setAttr(query:DOMCollection, attName:String, attValue:String):DOMCollection
@@ -43,7 +43,7 @@ class ElementManipulation
 		{
 			for (node in query)
 			{
-				domtools.single.ElementManipulation.setAttr(node, attName, attValue);
+				dtx.single.ElementManipulation.setAttr(node, attName, attValue);
 			}
 		}
 		return query;
@@ -55,7 +55,7 @@ class ElementManipulation
 		{
 			for (node in query)
 			{
-				domtools.single.ElementManipulation.removeAttr(node,attName);
+				dtx.single.ElementManipulation.removeAttr(node,attName);
 			}
 		}
 		return query;
@@ -74,7 +74,7 @@ class ElementManipulation
 
 			for (node in query)
 			{
-				if (domtools.single.ElementManipulation.hasClass(node, className) == false)
+				if (dtx.single.ElementManipulation.hasClass(node, className) == false)
 				{
 					result = false;
 					break;
@@ -91,7 +91,7 @@ class ElementManipulation
 		{
 			for (node in query)
 			{
-				domtools.single.ElementManipulation.addClass(node,className);
+				dtx.single.ElementManipulation.addClass(node,className);
 			}
 		}
 		return query;
@@ -103,7 +103,7 @@ class ElementManipulation
 		{
 			for (node in query)
 			{
-				domtools.single.ElementManipulation.removeClass(node,className);
+				dtx.single.ElementManipulation.removeClass(node,className);
 			}
 		}
 		return query;
@@ -115,7 +115,7 @@ class ElementManipulation
 		{
 			for (node in query)
 			{
-				domtools.single.ElementManipulation.toggleClass(node,className);
+				dtx.single.ElementManipulation.toggleClass(node,className);
 			}
 		}
 		return query;
@@ -123,12 +123,12 @@ class ElementManipulation
 
 	public static inline function tagName(query:DOMCollection):String
 	{
-		return (query != null && query.length > 0) ? domtools.single.ElementManipulation.tagName(query.getNode()) : "";
+		return (query != null && query.length > 0) ? dtx.single.ElementManipulation.tagName(query.getNode()) : "";
 	}
 
 	public static function val(query:DOMCollection):String
 	{
-		return (query != null && query.length > 0) ? domtools.single.ElementManipulation.val(query.getNode()) : "";
+		return (query != null && query.length > 0) ? dtx.single.ElementManipulation.val(query.getNode()) : "";
 	}
 
 	public static function setVal(query:DOMCollection, val:Dynamic)
@@ -138,7 +138,7 @@ class ElementManipulation
 		{
 			for (node in query)
 			{
-				domtools.single.ElementManipulation.setVal(node, value);
+				dtx.single.ElementManipulation.setVal(node, value);
 			}
 		}
 		return query;
@@ -151,7 +151,7 @@ class ElementManipulation
 		{
 			for (node in query)
 			{
-				text = text + domtools.single.ElementManipulation.text(node);
+				text = text + dtx.single.ElementManipulation.text(node);
 			}
 		}
 		return text;
@@ -163,7 +163,7 @@ class ElementManipulation
 		{
 			for (node in query)
 			{
-				domtools.single.ElementManipulation.setText(node,text);
+				dtx.single.ElementManipulation.setText(node,text);
 			}
 		}
 		return query;
@@ -176,7 +176,7 @@ class ElementManipulation
 		{
 			for (node in query)
 			{
-				ret += domtools.single.ElementManipulation.innerHTML(node);
+				ret += dtx.single.ElementManipulation.innerHTML(node);
 			}
 		}
 		return ret;
@@ -188,19 +188,19 @@ class ElementManipulation
 		{
 			for (node in query)
 			{
-				domtools.single.ElementManipulation.setInnerHTML(node,html);
+				dtx.single.ElementManipulation.setInnerHTML(node,html);
 			}
 		}
 		return query;
 	}
 
-	public static inline function toString(collection:DOMCollection, ?deep:Bool = true):DOMNode
+	public static inline function toString(collection:DOMCollection, ?deep:Bool = true):String
 	{
 		var str = "";
 		for (node in collection)
 		{
 			#if js
-			str += domtools.single.ElementManipulation.toString(node);
+			str += dtx.single.ElementManipulation.toString(node);
 			#else 
 			str += node.toString();
 			#end

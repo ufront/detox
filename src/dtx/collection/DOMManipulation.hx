@@ -27,10 +27,10 @@
 * 
 ****/
 
-package domtools.collection;
+package dtx.collection;
 
-import domtools.DOMNode;
-#if !js using domtools.XMLWrapper; #end
+import dtx.DOMNode;
+#if !js using dtx.XMLWrapper; #end
 
 class DOMManipulation
 {
@@ -47,7 +47,7 @@ class DOMManipulation
 				childCollection = (firstChildUsed && childCollection != null) ? childCollection.clone() : childCollection;
 
 				// now run the append from before
-				domtools.single.DOMManipulation.append(parent, childNode, childCollection);
+				dtx.single.DOMManipulation.append(parent, childNode, childCollection);
 				firstChildUsed = true;
 			}
 		}
@@ -75,7 +75,7 @@ class DOMManipulation
 				}
 
 				// now run the prepend from single.DOMManipulation
-				domtools.single.DOMManipulation.prepend(parent, childNode, childCollection);
+				dtx.single.DOMManipulation.prepend(parent, childNode, childCollection);
 			}
 		}
 		return parentCollection;
@@ -87,7 +87,7 @@ class DOMManipulation
 		if (parentNode != null)
 		{
 			// add this collection of children to this single parentNode
-			domtools.single.DOMManipulation.append(parentNode, children);
+			dtx.single.DOMManipulation.append(parentNode, children);
 		}
 		else if (parentCollection != null)
 		{
@@ -106,7 +106,7 @@ class DOMManipulation
 			children.collection.reverse();
 			for (child in children)
 			{
-				domtools.single.DOMManipulation.prependTo(child, parentNode, parentCollection);
+				dtx.single.DOMManipulation.prependTo(child, parentNode, parentCollection);
 			}
 		}
 		return children;
@@ -122,7 +122,7 @@ class DOMManipulation
 				for (childToAdd in content)
 				{
 					// insert a single child just before a single target
-					domtools.single.DOMManipulation.insertThisBefore(childToAdd, targetNode);
+					dtx.single.DOMManipulation.insertThisBefore(childToAdd, targetNode);
 				}
 			}
 			if (targetCollection != null)
@@ -159,7 +159,7 @@ class DOMManipulation
 				for (childToAdd in content)
 				{
 					// insert a single child just before a single target
-					domtools.single.DOMManipulation.insertThisAfter(childToAdd, currentTarget);
+					dtx.single.DOMManipulation.insertThisAfter(childToAdd, currentTarget);
 
 					// target the next one to go after this one
 					currentTarget = childToAdd;
@@ -192,7 +192,7 @@ class DOMManipulation
 		if (contentNode != null)
 		{
 			// before this target (multiple), insert content (single)
-			domtools.single.DOMManipulation.insertThisBefore(contentNode, target);
+			dtx.single.DOMManipulation.insertThisBefore(contentNode, target);
 		}
 		else if (contentCollection != null)
 		{
@@ -208,7 +208,7 @@ class DOMManipulation
 		if (contentNode != null)
 		{
 			// before this target (multiple), insert content (single)
-			domtools.single.DOMManipulation.insertThisAfter(contentNode, target);
+			dtx.single.DOMManipulation.insertThisAfter(contentNode, target);
 		}
 		else if (contentCollection != null)
 		{
@@ -226,7 +226,7 @@ class DOMManipulation
 		{
 			for (node in nodesToRemove)
 			{
-				domtools.single.DOMManipulation.remove(node);
+				dtx.single.DOMManipulation.remove(node);
 			}
 		}
 		return nodesToRemove;
@@ -238,13 +238,13 @@ class DOMManipulation
 	}
 
 	/** Remove a child element from the DOM.  Return the parent */
-	static public function removeChildren(parents:DOMCollection, ?childToRemove:DOMNode, ?childrenToRemove:domtools.DOMCollection)
+	static public function removeChildren(parents:DOMCollection, ?childToRemove:DOMNode, ?childrenToRemove:dtx.DOMCollection)
 	{
 		if (parents != null)
 		{
 			for (parent in parents)
 			{
-				domtools.single.DOMManipulation.removeChildren(parent, childToRemove, childrenToRemove);
+				dtx.single.DOMManipulation.removeChildren(parent, childToRemove, childrenToRemove);
 			}
 		}
 			
