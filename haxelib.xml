@@ -6,7 +6,7 @@
 	<tag v="xml" />
 	<tag v="js" />
 	<description>A simple library that eases DOM work in haxe.  It aims to be similar to jQuery, but more haxe-like, and hopefully one day portable to targets other than client side js.</description>
-	<version name="0.7.1.0">Renamed to Detox (dtx). Now use `using DTX;`  Added support for neko, tests passing.  Other platforms still unsupported for now.</version>
+	<version name="0.7.1.0">Renamed to Detox (dtx). Now use `using Detox;`  Added support for neko, tests passing.  Other platforms still unsupported for now.</version>
 	<depends name="xirsys_stdjs"/>
 	<depends name="jsmin"/>
 </project>

@@ -11,7 +11,7 @@ Here's some code so you can get an idea of what I mean:
 
 // You include this at the top of your file
 
-using DTX;
+using Detox;
 
 // Now you can write code like this:
 
