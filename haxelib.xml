@@ -1,4 +1,4 @@
-<project name="dtx" url="https://github.com/jasononeil/dtx" license="MIT">
+<project name="detox" url="https://github.com/jasononeil/dtx" license="MIT">
 	<user name="jason"/>
 	<tag v="js" />
 	<tag v="dom" />
