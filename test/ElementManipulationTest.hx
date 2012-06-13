@@ -3,7 +3,7 @@ package;
 import massive.munit.Assert;
 
 import dtx.DOMNode;
-using DTX;
+using Detox;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 

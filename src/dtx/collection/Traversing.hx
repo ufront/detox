@@ -94,7 +94,7 @@ class Traversing
 		{
 			for (node in query)
 			{
-				if (node.parentNode != null && node != DTX.document)
+				if (node.parentNode != null && node != Detox.document)
 					#if js
 					parents.add(node.parentNode);
 					#else 

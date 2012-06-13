@@ -2,8 +2,8 @@ package;
 
 import massive.munit.Assert;
 
-import DTX;
-using DTX;
+import Detox;
+using Detox;
 import dtx.DOMCollection;
 import dtx.DOMNode;
 
@@ -66,7 +66,7 @@ class CollectionTraversingTest
 		nullDOMCollection = null;
 		emptyDOMCollection = new DOMCollection();
 
-		DTX.setDocument(sampleDocument.getNode());
+		Detox.setDocument(sampleDocument.getNode());
 
 	}
 	

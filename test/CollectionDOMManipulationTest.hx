@@ -2,8 +2,8 @@ package;
 
 import massive.munit.Assert;
 
-import DTX;
-using DTX;
+import Detox;
+using Detox;
 import dtx.DOMCollection;
 import dtx.DOMNode;
 
@@ -70,7 +70,7 @@ class CollectionDOMManipulationTest
 			<div id='empty'></div>
 		</myxml>".parse();
 
-		DTX.setDocument(sampleDocument.getNode());
+		Detox.setDocument(sampleDocument.getNode());
 
 		h1 = "h1".find();
 		h1Node = "h1".find().getNode();

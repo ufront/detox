@@ -33,8 +33,8 @@ import CommonJS;
 using dtx.XMLWrapper; 
 #end
 import dtx.DOMNode;
-import DTX;
-using DTX;
+import Detox;
+using Detox;
 
 class DOMCollection
 {
@@ -56,14 +56,14 @@ class DOMCollection
 		if (selector != "")
 		{
 			#if js 
-			var nodeList = DTX.document.querySelectorAll(selector, null);
+			var nodeList = Detox.document.querySelectorAll(selector, null);
 			addNodeList(nodeList);
 			#else  
 			// This next line is a workaround to a bug in selecthxml
 			// See http://code.google.com/p/selecthxml/issues/detail?id=2
 			// And http://code.google.com/p/selecthxml/issues/detail?id=3
 			selecthxml.SelectDom.runtimeSelect(Xml.createDocument(), "a");
-			var nodeList = selecthxml.SelectDom.runtimeSelect(DTX.document, selector);
+			var nodeList = selecthxml.SelectDom.runtimeSelect(Detox.document, selector);
 			addCollection(nodeList);
 			#end
 		}

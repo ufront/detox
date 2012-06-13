@@ -356,7 +356,7 @@ class ElementManipulation
 	public static inline function html(elm:DOMNode):String
 	{
 		#if js
-		var div = DTX.create("div");
+		var div = Detox.create("div");
 		dtx.single.DOMManipulation.append(div, clone(elm));
 		return innerHTML(div);
 		#else 

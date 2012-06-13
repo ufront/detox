@@ -34,7 +34,7 @@ class Widget
 	{
 		super();
 
-		var q = DTX.parse(template);
+		var q = Detox.parse(template);
 		this.collection = q.collection;
 	}
 	#end

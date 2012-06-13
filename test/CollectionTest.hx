@@ -4,7 +4,7 @@ import massive.munit.Assert;
 
 import dtx.DOMCollection;
 import dtx.DOMNode;
-using DTX;
+using Detox;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -77,7 +77,7 @@ class CollectionTest
 		</table>
 		</myxml>".parse();
 
-		DTX.setDocument(sampleDocument.getNode());
+		Detox.setDocument(sampleDocument.getNode());
 
 		h1 = "h1".find();
 		lists = "ul".find();
@@ -324,9 +324,9 @@ class CollectionTest
 	{
 		var q = new DOMCollection();
 		#if js 
-		var nodeList = DTX.document.querySelectorAll("li", null);
+		var nodeList = Detox.document.querySelectorAll("li", null);
 		#else
-		var nodeList = DTX.document.find("li");
+		var nodeList = Detox.document.find("li");
 		#end 
 		q.addNodeList(cast nodeList);
 		Assert.areEqual(6, q.length);

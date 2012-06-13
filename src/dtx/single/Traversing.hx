@@ -83,7 +83,7 @@ class Traversing
 	static public function parent(node:DOMNode)
 	{
 		var p:DOMNode = null;
-		if (node != null && node.parentNode != null && node != DTX.document)
+		if (node != null && node.parentNode != null && node != Detox.document)
 		{
 			#if js
 			p = node.parentNode;

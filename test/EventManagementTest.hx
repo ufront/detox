@@ -2,8 +2,8 @@ package;
 
 import massive.munit.Assert;
 
-import DTX;
-using DTX;
+import Detox;
+using Detox;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 

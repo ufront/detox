@@ -3,8 +3,8 @@ package;
 import massive.munit.Assert;
 
 import dtx.DOMCollection;
-import DTX;
-using DTX;
+import Detox;
+using Detox;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -63,7 +63,7 @@ class CollectionElementManipulationTest
 			<div class='nonelements'>Start<!--Comment1-->End<!--Comment2--></div>
 		</myxml>".parse();
 
-		DTX.setDocument(sampleDocument.getNode());
+		Detox.setDocument(sampleDocument.getNode());
 
 		h1 = "h1".find();
 		lists = "ul".find();

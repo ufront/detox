@@ -111,7 +111,7 @@ class Tools
 			// this is allowed:
 			// n.setInnerHTML("");
 			// But this doesn't get swapped out to it's "using" function
-			// Presumably because this class is a dependency of the DTX?
+			// Presumably because this class is a dependency of the Detox?
 			// Either way haxe shouldn't do that...
 			dtx.single.ElementManipulation.setInnerHTML(n, html);
 			q = dtx.single.Traversing.children(n, false);
@@ -141,7 +141,7 @@ class Tools
 
 	/*public static inline function create(str:String):DOMCollection
 	{
-		return new DOMCollection(DTX.createElement(str));
+		return new DOMCollection(Detox.createElement(str));
 	}*/
 
 	#if js
