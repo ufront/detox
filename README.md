@@ -1,5 +1,5 @@
-DOMTools
-========
+Detox
+=====
 
 This is a library for haxeJS that makes it easier to work with the DOM or XML.  It is mostly inspired by JQuery but aims to give a more haxe-like way of coding.
 
@@ -11,7 +11,7 @@ Here's some code so you can get an idea of what I mean:
 
 // You include this at the top of your file
 
-using DOMTools;
+using DTX;
 
 // Now you can write code like this:
 
@@ -90,15 +90,15 @@ none of you would be using IE, would you?
 
 *Todo List*
 
-* Code: https://github.com/jasononeil/dtx/tree/gh-pages/demo/todo
-* Example: http://jasononeil.github.com/dtx/demo/todo/build/
+* Code: https://github.com/jasononeil/domtools/tree/gh-pages/demo/todo
+* Example: http://jasononeil.github.com/domtools/demo/todo/build/
 * Demonstrates: Basic usage.  Creating elements, manipulating elements, reading from 
   a form, traversing and moving things around the DOM.
 
 *Growl-Like Notifications*
 
-* Code: https://github.com/jasononeil/dtx/tree/gh-pages/demo/growl
-* Example: http://jasononeil.github.com/dtx/demo/growl/build/
+* Code: https://github.com/jasononeil/domtools/tree/gh-pages/demo/growl
+* Example: http://jasononeil.github.com/domtools/demo/growl/build/
 * Demonstrates: Basic usage as above.  Mostly demonstrates "Widgets" - how we can make
   our own custom classes in haxe that are closely tied to Elements on our HTML page.
 
