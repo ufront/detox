@@ -1,0 +1,9 @@
+
+# JavaScript
+-main DataWidgetExample
+-lib xirsys_stdjs
+-cp src
+-cp example/datawidget
+--js-modern
+--dead-code-elimination
+-js example/datawidget/build/datawidgetexample.js

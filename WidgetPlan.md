@@ -96,3 +96,19 @@ class PersonWidget_loop1<{name, detail}> extends DataWidget<T>
 ### Still to consider
 
  * Partial support, to import another widget/template (both once off and in loops)
+ * Event bindings (bind click to action etc).  These could be done purely through the class:
+
+       @template("ItemWidget.html") class ItemWidget extends DataWidget<Item> 
+       {
+           override public function setupInteraction()
+           {
+               this.find('.btn-primary').click(function () {
+                   this.reload();
+               })
+           }
+       }
+
+   Or you could use some code in the template:
+
+       <a class="btn" data-action="reload()">Button</a>
+       <a class="btn" data-action="Client.loadPage('http://google.com/')">Button</a>
