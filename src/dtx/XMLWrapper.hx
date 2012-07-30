@@ -158,7 +158,11 @@ class XMLWrapper
 	{
 		var xmlDocNode:Xml = null;
 		try {
+			#if macro 
+			xmlDocNode = Xml.parse("<doc>" + html + "</doc>").firstChild();
+			#else 
 			xmlDocNode = Xml.parse(html);
+			#end
 		} catch (e:Dynamic)
 		{
 			xmlDocNode = Xml.createDocument();
