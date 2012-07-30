@@ -193,7 +193,7 @@ class Traversing
 			#if js
 			var element:DOMElement = cast node;
 			newDOMCollection.addNodeList(element.querySelectorAll(selector));
-			#else 
+			#elseif !macro
 			// This next line is a workaround to a bug in selecthxml
 			// See http://code.google.com/p/selecthxml/issues/detail?id=2
 			// And http://code.google.com/p/selecthxml/issues/detail?id=3

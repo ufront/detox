@@ -12,13 +12,6 @@
 package dtx;
 
 /**
-* new() - runs a new query, creates a new collection. Alternatively pass DOM Node
-* slice
-* not - removes elements (or selector) from set
-* is("") - like filter, but returns Bool rather than new list if(element.is("li.menu"))
-* has(selector) - does it have a certain children
-* andSelf() - previous set of matched elements to the current set
-* index(?selector) - 
 * 
 * All the rest provided through "using"
 *
@@ -58,7 +51,7 @@ class DOMCollection
 			#if js 
 			var nodeList = Detox.document.querySelectorAll(selector, null);
 			addNodeList(nodeList);
-			#else  
+			#elseif !macro
 			// This next line is a workaround to a bug in selecthxml
 			// See http://code.google.com/p/selecthxml/issues/detail?id=2
 			// And http://code.google.com/p/selecthxml/issues/detail?id=3
