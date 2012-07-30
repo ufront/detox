@@ -6,15 +6,23 @@ using DateTools;
 
 class DataWidgetExample 
 {
+	static var pw:PersonWidget;
+
 	static public function main()
 	{
-		var doc = CommonJS.getHtmlDocument();
 		js.Lib.window.onload = function (e) {
 			var person = generateRandomPerson();
-			var pw = new PersonWidget(person);
+			pw = new PersonWidget(person);
+			var doc = CommonJS.getHtmlDocument();
 			doc.body.append(pw);
-			trace ("done? " + pw.html());
+			changePerson();
 		};
+	}
+
+	static public function changePerson()
+	{
+		var person = generateRandomPerson();
+		pw.bind(person);
 	}
 
 	static function generateRandomPerson()
