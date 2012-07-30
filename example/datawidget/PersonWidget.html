@@ -1,14 +1,16 @@
+<div>
 <h1>$name</h1>
 
-<img src="$p.getGravatar()" alt="$name's Gravatar" class="pull-left" />
+<img src="${getGravatar()}" alt="$name's Gravatar $name" class="pull-left" />
 
 <dl>
 	<dt>Name: </dt>
-	<dd>$p.name</dd>
+	<dd>$name</dd>
 	<dt>Email: </dt>
-	<dd><a href="mailto:$p.email">$p.email</a></dd>
+	<dd><a href="mailto:$email">$email</a></dd>
 	<dt>Date of Birth</dt>
-	<dd>$p.date</dd>
+	<dd>$dob</dd>
 </dl>
 
-<p>$p.name is ${p.getAge()} years old.</p>
+<p>$name is ${getAge()} years old.</p>
+</div>

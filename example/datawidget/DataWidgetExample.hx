@@ -2,23 +2,24 @@ import dtx.widget.DataWidget;
 import dtx.widget.WidgetTools;
 
 using Detox;
+using DateTools;
 
 class DataWidgetExample 
 {
 	static public function main()
 	{
-		var person = generateRandomPerson();
-		var pw = new PersonWidget(person);
-		trace (pw.html());
+		var doc = CommonJS.getHtmlDocument();
+		js.Lib.window.onload = function (e) {
+			var person = generateRandomPerson();
+			var pw = new PersonWidget(person);
+			doc.body.append(pw);
+			trace ("done? " + pw.html());
+		};
 	}
 
 	static function generateRandomPerson()
 	{
-		var a = Math.floor(Math.random() * 4);
-		var b = Math.floor(Math.random() * 4);
-		var c = Math.floor(Math.random() * 4);
-		var d = Math.floor(Math.random() * 4);
-
+		// Some data to choose from
 		var firstNames = ["Jason", "Barrack", "Julia", "Nelson"];
 		var lastNames = ["O'Neil", "Obama", "Gillard", "Mandela"];
 		var domains = ["gmail.com", "whitehouse.gov", "primeminister.gov.au", "thepresidency.gov.za"];
@@ -29,10 +30,11 @@ class DataWidgetExample
 			new Date(1918,6,18,0,0,0)
 		];
 
+		// Pick some random details and create a new person
 		var p = new Person();
-		p.name = firstNames[a] + " " + lastNames[b];
-		p.email = ~/[^a-z0-9]/g.replace(p.name.toLowerCase(), "") + "@" + domains[c];
-		p.dob = dates[d];
+		p.name = Random.fromArray(firstNames) + " " + Random.fromArray(lastNames);
+		p.email = ~/[^a-z0-9]/g.replace(p.name.toLowerCase(), "") + "@" + Random.fromArray(domains);
+		p.dob = Random.fromArray(dates);
 
 		return p;
 	}
@@ -47,10 +49,11 @@ class Person
 	public function new() {}
 
 	public function getGravatar():String {
-		return "";
+		return "https://en.gravatar.com/userimage/1620077/b344f5051e6f18d521f2e7c58a2f42fa.jpeg";
 	}
 	public function getAge():Int {
-		return 3;
+		var ageInSeconds = Date.now().getTime() - dob.getTime();
+		return Math.floor(ageInSeconds / 86400 / 365.25 / 1000);
 	}
 
 }
