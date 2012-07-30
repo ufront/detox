@@ -27,7 +27,7 @@
       - search for "$" (but not "$$")
       - if found
           - if not set, set attr(data-bind, i); i++;
-          - do string interpolation using modified Std.format(), get ("mailto:" + $email)
+          - do string interpolation using modified Std.format(), get ("mailto:" + email)
           - add binding to bind(), using find([data-bind=i]) and setAttr() or setText()
     - add in the static HTML for the widget
 
