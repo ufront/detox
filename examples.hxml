@@ -2,6 +2,9 @@
 # JavaScript
 -main DataWidgetExample
 -lib xirsys_stdjs
+-lib tink_macros
+-lib selecthxml
+-lib random
 -cp src
 -cp example/datawidget
 --js-modern
