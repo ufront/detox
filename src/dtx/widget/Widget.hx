@@ -27,7 +27,7 @@ import dtx.widget.WidgetTools;
 		super();
 
 		if (tpl != null) _tpl = tpl;
-		var q = Detox.parse(_tpl);
+		var q = Detox.parse(get_template());
 		this.collection = q.collection;
 	}
 
