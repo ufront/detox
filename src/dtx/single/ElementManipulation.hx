@@ -111,12 +111,8 @@ class ElementManipulation
 		var hasClass = true;
 		if (className.indexOf(' ') > -1)
 		{
-			#if !flash8 
 			var anyWhitespace = ~/\s+/g;
 			for (name in anyWhitespace.split(className))
-			#else 
-			for (name in className.split(" "))
-			#end
 			{
 				hasClass = testForClass(elm, name);
 				if (hasClass == false) break;

@@ -79,7 +79,7 @@ class Tools
 			{
 				elm = null;
 			}
-			#elseif !flash8
+			#else
 			// Haxe doesn't validate the name, so we should.
 			// I'm going to use a simplified (but not entirely accurate) validation.  See:
 			// http://stackoverflow.com/questions/3158274/what-would-be-a-regex-for-valid-xml-names
@@ -87,10 +87,6 @@ class Tools
 			// If it is valid, create, if it's not, return null
 			var valid = ~/^[a-zA-Z_:]([a-zA-Z0-9_:\.])*$/;
 			elm = (valid.match(name)) ? Xml.createElement(name) : null;
-			#else 
-			// Flash 8 can't do Regex, so just try pass the name
-			//var valid = ~/^[a-zA-Z_:]([a-zA-Z0-9_:\.])*$/;
-			elm = Xml.createElement(name);
 			#end
 		}
 		return elm;
