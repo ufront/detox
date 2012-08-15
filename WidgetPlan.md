@@ -11,6 +11,35 @@
         </ul>
     </div>"; 
 
+    OR
+
+    ### Follow Angular JS Example
+    ### http://angularjs.org/
+
+    "<div data-as='p'>
+        <h3>$p.name</h3>
+        <span>$p.phone</span>
+        <span><a href="$p.url">$p.url</a></span>
+        <span><a href="mailto:$p.email">$p.email</a></span>
+        <span>${DateTools.format(p.dob,"some format")}</span>
+        <ul>
+            <dtx-partial data-loop="item in items">
+              <li>$item.name: $item.detail</li>
+            </dtx-partial>
+        </ul>
+        <ul>
+            <dtx-partial data-loop="item in items">
+              <li>$name: $detail</li>
+            </dtx-partial>
+        </ul>
+        <dtx-partial data-object="person">
+          $name, $email
+        </dtx-partial>
+        <dtx-partial data-object="person as p">
+          $name, $email
+        </dtx-partial>
+    </div>"; 
+
 ### MACRO PSEUDOCODE
     
     - create the "override function bind()"
