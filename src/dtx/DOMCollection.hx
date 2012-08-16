@@ -139,16 +139,40 @@ class DOMCollection
 	{
 		if (node != null)
 		{
-			collection.remove(node);
+			removeNode(node);
 		}
 		if (nodeCollection != null)
 		{
 			for (n in nodeCollection)
 			{
-				collection.remove(n);
+				removeNode(n);
 			}
 		}
 		return this;
+	}
+
+	inline function removeNode(n)
+	{
+		#if flash 
+		// Fix bug with Flash where the usual array.remove() didn't work.
+		// It seems that 
+		//    a = xml.firstChild();
+		//    b = xml.firstChild();
+		//    a == b; // true
+		//    Assert.areEqual(a,b); // false.
+		// My guess is they are different objects in memory, but are physically equal.
+		// This is a workaround.
+		for (item in collection)
+		{
+			if (item==n)
+			{
+				collection.remove(item);
+				break;
+			}
+		}
+		#else
+		collection.remove(n);
+		#end 
 	}
 
 	public inline function each(f : DOMNode -> Void):DOMCollection

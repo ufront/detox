@@ -361,7 +361,7 @@ class CollectionTest
 		var string = "";
 		listItems.removeFromCollection("#b1".find().getNode());
 		listItems.removeFromCollection("#b3".find().getNode());
-		
+
 		Assert.areEqual(4, listItems.length);
 		for (item in listItems)
 		{
