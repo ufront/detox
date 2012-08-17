@@ -14,6 +14,7 @@ using dtx.Tools;
 */
 class AnimationTest 
 {
+	#if js 
 	private var timer:Timer;
 	
 	public function new() 
@@ -43,5 +44,5 @@ class AnimationTest
 	{
 		// trace ("Tear Down");
 	}
-
+	#end
 }
