@@ -195,7 +195,7 @@ class TraversingTest
 	@Test 
 	public function parent()
 	{
-		Assert.areEqual(a, "#a1".find().getNode().parents());
+		Assert.isTrue(a == "#a1".find().getNode().parents());
 		Assert.isTrue(".level4".find().getNode().parents().hasClass('level3'));
 		Assert.areEqual("nonElements", textNode1.parents().attr('id'));
 		Assert.areEqual("nonElements", textNode2.parents().attr('id'));

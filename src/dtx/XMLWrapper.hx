@@ -53,39 +53,73 @@ class XMLWrapper
 
 	static public inline function nextSibling(xml:Xml)
 	{
-		var p = xml.parent;
-		var itsTheNextOne = false;
-		var sibling:Xml = null;
-		for (child in p)
-		{
-			if (itsTheNextOne)
+		#if flash 
+			var sibling:Xml = null;
+			// get the flash node
+			var flashXML:flash.xml.XML = untyped xml._node;
+			// get the index
+			var i = flashXML.childIndex();
+			// get the siblings
+			var children:flash.xml.XMLList = flashXML.parent().children();
+			// get the previous item
+			var index = i + 1;
+			if (index >= 0 && index < children.length())
 			{
-				sibling = child;
-				break;
+				sibling = untyped Xml.wrap( children[index] );
 			}
-			if (child == xml) itsTheNextOne = true;
-		}
-		return sibling;
+			return sibling;
+		#else 
+			var p = xml.parent;
+			var itsTheNextOne = false;
+			var sibling:Xml = null;
+			for (child in p)
+			{
+				if (itsTheNextOne)
+				{
+					sibling = child;
+					break;
+				}
+				if (child == xml) itsTheNextOne = true;
+			}
+			return sibling;
+		#end
 	}
 
 	static public inline function previousSibling(xml:Xml)
 	{
-		var p = xml.parent;
-		var sibling:Xml;
-		for (child in p)
-		{
-			if (child != xml)
+		#if flash
+			var sibling:Xml = null;
+			// get the flash node
+			var flashXML:flash.xml.XML = untyped xml._node;
+			// get the index
+			var i = flashXML.childIndex();
+			// get the siblings
+			var children:flash.xml.XMLList = flashXML.parent().children();
+			// get the previous item
+			var index = i - 1;
+			if (index >= 0 && index < children.length())
 			{
-				sibling = child;
+				sibling = untyped Xml.wrap( children[index] );
 			}
-			else
+			return sibling;
+		#else 
+			var p = xml.parent;
+			var sibling:Xml;
+			for (child in p)
 			{
-				// If it's equal, leave "sibling" set to the previous value,
-				// and exit the loop...
-				break;
+				if (child != xml)
+				{
+					sibling = child;
+				}
+				else
+				{
+					// If it's equal, leave "sibling" set to the previous value,
+					// and exit the loop...
+					break;
+				}
 			}
-		}
-		return sibling;
+			return sibling;
+		#end 
 	}
 
 	static public function empty(xml:Xml)
