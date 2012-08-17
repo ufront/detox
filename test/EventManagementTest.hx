@@ -12,6 +12,7 @@ using Detox;
 */
 class EventManagementTest 
 {
+	#if js
 	
 	public function new() 
 	{
@@ -41,4 +42,5 @@ class EventManagementTest
 		// trace ("Tear Down");
 	}
 
+	#end
 }

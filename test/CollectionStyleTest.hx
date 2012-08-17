@@ -12,6 +12,7 @@ using dtx.Tools;
 */
 class CollectionStyleTest 
 {	
+	#if js
 	public function new() 
 	{
 	}
@@ -40,4 +41,5 @@ class CollectionStyleTest
 		// trace ("Tear Down");
 	}
 
+	#end
 }

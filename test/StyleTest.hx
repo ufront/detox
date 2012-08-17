@@ -12,6 +12,7 @@ using dtx.Tools;
 */
 class StyleTest 
 {
+	#if js
 	
 	public function new() 
 	{
@@ -41,4 +42,5 @@ class StyleTest
 		// trace ("Tear Down");
 	}
 
+	#end 
 }
