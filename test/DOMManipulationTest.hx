@@ -110,7 +110,7 @@ class DOMManipulationTest
 
 		// Now it should exist, and it should be the fourth child of it's parent
 		Assert.areEqual(1, a.find(".sample").length);
-		Assert.areEqual(sampleListItem, a.children().getNode(3));
+		Assert.isTrue(sampleListItem == a.children().getNode(3));
 	}
 
 	@Test 
@@ -124,8 +124,8 @@ class DOMManipulationTest
 
 		Assert.areEqual(3, emptyNode.children().length);
 		Assert.areEqual(2, emptyNode.find("p").length);
-		Assert.areEqual(sampleDOMCollection.getNode(0), emptyNode.children().getNode(1));
-		Assert.areEqual(sampleDOMCollection.getNode(1), emptyNode.children().getNode(2));
+		Assert.isTrue(sampleDOMCollection.getNode(0) == emptyNode.children().getNode(1));
+		Assert.isTrue(sampleDOMCollection.getNode(1) == emptyNode.children().getNode(2));
 	}
 
 	@Test 
@@ -152,7 +152,7 @@ class DOMManipulationTest
 
 		// Now it should exist, and it should be the first child of it's parent
 		Assert.areEqual(1, a.find(".sample").length);
-		Assert.areEqual(sampleListItem, a.children().getNode(0));
+		Assert.isTrue(sampleListItem == a.children().getNode(0));
 	}
 
 	@Test 
@@ -166,8 +166,8 @@ class DOMManipulationTest
 
 		Assert.areEqual(3, emptyNode.children().length);
 		Assert.areEqual(2, emptyNode.find("p").length);
-		Assert.areEqual(sampleDOMCollection.getNode(0), emptyNode.children().getNode(0));
-		Assert.areEqual(sampleDOMCollection.getNode(1), emptyNode.children().getNode(1));
+		Assert.isTrue(sampleDOMCollection.getNode(0) == emptyNode.children().getNode(0));
+		Assert.isTrue(sampleDOMCollection.getNode(1) == emptyNode.children().getNode(1));
 	}
 
 	@Test 
@@ -201,7 +201,7 @@ class DOMManipulationTest
 
 		// Now it should exist, and it should be the fourth child of it's parent
 		Assert.areEqual(1, a.find(".sample").length);
-		Assert.areEqual(sampleListItem, a.children().getNode(3));
+		Assert.isTrue(sampleListItem == a.children().getNode(3));
 	}
 
 	@Test 
@@ -246,7 +246,7 @@ class DOMManipulationTest
 
 		// Now it should exist, and it should be the first child of it's parent
 		Assert.areEqual(1, a.find(".sample").length);
-		Assert.areEqual(sampleListItem, a.children().getNode(0));
+		Assert.isTrue(sampleListItem == a.children().getNode(0));
 	}
 
 	@Test 
@@ -295,8 +295,8 @@ class DOMManipulationTest
 		insertSiblingContentNode.insertThisBefore(insertSiblingTargetNode);
 
 		// content should be first child, target second
-		Assert.areEqual(insertSiblingContentNode, sampleDOMCollection.eq(0).children().getNode(0));
-		Assert.areEqual(insertSiblingTargetNode, sampleDOMCollection.eq(0).children().getNode(1));
+		Assert.isTrue(insertSiblingContentNode == sampleDOMCollection.eq(0).children().getNode(0));
+		Assert.isTrue(insertSiblingTargetNode == sampleDOMCollection.eq(0).children().getNode(1));
 	}
 
 	@Test 
@@ -319,10 +319,10 @@ class DOMManipulationTest
 		Assert.areEqual(div1.innerHTML(), div2.innerHTML());
 
 		// check the order: should be content first, then target
-		Assert.areEqual(insertSiblingContentNode, div1.children().getNode(0));
-		Assert.areEqual(insertSiblingTargetDOMCollection.getNode(0), div1.children().getNode(1));
+		Assert.isTrue(insertSiblingContentNode == div1.children().getNode(0));
+		Assert.isTrue(insertSiblingTargetDOMCollection.getNode(0) == div1.children().getNode(1));
 		
-		Assert.areEqual(insertSiblingTargetDOMCollection.getNode(1), div2.children().getNode(1));
+		Assert.isTrue(insertSiblingTargetDOMCollection.getNode(1) == div2.children().getNode(1));
 		// This final one is a clone, so it won't be exactly equal, but it should be identical
 		Assert.areEqual(insertSiblingContentNode.innerHTML(), div2.children().getNode(0).innerHTML());
 		Assert.areEqual(insertSiblingContentNode.attr('class'), div2.children().getNode(0).attr('class'));
@@ -339,7 +339,7 @@ class DOMManipulationTest
 	public function insertThisBefore_Null()
 	{
 		a2.insertThisBefore(nullNode);
-		Assert.areEqual(a, a2.parents());
+		Assert.isTrue(a == a2.parents());
 	}
 
 	@Test 
@@ -348,8 +348,8 @@ class DOMManipulationTest
 		insertSiblingContentNode.insertThisAfter(insertSiblingTargetNode);
 
 		// First node should be target, second should be content
-		Assert.areEqual(insertSiblingTargetNode, sampleDOMCollection.eq(0).children().getNode(0));
-		Assert.areEqual(insertSiblingContentNode, sampleDOMCollection.eq(0).children().getNode(1));
+		Assert.isTrue(insertSiblingTargetNode == sampleDOMCollection.eq(0).children().getNode(0));
+		Assert.isTrue(insertSiblingContentNode == sampleDOMCollection.eq(0).children().getNode(1));
 	}
 
 	@Test 
@@ -372,9 +372,9 @@ class DOMManipulationTest
 		Assert.areEqual(div1.innerHTML(), div2.innerHTML());
 
 		// check the order: should be target first, then content
-		Assert.areEqual(insertSiblingTargetDOMCollection.getNode(0), div1.children().getNode(0));
-		Assert.areEqual(insertSiblingContentNode, div1.children().getNode(1));
-		Assert.areEqual(insertSiblingTargetDOMCollection.getNode(1), div2.children().getNode(0));
+		Assert.isTrue(insertSiblingTargetDOMCollection.getNode(0) == div1.children().getNode(0));
+		Assert.isTrue(insertSiblingContentNode == div1.children().getNode(1));
+		Assert.isTrue(insertSiblingTargetDOMCollection.getNode(1) == div2.children().getNode(0));
 		// This final one is a clone, so it won't be exactly equal, but it should be identical
 		Assert.areEqual(insertSiblingContentNode.innerHTML(), div2.children().getNode(1).innerHTML());
 		Assert.areEqual(insertSiblingContentNode.attr('class'), div2.children().getNode(1).attr('class'));
@@ -385,14 +385,14 @@ class DOMManipulationTest
 	{
 		var before = a.innerHTML();
 		nullNode.insertThisAfter(a2);
-		Assert.areEqual(before, a.innerHTML());
+		Assert.isTrue(before == a.innerHTML());
 	}
 
 	@Test 
 	public function insertThisAfter_Null()
 	{
 		a2.insertThisAfter(nullNode);
-		Assert.areEqual(a, a2.parents());
+		Assert.isTrue(a == a2.parents());
 	}
 
 	@Test 
@@ -401,8 +401,8 @@ class DOMManipulationTest
 		insertSiblingTargetNode.beforeThisInsert(insertSiblingContentNode);
 
 		// First node should be content, second should be target
-		Assert.areEqual(insertSiblingContentNode, sampleDOMCollection.eq(0).children().getNode(0));
-		Assert.areEqual(insertSiblingTargetNode, sampleDOMCollection.eq(0).children().getNode(1));
+		Assert.isTrue(insertSiblingContentNode == sampleDOMCollection.eq(0).children().getNode(0));
+		Assert.isTrue(insertSiblingTargetNode == sampleDOMCollection.eq(0).children().getNode(1));
 	}
 
 	@Test 
@@ -412,16 +412,16 @@ class DOMManipulationTest
 
 		// first and second should be content, third should be target
 		Assert.areEqual(3, sampleDOMCollection.eq().children().length);
-		Assert.areEqual(insertSiblingContentDOMCollection.getNode(0), sampleDOMCollection.eq(0).children().getNode(0));
-		Assert.areEqual(insertSiblingContentDOMCollection.getNode(1), sampleDOMCollection.eq(0).children().getNode(1));
-		Assert.areEqual(insertSiblingTargetNode, sampleDOMCollection.eq(0).children().getNode(2));
+		Assert.isTrue(insertSiblingContentDOMCollection.getNode(0) == sampleDOMCollection.eq(0).children().getNode(0));
+		Assert.isTrue(insertSiblingContentDOMCollection.getNode(1) == sampleDOMCollection.eq(0).children().getNode(1));
+		Assert.isTrue(insertSiblingTargetNode == sampleDOMCollection.eq(0).children().getNode(2));
 	}
 
 	@Test 
 	public function beforeThisInsert_OnNull()
 	{
 		nullNode.beforeThisInsert(a2);
-		Assert.areEqual(a, a2.parents());
+		Assert.isTrue(a == a2.parents());
 	}
 
 	@Test 
@@ -437,8 +437,8 @@ class DOMManipulationTest
 		insertSiblingTargetNode.afterThisInsert(insertSiblingContentNode);
 
 		// First node should be target, second should be content
-		Assert.areEqual(insertSiblingTargetNode, sampleDOMCollection.eq(0).children().getNode(0));
-		Assert.areEqual(insertSiblingContentNode, sampleDOMCollection.eq(0).children().getNode(1));
+		Assert.isTrue(insertSiblingTargetNode == sampleDOMCollection.eq(0).children().getNode(0));
+		Assert.isTrue(insertSiblingContentNode == sampleDOMCollection.eq(0).children().getNode(1));
 	}
 
 	@Test 
@@ -448,16 +448,16 @@ class DOMManipulationTest
 
 		// first should be target, second and third content
 		Assert.areEqual(3, sampleDOMCollection.eq().children().length);
-		Assert.areEqual(insertSiblingTargetNode, sampleDOMCollection.eq(0).children().getNode(0));
-		Assert.areEqual(insertSiblingContentDOMCollection.getNode(0), sampleDOMCollection.eq(0).children().getNode(1));
-		Assert.areEqual(insertSiblingContentDOMCollection.getNode(1), sampleDOMCollection.eq(0).children().getNode(2));
+		Assert.isTrue(insertSiblingTargetNode == sampleDOMCollection.eq(0).children().getNode(0));
+		Assert.isTrue(insertSiblingContentDOMCollection.getNode(0) == sampleDOMCollection.eq(0).children().getNode(1));
+		Assert.isTrue(insertSiblingContentDOMCollection.getNode(1) == sampleDOMCollection.eq(0).children().getNode(2));
 	}
 
 	@Test 
 	public function afterThisInsert_OnNull()
 	{
 		nullNode.afterThisInsert(a2);
-		Assert.areEqual(a, a2.parents());
+		Assert.isTrue(a == a2.parents());
 	}
 
 	@Test 
@@ -465,7 +465,7 @@ class DOMManipulationTest
 	{
 		var before = a.innerHTML();
 		a2.afterThisInsert(null);
-		Assert.areEqual(before, a.innerHTML());
+		Assert.isTrue(before == a.innerHTML());
 	}
 
 	@Test 
@@ -520,7 +520,7 @@ class DOMManipulationTest
 		a.removeChildren(null);
 
 		// check nothing changed
-		Assert.areEqual(original, a.innerHTML());
+		Assert.isTrue(original == a.innerHTML());
 	}
 
 	@Test 
@@ -537,7 +537,7 @@ class DOMManipulationTest
 		a.removeChildren(h1);
 
 		// check nothing changed
-		Assert.areEqual(original, a.innerHTML());
+		Assert.isTrue(original == a.innerHTML());
 	}
 
 	@Test 
