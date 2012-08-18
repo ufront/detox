@@ -457,11 +457,14 @@ class CollectionElementManipulationTest
 		// Make sure it reads the first Node in the set.
 
 		var input1 = "<input type='text' value='attr' />".parse().getNode();
-		Reflect.setField(input1, "value", "value1");
-		input1.setVal("value1");
 		var input2 = "<input type='text' value='attr' />".parse().getNode();
-		input2.setVal("value2");
+		#if js 
+		Reflect.setField(input1, "value", "value1");
 		Reflect.setField(input2, "value", "value2");
+		#else 
+		input1.setVal("value1");
+		input2.setVal("value2");
+		#end
 
 		var q = new DOMCollection().add(input1).add(input2);
 
