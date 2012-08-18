@@ -71,7 +71,7 @@ class DOMManipulation
 			// add this collection of children to this single parentNode
 			dtx.single.DOMManipulation.append(parentNode, children);
 		}
-		else if (parentCollection != null)
+		if (parentCollection != null)
 		{
 			// add this collection of children to this collection of parents
 			append(parentCollection, children);
@@ -147,7 +147,7 @@ class DOMManipulation
 					currentTarget = childToAdd;
 				}
 			}
-			else if (targetCollection != null)
+			if (targetCollection != null)
 			{
 				// insert this collection of content just before this collection of targets
 				var firstChildUsed = false;
@@ -176,7 +176,7 @@ class DOMManipulation
 			// before this target (multiple), insert content (single)
 			dtx.single.DOMManipulation.insertThisBefore(contentNode, target);
 		}
-		else if (contentCollection != null)
+		if (contentCollection != null)
 		{
 			// before this target (multiple), insert content (multiple)
 			insertThisBefore(contentCollection, target);
@@ -192,7 +192,7 @@ class DOMManipulation
 			// before this target (multiple), insert content (single)
 			dtx.single.DOMManipulation.insertThisAfter(contentNode, target);
 		}
-		else if (contentCollection != null)
+		if (contentCollection != null)
 		{
 			// before this target (multiple), insert content (multiple)
 			insertThisAfter(contentCollection, target);
