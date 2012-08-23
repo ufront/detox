@@ -41,6 +41,20 @@ Widgets
  * ^^ Partials
  	* ^^ Reference by fully qualified classname, or class in the same package
  	* ^^ Partial further down the page in the same template file
+ 	* ^^ <$MyWidget /> -> could be a class (or template which will turn into a class) with the same package path
+ 	     <$some.package.MyWidget> -> a widget / class with a different path
+ 	     <$SomePartial /> -> a partial taken from further down the same page (takes precedence over files)
+ 	     <partial name="MyWidget">Some Code</partial>
+
+ 	     QUESTIONS:
+ 	     * do these partial widgets get passed any constructor values?
+ 	       eg. <$MyButton args="(name, 'save()', Colour.Green)" />
+ 	     * do these partial widgets get associated with a class property (from data widgets)
+ 	       eg. <$MyButton inject="obj.property" />
+ 	       if (obj.property != null) -> widget.insert-at-location(obj.property);
+ 	       ... Or is that completely normal?
+ 	       <div>$myButton</div>
+ 	       (where $myButton is a widget instance to be imported?)
 
 Data Widgets
 
