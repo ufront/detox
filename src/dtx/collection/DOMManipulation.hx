@@ -189,12 +189,12 @@ class DOMManipulation
 	{
 		if (contentNode != null)
 		{
-			// before this target (multiple), insert content (single)
+			// after this target (multiple), insert content (single)
 			dtx.single.DOMManipulation.insertThisAfter(contentNode, target);
 		}
 		if (contentCollection != null)
 		{
-			// before this target (multiple), insert content (multiple)
+			// after this target (multiple), insert content (multiple)
 			insertThisAfter(contentCollection, target);
 		}
 

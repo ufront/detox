@@ -178,7 +178,6 @@ class DOMManipulation
 						// add the (possibly cloned) child after.the target
 						// (that is, before the targets next sibling)
 						var parent:DOMNode = #if js target.parentNode #else target.parentNode() #end;
-						var next = #if js target.nextSibling #else target.nextSibling() #end;
 						parent.insertBefore(childToInsert, next);
 					}
 					else 
