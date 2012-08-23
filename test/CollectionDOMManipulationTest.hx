@@ -141,7 +141,7 @@ class CollectionDOMManipulationTest
 	public function append_onNull()
 	{
 		nullDOMCollection.append(h1);
-		Assert.areEqual(sampleDocument.getNode(), h1Node.parents());
+		Assert.isTrue(sampleDocument.getNode() == h1Node.parents());
 	}
 
 	@Test 
@@ -150,7 +150,7 @@ class CollectionDOMManipulationTest
 		var before = h1.innerHTML();
 		h1.append(nullNode);
 		h1.append(nullDOMCollection);
-		Assert.areEqual(before, h1.innerHTML());
+		Assert.isTrue(before == h1.innerHTML());
 	}
 
 	@Test 
@@ -191,14 +191,14 @@ class CollectionDOMManipulationTest
 		var before = h1.innerHTML();
 		h1.prepend(nullNode);
 		h1.prepend(nullDOMCollection);
-		Assert.areEqual(before, h1.innerHTML());
+		Assert.isTrue(before == h1.innerHTML());
 	}
 
 	@Test
 	public function prepend_onNull()
 	{
 		nullDOMCollection.prepend(h1);
-		Assert.areEqual(sampleDocument.getNode(), h1Node.parents());
+		Assert.isTrue(sampleDocument.getNode() == h1Node.parents());
 	}
 
 	@Test 
@@ -239,7 +239,7 @@ class CollectionDOMManipulationTest
 	{
 		h1.appendTo(nullDOMCollection);
 		h1.appendTo(nullNode);
-		Assert.areEqual(sampleDocument.getNode(), h1Node.parents());
+		Assert.isTrue(sampleDocument.getNode() == h1Node.parents());
 	}
 
 	@Test 
@@ -248,7 +248,7 @@ class CollectionDOMManipulationTest
 		var before = h1.innerHTML();
 		nullDOMCollection.appendTo(h1);
 		nullDOMCollection.appendTo(h1Node);
-		Assert.areEqual(before, h1.innerHTML());
+		Assert.isTrue(before == h1.innerHTML());
 	}
 
 	@Test 
@@ -289,7 +289,7 @@ class CollectionDOMManipulationTest
 	{
 		h1.prependTo(nullDOMCollection);
 		h1.prependTo(nullNode);
-		Assert.areEqual(sampleDocument.getNode(), h1Node.parents());
+		Assert.isTrue(sampleDocument.getNode() == h1Node.parents());
 	}
 
 	@Test 
@@ -298,7 +298,7 @@ class CollectionDOMManipulationTest
 		var before = h1.innerHTML();
 		nullDOMCollection.prependTo(h1);
 		nullDOMCollection.prependTo(h1Node);
-		Assert.areEqual(before, h1.innerHTML());
+		Assert.isTrue(before == h1.innerHTML());
 	}
 
 	@Test 
@@ -340,7 +340,7 @@ class CollectionDOMManipulationTest
 		var before = lists.innerHTML();
 		nullDOMCollection.insertThisBefore(pickme);
 		nullDOMCollection.insertThisBefore(pickme.getNode(0));
-		Assert.areEqual(before, lists.innerHTML());
+		Assert.isTrue(before == lists.innerHTML());
 	}
 
 	@Test 
@@ -349,7 +349,7 @@ class CollectionDOMManipulationTest
 		var before = sampleDocument.innerHTML();
 		h1.insertThisBefore(nullNode);
 		h1.insertThisBefore(nullDOMCollection);
-		Assert.areEqual(before, sampleDocument.innerHTML());
+		Assert.isTrue(before == sampleDocument.innerHTML());
 	}
 
 	@Test 
@@ -391,7 +391,7 @@ class CollectionDOMManipulationTest
 		var before = sampleDocument.innerHTML();
 		h1.insertThisAfter(nullNode);
 		h1.insertThisAfter(nullDOMCollection);
-		Assert.areEqual(before, sampleDocument.innerHTML());
+		Assert.isTrue(before == sampleDocument.innerHTML());
 	}
 
 	@Test 
@@ -400,7 +400,7 @@ class CollectionDOMManipulationTest
 		var before = lists.innerHTML();
 		nullDOMCollection.insertThisAfter(pickme);
 		nullDOMCollection.insertThisAfter(pickme.getNode(0));
-		Assert.areEqual(before, lists.innerHTML());
+		Assert.isTrue(before == lists.innerHTML());
 	}
 
 	@Test 
@@ -441,7 +441,7 @@ class CollectionDOMManipulationTest
 		var before = lists.innerHTML();
 		pickme.beforeThisInsert(nullNode);
 		pickme.beforeThisInsert(nullDOMCollection);
-		Assert.areEqual(before, lists.innerHTML());
+		Assert.isTrue(before == lists.innerHTML());
 	}
 
 	@Test 
@@ -449,7 +449,7 @@ class CollectionDOMManipulationTest
 	{
 		var before = sampleDocument.innerHTML();
 		nullDOMCollection.beforeThisInsert(h1);
-		Assert.areEqual(before, sampleDocument.innerHTML());
+		Assert.isTrue(before == sampleDocument.innerHTML());
 	}
 
 	@Test 
@@ -489,7 +489,7 @@ class CollectionDOMManipulationTest
 	{
 		var before = sampleDocument.innerHTML();
 		nullDOMCollection.afterThisInsert(h1);
-		Assert.areEqual(before, sampleDocument.innerHTML());
+		Assert.isTrue(before == sampleDocument.innerHTML());
 	}
 
 	@Test 
@@ -498,7 +498,7 @@ class CollectionDOMManipulationTest
 		var before = lists.innerHTML();
 		pickme.afterThisInsert(nullNode);
 		pickme.afterThisInsert(nullDOMCollection);
-		Assert.areEqual(before, lists.innerHTML());
+		Assert.isTrue(before == lists.innerHTML());
 	}
 
 	@Test 
@@ -506,7 +506,7 @@ class CollectionDOMManipulationTest
 	{
 		var before = sampleDocument.innerHTML();
 		nullDOMCollection.remove();
-		Assert.areEqual(before, sampleDocument.innerHTML());
+		Assert.isTrue(before == sampleDocument.innerHTML());
 	}
 
 	@Test 
@@ -573,7 +573,7 @@ class CollectionDOMManipulationTest
 		var before = h1.innerHTML();
 		h1.removeChildren(nullNode);
 		h1.removeChildren(nullDOMCollection);
-		Assert.areEqual(before, h1.innerHTML());
+		Assert.isTrue(before == h1.innerHTML());
 	}
 
 	@Test 
@@ -582,8 +582,8 @@ class CollectionDOMManipulationTest
 		var before = sampleDocument.innerHTML();
 		nullDOMCollection.removeChildren(h1);
 		nullDOMCollection.removeChildren(h1Node);
-		Assert.areEqual(before, sampleDocument.innerHTML());
-		Assert.areEqual(sampleDocument.getNode(), h1Node.parents());
+		Assert.isTrue(before == sampleDocument.innerHTML());
+		Assert.isTrue(sampleDocument.getNode() == h1Node.parents());
 	}
 
 	@Test 
@@ -601,7 +601,7 @@ class CollectionDOMManipulationTest
 	{
 		var before = sampleDocument.innerHTML();
 		nullDOMCollection.empty();
-		Assert.areEqual(before, sampleDocument.innerHTML());
+		Assert.isTrue(before == sampleDocument.innerHTML());
 	}
 
 	@Test 
@@ -619,7 +619,7 @@ class CollectionDOMManipulationTest
 
 		// nothing should have changed
 		Assert.areEqual(3, nonElements.children(false).length);
-		Assert.areEqual(before, nonElements.innerHTML());
+		Assert.isTrue(before == nonElements.innerHTML());
 
 		// now empty the container
 		nonElements.empty();
