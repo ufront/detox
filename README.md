@@ -261,7 +261,7 @@ Status
         <td colspan="2">TESTSNOTRUN</td>   
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="1">TESTSFAIL</td>
+        <td colspan="1">GOOD</td>
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>
         <td colspan="1">NOTIMPLEMENTED</td>
@@ -273,7 +273,7 @@ Status
         <td colspan="2">TESTSNOTRUN</td>   
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="1">TESTSFAIL</td>
+        <td colspan="1">GOOD</td>
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>
         <td colspan="1">NOTIMPLEMENTED</td>
@@ -285,7 +285,7 @@ Status
         <td colspan="2">TESTSNOTRUN</td>   
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="1">TESTSFAIL</td>
+        <td colspan="1">GOOD</td>
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>
         <td colspan="1">NOTIMPLEMENTED</td>
@@ -297,7 +297,7 @@ Status
         <td colspan="2">TESTSNOTRUN</td>   
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="1">TESTSFAIL</td>
+        <td colspan="1">GOOD</td>
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>
         <td colspan="1">NOTIMPLEMENTED</td>
