@@ -111,6 +111,19 @@ class Tools
 			// Either way haxe shouldn't do that...
 			dtx.single.ElementManipulation.setInnerHTML(n, html);
 			q = dtx.single.Traversing.children(n, false);
+
+			#if neko
+			// This is a workaround for a glitch in neko where parse("<!-- Comment -->") generates
+			// a collection with 2 nodes - the comment and an empty text node.  Not sure if it comes
+			// from a child of these or from neko's XML parser...
+			for (child in q)
+			{
+				if (dtx.single.ElementManipulation.isTextNode(child) && child.nodeValue == "")
+				{
+					q.removeFromCollection(child);
+				}
+			}
+			#end
 		}
 		else 
 		{

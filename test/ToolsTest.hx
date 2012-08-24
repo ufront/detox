@@ -124,11 +124,12 @@ class ToolsTest
 	@Test 
 	public function parseMultiple() 
 	{
-		var q = Detox.parse("<div id='test1'>Hello</div><div id='test2'>World</div>");
+		var q = Detox.parse("<div id='test1'>Hello</div><p id='test2'>World</p><!--comment-->");
 
-		Assert.areEqual(2, q.length);
+		Assert.areEqual(3, q.length);
 		Assert.areEqual("div", q.eq(0).tagName());
-		Assert.areEqual("div", q.eq(1).tagName());
+		Assert.areEqual("p", q.eq(1).tagName());
+		Assert.areEqual("comment", q.eq(2).val());
 	}
 
 	@Test 
@@ -138,6 +139,30 @@ class ToolsTest
 
 		Assert.areEqual(dtx.DOMType.TEXT_NODE, q3.getNode().nodeType);
 		Assert.areEqual("text only", q3.getNode().nodeValue);
+		Assert.areEqual(1, q3.length);
+	}
+
+	@Test 
+	public function parseComment() 
+	{
+		var q1 = Detox.parse("<!-- Just 1 comment -->");
+
+		Assert.isTrue(q1.getNode().isComment());
+		Assert.areEqual(" Just 1 comment ", q1.getNode().nodeValue);
+		Assert.areEqual(1, q1.length);
+
+		var q2 = Detox.parse("<!-- Comment --> Text Node");
+
+		Assert.isTrue(q2.getNode().isComment());
+		Assert.areEqual(" Comment ", q2.getNode().nodeValue);
+		Assert.areEqual(2, q2.length);
+
+		var q3 = Detox.parse("<!-- Comment1 --><!-- Comment2 -->");
+
+		Assert.isTrue(q3.getNode().isComment());
+		Assert.areEqual(" Comment1 ", q3.getNode(0).nodeValue);
+		Assert.areEqual(" Comment2 ", q3.getNode(1).nodeValue);
+		Assert.areEqual(2, q3.length);
 	}
 
 	@Test 
