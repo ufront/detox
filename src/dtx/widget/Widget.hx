@@ -11,9 +11,6 @@
 
 package dtx.widget;
 
-import js.w3c.level3.Core;
-import js.w3c.level3.Core.Document;
-import CommonJS;
 import dtx.DOMCollection;
 import dtx.widget.WidgetTools;
 
@@ -26,12 +23,15 @@ import dtx.widget.WidgetTools;
 	{
 		super();
 
+		// If get_template() hasn't been overridden by a subclass (or a macro) then
+		// this allows us to set the template by passing one in.
 		if (tpl != null) _tpl = tpl;
 		var q = Detox.parse(get_template());
 		this.collection = q.collection;
 	}
 
-	var _tpl:String;
+	var _tpl:String = "<div></div>";
+	/** Override this method in your subclass to */
 	function get_template()
 	{
 		return _tpl;

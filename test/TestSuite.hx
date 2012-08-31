@@ -8,6 +8,7 @@ import CollectionElementManipulationTest;
 import CollectionTest;
 import CollectionEventManagementTest;
 import StyleTest;
+import WidgetTest;
 import DOMManipulationTest;
 import CollectionDOMManipulationTest;
 import TraversingTest;
@@ -35,6 +36,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(CollectionTest);
 		add(CollectionEventManagementTest);
 		add(StyleTest);
+		add(WidgetTest);
 		add(DOMManipulationTest);
 		add(CollectionDOMManipulationTest);
 		add(TraversingTest);

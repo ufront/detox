@@ -46,9 +46,24 @@ class WidgetTools
         {
             // Load the template
             var template = loadTemplate(localClass);
-            
-            // Create and add the get_template() field.  
-            fields.push(createField_get_template(template, widgetPos));
+
+            if (template != null)
+            {
+                // Process the template looking for partials, variables etc
+                // This function processes the template, and returns any binding statements
+                // that may be needed for bindings / variables etc.
+                var fnBody = new Array<Expr>();
+                var result = processTemplateBindings(template);
+                for (expr in result.bindings)
+                {
+                    fnBody.push(expr);
+                }
+                fields.push(createField_refresh(fnBody, false));
+
+                // Create and add the get_template() field.  
+                template = result.template;
+                fields.push(createField_get_template(template, widgetPos));
+            }
             return fields;
         }
         else
@@ -97,7 +112,7 @@ class WidgetTools
             }
             
             // Create the get_template() field and the refresh() field
-            fields.push(createField_refresh(fnBody));
+            fields.push(createField_refresh(fnBody, true));
             fields.push(createField_get_template(result.template, p));
         }
 
@@ -200,18 +215,26 @@ class WidgetTools
             } 
             catch( e : Dynamic ) 
             {
-                // If it fails, give an error message at compile time
-                var errorMessage = "Could not load the widget template: " + templateFile;
-                errorMessage += "\n  Using empty <div></div> template for now.";
-                Context.warning(errorMessage, p);
-                template = null;
+                try 
+                {
+                    // That was searching by fully qualified classpath, but try just the same folder....
+                    var file = Std.string(localClass);  // eg. my.pack.Widget
+                    var arr = file.split(".");          // eg. [my,pack,Widget]
+                    arr.pop();                          // eg. [my.pack]
+                    var path = arr.join("/");           // eg. my/pack
+
+                    path = (path.length > 0) ? path + "/" : "./"; // add a trailing slash, unless we're on the current directory
+                    template = neko.io.File.getContent(Context.resolvePath(path + templateFile));
+                }
+                catch (e : Dynamic)
+                {
+                    // If it fails, give an error message at compile time
+                    var errorMessage = "Could not load the widget template: " + templateFile;
+                    Context.warning(errorMessage, p);
+                    template = null;
+                }
             }
         }
-
-        //
-        // IN CASE WE DON'T HAVE A SAFE TEMPLATE, FALLBACK TO <DIV>
-        //
-        if (template == null) template = "<div></div>";
 
         return template;
     }
@@ -273,6 +296,69 @@ class WidgetTools
         var allNodes = new dtx.DOMCollection();
         allNodes.addCollection(xml);
         allNodes.addCollection(xml.descendants(false));
+
+        /*
+        - for each partial
+          - remove it from the XML
+          - take the element name, and append it to the current class, use it as a class name
+          - take the innerXML, use it as the template for a new class
+        */
+        for (node in allNodes)
+        {
+            if (node.isElement() && node.tagName().startsWith('_'))
+            {
+                //
+                // Remove the partial from the template
+                // 
+
+                // Due to the way template.parse() works, if the partial's parent is on the top level
+                // (ie. a sibling to your <html>) then node.removeFromDOM() won't remove it from xml,
+                // because xml is a collection that includes all top level elements.  Weird, I know!
+                // Anyway, the workaround is to remove it from the collection as well.
+                if (node.parent == xml.getNode(0).parent)
+                {
+                    // this is a top level element, make sure we remove it from the xml:DOMCollection too
+                    xml.removeFromCollection(node);
+                }
+                node.removeFromDOM();
+
+                //
+                // Create a class for this partial
+                //
+                var localClass = haxe.macro.Context.getLocalClass();
+
+                var name = node.nodeName;
+                var partialTpl = node.innerHTML();
+                var pack = localClass.get().pack;
+
+                var className = localClass.get().name + name;
+                var classKind = TypeDefKind.TDClass({
+                    sub: null,
+                    params: [],
+                    pack: ['dtx','widget'],
+                    name: "Widget"
+                });
+                var classMeta = [{
+                    pos: p,
+                    params: [Context.makeExpr(partialTpl, p)],
+                    name: "template"
+                }];
+                var fields:Array<Field> = [];
+
+                var partialDefinition = {
+                    pos: p,
+                    params: [],
+                    pack: pack,
+                    name: className,
+                    meta: classMeta,
+                    kind: classKind,
+                    isExtern: false,
+                    fields: fields
+                };
+
+                haxe.macro.Context.defineType(partialDefinition);
+            }
+        }
 
         /*
         - for each loop
@@ -343,14 +429,14 @@ class WidgetTools
         return { template: xml.html(), bindings: bindingExpressions };
     }
     
-    static function createField_refresh(fnBody:Array<Expr>):Field
+    static function createField_refresh(fnBody:Array<Expr>, isOverride:Bool):Field
     {
         var pos = Context.currentPos();
         return { 
             name : "refresh", 
             doc : null, 
             meta : [], 
-            access : [AOverride, APublic], 
+            access : (isOverride) ? [AOverride, APublic] : [APublic], 
             kind : FFun({ 
                 args: [], 
                 expr: fnBody.toBlock(), 

@@ -26,6 +26,7 @@
 -lib hamcrest
 -cp src
 -lib xirsys_stdjs
+-lib tink_macros
 
 -cp test
 -js build/js_test.js
