@@ -640,6 +640,18 @@ class CollectionElementManipulationTest
 	}
 
 	@Test 
+	public function htmlWithDifferentNodeTypes() 
+	{
+		// slight differences in toString() rendering between JS and Xml platforms
+		// toString() seems to ignore empty text nodes...
+		var expected = "<p>Text Node</p>  <p>  Text Node with Spaces  </p> <!-- Comment -->";
+		var xml = expected.parse();
+		var result = xml.html();
+		Assert.areEqual(5, xml.length);
+		Assert.areEqual(expected, result);
+	}
+
+	@Test 
 	public function htmlOnNull()
 	{
 		Assert.areEqual("", nullDOMCollection.html());

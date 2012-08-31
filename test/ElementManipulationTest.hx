@@ -486,6 +486,21 @@ class ElementManipulationTest
 		Assert.areEqual("<i>World</i>", helloworld.find("i").html());
 	}
 
+	@Test 
+	public function htmlWithDifferentNodeTypes() 
+	{
+		// slight differences in toString() rendering between JS and Xml platforms
+		// toString() seems to ignore empty text nodes...
+		var expected = "<p>Text <i>Node</i> </p>  <p>  Text Node with Spaces  </p> <!-- Comment -->";
+		var xml = expected.parse();
+		Assert.areEqual(5, xml.length);
+		Assert.areEqual("<p>Text <i>Node</i> </p>", xml.getNode(0).html());
+		Assert.areEqual("  ", xml.getNode(1).html());
+		Assert.areEqual("<p>  Text Node with Spaces  </p>", xml.getNode(2).html());
+		Assert.areEqual(" ", xml.getNode(3).html());
+		Assert.areEqual("<!-- Comment -->", xml.getNode(4).html());
+	}
+
 	@Test
 	public function testNullHtml():Void 
 	{
