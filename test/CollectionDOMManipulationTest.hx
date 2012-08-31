@@ -587,6 +587,77 @@ class CollectionDOMManipulationTest
 	}
 
 	@Test 
+	public function replaceWith_node()
+	{
+		// None of sampleListItem to start with
+		Assert.areEqual(0, ".sample".find().length);
+		Assert.areEqual(2, ".pickme".find().length);
+
+		// replace the ".pickme" li nodes with our .sample <li>
+		".pickme".find().replaceWith(sampleListItemNode);
+
+		// ".pickme" should be gone, and sampleListItemNode has replaced it, twice
+		Assert.areEqual('
+				<li id="a1">1</li>
+				<li class="sample">Sample1</li>
+				<li id="a3">3</li>
+			', a.innerHTML());
+		Assert.areEqual('
+				<li id="b1">1</li>
+				<li class="sample">Sample1</li>
+				<li id="b3">3</li>
+			', b.innerHTML());
+		Assert.areEqual(0, ".pickme".find().length);
+		Assert.areEqual(2, ".sample".find().length);
+	}
+
+	@Test 
+	public function replaceWith_query()
+	{
+		// None of sampleListItem to start with
+		Assert.areEqual(0, ".sample".find().length);
+		Assert.areEqual(2, ".pickme".find().length);
+
+		// replace the ".pickme" li nodes with our .sample <li>s 
+		".pickme".find().replaceWith(sampleListItems);
+
+		// There should be four samples, two in each, and the 'pickme' li's should be gone
+		Assert.areEqual('
+				<li id="a1">1</li>
+				<li class="sample">Sample1</li><li class="sample">Sample2</li>
+				<li id="a3">3</li>
+			', a.innerHTML());
+		Assert.areEqual('
+				<li id="b1">1</li>
+				<li class="sample">Sample1</li><li class="sample">Sample2</li>
+				<li id="b3">3</li>
+			', b.innerHTML());
+		Assert.areEqual(0, ".pickme".find().length);
+		Assert.areEqual(4, ".sample".find().length);
+	}
+
+	@Test 
+	public function replaceWith_null()
+	{
+		// None of sampleListItem to start with
+		Assert.areEqual(2, ".pickme".find().length);
+
+		// replace the ".pickme" li nodes with null, so they should be empty
+		".pickme".find().replaceWith(null);
+		Assert.areEqual(0, ".pickme".find().length);
+	}
+
+	@Test 
+	public function replaceWith_onNull()
+	{
+		var before = lists.innerHTML();
+
+		nullDOMCollection.replaceWith(sampleListItems);
+
+		Assert.isTrue(before == lists.innerHTML());
+	}
+
+	@Test 
 	public function empty()
 	{
 		Assert.areEqual(6, "li".find().length);

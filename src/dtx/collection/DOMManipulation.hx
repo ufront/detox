@@ -233,6 +233,14 @@ class DOMManipulation
 		return parents;
 	}
 
+	/** Replace each element in this collection with another node or collection.  Each element in this collection should then be removed from the DOM.  Returns the collection that was removed. */
+	static public function replaceWith(target:DOMCollection, ?contentNode:DOMNode, ?contentQuery:DOMCollection)
+	{
+		afterThisInsert(target, contentNode, contentQuery);
+		remove(target);
+		return target;
+	}
+
 	/** Empty the current element of all children. */
 	static public function empty(containers:DOMCollection)
 	{

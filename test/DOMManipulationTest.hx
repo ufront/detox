@@ -86,7 +86,7 @@ class DOMManipulationTest
 
 		sampleNode = "<i>Element</i>".parse().getNode();
 		sampleListItem = "<li class='sample'>Sample</li>".parse().getNode();
-		sampleDOMCollection = "<p class='1'><i class='target'></i></p><p class='2'><i class='target'></i></p>".parse();
+		sampleDOMCollection = "<p class='1'><i class='target'>i</i></p><p class='2'><i class='target'>i</i></p>".parse();
 		sampleDocument.append(sampleDOMCollection);
 
 		insertSiblingTargetDOMCollection = sampleDOMCollection.find('i.target');
@@ -538,6 +538,49 @@ class DOMManipulationTest
 
 		// check nothing changed
 		Assert.isTrue(original == a.innerHTML());
+	}
+
+	@Test 
+	public function replaceWith_Node()
+	{
+		insertSiblingTargetNode.replaceWith(insertSiblingContentNode);
+
+		// target should be removed, have no parent. Content should be in place, with correct html
+		Assert.isNull(insertSiblingTargetNode.parents());		
+		Assert.areEqual('<p class="1"><b class="content">1</b></p><p class="2"><i class="target">i</i></p>', sampleDOMCollection.html());
+	}
+
+	@Test 
+	public function replaceWith_Collection()
+	{
+		insertSiblingTargetNode.replaceWith(insertSiblingContentDOMCollection);
+
+		// target should be removed, have no parent. All content should be in place, correct HTML
+		Assert.isNull(insertSiblingTargetNode.parents());		
+		Assert.areEqual('<p class="1"><b class="content">1</b><b class="content">2</b></p><p class="2"><i class="target">i</i></p>', sampleDOMCollection.html());
+	}
+
+	@Test 
+	public function replaceWith_OnNull()
+	{
+		var before = a.innerHTML();
+		nullNode.replaceWith(a2);
+
+		// Nothing has changed
+		Assert.isTrue(before == a.innerHTML());
+	}
+
+	@Test 
+	public function replaceWith_Null()
+	{
+		var before = a.innerHTML();
+		a2.replaceWith(null);
+
+		// a2 should be gone
+		Assert.areEqual(1, a.find("#a1").length);
+		Assert.areEqual(0, a.find("#a2").length);
+		Assert.areEqual(1, a.find("#a3").length);
+		Assert.areEqual(2, a.children().length);
 	}
 
 	@Test 
