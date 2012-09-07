@@ -184,20 +184,30 @@ class WidgetTest
 		Assert.areEqual("doc", w.getNode().tagName());
 		Assert.areEqual("header", w.getNode().children().getNode().tagName());
 		Assert.areEqual("title", w.getNode().children().getNode().children().getNode().tagName());
+		Assert.areEqual(1, w.length); // children of widget
+		Assert.areEqual(1, w.getNode().children().length); // children of <doc>
 
 		// Check that the class is generated
 		var p = new widgets.PartialInSameFile1_BodyPartial();
-		Assert.areEqual("<section>
-		<h1>Header</h1>
-		<p>Paragraph</p>
-	</section>", p.html());
+		Assert.areEqual("<section><h1>Header</h1><p>Paragraph</p></section>", p.html());
 	}
 
 	@Test 
 	public function includePartialInSameFile()
 	{
 		var w = new widgets.PartialInSameFile2();
+		w.partial_1 = new widgets.PartialInSameFile2_BodyPartial();
+
 		// Check that it is included correctly
+		Assert.areEqual("doc", w.getNode(0).tagName());
+		Assert.areEqual("header", w.getNode(0).children().getNode(0).tagName());
+		Assert.areEqual("title", w.getNode(0).children().getNode(0).children().getNode(0).tagName());
+		Assert.areEqual(1, w.length); // children of widget
+		Assert.areEqual(2, w.getNode().children().length); // children of <doc>
+		Assert.areEqual("<doc><header><title>Test Partial</title></header><section><h1>Header</h1><p>Paragraph</p></section></doc>", w.html());
+		Assert.areEqual("section", w.getNode(0).children().getNode(1).tagName());
+		Assert.areEqual("h1", w.getNode(0).children().getNode(1).children().getNode(0).tagName());
+		Assert.areEqual("p", w.getNode(0).children().getNode(1).children().getNode(1).tagName());
 	}
 
 	@Test 
@@ -233,6 +243,15 @@ class WidgetTest
 	{
 		//var w = new widgets.PartialInSameFile3_Button();
 		// See if it matches _Button from that class...
+	}
+
+	@Test 
+	public function includePartialThenReplaceViaWidgetProperty()
+	{
+		var w = new widgets.PartialInSameFile2();
+		w.partial_1 = "<p>New Data</p>".parse();
+
+		// Check that it is included correctly
 	}
 
 	@Test 

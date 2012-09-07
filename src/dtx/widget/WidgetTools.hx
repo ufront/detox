@@ -53,12 +53,18 @@ class WidgetTools
                 // This function processes the template, and returns any binding statements
                 // that may be needed for bindings / variables etc.
                 var fnBody = new Array<Expr>();
-                var result = processTemplateBindings(template);
+                var result = processTemplate(template);
                 for (expr in result.bindings)
                 {
                     fnBody.push(expr);
                 }
                 fields.push(createField_refresh(fnBody, false));
+
+                // Push the extra class properties that came during our processing
+                for (f in result.fields)
+                {
+                    fields.push(f);
+                }
 
                 // Create and add the get_template() field.  
                 template = result.template;
@@ -105,7 +111,7 @@ class WidgetTools
                     haxe.macro.Context.error("DataWidget can only have a class instance as a type parameter", p);
 
             }
-            var result = processTemplateBindings(template);
+            var result = processTemplate(template);
             for (expr in result.bindings)
             {
                 fnBody.push(expr);
@@ -288,7 +294,7 @@ class WidgetTools
         return bindings;
     }
 
-    static function processTemplateBindings(template:String):{ template:String, bindings:Array<Expr>}
+    static function processTemplate(template:String):{ template:String, bindings:Array<Expr>, fields:Array<Field> }
     {
         // Get every node (including descendants)
         var p = haxe.macro.Context.currentPos();
@@ -297,16 +303,18 @@ class WidgetTools
         allNodes.addCollection(xml);
         allNodes.addCollection(xml.descendants(false));
 
-        /*
-        - for each partial
-          - remove it from the XML
-          - take the element name, and append it to the current class, use it as a class name
-          - take the innerXML, use it as the template for a new class
-        */
+        var fieldsToAdd = new Array<Field>();
+        var t=0;
         for (node in allNodes)
         {
             if (node.isElement() && node.tagName().startsWith('_'))
             {
+                /*
+                - for each partial
+                  - remove it from the XML
+                  - take the element name, and append it to the current class, use it as a class name
+                  - take the innerXML, use it as the template for a new class
+                */
                 //
                 // Remove the partial from the template
                 // 
@@ -357,6 +365,106 @@ class WidgetTools
                 };
 
                 haxe.macro.Context.defineType(partialDefinition);
+            }
+            else if (node.isElement() && node.tagName().startsWith('dtx:'))
+            {
+                //
+                // This is a partial call.  
+                //
+
+                // Generate a name for the partial.  Either take it from the <dtx:MyPartial name="this" /> attribute,
+                // or autogenerate one (partial_$t, t++)
+                t++;
+                var widgetClass = haxe.macro.Context.getLocalClass();
+                var nameAttr = node.attr('name');
+                var name = (nameAttr != "") ? nameAttr : "partial_" + t;
+
+                // Resolve the type for the partial.  If it begins with dtx:_, then it is local to this file.
+                // Otherwise, just resolve it as a class name.
+                var typeName = node.nodeName.substring(4);
+                if (node.nodeName.startsWith("_"))
+                {
+                    // partial inside this file
+                    typeName = widgetClass.get().name + typeName;
+                }
+                
+                // Replace the call with <div data-partial="$name" />
+                node.replaceWith("div".create().setAttr("data-partial", name));
+
+                // Set up a public field in the widget, public var $name:$type
+                var fields = widgetClass.get().fields.get();
+                if (fields.exists(function (f) { return f.name == name; }) == false)
+                {
+                    // Field doesn't exist yet.  Go ahead and add it to the list.
+
+                    // Get the type of our property, we'll have to use it a few times
+                    var propType = TPath({
+                        sub: null,
+                        params: [],
+                        pack: ["dtx"],
+                        name: "DOMCollection"
+                    });
+
+                    // Create the property
+                    var property = {
+                        pos: p,
+                        name: name,
+                        meta: [],
+                        kind: FieldType.FProp("default", "set_" + name, propType),
+                        doc: "Field referencing the " + name + " partial in this widget.",
+                        access: [APublic]
+                    }
+                    fieldsToAdd.push(property);
+
+                    // Create the setter
+                    var variableRef = name.resolve();
+                    var selector = ("[data-partial='" + name + "']").toExpr();
+                    var setterBody = macro {
+                        // Either replace the existing partial, or if none set, replace the <div data-partial='name'/> placeholder
+                        var toReplace = ($variableRef != null) ? $variableRef : dtx.collection.Traversing.find(this, $selector);
+                        dtx.collection.DOMManipulation.replaceWith(toReplace, v);
+                        $variableRef = v; 
+                        return v; 
+                    };
+                    var setter = {
+                        pos: p,
+                        name: "set_" + name,
+                        meta: [],
+                        kind: FieldType.FFun({
+                            ret: propType,
+                            params: [],
+                            expr: setterBody,
+                            args: [{
+                                value: null,
+                                type: propType,
+                                opt: false,
+                                name: "v"
+                            }]
+                        }),
+                        doc: "",
+                        access: []
+                    }
+                    fieldsToAdd.push(setter);
+
+                }
+
+                // In the constructor
+                // $name = new $type()
+                // $name.var1 = var1
+                // $name.var2 = var2
+                // this.find("[data-partial=$name]").replaceWith($name)
+                //
+                // So that'll end up looking like
+                //
+                // public function new() {
+                //   var btn = new Button();
+                //   btn.text = "Click Me!";
+                //   this.find("[data-partial=btn]").replaceWith(btn);
+                // }
+                if (fields.exists(function (f) { return f.name == "hello"; }))
+                {
+                    throw "there is a field named hello";
+                }
             }
         }
 
@@ -426,9 +534,81 @@ class WidgetTools
             }
         }
 
-        return { template: xml.html(), bindings: bindingExpressions };
+        return { template: xml.html(), bindings: bindingExpressions, fields: fieldsToAdd };
     }
     
+    static function processPartialDeclarations()
+    {
+        // Elements beginning with an underscore: <_SOMETHING />
+        
+        // Remove element from template
+        // Use innerHTML as template, create new widget class 
+        // (this will recur and process that class separately, including finding variables etc)
+    }
+
+    static function processPartialCalls()
+    {
+        // Elements beginning with <dtx:SomeTypeName /> or <dtx:my.package.SomeTypeName />
+        // May have attributes <dtx:Button text="Click Me" />
+
+        // Get the partial name: <dtx:Button dtx:id="mybtn" />
+
+        // Replace with <div data-partial="partial_XX" /> (or custom partial name)
+        // Find parent widget
+            // add property var partial_XX(default,get_partial_XX):DOMCollection;
+            // add private method get_partial_XX(p)
+            // {
+            //     partial_XX.replaceWith(p); // if length is greater than 1, may have to do something custom here
+            //     partial_XX = p;
+            // }
+            // Find initiatePartials() method of the parent Widget
+                // add the line
+                // partial_XX = new Button();
+                // partial_XX.text = "Click Me"
+    }
+
+    static function processTemplateVariables()
+    {
+        // Go through every node
+            // For each attribute
+                // If has variable
+                // processVariableInterpolation()
+                // 
+            // For each text node
+                // If has variable
+                // processVariableInterpolation()
+    }
+
+    static function processVariableInterpolation(string:String, callToChangeText:Expr)
+    {
+        // string is the attribute text or textnode text
+        // callToChangeText is an expr, eg. this.find("something").setAttr("value", "CHANGETHIS");
+            // We will take this expr, change the last argument to interpolate the variables
+
+        // Run Std.format() on the string
+        // Check which variables are in the resulting expression
+        // For each variable
+            // If the Widget has a property for it already
+                // Append a new line to set_myproperty():
+                // callToChangeText(), but with the expr returned by Std.format
+
+        // This means, 
+        // Every time any relevant property is set, the rule will be updated
+    }
+
+    static function processDtxAttributes()
+    {
+        // dtx-value
+        // dtx-show
+        // dtx-hide
+        // dtx-enabled
+        // dtx-disabled
+        // dtx-checked
+        // dtx-unchecked
+        // dtx-on-$event 
+        // dtx-foreach
+    }
+
     static function createField_refresh(fnBody:Array<Expr>, isOverride:Bool):Field
     {
         var pos = Context.currentPos();
