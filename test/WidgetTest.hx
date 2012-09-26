@@ -159,8 +159,8 @@ class WidgetTest
 
 		// Test that the macro XML parser won't spew on a "<dtx:SomeThing />"
 		var w2 = new widgets.WidgetWithDtxNamespace();
-		Assert.areEqual("dtx:NameSpace".toLowerCase(), w2.getNode().nodeName.toLowerCase());
-		Assert.areEqual(1, w2.length);
+		Assert.areEqual("dtx:_NameSpace".toLowerCase(), w2.getNode().nodeName.toLowerCase());
+		Assert.areEqual(2, w2.length);
 		Assert.areEqual("Widget Namespace", w2.innerHTML());
 	}
 
@@ -196,7 +196,6 @@ class WidgetTest
 	public function includePartialInSameFile()
 	{
 		var w = new widgets.PartialInSameFile2();
-		w.partial_1 = new widgets.PartialInSameFile2_BodyPartial();
 
 		// Check that it is included correctly
 		Assert.areEqual("doc", w.getNode(0).tagName());
@@ -215,13 +214,16 @@ class WidgetTest
 	{
 		var w = new widgets.PartialInSamePackageLayout();
 		// Check that it is included correctly
+		Assert.areEqual("<html><head><title>Test Partial</title></head><body><h1>Header</h1><p>Paragraph</p></body></html>", w.html());
 	}
 
 	@Test 
 	public function includePartialThatIsIncluded()
 	{
 		var w = new widgets.PartialThatIsIncludedLayout();
+
 		// Check that it is included correctly
+		Assert.areEqual("<html><head><title>Test Partial</title></head><body><h1>Header</h1><p>Paragraph</p><p>In <code>testpackage</code> package</p></body></html>", w.html());
 	}
 
 	@Test 
@@ -229,20 +231,25 @@ class WidgetTest
 	{
 		var w = new widgets.PartialFromQualifiedName();
 		// Check that it is included correctly
+		throw w.html();
 	}
 
 	@Test 
 	public function includePartialMultipleTimes()
 	{
 		var w = new widgets.PartialInSameFile3();
+
 		// Check that it has come through twice
+		Assert.areEqual('<doc><header><title>Test Partial</title></header><section><h1>Header</h1><p>Paragraph</p><a href="#" class="btn">Button</a><a href="#" class="btn">Button</a></section></doc>', w.html());
 	}
 
 	@Test 
 	public function callInlinePartialFromCode()
 	{
-		//var w = new widgets.PartialInSameFile3_Button();
+		var w = new widgets.PartialInSameFile3_Button();
+
 		// See if it matches _Button from that class...
+		Assert.areEqual('<a href="#" class="btn">Button</a>', w.html());
 	}
 
 	@Test 
@@ -252,6 +259,7 @@ class WidgetTest
 		w.partial_1 = "<p>New Data</p>".parse();
 
 		// Check that it is included correctly
+		Assert.areEqual("<doc><header><title>Test Partial</title></header><p>New Data</p></doc>", w.html());
 	}
 
 	@Test 

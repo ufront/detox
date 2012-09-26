@@ -1,4 +1,4 @@
 package widgets;
 
-@template("<dtx:NameSpace>Widget Namespace</dtx:NameSpace>")
+@template("<dtx:_NameSpace>Widget Namespace</dtx:_NameSpace><_NameSpace></_NameSpace>")
 class WidgetWithDtxNamespace extends dtx.widget.Widget { }

@@ -1,3 +1,3 @@
 package widgets;
 
-class PartialInSamePackageLayout extends dtx.widget.Widget { }
+class PartialInSamePackageBody extends dtx.widget.Widget { }
