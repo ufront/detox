@@ -12,8 +12,8 @@
 package dtx.single;
 
 #if js
+import Bean;
 import dtx.DOMNode;
-import js.w3c.level3.Events;
 /*
 JQuery has these methods.  I'll try break them down into core functionality and implementations of specific events
 For now I'm only testing in Firefox / W3 conforming browsers.  Almost certainly broken in IE8 and below.
@@ -97,76 +97,76 @@ class EventManagement
 	// }
 
 	/** add an event listener */
-	public static inline function on(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
+	public static inline function on(target:DOMNode, eventType:String, listener:BnEvent->Void):DOMNode
 	{
 		Bean.on(target, eventType, listener);
 		return target;
 	}
 
-	public static function off(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
+	public static function off(target:DOMNode, eventType:String, listener:BnEvent->Void):DOMNode
 	{
 		Bean.off(target, eventType, listener);
 		return target;
 	}
 
 	/** Attach an event but only let it run once */
-	public static function one(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
+	public static function one(target:DOMNode, eventType:String, listener:BnEvent->Void):DOMNode
 	{
 		Bean.one(target, eventType, listener);
 		return target;
 	}
 
-	public static inline function mousedown(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function mousedown(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "mousedown", listener);
 	}
 
-	public static inline function mouseenter(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function mouseenter(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "mouseover", listener);
 	}
 
-	public static inline function mouseleave(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function mouseleave(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "mouseout", listener);
 	}
 
-	public static inline function mousemove(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function mousemove(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "mousemove", listener);
 	}
 
-	public static inline function mouseout(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function mouseout(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "mouseout", listener);
 	}
 
-	public static inline function mouseover(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function mouseover(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "mouseover", listener);
 	}
 
-	public static inline function mouseup(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function mouseup(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "mouseup", listener);
 	}
 
-	public static inline function keydown(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function keydown(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "keydown", listener);
 	}
 
-	public static inline function keypress(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function keypress(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "keypress", listener);
 	}
 
-	public static inline function keyup(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function keyup(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "keyup", listener);
 	}
 
-	public static function hover(target:DOMNode, listener1:Event->Void, ?listener2:Event->Void = null):DOMNode
+	public static function hover(target:DOMNode, listener1:BnEvent->Void, ?listener2:BnEvent->Void = null):DOMNode
 	{
 		mouseenter(target, listener1);
 
@@ -183,18 +183,18 @@ class EventManagement
 		return target;
 	}
 
-	public static inline function submit(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function submit(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "submit", listener);
 	}
 
-	public static function toggleClick(target:DOMNode, listenerFirstClick:Event->Void, listenerSecondClick:Event->Void):DOMNode
+	public static function toggleClick(target:DOMNode, listenerFirstClick:BnEvent->Void, listenerSecondClick:BnEvent->Void):DOMNode
 	{
 		// Wrap the first click function to run once, then remove itself and add the second click function
-		var fn1:Event->Void = null;
-		var fn2:Event->Void = null;
+		var fn1:BnEvent->Void = null;
+		var fn2:BnEvent->Void = null;
 		
-		fn1 = function (e:Event)
+		fn1 = function (e:BnEvent)
 		{
 			listenerFirstClick(e);
 			target.removeEventListener("click", fn1, false);
@@ -202,7 +202,7 @@ class EventManagement
 		}
 
 		// Wrap the second click function to run once, then remove itself and add the first click function
-		fn2 = function (e:Event)
+		fn2 = function (e:BnEvent)
 		{
 			listenerSecondClick(e);
 			target.removeEventListener("click", fn2, false);
@@ -215,72 +215,72 @@ class EventManagement
 		return target;
 	}
 
-	public static inline function blur(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function blur(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "blur", listener);
 	}
 
-	public static inline function change(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function change(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "change", listener);
 	}
 
-	public static inline function click(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function click(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "click", listener);
 	}
 
-	public static inline function dblclick(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function dblclick(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "dblclick", listener);
 	}
 
-	public static inline function focus(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function focus(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "focus", listener);
 	}
 
-	public static inline function focusIn(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function focusIn(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "focusIn", listener);
 	}
 
-	public static inline function focusOut(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function focusOut(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "focusOut", listener);
 	}
 
-	public static inline function resize(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function resize(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "resize", listener);
 	}
 
-	public static inline function scroll(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function scroll(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "scroll", listener);
 	}
 
-	public static inline function select(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function select(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "select", listener);
 	}
 
-	public static inline function load(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function load(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "load", listener);
 	}
 
-	public static inline function unload(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function unload(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "unload", listener);
 	}
 
-	public static inline function error(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function error(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "error", listener);
 	}
 
-	public static inline function ready(target:DOMNode, listener:Event->Void):DOMNode
+	public static inline function ready(target:DOMNode, listener:BnEvent->Void):DOMNode
 	{
 		return on(target, "ready", listener);
 	}
