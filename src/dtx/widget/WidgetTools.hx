@@ -20,6 +20,7 @@ using tink.macro.tools.MacroTools;
 using StringTools;
 using Lambda;
 using Detox;
+using dtx.widget.BuildTools;
 
 class WidgetTools 
 {
@@ -38,8 +39,7 @@ class WidgetTools
     {
         var widgetPos = Context.currentPos();                   // Position where the original Widget class is declared
         var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
-        var fields = haxe.macro.Context.getBuildFields();
-
+        var fields = BuildTools.getFields();
         
         // If get_template() already exists, don't recreate it
         if (fields.exists(function (f) { return f.name == "get_template"; }) == false)
@@ -69,6 +69,9 @@ class WidgetTools
                 // Create and add the get_template() field.  
                 template = result.template;
                 fields.push(createField_get_template(template, widgetPos));
+
+                // Add the extra lines to the constructor
+
             }
             return fields;
         }
@@ -83,140 +86,78 @@ class WidgetTools
     * This build macro runs on every subclass of DataWidget.
     * It trsfd
     */
-    @:macro public static function buildDataWidget():Array<Field>
-    {
-        var p = Context.currentPos();                           // Position where the original Widget class is declared
-        var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
-        var fields = haxe.macro.Context.getBuildFields();
+    // @:macro public static function buildDataWidget():Array<Field>
+    // {
+    //     var p = Context.currentPos();                           // Position where the original Widget class is declared
+    //     var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
+    //     var fields = haxe.macro.Context.getBuildFields();
 
-        var dataType = localClass.get().superClass.params[0];
+    //     var dataType = localClass.get().superClass.params[0];
 
-        // If get_template() already exists, don't recreate it
-        if (fields.exists(function (f) { return f.name == "get_template"; }) == false)
-        {
-            // Load the template
-            var template = loadTemplate(localClass);
-            var fnBody = new Array<Expr>();
+    //     // If get_template() already exists, don't recreate it
+    //     if (fields.exists(function (f) { return f.name == "get_template"; }) == false)
+    //     {
+    //         // Load the template
+    //         var template = loadTemplate(localClass);
+    //         var fnBody = new Array<Expr>();
 
-            // Collect all the statements we use
-            switch (dataType)
-            {
-                case TInst(t,params):
-                    var dataClass = t.get();
-                    for (expr in setupBindingVariables(dataClass))
-                    {
-                        fnBody.push(expr);
-                    }
-                default:
-                    haxe.macro.Context.error("DataWidget can only have a class instance as a type parameter", p);
+    //         // Collect all the statements we use
+    //         switch (dataType)
+    //         {
+    //             case TInst(t,params):
+    //                 var dataClass = t.get();
+    //                 for (expr in setupBindingVariables(dataClass))
+    //                 {
+    //                     fnBody.push(expr);
+    //                 }
+    //             default:
+    //                 haxe.macro.Context.error("DataWidget can only have a class instance as a type parameter", p);
 
-            }
-            var result = processTemplate(template);
-            for (expr in result.bindings)
-            {
-                fnBody.push(expr);
-            }
+    //         }
+    //         var result = processTemplate(template);
+    //         for (expr in result.bindings)
+    //         {
+    //             fnBody.push(expr);
+    //         }
             
-            // Create the get_template() field and the refresh() field
-            fields.push(createField_refresh(fnBody, true));
-            fields.push(createField_get_template(result.template, p));
-        }
+    //         // Create the get_template() field and the refresh() field
+    //         fields.push(createField_refresh(fnBody, true));
+    //         fields.push(createField_get_template(result.template, p));
+    //     }
 
 
-        return fields;
-    }
+    //     return fields;
+    // }
 
     /**
       * Helper functions
       */
-    #if macro
 
+    #if macro
     static function loadTemplate(localClass:Null<Ref<ClassType>>):String
     {
         var p = localClass.get().pos;                           // Position where the original Widget class is declared
         var className = localClass.toString();                  // Name of the class eg "my.pack.MyType"
-        var meta = localClass.get().meta;                       // Metadata of the this class
         
-        var templateFile:String;                                // If we are loading template from a file, this is the filename
+        var templateFile:String = "";                           // If we are loading template from a file, this is the filename
         var template:String = "";                               // If the template is directly in metadata, use that.
 
-        //
-        // IF TEMPLATE IS DECLARED IN METADATA
-        //
-        if (meta.has("template"))
+        // Get the template content if declared in metadata
+        var template = BuildTools.getClassMetadata_String("template");
+        if (template == null)
         {
-            for (metadataItem in meta.get())
-            {
-                if (metadataItem.name == "template")
-                {
-                    if (metadataItem.params.length == 0) Context.error("Metadata template() exists, but was empty.", p);
-                    for (templateMetadata in metadataItem.params)
-                    {
-                        switch( templateMetadata.expr ) 
-                        {
-                            case EConst(c):
-                                switch(c) 
-                                {
-                                    case CString(str): 
-                                        template = str;
-                                    default: 
-                                        Context.error("Metadata for template() existed, but was not a constant String.", p);
-                                }
-                            default: 
-                                Context.error("Metadata for template() existed, but was not a constant value.", p);
-                        } 
-                    }
-                }
-            }
-        }
-        else 
-        {
-            // 
-            // IF TEMPLATE FILE IS DECLARED IN METADATA
-            //
-            if (meta.has("loadTemplate")) 
-            {
-                for (metadataItem in meta.get())
-                {
-                    if (metadataItem.name == "loadTemplate")
-                    {
-                        if (metadataItem.params.length == 0) Context.error("Metadata loadTemplate() exists, but was empty.", p);
-
-                        for (templateMetadata in metadataItem.params)
-                        {
-                            switch( templateMetadata.expr ) 
-                            {
-                                case EConst(c):
-                                    switch(c) 
-                                    {
-                                        case CString(str): 
-                                            templateFile = str;
-                                        default: 
-                                            Context.error("Metadata for loadTemplate() existed, but was not a constant String.", p);
-                                    }
-                                default: 
-                                    Context.error("Metadata for loadTemplate() existed, but was not a constant value.", p);
-                            } 
-                        }
-                    }
-                }
-            }
-            //
-            // IF NO TEMPLATE OR FILE IS DECLARED IN METADATA
-            //
-            else 
+            // Get the template file if declared in metadata
+            var templateFile = BuildTools.getClassMetadata_String("loadTemplate");
+            if (templateFile == null)
             {
                 // If there is no metadata for the template, look for a file in the same 
-                // spot but with ".tpl" instead of ".hx" at the end.
+                // spot but with ".html" instead of ".hx" at the end.
                 templateFile = className.replace(".", "/") + ".html";
             }
 
-            //
             // Attempt to load the file
-            //
             try 
             {
-                // Try to read the specified file
                 template = neko.io.File.getContent(Context.resolvePath(templateFile));
             } 
             catch( e : Dynamic ) 
@@ -226,7 +167,7 @@ class WidgetTools
                     // That was searching by fully qualified classpath, but try just the same folder....
                     var file = Std.string(localClass);  // eg. my.pack.Widget
                     var arr = file.split(".");          // eg. [my,pack,Widget]
-                    arr.pop();                          // eg. [my.pack]
+                    arr.pop();                          // eg. [my,pack]
                     var path = arr.join("/");           // eg. my/pack
 
                     path = (path.length > 0) ? path + "/" : "./"; // add a trailing slash, unless we're on the current directory
@@ -241,7 +182,6 @@ class WidgetTools
                 }
             }
         }
-
         return template;
     }
     
@@ -304,167 +244,20 @@ class WidgetTools
         allNodes.addCollection(xml.descendants(false));
 
         var fieldsToAdd = new Array<Field>();
-        var t=0;
+        var t=0; // Used to create name if none given, eg partial_4:DOMCollection
+
         for (node in allNodes)
         {
             if (node.isElement() && node.tagName().startsWith('_'))
             {
-                /*
-                - for each partial
-                  - remove it from the XML
-                  - take the element name, and append it to the current class, use it as a class name
-                  - take the innerXML, use it as the template for a new class
-                */
-                //
-                // Remove the partial from the template
-                // 
-
-                // Due to the way template.parse() works, if the partial's parent is on the top level
-                // (ie. a sibling to your <html>) then node.removeFromDOM() won't remove it from xml,
-                // because xml is a collection that includes all top level elements.  Weird, I know!
-                // Anyway, the workaround is to remove it from the collection as well.
-                if (node.parent == xml.getNode(0).parent)
-                {
-                    // this is a top level element, make sure we remove it from the xml:DOMCollection too
-                    xml.removeFromCollection(node);
-                }
-                node.removeFromDOM();
-
-                //
-                // Create a class for this partial
-                //
-                var localClass = haxe.macro.Context.getLocalClass();
-
-                var name = node.nodeName;
-                var partialTpl = node.innerHTML();
-                var pack = localClass.get().pack;
-
-                var className = localClass.get().name + name;
-                var classKind = TypeDefKind.TDClass({
-                    sub: null,
-                    params: [],
-                    pack: ['dtx','widget'],
-                    name: "Widget"
-                });
-                var classMeta = [{
-                    pos: p,
-                    params: [Context.makeExpr(partialTpl, p)],
-                    name: "template"
-                }];
-                var fields:Array<Field> = [];
-
-                var partialDefinition = {
-                    pos: p,
-                    params: [],
-                    pack: pack,
-                    name: className,
-                    meta: classMeta,
-                    kind: classKind,
-                    isExtern: false,
-                    fields: fields
-                };
-
-                haxe.macro.Context.defineType(partialDefinition);
+                // This is a partial declaration <_MyPartial>template</_MyPartial>
+                processPartialDeclarations(node, xml);
             }
             else if (node.isElement() && node.tagName().startsWith('dtx:'))
             {
-                //
-                // This is a partial call.  
-                //
-
-                // Generate a name for the partial.  Either take it from the <dtx:MyPartial name="this" /> attribute,
-                // or autogenerate one (partial_$t, t++)
+                // This is a partial call.  <dtx:_MyPartial /> or <dtx:widgets.SomePartial /> etc
                 t++;
-                var widgetClass = haxe.macro.Context.getLocalClass();
-                var nameAttr = node.attr('name');
-                var name = (nameAttr != "") ? nameAttr : "partial_" + t;
-
-                // Resolve the type for the partial.  If it begins with dtx:_, then it is local to this file.
-                // Otherwise, just resolve it as a class name.
-                var typeName = node.nodeName.substring(4);
-                if (node.nodeName.startsWith("_"))
-                {
-                    // partial inside this file
-                    typeName = widgetClass.get().name + typeName;
-                }
-                
-                // Replace the call with <div data-partial="$name" />
-                node.replaceWith("div".create().setAttr("data-partial", name));
-
-                // Set up a public field in the widget, public var $name:$type
-                var fields = widgetClass.get().fields.get();
-                if (fields.exists(function (f) { return f.name == name; }) == false)
-                {
-                    // Field doesn't exist yet.  Go ahead and add it to the list.
-
-                    // Get the type of our property, we'll have to use it a few times
-                    var propType = TPath({
-                        sub: null,
-                        params: [],
-                        pack: ["dtx"],
-                        name: "DOMCollection"
-                    });
-
-                    // Create the property
-                    var property = {
-                        pos: p,
-                        name: name,
-                        meta: [],
-                        kind: FieldType.FProp("default", "set_" + name, propType),
-                        doc: "Field referencing the " + name + " partial in this widget.",
-                        access: [APublic]
-                    }
-                    fieldsToAdd.push(property);
-
-                    // Create the setter
-                    var variableRef = name.resolve();
-                    var selector = ("[data-partial='" + name + "']").toExpr();
-                    var setterBody = macro {
-                        // Either replace the existing partial, or if none set, replace the <div data-partial='name'/> placeholder
-                        var toReplace = ($variableRef != null) ? $variableRef : dtx.collection.Traversing.find(this, $selector);
-                        dtx.collection.DOMManipulation.replaceWith(toReplace, v);
-                        $variableRef = v; 
-                        return v; 
-                    };
-                    var setter = {
-                        pos: p,
-                        name: "set_" + name,
-                        meta: [],
-                        kind: FieldType.FFun({
-                            ret: propType,
-                            params: [],
-                            expr: setterBody,
-                            args: [{
-                                value: null,
-                                type: propType,
-                                opt: false,
-                                name: "v"
-                            }]
-                        }),
-                        doc: "",
-                        access: []
-                    }
-                    fieldsToAdd.push(setter);
-
-                }
-
-                // In the constructor
-                // $name = new $type()
-                // $name.var1 = var1
-                // $name.var2 = var2
-                // this.find("[data-partial=$name]").replaceWith($name)
-                //
-                // So that'll end up looking like
-                //
-                // public function new() {
-                //   var btn = new Button();
-                //   btn.text = "Click Me!";
-                //   this.find("[data-partial=btn]").replaceWith(btn);
-                // }
-                if (fields.exists(function (f) { return f.name == "hello"; }))
-                {
-                    throw "there is a field named hello";
-                }
+                processPartialCalls(node, xml, t);
             }
         }
 
@@ -487,6 +280,7 @@ class WidgetTools
         */
 
         var bindingExpressions = new Array<Expr>();
+        var toAddToConstructor = new Array<Expr>();
 
         var t = 0;
         for (node in allNodes)
@@ -495,63 +289,177 @@ class WidgetTools
             switch (node.nodeType)
             {
                 case Xml.Element:
-                    // Set up bindings for each attribute value
-                    for (att in node.attributes())
-                    {
-                        var str = node.attr(att);
-                        if (str.indexOf('$') > -1)
-                        {
-                            node.setAttr('data-binding',Std.string(t));
-                            var stringAsExpr = Context.makeExpr(str, Context.currentPos());
-                            var nameAsExpr = Context.makeExpr(att, Context.currentPos());
-                            var identifierAsExpr = Context.makeExpr(Std.string(t), Context.currentPos());
-                            var interpolationExpr = Format.format(stringAsExpr);
-                            var bindingExpr = macro this.find('[data-binding="' + $identifierAsExpr + '"]').setAttr($nameAsExpr, $interpolationExpr);
-                            bindingExpressions.push(bindingExpr);
-                        }
-                    }
+                    // // Set up bindings for each attribute value
+                    // for (att in node.attributes())
+                    // {
+                    //     var str = node.attr(att);
+                    //     if (str.indexOf('$') > -1)
+                    //     {
+                    //         node.setAttr('data-binding',Std.string(t));
+                    //         var stringAsExpr = Context.makeExpr(str, Context.currentPos());
+                    //         var nameAsExpr = Context.makeExpr(att, Context.currentPos());
+                    //         var identifierAsExpr = Context.makeExpr(Std.string(t), Context.currentPos());
+                    //         var interpolationExpr = Format.format(stringAsExpr);
+                    //         var bindingExpr = macro this.find('[data-binding="' + $identifierAsExpr + '"]').setAttr($nameAsExpr, $interpolationExpr);
+                    //         bindingExpressions.push(bindingExpr);
+                    //     }
+                    // }
                 default:
-                    // Set up bindings for the text content...
-                    var str = node.text();
-                    if (str.indexOf('$') > -1)
-                    {
-                        // Will need to get nearest element + index, so we can do:
-                        // "nearestElm".find().children(false).get(index).setText();
-                        var parent = node.parent;
-                        if (parent.exists('data-binding') == false)
-                        {
-                            parent.setAttr('data-binding', Std.string(t));
-                        }
-                        var indexOfTextNode = Lambda.indexOf(parent.children(false), node);
+                    // // Set up bindings for the text content...
+                    // var str = node.text();
+                    // if (str.indexOf('$') > -1)
+                    // {
+                    //     // Will need to get nearest element + index, so we can do:
+                    //     // "nearestElm".find().children(false).get(index).setText();
+                    //     var parent = node.parent;
+                    //     if (parent.exists('data-binding') == false)
+                    //     {
+                    //         parent.setAttr('data-binding', Std.string(t));
+                    //     }
+                    //     var indexOfTextNode = Lambda.indexOf(parent.children(false), node);
 
-                        var stringAsExpr = Context.makeExpr(str, Context.currentPos());
-                        var identifierAsExpr = Context.makeExpr(parent.attr('data-binding'), Context.currentPos());
-                        var indexAsExpr = Context.makeExpr(indexOfTextNode, Context.currentPos());
-                        var interpolationExpr = Format.format(stringAsExpr);
-                        var bindingExpr = macro this.find('[data-binding="' + $identifierAsExpr + '"]').getNode($indexAsExpr).setText($interpolationExpr);
-                        bindingExpressions.push(bindingExpr);
-                    }
+                    //     var stringAsExpr = Context.makeExpr(str, Context.currentPos());
+                    //     var identifierAsExpr = Context.makeExpr(parent.attr('data-binding'), Context.currentPos());
+                    //     var indexAsExpr = Context.makeExpr(indexOfTextNode, Context.currentPos());
+                    //     var interpolationExpr = Format.format(stringAsExpr);
+                    //     var bindingExpr = macro this.find('[data-binding="' + $identifierAsExpr + '"]').getNode($indexAsExpr).setText($interpolationExpr);
+                    //     bindingExpressions.push(bindingExpr);
+                    // }
             }
         }
 
         return { template: xml.html(), bindings: bindingExpressions, fields: fieldsToAdd };
     }
     
-    static function processPartialDeclarations()
+    static function processPartialDeclarations(node:dtx.DOMNode, wholeTemplate:dtx.DOMCollection)
     {
-        // Elements beginning with an underscore: <_SOMETHING />
-        
-        // Remove element from template
-        // Use innerHTML as template, create new widget class 
-        // (this will recur and process that class separately, including finding variables etc)
+        // Remove the partial from the template
+
+        // Due to the way template.parse() works, if the partial's parent is on the top level
+        // (ie. a sibling to your <html>) then node.removeFromDOM() won't remove it from wholeTemplate,
+        // because wholeTemplate is a collection that includes all top level elements.  Weird, I know!
+        // Anyway, the workaround is to remove it from the collection as well.
+        if (node.parent == wholeTemplate.getNode(0).parent)
+        {
+            wholeTemplate.removeFromCollection(node);
+        }
+        node.removeFromDOM();
+
+        // Create a class for this partial
+
+        var localClass = haxe.macro.Context.getLocalClass();
+        var name = node.nodeName;
+        var partialTpl = node.innerHTML();
+        var pack = localClass.get().pack;
+        var p = Context.currentPos();
+
+        var className = localClass.get().name + name;
+        var classKind = TypeDefKind.TDClass({
+            sub: null,
+            params: [],
+            pack: ['dtx','widget'],
+            name: "Widget"
+        });
+        var classMeta = [{
+            pos: p,
+            params: [Context.makeExpr(partialTpl, p)],
+            name: "template"
+        }];
+        var fields:Array<Field> = [];
+
+        var partialDefinition = {
+            pos: p,
+            params: [],
+            pack: pack,
+            name: className,
+            meta: classMeta,
+            kind: classKind,
+            isExtern: false,
+            fields: fields
+        };
+
+        haxe.macro.Context.defineType(partialDefinition);
     }
 
-    static function processPartialCalls()
+    static function processPartialCalls(node:dtx.DOMNode, wholeTemplate:dtx.DOMCollection, t:Int)
     {
         // Elements beginning with <dtx:SomeTypeName /> or <dtx:my.package.SomeTypeName />
         // May have attributes <dtx:Button text="Click Me" />
 
-        // Get the partial name: <dtx:Button dtx:id="mybtn" />
+        // Generate a name for the partial.  Either take it from the <dtx:MyPartial name="this" /> attribute,
+        // or autogenerate one (partial_$t, t++)
+        var widgetClass = haxe.macro.Context.getLocalClass();
+        var nameAttr = node.attr('name');
+        var name = (nameAttr != "") ? nameAttr : "partial_" + t;
+        var p = Context.currentPos();
+
+        // Resolve the type for the partial.  If it begins with dtx:_, then it is local to this file.
+        // Otherwise, just resolve it as a class name.
+        var typeName = node.nodeName.substring(4);
+        if (typeName.startsWith("_"))
+        {
+            // partial inside this file
+            typeName = widgetClass.get().name + typeName;
+        }
+        
+        // Replace the call with <div data-partial="$name" />
+        node.replaceWith("div".create().setAttr("data-partial", name));
+
+        // Set up a public field in the widget, public var $name:$type
+        var propType = TPath({
+            sub: null,
+            params: [],
+            pack: ["dtx"],
+            name: "DOMCollection"
+        });
+
+        // propertyName, propertyType, useGetter, useSetter
+        var prop = BuildTools.getOrCreateProperty(name, propType, false, true);
+        var variableRef = name.resolve();
+        var typeRef = typeName.resolve();
+
+        // Add some lines to the setter
+        var selector = ("[data-partial='" + name + "']").toExpr();
+        var linesToAdd = macro {
+            // Either replace the existing partial, or if none set, replace the <div data-partial='name'/> placeholder
+            var toReplace = ($variableRef != null) ? $variableRef : dtx.collection.Traversing.find(this, $selector);
+            dtx.collection.DOMManipulation.replaceWith(toReplace, v);
+        }
+        BuildTools.addLinesToFunction(prop.setter, linesToAdd, true);
+
+
+        // Get the constructor, add lines to it
+        var constructorBody = macro { super(); }
+        var constructor = BuildTools.getOrCreateField({
+            pos: p,
+            name: "new",
+            meta: [],
+            kind: FieldType.FFun({
+                    ret: null,
+                    params: [],
+                    expr: constructorBody,
+                    args: []
+                }),
+            doc: "",
+            access: [APublic]
+        });
+        linesToAdd = macro {
+            $variableRef = new $typeName();
+        }
+        BuildTools.addLinesToFunction(constructor, linesToAdd);
+
+        // $name = new $type()
+        // $name.var1 = var1
+        // $name.var2 = var2
+        // this.find("[data-partial=$name]").replaceWith($name)
+        //
+        // So that'll end up looking like
+        //
+        // public function new() {
+        //   var btn = new Button();
+        //   btn.text = "Click Me!";
+        //   this.find("[data-partial=btn]").replaceWith(btn);
+        // }
 
         // Replace with <div data-partial="partial_XX" /> (or custom partial name)
         // Find parent widget
@@ -626,6 +534,5 @@ class WidgetTools
             pos: pos
         }
     }
-
-    #end 
+    #end
 }
