@@ -1,6 +1,6 @@
-import domtools.Widget;
+import Detox.Widget;
 using StringTools;
-using DOMTools;
+using Detox;
 
 class ContactView extends Widget 
 {

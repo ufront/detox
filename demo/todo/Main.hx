@@ -1,5 +1,5 @@
-using DOMTools;
-import DOMTools;
+using Detox;
+import Detox;
 
 class Main
 {
@@ -9,7 +9,7 @@ class Main
 		haxe.Log.trace = haxe.Firebug.trace;
 
 		// Run out app after the window has finished loading.
-		domtools.Query.window.onload = run;
+		dtx.Tools.window.onload = run;
 	}
 
 	static function run(e)

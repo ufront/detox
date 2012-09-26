@@ -1,17 +1,16 @@
-using DOMTools;
+using Detox;
 using StringTools;
 
-class Notification extends domtools.Widget
+@template("<div class='notification alert fade in out'>
+	<a class='close' href='#'>&times;</a>
+	<h4 class='alert-heading'>Title</h4>
+	<p>Description goes here</p>
+</div>")
+class Notification extends dtx.widget.Widget
 {
-	static var template = "<div class='notification alert fade in out'>
-		<a class='close' href='#'>&times;</a>
-		<h4 class='alert-heading'>Title</h4>
-		<p>Description goes here</p>
-	</div>";
-
 	public function new(title:String, comment:String)
 	{
-		super(template);
+		super();
 
 		// Set the title and the comment
 		this.find("h4").setText(title);

@@ -1,9 +1,9 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
-if(typeof domtools=='undefined') domtools = {}
-if(!domtools.single) domtools.single = {}
-domtools.single.DOMManipulation = function() { }
-domtools.single.DOMManipulation.__name__ = ["domtools","single","DOMManipulation"];
-domtools.single.DOMManipulation.append = function(parent,childNode,childCollection) {
+if(typeof Detox=='undefined') Detox = {}
+if(!Detox.single) Detox.single = {}
+Detox.single.DOMManipulation = function() { }
+Detox.single.DOMManipulation.__name__ = ["Detox","single","DOMManipulation"];
+Detox.single.DOMManipulation.append = function(parent,childNode,childCollection) {
 	if(parent != null) {
 		if(childNode != null) parent.appendChild(childNode);
 		if(childCollection != null) {
@@ -16,43 +16,43 @@ domtools.single.DOMManipulation.append = function(parent,childNode,childCollecti
 	}
 	return parent;
 }
-domtools.single.DOMManipulation.remove = function(childToRemove) {
+Detox.single.DOMManipulation.remove = function(childToRemove) {
 	if(childToRemove != null && childToRemove.parentNode != null) childToRemove.parentNode.removeChild(childToRemove);
 	return childToRemove;
 }
-domtools.single.DOMManipulation.prototype.__class__ = domtools.single.DOMManipulation;
-if(!domtools.collection) domtools.collection = {}
-domtools.collection.EventManagement = function() { }
-domtools.collection.EventManagement.__name__ = ["domtools","collection","EventManagement"];
-domtools.collection.EventManagement.on = function(targetCollection,eventType,listener) {
+Detox.single.DOMManipulation.prototype.__class__ = Detox.single.DOMManipulation;
+if(!Detox.collection) Detox.collection = {}
+Detox.collection.EventManagement = function() { }
+Detox.collection.EventManagement.__name__ = ["Detox","collection","EventManagement"];
+Detox.collection.EventManagement.on = function(targetCollection,eventType,listener) {
 	var $it0 = targetCollection.collection.iterator();
 	while( $it0.hasNext() ) {
 		var target = $it0.next();
-		domtools.single.EventManagement.on(target,eventType,listener);
+		Detox.single.EventManagement.on(target,eventType,listener);
 	}
 	return targetCollection;
 }
-domtools.collection.EventManagement.submit = function(target,listener) {
-	return domtools.collection.EventManagement.on(target,"submit",listener);
+Detox.collection.EventManagement.submit = function(target,listener) {
+	return Detox.collection.EventManagement.on(target,"submit",listener);
 }
-domtools.collection.EventManagement.click = function(target,listener) {
-	return domtools.collection.EventManagement.on(target,"click",listener);
+Detox.collection.EventManagement.click = function(target,listener) {
+	return Detox.collection.EventManagement.on(target,"click",listener);
 }
-domtools.collection.EventManagement.prototype.__class__ = domtools.collection.EventManagement;
-domtools.single.Traversing = function() { }
-domtools.single.Traversing.__name__ = ["domtools","single","Traversing"];
-domtools.single.Traversing.find = function(node,selector) {
-	var newQuery = new domtools.Query();
-	if(node != null && domtools.single.ElementManipulation.isElement(node)) {
+Detox.collection.EventManagement.prototype.__class__ = Detox.collection.EventManagement;
+Detox.single.Traversing = function() { }
+Detox.single.Traversing.__name__ = ["Detox","single","Traversing"];
+Detox.single.Traversing.find = function(node,selector) {
+	var newQuery = new Detox.Query();
+	if(node != null && Detox.single.ElementManipulation.isElement(node)) {
 		var element = node;
 		newQuery.addNodeList(element.querySelectorAll(selector));
 	}
 	return newQuery;
 }
-domtools.single.Traversing.prototype.__class__ = domtools.single.Traversing;
-domtools.collection.DOMManipulation = function() { }
-domtools.collection.DOMManipulation.__name__ = ["domtools","collection","DOMManipulation"];
-domtools.collection.DOMManipulation.append = function(parentCollection,childNode,childCollection) {
+Detox.single.Traversing.prototype.__class__ = Detox.single.Traversing;
+Detox.collection.DOMManipulation = function() { }
+Detox.collection.DOMManipulation.__name__ = ["Detox","collection","DOMManipulation"];
+Detox.collection.DOMManipulation.append = function(parentCollection,childNode,childCollection) {
 	var firstChildUsed = false;
 	if(parentCollection != null) {
 		var $it0 = parentCollection.collection.iterator();
@@ -60,40 +60,40 @@ domtools.collection.DOMManipulation.append = function(parentCollection,childNode
 			var parent = $it0.next();
 			childNode = firstChildUsed && childNode != null?childNode.cloneNode(true):childNode;
 			childCollection = firstChildUsed && childCollection != null?childCollection.clone():childCollection;
-			domtools.single.DOMManipulation.append(parent,childNode,childCollection);
+			Detox.single.DOMManipulation.append(parent,childNode,childCollection);
 			firstChildUsed = true;
 		}
 	}
 	return parentCollection;
 }
-domtools.collection.DOMManipulation.remove = function(nodesToRemove) {
+Detox.collection.DOMManipulation.remove = function(nodesToRemove) {
 	if(nodesToRemove != null) {
 		var $it0 = nodesToRemove.collection.iterator();
 		while( $it0.hasNext() ) {
 			var node = $it0.next();
-			domtools.single.DOMManipulation.remove(node);
+			Detox.single.DOMManipulation.remove(node);
 		}
 	}
 	return nodesToRemove;
 }
-domtools.collection.DOMManipulation.prototype.__class__ = domtools.collection.DOMManipulation;
-domtools.collection.ElementManipulation = function() { }
-domtools.collection.ElementManipulation.__name__ = ["domtools","collection","ElementManipulation"];
-domtools.collection.ElementManipulation.val = function(query) {
-	return query != null && query.collection.length > 0?domtools.single.ElementManipulation.val(query.collection[0]):"";
+Detox.collection.DOMManipulation.prototype.__class__ = Detox.collection.DOMManipulation;
+Detox.collection.ElementManipulation = function() { }
+Detox.collection.ElementManipulation.__name__ = ["Detox","collection","ElementManipulation"];
+Detox.collection.ElementManipulation.val = function(query) {
+	return query != null && query.collection.length > 0?Detox.single.ElementManipulation.val(query.collection[0]):"";
 }
-domtools.collection.ElementManipulation.setVal = function(query,val) {
+Detox.collection.ElementManipulation.setVal = function(query,val) {
 	var value = Std.string(val);
 	if(query != null) {
 		var $it0 = query.collection.iterator();
 		while( $it0.hasNext() ) {
 			var node = $it0.next();
-			domtools.single.ElementManipulation.setVal(node,value);
+			Detox.single.ElementManipulation.setVal(node,value);
 		}
 	}
 	return query;
 }
-domtools.collection.ElementManipulation.prototype.__class__ = domtools.collection.ElementManipulation;
+Detox.collection.ElementManipulation.prototype.__class__ = Detox.collection.ElementManipulation;
 Reflect = function() { }
 Reflect.__name__ = ["Reflect"];
 Reflect.hasField = function(o,field) {
@@ -201,15 +201,15 @@ StringBuf.prototype.toString = function() {
 }
 StringBuf.prototype.b = null;
 StringBuf.prototype.__class__ = StringBuf;
-domtools.Tools = function() { }
-domtools.Tools.__name__ = ["domtools","Tools"];
-domtools.Tools.find = function(selector) {
-	return new domtools.Query(selector);
+Detox.Tools = function() { }
+Detox.Tools.__name__ = ["Detox","Tools"];
+Detox.Tools.find = function(selector) {
+	return new Detox.Query(selector);
 }
-domtools.Tools.create = function(elmName) {
-	return domtools.Query.create(elmName);
+Detox.Tools.create = function(elmName) {
+	return Detox.Query.create(elmName);
 }
-domtools.Tools.toNode = function(eventHandler) {
+Detox.Tools.toNode = function(eventHandler) {
 	var elm;
 	try {
 		elm = eventHandler;
@@ -218,16 +218,16 @@ domtools.Tools.toNode = function(eventHandler) {
 	}
 	return elm;
 }
-domtools.Tools.prototype.__class__ = domtools.Tools;
-domtools.collection.Traversing = function() { }
-domtools.collection.Traversing.__name__ = ["domtools","collection","Traversing"];
-domtools.collection.Traversing.find = function(query,selector) {
-	var newQuery = new domtools.Query();
+Detox.Tools.prototype.__class__ = Detox.Tools;
+Detox.collection.Traversing = function() { }
+Detox.collection.Traversing.__name__ = ["Detox","collection","Traversing"];
+Detox.collection.Traversing.find = function(query,selector) {
+	var newQuery = new Detox.Query();
 	if(query != null && selector != null && selector != "") {
 		var $it0 = query.collection.iterator();
 		while( $it0.hasNext() ) {
 			var node = $it0.next();
-			if(domtools.single.ElementManipulation.isElement(node)) {
+			if(Detox.single.ElementManipulation.isElement(node)) {
 				var element = node;
 				newQuery.addNodeList(element.querySelectorAll(selector));
 			}
@@ -235,7 +235,7 @@ domtools.collection.Traversing.find = function(query,selector) {
 	}
 	return newQuery;
 }
-domtools.collection.Traversing.prototype.__class__ = domtools.collection.Traversing;
+Detox.collection.Traversing.prototype.__class__ = Detox.collection.Traversing;
 haxe.Firebug = function() { }
 haxe.Firebug.__name__ = ["haxe","Firebug"];
 haxe.Firebug.trace = function(v,inf) {
@@ -244,7 +244,7 @@ haxe.Firebug.trace = function(v,inf) {
 	console[type]((inf == null?"":inf.fileName + ":" + inf.lineNumber + " : ") + Std.string(v));
 }
 haxe.Firebug.prototype.__class__ = haxe.Firebug;
-domtools.Query = function(selector,node,collection) {
+Detox.Query = function(selector,node,collection) {
 	if( selector === $_ ) return;
 	if(selector == null) selector = "";
 	this.collection = new Array();
@@ -258,17 +258,17 @@ domtools.Query = function(selector,node,collection) {
 	if(selector != "") {
 		var nodeList = ((function($this) {
 			var $r;
-			if(domtools.Query.document == null) domtools.Query.document = document;
-			$r = domtools.Query.document;
+			if(Detox.Query.document == null) Detox.Query.document = document;
+			$r = Detox.Query.document;
 			return $r;
 		}(this))).querySelectorAll(selector,null);
 		this.addNodeList(nodeList);
 	}
 }
-domtools.Query.__name__ = ["domtools","Query"];
-domtools.Query.document = null;
-domtools.Query.window = null;
-domtools.Query.create = function(name) {
+Detox.Query.__name__ = ["Detox","Query"];
+Detox.Query.document = null;
+Detox.Query.window = null;
+Detox.Query.create = function(name) {
 	var elm = null;
 	if(name != null) try {
 		elm = document.createElement(name);
@@ -277,35 +277,35 @@ domtools.Query.create = function(name) {
 	}
 	return elm;
 }
-domtools.Query.get_window = function() {
+Detox.Query.get_window = function() {
 	return window;
 }
-domtools.Query.get_document = function() {
-	if(domtools.Query.document == null) domtools.Query.document = document;
-	return domtools.Query.document;
+Detox.Query.get_document = function() {
+	if(Detox.Query.document == null) Detox.Query.document = document;
+	return Detox.Query.document;
 }
-domtools.Query.prototype.collection = null;
-domtools.Query.prototype.length = null;
-domtools.Query.prototype.iterator = function() {
+Detox.Query.prototype.collection = null;
+Detox.Query.prototype.length = null;
+Detox.Query.prototype.iterator = function() {
 	return this.collection.iterator();
 }
-domtools.Query.prototype.getNode = function(i) {
+Detox.Query.prototype.getNode = function(i) {
 	if(i == null) i = 0;
 	return this.collection[i];
 }
-domtools.Query.prototype.add = function(node) {
+Detox.Query.prototype.add = function(node) {
 	if(node != null) {
 		if(Lambda.has(this.collection,node) == false) this.collection.push(node);
 	}
 	return this;
 }
-domtools.Query.prototype.addCollection = function(collection,elementsOnly) {
+Detox.Query.prototype.addCollection = function(collection,elementsOnly) {
 	if(elementsOnly == null) elementsOnly = false;
 	if(collection != null) {
 		var $it0 = collection.iterator();
 		while( $it0.hasNext() ) {
 			var node = $it0.next();
-			if(elementsOnly == false || domtools.single.ElementManipulation.isElement(node)) {
+			if(elementsOnly == false || Detox.single.ElementManipulation.isElement(node)) {
 				if(node != null) {
 					if(Lambda.has(this.collection,node) == false) this.collection.push(node);
 				}
@@ -315,13 +315,13 @@ domtools.Query.prototype.addCollection = function(collection,elementsOnly) {
 	}
 	return this;
 }
-domtools.Query.prototype.addNodeList = function(nodeList,elementsOnly) {
+Detox.Query.prototype.addNodeList = function(nodeList,elementsOnly) {
 	if(elementsOnly == null) elementsOnly = true;
 	var _g1 = 0, _g = nodeList.length;
 	while(_g1 < _g) {
 		var i = _g1++;
 		var node = nodeList.item(i);
-		if(elementsOnly == false || domtools.single.ElementManipulation.isElement(node)) {
+		if(elementsOnly == false || Detox.single.ElementManipulation.isElement(node)) {
 			if(node != null) {
 				if(Lambda.has(this.collection,node) == false) this.collection.push(node);
 			}
@@ -330,9 +330,9 @@ domtools.Query.prototype.addNodeList = function(nodeList,elementsOnly) {
 	}
 	return this;
 }
-domtools.Query.prototype.clone = function(deep) {
+Detox.Query.prototype.clone = function(deep) {
 	if(deep == null) deep = true;
-	var q = new domtools.Query();
+	var q = new Detox.Query();
 	var $it0 = this.collection.iterator();
 	while( $it0.hasNext() ) {
 		var node = $it0.next();
@@ -340,10 +340,10 @@ domtools.Query.prototype.clone = function(deep) {
 	}
 	return q;
 }
-domtools.Query.prototype.get_length = function() {
+Detox.Query.prototype.get_length = function() {
 	return this.collection.length;
 }
-domtools.Query.prototype.__class__ = domtools.Query;
+Detox.Query.prototype.__class__ = Detox.Query;
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -392,21 +392,21 @@ List = function() { }
 List.__name__ = ["List"];
 List.prototype.length = null;
 List.prototype.__class__ = List;
-domtools.single.EventManagement = function() { }
-domtools.single.EventManagement.__name__ = ["domtools","single","EventManagement"];
-domtools.single.EventManagement.on = function(target,eventType,listener) {
+Detox.single.EventManagement = function() { }
+Detox.single.EventManagement.__name__ = ["Detox","single","EventManagement"];
+Detox.single.EventManagement.on = function(target,eventType,listener) {
 	var elm = target;
 	elm.addEventListener(eventType,listener,false);
-	haxe.Log.trace("add",{ fileName : "EventManagement.hx", lineNumber : 131, className : "domtools.single.EventManagement", methodName : "on"});
+	haxe.Log.trace("add",{ fileName : "EventManagement.hx", lineNumber : 131, className : "Detox.single.EventManagement", methodName : "on"});
 	return target;
 }
-domtools.single.EventManagement.submit = function(target,listener) {
-	return domtools.single.EventManagement.on(target,"submit",listener);
+Detox.single.EventManagement.submit = function(target,listener) {
+	return Detox.single.EventManagement.on(target,"submit",listener);
 }
-domtools.single.EventManagement.click = function(target,listener) {
-	return domtools.single.EventManagement.on(target,"click",listener);
+Detox.single.EventManagement.click = function(target,listener) {
+	return Detox.single.EventManagement.on(target,"click",listener);
 }
-domtools.single.EventManagement.prototype.__class__ = domtools.single.EventManagement;
+Detox.single.EventManagement.prototype.__class__ = Detox.single.EventManagement;
 if(typeof js=='undefined') js = {}
 js.Lib = function() { }
 js.Lib.__name__ = ["js","Lib"];
@@ -653,31 +653,31 @@ EReg.prototype.customReplace = function(s,f) {
 	return buf.b.join("");
 }
 EReg.prototype.__class__ = EReg;
-domtools.single.ElementManipulation = function() { }
-domtools.single.ElementManipulation.__name__ = ["domtools","single","ElementManipulation"];
-domtools.single.ElementManipulation.isElement = function(node) {
-	return node != null && node.nodeType == domtools.single.ElementManipulation.NodeTypeElement;
+Detox.single.ElementManipulation = function() { }
+Detox.single.ElementManipulation.__name__ = ["Detox","single","ElementManipulation"];
+Detox.single.ElementManipulation.isElement = function(node) {
+	return node != null && node.nodeType == Detox.single.ElementManipulation.NodeTypeElement;
 }
-domtools.single.ElementManipulation.attr = function(elm,attName) {
+Detox.single.ElementManipulation.attr = function(elm,attName) {
 	var ret = "";
-	if(domtools.single.ElementManipulation.isElement(elm)) {
+	if(Detox.single.ElementManipulation.isElement(elm)) {
 		var element = elm;
 		ret = element.getAttribute(attName);
 		if(ret == null) ret = "";
 	}
 	return ret;
 }
-domtools.single.ElementManipulation.setAttr = function(elm,attName,attValue) {
-	if(elm != null && elm.nodeType == domtools.single.ElementManipulation.NodeTypeElement) {
+Detox.single.ElementManipulation.setAttr = function(elm,attName,attValue) {
+	if(elm != null && elm.nodeType == Detox.single.ElementManipulation.NodeTypeElement) {
 		var element = elm;
 		element.setAttribute(attName,attValue);
 	}
 	return elm;
 }
-domtools.single.ElementManipulation.testForClass = function(elm,className) {
-	return (" " + domtools.single.ElementManipulation.attr(elm,"class") + " ").indexOf(" " + className + " ") > -1;
+Detox.single.ElementManipulation.testForClass = function(elm,className) {
+	return (" " + Detox.single.ElementManipulation.attr(elm,"class") + " ").indexOf(" " + className + " ") > -1;
 }
-domtools.single.ElementManipulation.hasClass = function(elm,className) {
+Detox.single.ElementManipulation.hasClass = function(elm,className) {
 	var hasClass = true;
 	if(className.indexOf(" ") > -1) {
 		var anyWhitespace = new EReg("\\s+","g");
@@ -685,27 +685,27 @@ domtools.single.ElementManipulation.hasClass = function(elm,className) {
 		while(_g < _g1.length) {
 			var name = _g1[_g];
 			++_g;
-			hasClass = (" " + domtools.single.ElementManipulation.attr(elm,"class") + " ").indexOf(" " + name + " ") > -1;
+			hasClass = (" " + Detox.single.ElementManipulation.attr(elm,"class") + " ").indexOf(" " + name + " ") > -1;
 			if(hasClass == false) break;
 		}
-	} else hasClass = (" " + domtools.single.ElementManipulation.attr(elm,"class") + " ").indexOf(" " + className + " ") > -1;
+	} else hasClass = (" " + Detox.single.ElementManipulation.attr(elm,"class") + " ").indexOf(" " + className + " ") > -1;
 	return hasClass;
 }
-domtools.single.ElementManipulation.addClass = function(elm,className) {
+Detox.single.ElementManipulation.addClass = function(elm,className) {
 	var _g = 0, _g1 = className.split(" ");
 	while(_g < _g1.length) {
 		var name = _g1[_g];
 		++_g;
-		if(domtools.single.ElementManipulation.hasClass(elm,className) == false) {
-			var oldClassName = domtools.single.ElementManipulation.attr(elm,"class");
+		if(Detox.single.ElementManipulation.hasClass(elm,className) == false) {
+			var oldClassName = Detox.single.ElementManipulation.attr(elm,"class");
 			var newClassName = oldClassName == ""?className:oldClassName + " " + className;
-			domtools.single.ElementManipulation.setAttr(elm,"class",newClassName);
+			Detox.single.ElementManipulation.setAttr(elm,"class",newClassName);
 		}
 	}
 	return elm;
 }
-domtools.single.ElementManipulation.removeClass = function(elm,className) {
-	var classes = domtools.single.ElementManipulation.attr(elm,"class").split(" ");
+Detox.single.ElementManipulation.removeClass = function(elm,className) {
+	var classes = Detox.single.ElementManipulation.attr(elm,"class").split(" ");
 	var _g = 0, _g1 = className.split(" ");
 	while(_g < _g1.length) {
 		var name = _g1[_g];
@@ -713,36 +713,36 @@ domtools.single.ElementManipulation.removeClass = function(elm,className) {
 		classes.remove(name);
 	}
 	var newClassValue = classes.join(" ");
-	domtools.single.ElementManipulation.setAttr(elm,"class",newClassValue);
+	Detox.single.ElementManipulation.setAttr(elm,"class",newClassValue);
 	return elm;
 }
-domtools.single.ElementManipulation.toggleClass = function(elm,className) {
+Detox.single.ElementManipulation.toggleClass = function(elm,className) {
 	var _g = 0, _g1 = className.split(" ");
 	while(_g < _g1.length) {
 		var name = _g1[_g];
 		++_g;
-		if(domtools.single.ElementManipulation.hasClass(elm,name)) domtools.single.ElementManipulation.removeClass(elm,name); else domtools.single.ElementManipulation.addClass(elm,name);
+		if(Detox.single.ElementManipulation.hasClass(elm,name)) Detox.single.ElementManipulation.removeClass(elm,name); else Detox.single.ElementManipulation.addClass(elm,name);
 	}
 	return elm;
 }
-domtools.single.ElementManipulation.tagName = function(elm) {
+Detox.single.ElementManipulation.tagName = function(elm) {
 	return elm == null?"":elm.nodeName.toLowerCase();
 }
-domtools.single.ElementManipulation.val = function(node) {
+Detox.single.ElementManipulation.val = function(node) {
 	var val = "";
 	if(node != null) switch(node.nodeType) {
-	case domtools.single.ElementManipulation.NodeTypeElement:
+	case Detox.single.ElementManipulation.NodeTypeElement:
 		val = Reflect.field(node,"value");
-		if(val == null) val = domtools.single.ElementManipulation.attr(node,"value");
+		if(val == null) val = Detox.single.ElementManipulation.attr(node,"value");
 		break;
 	default:
 		val = node.nodeValue;
 	}
 	return val;
 }
-domtools.single.ElementManipulation.setVal = function(node,val) {
+Detox.single.ElementManipulation.setVal = function(node,val) {
 	if(node != null) switch(node.nodeType) {
-	case domtools.single.ElementManipulation.NodeTypeElement:
+	case Detox.single.ElementManipulation.NodeTypeElement:
 		node["value"] = val;
 		break;
 	default:
@@ -750,13 +750,13 @@ domtools.single.ElementManipulation.setVal = function(node,val) {
 	}
 	return node;
 }
-domtools.single.ElementManipulation.setText = function(elm,text) {
+Detox.single.ElementManipulation.setText = function(elm,text) {
 	if(elm != null) {
-		if(domtools.single.ElementManipulation.isElement(elm)) elm.textContent = text; else elm.nodeValue = text;
+		if(Detox.single.ElementManipulation.isElement(elm)) elm.textContent = text; else elm.nodeValue = text;
 	}
 	return elm;
 }
-domtools.single.ElementManipulation.prototype.__class__ = domtools.single.ElementManipulation;
+Detox.single.ElementManipulation.prototype.__class__ = Detox.single.ElementManipulation;
 Main = function() { }
 Main.__name__ = ["Main"];
 Main.main = function() {
@@ -765,23 +765,23 @@ Main.main = function() {
 }
 Main.run = function(e) {
 	haxe.Log.trace("Welcome to my app!",{ fileName : "Main.hx", lineNumber : 17, className : "Main", methodName : "run"});
-	var form = domtools.Tools.find("#inputform");
-	var input = domtools.Tools.find("#task");
-	var tasks = domtools.Tools.find("#tasks");
-	var clear = domtools.Tools.find("#clear");
-	domtools.collection.EventManagement.on(domtools.Tools.find("#inputform"),"submit",function(e1) {
-		var val = domtools.collection.ElementManipulation.val(input);
-		var li = domtools.single.ElementManipulation.setText(domtools.Tools.create("li"),val);
-		domtools.collection.DOMManipulation.append(tasks,li);
-		domtools.collection.ElementManipulation.setVal(input,"");
+	var form = Detox.Tools.find("#inputform");
+	var input = Detox.Tools.find("#task");
+	var tasks = Detox.Tools.find("#tasks");
+	var clear = Detox.Tools.find("#clear");
+	Detox.collection.EventManagement.on(Detox.Tools.find("#inputform"),"submit",function(e1) {
+		var val = Detox.collection.ElementManipulation.val(input);
+		var li = Detox.single.ElementManipulation.setText(Detox.Tools.create("li"),val);
+		Detox.collection.DOMManipulation.append(tasks,li);
+		Detox.collection.ElementManipulation.setVal(input,"");
 		e1.preventDefault();
 	});
-	domtools.collection.EventManagement.on(tasks,"click",function(e1) {
-		var target = domtools.Tools.toNode(e1.target);
-		if((target == null?"":target.nodeName.toLowerCase()) == "li") domtools.single.ElementManipulation.toggleClass(target,"completed");
+	Detox.collection.EventManagement.on(tasks,"click",function(e1) {
+		var target = Detox.Tools.toNode(e1.target);
+		if((target == null?"":target.nodeName.toLowerCase()) == "li") Detox.single.ElementManipulation.toggleClass(target,"completed");
 	});
-	domtools.collection.EventManagement.on(clear,"click",function(e1) {
-		domtools.collection.DOMManipulation.remove(domtools.collection.Traversing.find(tasks,".completed"));
+	Detox.collection.EventManagement.on(clear,"click",function(e1) {
+		Detox.collection.DOMManipulation.remove(Detox.collection.Traversing.find(tasks,".completed"));
 	});
 }
 Main.prototype.__class__ = Main;
@@ -889,5 +889,5 @@ js.Boot.__init();
 		return f(msg,[url+":"+line]);
 	}
 }
-domtools.single.ElementManipulation.NodeTypeElement = 1;
+Detox.single.ElementManipulation.NodeTypeElement = 1;
 Main.main()

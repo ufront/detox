@@ -3,7 +3,9 @@
 #
 
 # Use our library.
--lib domtools 
+-lib detox 
+-lib beanhx 
+-lib tink_macros
 
 # Classpaths used for demo
 -cp demo/todo
@@ -23,7 +25,9 @@
 #
 
 # Use our library.
--lib domtools 
+-lib detox 
+-lib beanhx 
+-lib tink_macros
 
 # Classpaths used for demo
 -cp demo/growl

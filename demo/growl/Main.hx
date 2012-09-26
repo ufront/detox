@@ -1,4 +1,4 @@
-using DOMTools;
+using Detox;
 import Notification;
 import ProgressBar;
 
@@ -10,7 +10,7 @@ class Main
 		haxe.Log.trace = haxe.Firebug.trace;
 
 		// Run out function when the page is ready
-		domtools.Query.window.onload = run;
+		dtx.Tools.window.onload = run;
 	}
 
 	public static function run(e)

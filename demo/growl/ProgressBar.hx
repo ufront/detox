@@ -1,16 +1,15 @@
-using DOMTools;
+using Detox;
 
-class ProgressBar extends domtools.Widget 
+@template("<div class='progress'>
+	<div class='bar' style='width: ' />
+</div>")
+class ProgressBar extends dtx.widget.Widget 
 {
-	static var template = "<div class='progress'>
-		<div class='bar' style='width: '>
-	</div>";
-
 	var percentage:Float;
 	
 	public function new(?percentage:Float = 0)
 	{
-		super(template);
+		super();
 
 		// You can use functions and class members for your widgets
 		updateProgress(percentage);
