@@ -9,4 +9,5 @@
 	<version name="0.7.1.0">Renamed to Detox (dtx). Now use `using Detox;`  Added support for neko, tests passing.  Other platforms still unsupported for now.</version>
 	<depends name="xirsys_stdjs"/>
 	<depends name="beanhx"/>
+	<depends name="tink_macros"/>
 </project>
