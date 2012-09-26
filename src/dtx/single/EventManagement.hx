@@ -83,82 +83,36 @@ class EventManagement
 
 	}
 
-	/** Trigger an event, as if it has actually happened 
-	public static function trigger(target:DOMNode, eventString:String):DOMNode
+	/** Trigger an event, as if it has actually happened */
+	public static inline function trigger(target:DOMNode, eventString:String):DOMNode
 	{
-		if (ElementManipulation.isElement(target))
-		{
-			var elm:DOMElement = cast target;
-
-			var event;
-			var useW3EventModel:Bool = untyped __js__('document.createEvent');
-			if (useW3EventModel) 
-			{
-				event = untyped __js__("document.createEvent('HTMLEvents')");
-				event.initEvent(eventString, true, true);
-			} 
-			else 
-			{
-				event = untyped __js__("document.createEventObject()");
-				event.eventType = "on" + eventString;
-			}
-
-			event.eventName = eventString;
-			event.memo = memo || { };
-
-			if (useW3EventModel)
-			{
-				elm.dispatchEvent(event);
-			}
-			else
-			{
-				untyped __js__("elm.fireEvent(event.eventType, event)");
-			}
-		}
-
-		return target;
-	}*/
-
-	/** Trigger the handler for the event, but don't emulate the event itself */
-	public static function triggerHandler(target:DOMNode, event:String):DOMNode
-	{
+		Bean.fire(target, eventString);
 		return target;
 	}
 
+	// /** Trigger the handler for the event, but don't emulate the event itself */
+	// public static function triggerHandler(target:DOMNode, event:String):DOMNode
+	// {
+	// 	return target;
+	// }
+
 	/** add an event listener */
-	public static function on(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
+	public static inline function on(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
 	{
-		var elm:DOMElement = cast target;
-
-		// eventType, listener, useCapture.  For info on useCapture, see http://blog.seankoole.com/addeventlistener-explaining-usecapture
-		// will not work on IE8 or below.  Can't be bothered adding at the moment.
-		elm.addEventListener(eventType, listener, false);
-
+		Bean.on(target, eventType, listener);
 		return target;
 	}
 
 	public static function off(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
 	{
-		var elm:DOMElement = cast target;
-
-		// eventType, listener, useCapture.  For info on useCapture, see http://blog.seankoole.com/addeventlistener-explaining-usecapture
-		// will not work on IE8 or below.  Can't be bothered adding at the moment.
-		// This code may also be an alternative: https://developer.mozilla.org/en/DOM/element.removeEventListener#section_4
-		elm.removeEventListener(eventType, listener, false);
-		
+		Bean.off(target, eventType, listener);
 		return target;
 	}
 
 	/** Attach an event but only let it run once */
 	public static function one(target:DOMNode, eventType:String, listener:Event->Void):DOMNode
 	{
-		var fn:Event->Void = null;
-		fn = function (e:Event)
-		{
-			listener(e);
-			target.removeEventListener(eventType, fn, false);
-		}
-		target.addEventListener(eventType, fn, false);
+		Bean.one(target, eventType, listener);
 		return target;
 	}
 
