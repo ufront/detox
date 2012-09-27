@@ -10,7 +10,7 @@ class Main
 		haxe.Log.trace = haxe.Firebug.trace;
 
 		// Run out function when the page is ready
-		dtx.Tools.window.onload = run;
+		Detox.window.onload = run;
 	}
 
 	public static function run(e)

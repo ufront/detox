@@ -9,7 +9,7 @@ class Main
 		haxe.Log.trace = haxe.Firebug.trace;
 
 		// Run out app after the window has finished loading.
-		dtx.Tools.window.onload = run;
+		Detox.window.onload = run;
 	}
 
 	static function run(e)
