@@ -156,13 +156,6 @@ class Tools
 		return new DOMCollection(Detox.createElement(str));
 	}*/
 
-	#if js
-	static inline function get_window():Window
-	{
-		return untyped __js__("window");
-	}
-	#end
-
 	static inline function get_document():DocumentOrElement
 	{
 		if (document == null) 
@@ -189,6 +182,12 @@ class Tools
 				document = untyped newDocument;
 			}
 		}
+	}
+
+	#if js
+	static inline function get_window():Window
+	{
+		return untyped __js__("window");
 	}
 
 	static inline function get_body():DOMNode
@@ -236,4 +235,5 @@ class Tools
 		
 		
 	}
+	#end
 }
