@@ -47,7 +47,10 @@ import dtx.DOMNode;
 class Tools 
 {
 	public static var document(get_document,null):DocumentOrElement;
-	#if js public static var window(get_window,null):Window; #end
+	#if js 
+	public static var body(get_body,null):dtx.DOMNode;
+	public static var window(get_window,null):Window; 
+	#end
 
 	function new()
 	{
@@ -186,5 +189,51 @@ class Tools
 				document = untyped newDocument;
 			}
 		}
+	}
+
+	static inline function get_body():DOMNode
+	{
+		return untyped document.body;
+	}
+
+	public static function ready(f:Void->Void)
+	{
+		/*
+		SHIM TO MAKE SURE IT WORKS IN FF3.5 OR UNDER
+		OTHERWISE: document.ready() will fire when the page loads, but if the page has already loaded
+		it will never fire, so your javascript may never run.
+
+		The below line of code is basically a highly minified version of this:
+
+		// verify that document.readyState is undefined
+		// verify that document.addEventListener is there
+		// these two conditions are basically telling us
+		// we are using Firefox < 3.6
+		if(document.readyState == null && document.addEventListener){
+		    // on DOMContentLoaded event, supported since ages
+		    document.addEventListener("DOMContentLoaded", function DOMContentLoaded(){
+		        // remove the listener itself
+		        document.removeEventListener("DOMContentLoaded", DOMContentLoaded, false);
+		        // assign readyState as complete
+		        document.readyState = "complete";
+		    }, false);
+		    // set readyState = loading or interactive
+		    // it does not really matter for this purpose
+		    document.readyState = "loading";
+		}
+
+		Shim taken from:
+		http://webreflection.blogspot.com.au/2009/11/195-chars-to-help-lazy-loading.html
+		*/
+		untyped __js__('(function(h,a,c,k){if(h[a]==null&&h[c]){h[a]="loading";h[c](k,c=function(){h[a]="complete";h.removeEventListener(k,c,!1)},!1)}})(document,"readyState","addEventListener","DOMContentLoaded");');
+
+		/*
+		Mini ready() function taken from:
+		http://dustindiaz.com/smallest-domready-ever
+		*/
+		untyped __js__('/in/.test(document.readyState) ? setTimeout("dtx.Tools.ready("+f+")", 9) : f();');
+
+		
+		
 	}
 }
