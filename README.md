@@ -320,10 +320,8 @@ Status
 Platform Inconsistencies
 ========================
 
-* Selecthxml (non-JS targets) find() includes the root element, querySelectorAll (js target) does not.
 * On XML based targets (non JS), parent is an Node, not a function that returns a Node.  It is not null-safe.  Use parents() instead to be safe and consistent across platforms.
 * On XML based targets (non JS), remove() is a method to remove attributes.  Because it already exists, our "remove()" mixin does not work.  Use removeFromDOM() instead.
-* 
 
 Future
 ======
