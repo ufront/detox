@@ -224,12 +224,12 @@ Status
 ======
 
 * NA: this feature does not apply to this platform
-* NOTIMPLEMENTED: this feature has not been written yet
-* NOTESTS: implemented, but no tests written - no guarantee it works
-* TESTSNOTRUN: implemented, and tests written, but not run yet on this platform.
-* TESTFAIL: implemented, tested, some tests failing
+* Broken: this feature has not been written yet
+* NoTests: implemented, but no tests written - no guarantee it works
+* NotRun: implemented, and tests written, but not run yet on this platform.
+* TestFails: implemented, tested, some tests failing
 * OKAY: implemented, tests passing, could do with a few more tests.
-* GOOD: implemented, tests passing, good coverage, good to go.
+* Good: implemented, tests passing, good coverage, good to go.
 
 <table>
 <thead>
@@ -257,65 +257,61 @@ Status
 <tbody>
     <tr>
         <th>Element Manipulation</th>
-        <td colspan="3">GOOD</td>
-        <td colspan="2">TESTSNOTRUN</td>   
-        <td colspan="1">GOOD</td>
-        <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="1">GOOD</td>
-        <td colspan="1">GOOD</td>
-        <td colspan="1">TESTSNOTRUN</td>
-        <td colspan="1">NOTIMPLEMENTED</td>
-        <td colspan="1">GOOD</td>
+        <td colspan="3">Good</td>
+        <td colspan="2">NotRun</td>   
+        <td colspan="1">Good</td>
+        <td colspan="1">NotRun</td>   
+        <td colspan="2">Good</td>
+        <td colspan="1">NotRun</td>
+        <td colspan="1">Broken</td>
+        <td colspan="1">Good</td>
     </tr>
     <tr>
         <th>Query (Collection)</th>
-        <td colspan="3">GOOD</td>
-        <td colspan="2">TESTSNOTRUN</td>   
-        <td colspan="1">GOOD</td>
-        <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="1">GOOD</td>
-        <td colspan="1">GOOD</td>
-        <td colspan="1">TESTSNOTRUN</td>
-        <td colspan="1">NOTIMPLEMENTED</td>
-        <td colspan="1">GOOD</td>
+        <td colspan="3">Good</td>
+        <td colspan="2">NotRun</td>   
+        <td colspan="1">Good</td>
+        <td colspan="1">NotRun</td>   
+        <td colspan="2">Good</td>
+        <td colspan="1">NotRun</td>
+        <td colspan="1">Broken</td>
+        <td colspan="1">Good</td>
     </tr>
     <tr>
         <th>DOM Manipulation</th>
-        <td colspan="3">GOOD</td>
-        <td colspan="2">TESTSNOTRUN</td>   
-        <td colspan="1">GOOD</td>
-        <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="1">GOOD</td>
-        <td colspan="1">GOOD</td>
-        <td colspan="1">TESTSNOTRUN</td>
-        <td colspan="1">NOTIMPLEMENTED</td>
-        <td colspan="1">GOOD</td>
+        <td colspan="3">Good</td>
+        <td colspan="2">NotRun</td>   
+        <td colspan="1">Good</td>
+        <td colspan="1">NotRun</td>   
+        <td colspan="2">Good</td>
+        <td colspan="1">NotRun</td>
+        <td colspan="1">Broken</td>
+        <td colspan="1">Good</td>
     </tr>
     <tr>
         <th>Traversing</th>
-        <td colspan="3">GOOD</td>
-        <td colspan="2">TESTSNOTRUN</td>   
-        <td colspan="1">GOOD</td>
-        <td colspan="1">TESTSNOTRUN</td>   
-        <td colspan="1">GOOD</td>
-        <td colspan="1">GOOD</td>
-        <td colspan="1">TESTSNOTRUN</td>
-        <td colspan="1">NOTIMPLEMENTED</td>
-        <td colspan="1">GOOD</td>
+        <td colspan="3">Good</td>
+        <td colspan="2">NotRun</td>   
+        <td colspan="1">Good</td>
+        <td colspan="1">NotRun</td>   
+        <td colspan="2">Good</td>
+        <td colspan="1">NotRun</td>
+        <td colspan="1">Broken</td>
+        <td colspan="1">Good</td>
     </tr>
     <tr>
         <th>Event Management</th>
-        <td colspan="7">NOTESTS (basics working)</td>   
+        <td colspan="7">NoTests (should work)</td>   
         <td colspan="5">NA</td>    
     </tr>
     <tr>
         <th>Style</th>
-        <td colspan="7">NOTIMPLEMENTED</td>   
+        <td colspan="7">Broken</td>   
         <td colspan="5">NA</td>    
     </tr>
     <tr>
         <th>Animation</th>
-        <td colspan="7">NOTIMPLEMENTED</td>   
+        <td colspan="7">Broken</td>   
         <td colspan="5">NA</td>    
     </tr>
 </tbody>
