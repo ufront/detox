@@ -260,7 +260,6 @@ Status
         <td colspan="3">Good</td>
         <td colspan="2">NotRun</td>   
         <td colspan="1">Good</td>
-        <td colspan="1">NotRun</td>   
         <td colspan="2">Good</td>
         <td colspan="1">NotRun</td>
         <td colspan="1">Broken</td>
@@ -271,7 +270,6 @@ Status
         <td colspan="3">Good</td>
         <td colspan="2">NotRun</td>   
         <td colspan="1">Good</td>
-        <td colspan="1">NotRun</td>   
         <td colspan="2">Good</td>
         <td colspan="1">NotRun</td>
         <td colspan="1">Broken</td>
@@ -282,7 +280,6 @@ Status
         <td colspan="3">Good</td>
         <td colspan="2">NotRun</td>   
         <td colspan="1">Good</td>
-        <td colspan="1">NotRun</td>   
         <td colspan="2">Good</td>
         <td colspan="1">NotRun</td>
         <td colspan="1">Broken</td>
@@ -293,7 +290,6 @@ Status
         <td colspan="3">Good</td>
         <td colspan="2">NotRun</td>   
         <td colspan="1">Good</td>
-        <td colspan="1">NotRun</td>   
         <td colspan="2">Good</td>
         <td colspan="1">NotRun</td>
         <td colspan="1">Broken</td>
