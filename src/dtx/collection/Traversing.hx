@@ -213,6 +213,13 @@ class Traversing
 					// See http://code.google.com/p/selecthxml/issues/detail?id=2
 					// And http://code.google.com/p/selecthxml/issues/detail?id=3
 					var results = selecthxml.SelectDom.runtimeSelect(node, selector);
+
+					// SelectHxml also includes our original node in the search.
+					// We should match the querySelectorAll() functionality from JS, which
+					// only searches descendant nodes.  Therefore, remove the current node
+					// if it was returned as a match.
+					results.remove(node);
+					
 					newDOMCollection.addCollection(results);
 					#end
 				}

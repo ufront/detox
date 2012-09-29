@@ -318,9 +318,6 @@ class TraversingTest
 	}
 
 	@Test
-	// PLATFORM INCONSISTENCY:
-	// querySelectorAll() does not include the current element in the search
-	// find() from selecthxml does.  So the count in the final Assert differs
 	public function find()
 	{
 		Assert.areNotEqual(0, sampleDocument.find('*').length);
@@ -331,12 +328,7 @@ class TraversingTest
 		var recursive = "#recursive".find().getNode();
 		Assert.areEqual(1, recursive.find('.level4').length);
 		Assert.areEqual(1, recursive.find('.level4').length);
-		trace ("Platform inconsistency here, see README");
-		#if js 
 		Assert.areEqual(3, recursive.find('div').length);
-		#else 
-		Assert.areEqual(4, recursive.find('div').length);
-		#end
 	}
 
 	@Test 
