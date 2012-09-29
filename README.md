@@ -224,18 +224,18 @@ Status
 ======
 
 * NA: this feature does not apply to this platform
-* Broken: this feature has not been written yet
+* NotYet: this feature has not been written yet
 * NoTests: implemented, but no tests written - no guarantee it works
 * NotRun: implemented, and tests written, but not run yet on this platform.
 * TestFails: implemented, tested, some tests failing
-* OKAY: implemented, tests passing, could do with a few more tests.
+* Okay: implemented, tests passing, could do with a few more tests.
 * Good: implemented, tests passing, good coverage, good to go.
 
 <table>
 <thead>
     <tr>
         <th>Feature</th>
-        <th colspan="7">Browser JS</th>
+        <th colspan="6">Browser JS</th>
         <th colspan="5">Other Platforms</th>
     </tr>
     <tr>
@@ -246,7 +246,6 @@ Status
         <th>IE7</th>
         <th>IE8</th>
         <th>IE9</th>
-        <th>IE10</th>
         <th>Flash 9+</th>
         <th>Neko</th>
         <th>PHP</th>
@@ -262,7 +261,7 @@ Status
         <td colspan="1">Good</td>
         <td colspan="2">Good</td>
         <td colspan="1">NotRun</td>
-        <td colspan="1">Broken</td>
+        <td colspan="1">NotYet</td>
         <td colspan="1">Good</td>
     </tr>
     <tr>
@@ -272,7 +271,7 @@ Status
         <td colspan="1">Good</td>
         <td colspan="2">Good</td>
         <td colspan="1">NotRun</td>
-        <td colspan="1">Broken</td>
+        <td colspan="1">NotYet</td>
         <td colspan="1">Good</td>
     </tr>
     <tr>
@@ -282,7 +281,7 @@ Status
         <td colspan="1">Good</td>
         <td colspan="2">Good</td>
         <td colspan="1">NotRun</td>
-        <td colspan="1">Broken</td>
+        <td colspan="1">NotYet</td>
         <td colspan="1">Good</td>
     </tr>
     <tr>
@@ -292,22 +291,22 @@ Status
         <td colspan="1">Good</td>
         <td colspan="2">Good</td>
         <td colspan="1">NotRun</td>
-        <td colspan="1">Broken</td>
+        <td colspan="1">NotYet</td>
         <td colspan="1">Good</td>
     </tr>
     <tr>
         <th>Event Management</th>
-        <td colspan="7">NoTests (should work)</td>   
+        <td colspan="6">NoTests (should work)</td>   
         <td colspan="5">NA</td>    
     </tr>
     <tr>
         <th>Style</th>
-        <td colspan="7">Broken</td>   
+        <td colspan="6">NotYet</td>   
         <td colspan="5">NA</td>    
     </tr>
     <tr>
         <th>Animation</th>
-        <td colspan="7">Broken</td>   
+        <td colspan="6">NotYet</td>   
         <td colspan="5">NA</td>    
     </tr>
 </tbody>
