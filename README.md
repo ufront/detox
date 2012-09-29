@@ -265,7 +265,7 @@ Status
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>
         <td colspan="1">NOTIMPLEMENTED</td>
-        <td colspan="1">TESTSNOTRUN</td>
+        <td colspan="1">GOOD</td>
     </tr>
     <tr>
         <th>Query (Collection)</th>
@@ -277,7 +277,7 @@ Status
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>
         <td colspan="1">NOTIMPLEMENTED</td>
-        <td colspan="1">TESTSNOTRUN</td>
+        <td colspan="1">GOOD</td>
     </tr>
     <tr>
         <th>DOM Manipulation</th>
@@ -289,7 +289,7 @@ Status
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>
         <td colspan="1">NOTIMPLEMENTED</td>
-        <td colspan="1">TESTSNOTRUN</td>
+        <td colspan="1">GOOD</td>
     </tr>
     <tr>
         <th>Traversing</th>
@@ -301,7 +301,7 @@ Status
         <td colspan="1">GOOD</td>
         <td colspan="1">TESTSNOTRUN</td>
         <td colspan="1">NOTIMPLEMENTED</td>
-        <td colspan="1">TESTSNOTRUN</td>
+        <td colspan="1">GOOD</td>
     </tr>
     <tr>
         <th>Event Management</th>
