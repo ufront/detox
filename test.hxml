@@ -43,3 +43,16 @@
 
 -cp test
 -neko build/neko_test.n
+
+--next
+
+# CPP
+-main TestMain
+-lib munit
+-lib hamcrest
+-lib selecthxml
+-cp src
+
+-cp test
+-cpp build/cpp/
+-D HXCPP_M64

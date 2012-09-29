@@ -488,7 +488,7 @@ class CollectionTest
 	public function filterCallbackReturnsNull()
 	{
 		var filteredList = listItems.filter(function (li) {
-			#if flash9
+			#if (flash9 || cpp)
 			var returnValue = false;
 			#else
 			var returnValue:Bool = null;
