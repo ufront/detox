@@ -159,9 +159,9 @@ class WidgetTest
 
 		// Test that the macro XML parser won't spew on a "<dtx:SomeThing />"
 		var w2 = new widgets.WidgetWithDtxNamespace();
-		Assert.areEqual("dtx:_NameSpace".toLowerCase(), w2.getNode().nodeName.toLowerCase());
-		Assert.areEqual(2, w2.length);
-		Assert.areEqual("Widget Namespace", w2.innerHTML());
+		Assert.areEqual("doc", w2.getNode().nodeName.toLowerCase());
+		Assert.areEqual(1, w2.length);
+		Assert.areEqual("<doc><header><title>Test Partial</title></header><section><h1>Header</h1><p>Paragraph</p></section></doc>", w2.html());
 	}
 
 	@Test 
@@ -214,7 +214,7 @@ class WidgetTest
 	{
 		var w = new widgets.PartialInSamePackageLayout();
 		// Check that it is included correctly
-		Assert.areEqual("<html><head><title>Test Partial</title></head><body><h1>Header</h1><p>Paragraph</p></body></html>", w.html());
+		Assert.areEqual("<doc><header><title>Test Partial</title></header><section><h1>Header</h1><p>Paragraph</p></section></doc>", w.html());
 	}
 
 	@Test 
@@ -223,16 +223,21 @@ class WidgetTest
 		var w = new widgets.PartialThatIsIncludedLayout();
 
 		// Check that it is included correctly
-		Assert.areEqual("<html><head><title>Test Partial</title></head><body><h1>Header</h1><p>Paragraph</p><p>In <code>testpackage</code> package</p></body></html>", w.html());
+		Assert.areEqual("<doc><header><title>Test Partial</title></header><section><h1>Header</h1><p>Paragraph</p><p>In <code>testpackage</code> package</p></section></doc>", w.html());
 	}
 
-	@Test 
-	public function includePartialFromFullyQualifiedName()
-	{
-		var w = new widgets.PartialFromQualifiedName();
-		// Check that it is included correctly
-		throw w.html();
-	}
+	/* 
+	* For now I'm leaving this as unsupported.
+	* To use a partial from another package, you must run "include" on the class.
+	*/
+	// @Test 
+	// public function includePartialFromFullyQualifiedName()
+	// {
+	// 	var w = new widgets.PartialFromQualifiedName();
+
+	// 	// Check that it is included correctly
+	// 	Assert.areEqual("...", w.html());
+	// }
 
 	@Test 
 	public function includePartialMultipleTimes()

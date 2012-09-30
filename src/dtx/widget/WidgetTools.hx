@@ -401,9 +401,13 @@ class WidgetTools
             // partial inside this file
             typeName = widgetClass.get().name + typeName;
         }
+        // If we ever allow importing partials by fully qualified name, the macro parser does not support
+        // having a '.' in the Xml Element Name.  So replace them with a ":", and we'll substitute them
+        // back here.  For now though, I couldn't get it to work so I'll leave this disabled.
+        //typeName = (typeName.indexOf(':') > -1) ? typeName.replace(':', '.') : typeName;
         
-        // Replace the call with <div data-partial="$name" />
-        node.replaceWith("div".create().setAttr("data-partial", name));
+        // Replace the call with <div data-partial="$name"> </div>, the extra space ensures the output passes correctly in browsers
+        node.replaceWith("div".create().setAttr("data-partial", name).setText(' '));
 
         // Set up a public field in the widget, public var $name:$type
         var propType = TPath({
@@ -445,7 +449,7 @@ class WidgetTools
         });
         linesToAdd = macro {
             $variableRef = new $typeName();
-        }
+        };
         BuildTools.addLinesToFunction(constructor, linesToAdd);
 
         // $name = new $type()
