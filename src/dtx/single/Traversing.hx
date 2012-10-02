@@ -94,7 +94,7 @@ class Traversing
 		return p;
 	}
 
-	/** This is identical to parents() but it's necessary to use this on non 
+	/** This is identical to parent() but it's necessary to use this on non 
 	JS platforms if you want to have null-safety etc. */
 	static inline public function parents(node:DOMNode)
 	{
