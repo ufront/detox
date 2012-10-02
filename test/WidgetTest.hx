@@ -261,10 +261,16 @@ class WidgetTest
 	public function includePartialThenReplaceViaWidgetProperty()
 	{
 		var w = new widgets.PartialInSameFile2();
-		w.partial_1 = "<p>New Data</p>".parse();
+		w.partial_1 = new widgets.PartialInSameFile2_BodyPartial();
 
 		// Check that it is included correctly
 		Assert.areEqual("<doc><header><title>Test Partial</title></header><p>New Data</p></doc>", w.html());
+	}
+
+	@Test 
+	public function includeNamedPartial()
+	{
+		Assert.isTrue(false);
 	}
 
 	@Test 
@@ -289,5 +295,19 @@ class WidgetTest
 	public function noVariables()
 	{
 		
+	}
+
+	@Test @TestDebug
+	public function disaster()
+	{
+		var w = new widgets.Disaster();
+		w.userType = "student";
+		w.firstName = "Jason";
+		w.lastName = "O'Neil";
+		w.birthday = new Date(1987,9,16,0,0,0);
+		w.id = "joneil";
+
+		var expected = "<doc><h1 class='student' data-dtx-id='0' id='user_joneil'>We've been expecting you, Jason O'Neil</h1><p data-dtx-id='1' title='Jason has their birthday on 16/10/87'>Hover over this paragraph to see Jason's birthday</p><p data-dtx-id='2'>This paragraph <em>purely</em> exists to try show that we can substitute in names like Jason <em>or</em> O'Neil into anywhere and our text nodes won't get messed up.  Also, works with birthdays like <span class='date' data-dtx-id='3'>16/10/87</span></p></doc>";
+		Assert.areEqual("", w.html());
 	}
 }

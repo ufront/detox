@@ -13,7 +13,6 @@ package dtx.widget;
 
 import haxe.macro.Expr;
 import haxe.macro.Context;
-import haxe.macro.Type;
 import haxe.macro.Format;
 import tink.macro.tools.MacroTools;
 using tink.macro.tools.MacroTools;
@@ -69,9 +68,6 @@ class WidgetTools
                 // Create and add the get_template() field.  
                 template = result.template;
                 fields.push(createField_get_template(template, widgetPos));
-
-                // Add the extra lines to the constructor
-
             }
             return fields;
         }
@@ -134,7 +130,7 @@ class WidgetTools
       */
 
     #if macro
-    static function loadTemplate(localClass:Null<Ref<ClassType>>):String
+    static function loadTemplate(localClass:Null<haxe.macro.Type.Ref<haxe.macro.Type.ClassType>>):String
     {
         var p = localClass.get().pos;                           // Position where the original Widget class is declared
         var className = localClass.toString();                  // Name of the class eg "my.pack.MyType"
@@ -219,19 +215,34 @@ class WidgetTools
         }
     }
 
-    static function setupBindingVariables(c:ClassType):Array<Expr>
+    // static function setupBindingVariables(c:ClassType):Array<Expr>
+    // {
+    //     var p = Context.currentPos();
+    //     var bindings = new Array();
+
+    //     for (f in c.fields.get())
+    //     {
+    //         var varValue = ("o." + f.name).resolve();
+    //         var expr = f.name.define(varValue);
+    //         bindings.push(expr);
+    //     }
+
+    //     return bindings;
+    // }
+
+    static var topLevelElements:Array<dtx.DOMNode>;
+    static function trackTopLevelElements(xml:DOMCollection)
     {
-        var p = Context.currentPos();
-        var bindings = new Array();
-
-        for (f in c.fields.get())
+        if (topLevelElements == null) topLevelElements = [];
+        for (node in xml)
         {
-            var varValue = ("o." + f.name).resolve();
-            var expr = f.name.define(varValue);
-            bindings.push(expr);
+            topLevelElements.push(node);
         }
+    }
 
-        return bindings;
+    static function isTopLevelElement(n:dtx.DOMNode)
+    {
+        return (topLevelElements != null) ? topLevelElements.has(n) : false;
     }
 
     static function processTemplate(template:String):{ template:String, bindings:Array<Expr>, fields:Array<Field> }
@@ -239,12 +250,16 @@ class WidgetTools
         // Get every node (including descendants)
         var p = haxe.macro.Context.currentPos();
         var xml = template.parse();
+        trackTopLevelElements(xml);
+
         var allNodes = new dtx.DOMCollection();
         allNodes.addCollection(xml);
         allNodes.addCollection(xml.descendants(false));
 
         var fieldsToAdd = new Array<Field>();
         var t=0; // Used to create name if none given, eg partial_4:DOMCollection
+
+        // Look for special things (variables, loops, partials etc)
 
         for (node in allNodes)
         {
@@ -253,80 +268,48 @@ class WidgetTools
                 // This is a partial declaration <_MyPartial>template</_MyPartial>
                 processPartialDeclarations(node, xml);
             }
+            else if (node.isElement() && node.tagName() == "dtx:loop")
+            {
+                // It's a loop element... either: 
+                //    <dtx:loop><dt>$name</dt><dd>$age</dd></dtx:loop> OR
+                //    <dtx:loop partial="Something" />
+
+            }
             else if (node.isElement() && node.tagName().startsWith('dtx:'))
             {
-                // This is a partial call.  <dtx:_MyPartial /> or <dtx:widgets.SomePartial /> etc
+                // This is a partial call.  <dtx:_MyPartial /> or <dtx:SomePartial /> etc
                 t++;
                 processPartialCalls(node, xml, t);
             }
+            else if (node.isElement())
+            {
+                // A regular element
+
+                for (attName in node.attributes())
+                {
+                    // look for special attributes eg <ul dtx-show="hasItems" />
+                    processDtxAttributes();
+
+                    // look for variable interpolation eg <div id="person_$name">...</div>
+                    if (node.get(attName).indexOf('$') > -1)
+                    {
+                        interpolateAttributes(node, attName);
+                    }
+                }
+
+            }
+            else if (node.isTextNode())
+            {
+                // look for variable interpolation eg "Welcome back, $name..."
+                if (node.text().indexOf('$') > -1)
+                {
+                    interpolateTextNodes(node);
+                }
+            }
         }
-
-        /*
-        - for each loop
-          - if not set, set attr(data-loop-id, t); t++;
-          - take HTML, and create a new subwidget (as a class? or use a factory? eg PersonWidget.newLoop(1))
-          - get the type parameter (T) of the Iterable.  eg String in Array<String>
-          - create a class for the subwidget, take html
-          - recurse on this macro for the subwidget.
-        */
-
-        /*
-        - for each attribute, text node
-          - search for "$" (but not "$$")
-          - if found
-              - if not set, set attr(data-bind, i); i++;
-              - do string interpolation using modified Std.format(), get ("mailto:" + email)
-              - add binding to bind(), using find([data-bind=i]) and setAttr() or setText()
-        */
 
         var bindingExpressions = new Array<Expr>();
         var toAddToConstructor = new Array<Expr>();
-
-        var t = 0;
-        for (node in allNodes)
-        {
-            t++;
-            switch (node.nodeType)
-            {
-                case Xml.Element:
-                    // // Set up bindings for each attribute value
-                    // for (att in node.attributes())
-                    // {
-                    //     var str = node.attr(att);
-                    //     if (str.indexOf('$') > -1)
-                    //     {
-                    //         node.setAttr('data-binding',Std.string(t));
-                    //         var stringAsExpr = Context.makeExpr(str, Context.currentPos());
-                    //         var nameAsExpr = Context.makeExpr(att, Context.currentPos());
-                    //         var identifierAsExpr = Context.makeExpr(Std.string(t), Context.currentPos());
-                    //         var interpolationExpr = Format.format(stringAsExpr);
-                    //         var bindingExpr = macro this.find('[data-binding="' + $identifierAsExpr + '"]').setAttr($nameAsExpr, $interpolationExpr);
-                    //         bindingExpressions.push(bindingExpr);
-                    //     }
-                    // }
-                default:
-                    // // Set up bindings for the text content...
-                    // var str = node.text();
-                    // if (str.indexOf('$') > -1)
-                    // {
-                    //     // Will need to get nearest element + index, so we can do:
-                    //     // "nearestElm".find().children(false).get(index).setText();
-                    //     var parent = node.parent;
-                    //     if (parent.exists('data-binding') == false)
-                    //     {
-                    //         parent.setAttr('data-binding', Std.string(t));
-                    //     }
-                    //     var indexOfTextNode = Lambda.indexOf(parent.children(false), node);
-
-                    //     var stringAsExpr = Context.makeExpr(str, Context.currentPos());
-                    //     var identifierAsExpr = Context.makeExpr(parent.attr('data-binding'), Context.currentPos());
-                    //     var indexAsExpr = Context.makeExpr(indexOfTextNode, Context.currentPos());
-                    //     var interpolationExpr = Format.format(stringAsExpr);
-                    //     var bindingExpr = macro this.find('[data-binding="' + $identifierAsExpr + '"]').getNode($indexAsExpr).setText($interpolationExpr);
-                    //     bindingExpressions.push(bindingExpr);
-                    // }
-            }
-        }
 
         return { template: xml.html(), bindings: bindingExpressions, fields: fieldsToAdd };
     }
@@ -406,33 +389,59 @@ class WidgetTools
         // back here.  For now though, I couldn't get it to work so I'll leave this disabled.
         //typeName = (typeName.indexOf(':') > -1) ? typeName.replace(':', '.') : typeName;
         
-        // Replace the call with <div data-partial="$name"> </div>, the extra space ensures the output passes correctly in browsers
-        node.replaceWith("div".create().setAttr("data-partial", name).setText(' '));
+        // Replace the call with <div data-dtx-partial="$name"> </div>, the extra space ensures the output passes correctly in browsers
+        node.replaceWith("div".create().setAttr("data-dtx-partial", name).setText(' '));
 
-        // Set up a public field in the widget, public var $name:$type
+        var pack = [];
+        var type = Context.getType(typeName);
+        // Alternatively use: type = Context.typeof(macro new $typeName()), see what works
+        switch (type)
+        {
+            case TInst(t,params):
+                // get the type
+                var classType = t.get();
+                pack = classType.pack;
+            default: 
+                throw "Asked for partial " + typeName + " but that doesn't appear to be a class";
+        }
+
+        // Set up a public field in the widget, public var $name(default,set_$name):$type
         var propType = TPath({
             sub: null,
             params: [],
-            pack: ["dtx"],
-            name: "DOMCollection"
+            pack: pack,
+            name: typeName
         });
-
-        // propertyName, propertyType, useGetter, useSetter
         var prop = BuildTools.getOrCreateProperty(name, propType, false, true);
         var variableRef = name.resolve();
         var typeRef = typeName.resolve();
 
         // Add some lines to the setter
-        var selector = ("[data-partial='" + name + "']").toExpr();
+        var selector = ("[data-dtx-partial='" + name + "']").toExpr();
         var linesToAdd = macro {
-            // Either replace the existing partial, or if none set, replace the <div data-partial='name'/> placeholder
+            // Either replace the existing partial, or if none set, replace the <div data-dtx-partial='name'/> placeholder
             var toReplace = ($variableRef != null) ? $variableRef : dtx.collection.Traversing.find(this, $selector);
             dtx.collection.DOMManipulation.replaceWith(toReplace, v);
         }
-        BuildTools.addLinesToFunction(prop.setter, linesToAdd, true);
+        BuildTools.addLinesToFunction(prop.setter, linesToAdd, 0);
 
+        // Now that we can set it via the property setter, we do so in our constructor.
+        // With something like:
+        // 
+        // $name = new $type()
+        // $name.var1 = var1
+        // $name.var2 = var2
+        // this.find("[data-dtx-partial=$name]").replaceWith($name)
+        //
+        // So that'll end up looking like:
+        //
+        // public function new() {
+        //   var btn = new Button();
+        //   btn.text = "Click Me!";
+        //   partial_1 = btn;
+        // }
 
-        // Get the constructor, add lines to it
+        // Get the constructor, instantiate our partial
         var constructorBody = macro { super(); }
         var constructor = BuildTools.getOrCreateField({
             pos: p,
@@ -452,60 +461,140 @@ class WidgetTools
         };
         BuildTools.addLinesToFunction(constructor, linesToAdd);
 
-        // $name = new $type()
-        // $name.var1 = var1
-        // $name.var2 = var2
-        // this.find("[data-partial=$name]").replaceWith($name)
-        //
-        // So that'll end up looking like
-        //
-        // public function new() {
-        //   var btn = new Button();
-        //   btn.text = "Click Me!";
-        //   this.find("[data-partial=btn]").replaceWith(btn);
-        // }
-
-        // Replace with <div data-partial="partial_XX" /> (or custom partial name)
-        // Find parent widget
-            // add property var partial_XX(default,get_partial_XX):DOMCollection;
-            // add private method get_partial_XX(p)
-            // {
-            //     partial_XX.replaceWith(p); // if length is greater than 1, may have to do something custom here
-            //     partial_XX = p;
-            // }
-            // Find initiatePartials() method of the parent Widget
-                // add the line
-                // partial_XX = new Button();
-                // partial_XX.text = "Click Me"
+        // Set any variables for the partial
+        for (attName in node.attributes())
+        {
+            var propertyRef = (name + "." + attName).resolve();
+            var valueExpr = node.attr(attName).toExpr();
+            linesToAdd = macro {
+                $propertyRef = $valueExpr;
+            };
+            BuildTools.addLinesToFunction(constructor, linesToAdd);
+        }
     }
 
-    static function processTemplateVariables()
+    static var uniqueDtxID:Int = 0;
+    
+    /** Get a unique selector for the node, creating a data attribute if necessary */
+    static function getUniqueSelectorForNode(node:dtx.DOMNode):Expr
     {
-        // Go through every node
-            // For each attribute
-                // If has variable
-                // processVariableInterpolation()
-                // 
-            // For each text node
-                // If has variable
-                // processVariableInterpolation()
+        var selector:String;
+
+        if (node.attr("data-dtx-id") != "") 
+        {
+            // If the element has data-dtx-id, use that
+            selector = "[data-dtx-id=\'" + node.attr("data-dtx-id") + "\']";
+        }
+        else
+        {
+            // If not, create data-dtx-id=ID, use that
+            node.setAttr("data-dtx-id", Std.string(uniqueDtxID));
+            selector = "[data-dtx-id=\'" + node.attr("data-dtx-id") + "\']";
+            uniqueDtxID++;
+        } 
+
+        var selectorTextAsExpr = Context.makeExpr(selector, Context.currentPos());
+        var selectorExpr = isTopLevelElement(node) ? macro this : macro dtx.collection.Traversing.find(this, $selectorTextAsExpr);
+        return selectorExpr;
     }
 
-    static function processVariableInterpolation(string:String, callToChangeText:Expr)
+    static function interpolateAttributes(node:dtx.DOMNode, attName:String)
     {
-        // string is the attribute text or textnode text
-        // callToChangeText is an expr, eg. this.find("something").setAttr("value", "CHANGETHIS");
-            // We will take this expr, change the last argument to interpolate the variables
+        var selectorExpr = getUniqueSelectorForNode(node);
 
-        // Run Std.format() on the string
-        // Check which variables are in the resulting expression
-        // For each variable
-            // If the Widget has a property for it already
-                // Append a new line to set_myproperty():
-                // callToChangeText(), but with the expr returned by Std.format
+        var nameAsExpr = Context.makeExpr(attName, Context.currentPos());
 
-        // This means, 
-        // Every time any relevant property is set, the rule will be updated
+        var result = processVariableInterpolation(node.attr(attName));
+        var interpolationExpr = result.expr;
+        var variablesInside = result.variablesInside;
+
+        // Set up bindingExpr
+        //var bindingExpr = macro this.find($selectorAsExpr).setAttr($nameAsExpr, $interpolationExpr);
+        var bindingExpr = macro dtx.collection.ElementManipulation.setAttr($selectorExpr, $nameAsExpr, $interpolationExpr);
+        
+        // Go through array of all variables again
+        addExprToAllSetters(bindingExpr, variablesInside, true);
+    }
+
+    static function interpolateTextNodes(node:dtx.DOMNode)
+    {
+        // Get (or set) ID on parent, get selector
+        var selectorAsExpr = getUniqueSelectorForNode(node.parent);
+        var index = node.index();
+        var indexAsExpr = index.toExpr();
+        
+        var result = processVariableInterpolation(node.text());
+        var interpolationExpr = result.expr;
+        var variablesInside = result.variablesInside;
+
+        // Set up bindingExpr
+        //var bindingExpr = macro this.children(false).getNode($indexAsExpr).setText($interpolationExpr);
+        var bindingExpr = macro dtx.single.ElementManipulation.setText(dtx.collection.Traversing.children($selectorAsExpr, false).getNode($indexAsExpr), $interpolationExpr);
+        
+        // Go through array of all variables again
+        addExprToAllSetters(bindingExpr, variablesInside, true);
+    }
+
+    static function addExprToAllSetters(expr:Expr, variables:Array<String>, ?prepend)
+    {
+        for (varName in variables)
+        {
+            // Add bindingExpr to every setter.  Add at position `1`, so after the first line, which should be 'this.field = v;'
+            var prop = BuildTools.getField(varName);
+            var setter = BuildTools.getSetterFromField(prop);
+            BuildTools.addLinesToFunction(setter, expr, 1);
+        }
+    }
+
+    static function processVariableInterpolation(string:String):{ expr:Expr, variablesInside:Array<String> }
+    {
+        var stringAsExpr = Context.makeExpr(string, Context.currentPos());
+        var interpolationExpr = Format.format(stringAsExpr);
+        
+        // Get an array of all the variables in interpolationExpr
+        var variables:Array<String> = BuildTools.extractVariablesUsedInInterpolation(interpolationExpr);
+
+        for (varName in variables)
+        {
+            var propType = TPath({
+                sub: null,
+                params: [],
+                pack: [],
+                name: "String"
+            });
+            var prop = BuildTools.getOrCreateProperty(varName, propType, false, true);
+
+            if (BuildTools.fieldExists("print_" + varName))
+            {
+                // If yes, in interpolationExpr replace calls to $name with print_$name($name)
+                var fn = BuildTools.getField("print_" + varName);
+
+                var exprToLookFor = EConst(CIdent(varName));
+                var functionName = "print_" + varName;
+                var functionNameExpr = functionName.resolve();
+                var exprToReplaceWith = macro $functionNameExpr();
+
+                // Use tink_macros' transform() to look for the old expression and replace it
+                interpolationExpr = interpolationExpr.transform(function (oldExpr) {
+                    if (Type.enumEq(oldExpr.expr, exprToLookFor))
+                    {
+                        return {
+                            expr: exprToReplaceWith.expr,
+                            pos: oldExpr.pos
+                        };
+                    }
+                    else 
+                    {
+                        return oldExpr;
+                    }
+                });
+            }
+        }
+
+        return {
+            expr: interpolationExpr,
+            variablesInside: variables
+        };
     }
 
     static function processDtxAttributes()
@@ -540,3 +629,5 @@ class WidgetTools
     }
     #end
 }
+
+// for the glory of God
