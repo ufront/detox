@@ -57,6 +57,15 @@ class ElementManipulation
 		return new DOMCollection(n);
 	}
 
+	public static function index(n:DOMNode):Int 
+	{
+		#if js
+			return Lambda.indexOf(dtx.single.Traversing.children(dtx.single.Traversing.parents(n), false), n);
+		#else
+			return Lambda.indexOf(n.parent, n);
+		#end 
+	}
+
 	public static function attr(elm:DOMNode, attName:String):String
 	{
 		var ret = "";
