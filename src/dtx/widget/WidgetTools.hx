@@ -51,13 +51,13 @@ class WidgetTools
                 // Process the template looking for partials, variables etc
                 // This function processes the template, and returns any binding statements
                 // that may be needed for bindings / variables etc.
-                var fnBody = new Array<Expr>();
                 var result = processTemplate(template);
-                for (expr in result.bindings)
-                {
-                    fnBody.push(expr);
-                }
-                fields.push(createField_refresh(fnBody, false));
+                // var fnBody = new Array<Expr>();
+                // for (expr in result.bindings)
+                // {
+                //     fnBody.push(expr);
+                // }
+                // fields.push(createField_refresh(fnBody, false));
 
                 // Push the extra class properties that came during our processing
                 for (f in result.fields)
@@ -245,7 +245,7 @@ class WidgetTools
         return (topLevelElements != null) ? topLevelElements.has(n) : false;
     }
 
-    static function processTemplate(template:String):{ template:String, bindings:Array<Expr>, fields:Array<Field> }
+    static function processTemplate(template:String):{ template:String, fields:Array<Field> }
     {
         // Get every node (including descendants)
         var p = haxe.macro.Context.currentPos();
@@ -283,20 +283,7 @@ class WidgetTools
             }
             else if (node.isElement())
             {
-                // A regular element
-
-                for (attName in node.attributes())
-                {
-                    // look for special attributes eg <ul dtx-show="hasItems" />
-                    processDtxAttributes();
-
-                    // look for variable interpolation eg <div id="person_$name">...</div>
-                    if (node.get(attName).indexOf('$') > -1)
-                    {
-                        interpolateAttributes(node, attName);
-                    }
-                }
-
+                processAttributes(node);
             }
             else if (node.isTextNode())
             {
@@ -308,10 +295,10 @@ class WidgetTools
             }
         }
 
-        var bindingExpressions = new Array<Expr>();
-        var toAddToConstructor = new Array<Expr>();
+        // var bindingExpressions = new Array<Expr>();
+        // var toAddToConstructor = new Array<Expr>();
 
-        return { template: xml.html(), bindings: bindingExpressions, fields: fieldsToAdd };
+        return { template: xml.html(), fields: fieldsToAdd };
     }
     
     static function processPartialDeclarations(node:dtx.DOMNode, wholeTemplate:dtx.DOMCollection)
@@ -473,6 +460,39 @@ class WidgetTools
         }
     }
 
+    static function processAttributes(node:dtx.DOMNode)
+    {
+        // A regular element
+        for (attName in node.attributes())
+        {
+            if (attName.startsWith('dtx-on-'))
+            {
+                // this is not a boolean, does it need to be processed separately?
+            }
+            else if (attName.startsWith('dtx-loop'))
+            {
+                // loop this element...
+            }
+            else if (attName.startsWith('dtx-value'))
+            {
+                // loop this element...
+            }
+            else if (attName.startsWith('dtx-'))
+            {
+                // look for special attributes eg <ul dtx-show="hasItems" />
+                var wasDtxAttr = processDtxBoolAttributes(node, attName);
+            }
+            else 
+            {
+                // look for variable interpolation eg <div id="person_$name">...</div>
+                if (node.get(attName).indexOf('$') > -1)
+                {
+                    interpolateAttributes(node, attName);
+                }
+            }
+        }
+    }
+
     static var uniqueDtxID:Int = 0;
     
     /** Get a unique selector for the node, creating a data attribute if necessary */
@@ -597,36 +617,132 @@ class WidgetTools
         };
     }
 
-    static function processDtxAttributes()
+    static function processDtxBoolAttributes(node:dtx.DOMNode, attName:String)
     {
-        // dtx-value
-        // dtx-show
-        // dtx-hide
-        // dtx-enabled
-        // dtx-disabled
-        // dtx-checked
-        // dtx-unchecked
-        // dtx-on-$event 
-        // dtx-foreach
+        var wasDtxAttr = false;
+        var trueStatement:Expr = null;
+        var falseStatement:Expr = null;
+
+        if (attName.startsWith('dtx-'))
+        {
+            wasDtxAttr = true; // probably true
+            var selector = getUniqueSelectorForNode(node);
+            switch (attName)
+            {
+                case "dtx-show":
+                    var className = "hidden".toExpr();
+                    trueStatement = macro dtx.collection.ElementManipulation.removeClass($selector, $className);
+                    falseStatement = macro dtx.collection.ElementManipulation.addClass($selector, $className);
+                case "dtx-hide":
+                    var className = "hidden".toExpr();
+                    trueStatement = macro dtx.collection.ElementManipulation.addClass($selector, $className);
+                    falseStatement = macro dtx.collection.ElementManipulation.removeClass($selector, $className);
+                case "dtx-enabled":
+                case "dtx-disabled":
+                case "dtx-checked":
+                case "dtx-unchecked":
+                default:
+                    if (attName.startsWith('dtx-class-'))
+                    {
+                        // add a class
+                    }
+                    else
+                    {
+                        wasDtxAttr = false; // didn't match, set back to false
+                    }
+            }
+        }
+
+        if (wasDtxAttr)
+        {
+            // Get setter parts, add statements, remove our dtx-* attribute
+            var booleanName = node.attr(attName);
+            var setterParts = getBooleanSetterParts(booleanName);
+            BuildTools.addLinesToBlock(setterParts.trueBlock, trueStatement);
+            BuildTools.addLinesToBlock(setterParts.falseBlock, falseStatement);
+            node.removeAttr(attName);
+        }
+            
+        return wasDtxAttr;
     }
 
-    static function createField_refresh(fnBody:Array<Expr>, isOverride:Bool):Field
+    static var booleanSetters:Hash<Hash<{ trueBlock:Array<Expr>, falseBlock:Array<Expr> }>> = null;
+    static function getBooleanSetterParts(booleanName:String)
     {
-        var pos = Context.currentPos();
-        return { 
-            name : "refresh", 
-            doc : null, 
-            meta : [], 
-            access : (isOverride) ? [AOverride, APublic] : [APublic], 
-            kind : FFun({ 
-                args: [], 
-                expr: fnBody.toBlock(), 
-                params: [], 
-                ret: null 
-            }), 
-            pos: pos
+        // If a list of boolean setters for this class doesn't exist yet, set one up
+        var className = Context.getLocalClass().toString();
+        if (booleanSetters == null) booleanSetters = new Hash();
+        if (booleanSetters.exists(className) ==  false) booleanSetters.set(className, new Hash());
+
+        // If this boolean setter doesn't exist yet, create it.  
+        if (booleanSetters.get(className).exists(booleanName) == false)
+        {
+            // get or create property
+            var propType = TPath({
+                sub: null,
+                params: [],
+                pack: [],
+                name: "Bool"
+            });
+            var prop = BuildTools.getOrCreateProperty(booleanName, propType, false, true);
+
+            // add if() else() to setter, at position 1 (so after the this.x = x; statement)
+            var booleanExpr = booleanName.resolve();
+            var ifStatement = macro if ($booleanExpr) {} else {};
+            BuildTools.addLinesToFunction(prop.setter, ifStatement, 1);
+
+            // get the trueBlock and falseBlock
+            var trueBlock:Array<Expr>;
+            var falseBlock:Array<Expr>;
+            switch (ifStatement.expr)
+            {
+                case EIf(econd,eif,eelse):
+                    switch (eif.expr)
+                    {
+                        case EBlock(b):
+                            trueBlock = b;
+                        default: 
+                            throw "Error in WidgetTools: this should definitely have been an EBlock";
+                    }
+                    switch (eelse.expr)
+                    {
+                        case EBlock(b):
+                            falseBlock = b;
+                        default: 
+                            throw "Error in WidgetTools: this should definitely have been an EBlock";
+                    }
+                default:
+                    throw "Error in WidgetTools: this should definitely have been an EIf";
+            }
+
+            // Keep track of them so we can use them later
+            booleanSetters.get(className).set(booleanName, {
+                trueBlock: trueBlock,
+                falseBlock: falseBlock
+            });
         }
+
+        // get the if block and else block and return them
+        return booleanSetters.get(className).get(booleanName);
     }
+
+    // static function createField_refresh(fnBody:Array<Expr>, isOverride:Bool):Field
+    // {
+    //     var pos = Context.currentPos();
+    //     return { 
+    //         name : "refresh", 
+    //         doc : null, 
+    //         meta : [], 
+    //         access : (isOverride) ? [AOverride, APublic] : [APublic], 
+    //         kind : FFun({ 
+    //             args: [], 
+    //             expr: fnBody.toBlock(), 
+    //             params: [], 
+    //             ret: null 
+    //         }), 
+    //         pos: pos
+    //     }
+    // }
     #end
 }
 

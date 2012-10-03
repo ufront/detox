@@ -259,6 +259,12 @@ class BuildTools
                 Context.error("addLinesToFunction was expecting an EBlock as the function body, but got something else.", Context.currentPos());
         }
         
+        addLinesToBlock(body, lines, whereToAdd);
+    }
+
+    /** Same as addLinesToFunction, but works on an arbitrary EBlock array.  */
+    public static function addLinesToBlock(block:Array<Expr>, lines:Expr, ?whereToAdd = -1)
+    {
         // Get an array of the lines we want to add...
         var linesArray:Array<Expr> = [];
         switch ( lines.expr )
@@ -275,11 +281,11 @@ class BuildTools
         }
 
         // Add the lines, put them at the end by default
-        if (whereToAdd == -1) whereToAdd = body.length;
+        if (whereToAdd == -1) whereToAdd = block.length;
     	linesArray.reverse();
         for (line in linesArray)
         {
-        	body.insert(whereToAdd, line);
+        	block.insert(whereToAdd, line);
         }
     }
 
