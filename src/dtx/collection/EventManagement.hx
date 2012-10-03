@@ -12,8 +12,9 @@
 package dtx.collection;
 
 #if js
-import dtx.DOMNode;
 import Bean;
+#end
+import dtx.DOMNode;
 
 class EventManagement
 {
@@ -187,4 +188,3 @@ class EventManagement
 		return on(target, "ready", listener);
 	}
 }
-#end

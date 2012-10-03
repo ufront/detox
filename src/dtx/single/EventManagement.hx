@@ -13,6 +13,7 @@ package dtx.single;
 
 #if js
 import Bean;
+#end
 import dtx.DOMNode;
 /*
 JQuery has these methods.  I'll try break them down into core functionality and implementations of specific events
@@ -86,7 +87,11 @@ class EventManagement
 	/** Trigger an event, as if it has actually happened */
 	public static inline function trigger(target:DOMNode, eventString:String):DOMNode
 	{
+		#if js 
 		Bean.fire(target, eventString);
+		#else 
+		trace ("Detox events only work on the Javascript target, sorry.");
+		#end
 		return target;
 	}
 
@@ -99,20 +104,32 @@ class EventManagement
 	/** add an event listener */
 	public static inline function on(target:DOMNode, eventType:String, listener:BnEvent->Void):DOMNode
 	{
+		#if js 
 		Bean.on(target, eventType, listener);
+		#else 
+		trace ("Detox events only work on the Javascript target, sorry.");
+		#end
 		return target;
 	}
 
 	public static function off(target:DOMNode, eventType:String, listener:BnEvent->Void):DOMNode
 	{
+		#if js 
 		Bean.off(target, eventType, listener);
+		#else 
+		trace ("Detox events only work on the Javascript target, sorry.");
+		#end
 		return target;
 	}
 
 	/** Attach an event but only let it run once */
 	public static function one(target:DOMNode, eventType:String, listener:BnEvent->Void):DOMNode
 	{
+		#if js 
 		Bean.one(target, eventType, listener);
+		#else 
+		trace ("Detox events only work on the Javascript target, sorry.");
+		#end
 		return target;
 	}
 
@@ -286,4 +303,3 @@ class EventManagement
 	}
 
 }
-#end
