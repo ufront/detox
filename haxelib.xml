@@ -1,4 +1,4 @@
-<project name="detox" url="https://github.com/jasononeil/detox" license="">
+<project name="detox" url="https://github.com/jasononeil/detox" license="MIT">
 	<user name="jason"/>
 	<tag v="js" />
 	<tag v="dom" />
@@ -12,4 +12,5 @@
 	<depends name="xirsys_stdjs"/>
 	<depends name="tink_macros"/>
 	<depends name="beanhx"/>
+	<depends name="selecthxml"/>
 </project>
