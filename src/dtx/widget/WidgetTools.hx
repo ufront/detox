@@ -638,13 +638,25 @@ class WidgetTools
                     trueStatement = macro dtx.collection.ElementManipulation.addClass($selector, $className);
                     falseStatement = macro dtx.collection.ElementManipulation.removeClass($selector, $className);
                 case "dtx-enabled":
+                    trueStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "disabled");
+                    falseStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "disabled", "disabled");
                 case "dtx-disabled":
+                    trueStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "disabled", "disabled");
+                    falseStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "disabled");
                 case "dtx-checked":
+                    trueStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "checked", "checked");
+                    falseStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "checked");
                 case "dtx-unchecked":
+                    trueStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "checked");
+                    falseStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "checked", "checked");
                 default:
                     if (attName.startsWith('dtx-class-'))
                     {
                         // add a class
+                        var className = attName.substring(10);
+                        var classNameAsExpr = className.toExpr();
+                        trueStatement = macro dtx.collection.ElementManipulation.addClass($selector, $classNameAsExpr);
+                        falseStatement = macro dtx.collection.ElementManipulation.removeClass($selector, $classNameAsExpr);
                     }
                     else
                     {
