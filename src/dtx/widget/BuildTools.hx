@@ -14,6 +14,7 @@ package dtx.widget;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Format;
+import haxe.macro.Type;
 import tink.macro.tools.MacroTools;
 using tink.macro.tools.MacroTools;
 using StringTools;
@@ -66,11 +67,11 @@ class BuildTools
         }
     }
 
-    /** Searches the metadata for the current class - expects to find a single string @dataName("my string"), otherwise throws an error. */
-    public static function getClassMetadata_String(dataName:String)
+    /** Searches the metadata for the current class - expects to find a single string @dataName("my string"), returns null in none found.  Generates an error if one was found but it was the wrong type. Can search recursively up the super-classes if 'recursive' is true */
+    public static function getClassMetadata_String(dataName:String, recursive=false, ?cl:Ref<ClassType>)
     {
         var p = Context.currentPos();                           // Position where the original Widget class is declared
-        var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
+        var localClass = (cl == null) ? haxe.macro.Context.getLocalClass() : cl;    // Class that is being declared, or class that is passed in
         var meta = localClass.get().meta;                       // Metadata of the this class
         var result = null;
         if (meta.has(dataName))
@@ -94,10 +95,19 @@ class BuildTools
                                         Context.error("Metadata for " + dataName + "() existed, but was not a constant String.", p);
                                 }
                             default: 
-                                Context.error("Metadata for " + dataName + "() existed, but was not a constant value.", p);
+                                Context.error("Metadata for " + dataName + "() existed, but was not a constant String.", p);
                         } 
                     }
                 }
+            }
+        }
+        else if (recursive)
+        {
+            // Check if there is a super class, and check recursively for metadata
+            if (localClass.get().superClass != null)
+            {
+                var superClass = localClass.get().superClass.t;
+                result = getClassMetadata_String(dataName, true, superClass);
             }
         }
         return result;

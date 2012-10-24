@@ -139,11 +139,11 @@ class WidgetTools
         var template:String = "";                               // If the template is directly in metadata, use that.
 
         // Get the template content if declared in metadata
-        var template = BuildTools.getClassMetadata_String("template");
+        var template = BuildTools.getClassMetadata_String("template", true);
         if (template == null)
         {
             // Get the template file if declared in metadata
-            var templateFile = BuildTools.getClassMetadata_String("loadTemplate");
+            var templateFile = BuildTools.getClassMetadata_String("loadTemplate", true);
             if (templateFile == null)
             {
                 // If there is no metadata for the template, look for a file in the same 
