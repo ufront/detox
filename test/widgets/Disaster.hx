@@ -14,6 +14,13 @@ using Detox;
 
 	<p dtx-show='showBirthday'>Your birthday is $birthday</p>
 	<p dtx-hide='showBirthday'>Your birthday is a complete secret!</p>
+	<form dtx-class-birthday-form='showBirthday'>
+		<label><input type='checkbox' dtx-checked='showBirthday' />This one is checked if showBirthday is true</label>
+		<label><input type='checkbox' dtx-unchecked='showBirthday' />This one is checked if showBirthday is false</label>
+		<button dtx-enabled='showBirthday'>This button is enabled if showBirthday is true</button>
+		<button dtx-disabled='showBirthday'>This button is disabled if showBirthday is true</button>
+	</form>
+	<p>Showbirthday is $showBirthday</p>
 </doc>
 
 <_Button>
