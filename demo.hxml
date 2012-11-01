@@ -39,3 +39,24 @@
 # This should keep our code size down
 --dead-code-elimination
 
+--next 
+
+#
+# Event Management Test
+#
+
+# Use our library.
+-lib detox 
+-lib beanhx 
+-lib tink_macros
+
+# Classpaths used for demo
+-cp demo/events
+
+# The main class for our todo
+-main Main
+-js demo/events/build/demo-events.js
+
+# This should keep our code size down
+--dead-code-elimination
+
