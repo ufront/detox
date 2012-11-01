@@ -43,6 +43,7 @@ Main.run = function(e) {
 	dtx.collection.EventManagement.on(form,"submit",function(e1) {
 		var n = new Notification(dtx.collection.ElementManipulation.val(titleInput),dtx.collection.ElementManipulation.val(commentInput));
 		dtx.collection.DOMManipulation.prepend(dtx.Tools.find("#notifications"),null,n);
+		e1.stop();
 	});
 	dtx.collection.EventManagement.on(dtx.Tools.find("#notifyWithProgress"),"click",function(e1) {
 		var n = new Notification(dtx.collection.ElementManipulation.val(titleInput),dtx.collection.ElementManipulation.val(commentInput));
@@ -50,6 +51,7 @@ Main.run = function(e) {
 		var p = new ProgressBar(percentage);
 		dtx.collection.DOMManipulation.append(n,null,p);
 		dtx.collection.DOMManipulation.prepend(dtx.Tools.find("#notifications"),null,n);
+		e1.stop();
 	});
 }
 var dtx = dtx || {}
@@ -610,9 +612,6 @@ js.Boot.__instanceof = function(o,cl) {
 		if(cl == Enum && o.__ename__ != null) return true; else null;
 		return o.__enum__ == cl;
 	}
-}
-js.Boot.__cast = function(o,t) {
-	if(js.Boot.__instanceof(o,t)) return o; else throw "Cannot cast " + Std.string(o) + " to " + Std.string(t);
 }
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; };
 var $_;

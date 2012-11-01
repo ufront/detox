@@ -26,6 +26,8 @@ class Main
 
 			// Append this widget to our notifications area
 			"#notifications".find().prepend(n);
+
+			e.stop();
 		});
 
 		// When the "Notify + Progress" button is clicked
@@ -44,6 +46,8 @@ class Main
 
 			// Now attach the notification (with progress bar) to the notifications area
 			"#notifications".find().prepend(n);
+
+			e.stop();
 		});
 	}
 
