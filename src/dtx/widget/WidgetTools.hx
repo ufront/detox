@@ -359,7 +359,7 @@ class WidgetTools
         // Generate a name for the partial.  Either take it from the <dtx:MyPartial name="this" /> attribute,
         // or autogenerate one (partial_$t, t++)
         var widgetClass = haxe.macro.Context.getLocalClass();
-        var nameAttr = node.attr('name');
+        var nameAttr = node.attr('dtx-name');
         var name = (nameAttr != "") ? nameAttr : "partial_" + t;
         var p = Context.currentPos();
 
