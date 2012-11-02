@@ -31,9 +31,21 @@ import dtx.widget.WidgetTools;
 	}
 
 	var _tpl:String = "<div></div>";
-	/** Override this method in your subclass to */
+	/** Override this method in your subclass to get template some other way.  Using detox 
+	templating will automatically override this method. */
 	function get_template()
 	{
 		return _tpl;
+	}
+
+	/** When using widgets, this runs immediately after all partials and variables have been initialised.
+
+	When using Widget templates, the partials are initialised at the end of the
+	constructor, so you can't do anything with them in the constructor, they're still
+	null at that point.  Override this function to work with your partials immediately
+	after they are initialised. */
+	function init()
+	{
+
 	}
 }
