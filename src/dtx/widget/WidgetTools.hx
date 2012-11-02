@@ -295,6 +295,18 @@ class WidgetTools
             }
         }
 
+        // All our variable definitions are added to the end of the constructor.
+        // So if the developer wants to work with the partials in the constructor, they find out that
+        // the partials are still null.  (D'OH!)  Call init(), which the developer can then use
+        // instead of putting their code in the constructor.
+        if ("new".fieldExists())
+        {
+            var constructor = "new".getField();
+            var lineToAdd = macro init();
+            BuildTools.addLinesToFunction(constructor, lineToAdd);
+        }
+
+
         // var bindingExpressions = new Array<Expr>();
         // var toAddToConstructor = new Array<Expr>();
 
@@ -478,7 +490,7 @@ class WidgetTools
             }
             else if (attName.startsWith('dtx-value'))
             {
-                // loop this element...
+                // Every time the value changes, change this.
             }
             else if (attName.startsWith('dtx-'))
             {
