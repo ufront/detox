@@ -451,12 +451,15 @@ class WidgetTools
         // Set any variables for the partial
         for (attName in node.attributes())
         {
-            var propertyRef = (name + "." + attName).resolve();
-            var valueExpr = node.attr(attName).toExpr();
-            linesToAdd = macro {
-                $propertyRef = $valueExpr;
-            };
-            BuildTools.addLinesToFunction(constructor, linesToAdd);
+            if (attName != "dtx-name")
+            {
+                var propertyRef = (name + "." + attName).resolve();
+                var valueExpr = node.attr(attName).toExpr();
+                linesToAdd = macro {
+                    $propertyRef = $valueExpr;
+                };
+                BuildTools.addLinesToFunction(constructor, linesToAdd);
+            }
         }
     }
 
