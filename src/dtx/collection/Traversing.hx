@@ -206,21 +206,23 @@ class Traversing
 				if (dtx.single.ElementManipulation.isElement(node))
 				{
 					#if js
-					var element:DOMElement = cast node;
-					newDOMCollection.addNodeList(element.querySelectorAll(selector));
+						var element:DOMElement = cast node;
+						newDOMCollection.addNodeList(element.querySelectorAll(selector));
 					#elseif !macro
-					// This next line is a workaround to a bug in selecthxml
-					// See http://code.google.com/p/selecthxml/issues/detail?id=2
-					// And http://code.google.com/p/selecthxml/issues/detail?id=3
-					var results = selecthxml.SelectDom.runtimeSelect(node, selector);
+						// This next line is a workaround to a bug in selecthxml
+						// See http://code.google.com/p/selecthxml/issues/detail?id=2
+						// And http://code.google.com/p/selecthxml/issues/detail?id=3
+						var results = selecthxml.SelectDom.runtimeSelect(node, selector);
 
-					// SelectHxml also includes our original node in the search.
-					// We should match the querySelectorAll() functionality from JS, which
-					// only searches descendant nodes.  Therefore, remove the current node
-					// if it was returned as a match.
-					results.remove(node);
-					
-					newDOMCollection.addCollection(results);
+						// SelectHxml also includes our original node in the search.
+						// We should match the querySelectorAll() functionality from JS, which
+						// only searches descendant nodes.  Therefore, remove the current node
+						// if it was returned as a match.
+						results.remove(node);
+						
+						newDOMCollection.addCollection(results);
+					#else 
+						throw "Sorry, our selector engine doesn't currently work in macros, so you can't use find()";
 					#end
 				}
 			}

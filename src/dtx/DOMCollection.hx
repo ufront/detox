@@ -48,17 +48,7 @@ class DOMCollection
 		}
 		if (selector != "")
 		{
-			#if js 
-			var nodeList = Detox.document.querySelectorAll(selector, null);
-			addNodeList(nodeList);
-			#elseif !macro
-			// This next line is a workaround to a bug in selecthxml
-			// See http://code.google.com/p/selecthxml/issues/detail?id=2
-			// And http://code.google.com/p/selecthxml/issues/detail?id=3
-			selecthxml.SelectDom.runtimeSelect(Xml.createDocument(), "a");
-			var nodeList = selecthxml.SelectDom.runtimeSelect(Detox.document, selector);
-			addCollection(nodeList);
-			#end
+			addCollection(dtx.single.Traversing.find(Detox.document, selector));
 		}
 	}
 
@@ -69,7 +59,7 @@ class DOMCollection
 
 	public inline function getNode(?i:Int = 0)
 	{
-		return collection[i];
+		return if (collection.length > i && i >= 0) collection[i] else null;
 	}
 
 	public inline function eq(?i:Int = 0)
