@@ -175,9 +175,9 @@ class Traversing
 			// find the prev sibling up the line.
 			// If there is none, this will return null, which is okay.
 			#if js 
-			sibling = sibling.previousSibling;
+				sibling = sibling.previousSibling;
 			#else 
-			sibling = sibling.previousSibling();
+				sibling = sibling.previousSibling();
 			#end
 		}
 

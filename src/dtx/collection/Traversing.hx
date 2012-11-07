@@ -28,9 +28,9 @@ class Traversing
 				{
 					// Add any child elements
 					#if js
-					children.addNodeList(node.childNodes, elementsOnly);
+						children.addNodeList(node.childNodes, elementsOnly);
 					#else 
-					children.addCollection(node, elementsOnly);
+						children.addCollection(node, elementsOnly);
 					#end
 				}
 			}
@@ -74,9 +74,9 @@ class Traversing
 					while (elementsOnly == true && e != null && dtx.single.ElementManipulation.isElement(e) == false)
 					{
 						#if js
-						e = e.previousSibling;
+							e = e.previousSibling;
 						#else 
-						e = e.previousSibling();
+							e = e.previousSibling();
 						#end
 					}
 					if (e != null) children.add(e);
@@ -96,9 +96,9 @@ class Traversing
 			{
 				if (node.parentNode != null && node != Detox.document)
 					#if js
-					parents.add(node.parentNode);
+						parents.add(node.parentNode);
 					#else 
-					parents.add(node.parent);
+						parents.add(node.parent);
 					#end
 			}
 		}
