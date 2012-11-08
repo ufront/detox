@@ -90,15 +90,15 @@ none of you would be using IE, would you?
 
 *Todo List*
 
-* Code: https://github.com/jasononeil/domtools/tree/gh-pages/demo/todo
-* Example: http://jasononeil.github.com/domtools/demo/todo/build/
+* Code: https://github.com/jasononeil/detox/tree/gh-pages/demo/todo
+* Example: http://jasononeil.github.com/detox/demo/todo/build/
 * Demonstrates: Basic usage.  Creating elements, manipulating elements, reading from 
   a form, traversing and moving things around the DOM.
 
 *Growl-Like Notifications*
 
-* Code: https://github.com/jasononeil/domtools/tree/gh-pages/demo/growl
-* Example: http://jasononeil.github.com/domtools/demo/growl/build/
+* Code: https://github.com/jasononeil/detox/tree/gh-pages/demo/growl
+* Example: http://jasononeil.github.com/detox/demo/growl/build/
 * Demonstrates: Basic usage as above.  Mostly demonstrates "Widgets" - how we can make
   our own custom classes in haxe that are closely tied to Elements on our HTML page.
 
