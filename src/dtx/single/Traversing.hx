@@ -192,10 +192,23 @@ class Traversing
 		{
 			#if js
 				var element:DOMElement = cast node;
-				newDOMCollection.addNodeList(element.querySelectorAll(selector));
+				if (untyped __js__("document.querySelectorAll"))
+				{
+					var results = element.querySelectorAll(selector);
+					newDOMCollection.addNodeList(results);
+				}
+				else 
+				{
+					var engine:String->DOMNode->Array<DOMNode> = untyped __js__("
+						(('undefined' != typeof Sizzle && Sizzle) || 
+						(('undefined' != typeof jQuery) && jQuery.find) || 
+						(('undefined' != typeof $) && $.find))
+					");
+					var results = engine(selector, node);
+					newDOMCollection.addCollection(results);
+				}
 			#elseif !macro
 				var results = selecthxml.SelectDom.runtimeSelect(node, selector);
-
 				// SelectHxml also includes our original node in the search.
 				// We should match the querySelectorAll() functionality from JS, which
 				// only searches descendant nodes.  Therefore, remove the current node

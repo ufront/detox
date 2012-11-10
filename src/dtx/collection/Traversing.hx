@@ -207,7 +207,21 @@ class Traversing
 				{
 					#if js
 						var element:DOMElement = cast node;
-						newDOMCollection.addNodeList(element.querySelectorAll(selector));
+						if (untyped __js__("document.querySelectorAll"))
+						{
+							var results = element.querySelectorAll(selector);
+							newDOMCollection.addNodeList(results);
+						}
+						else 
+						{
+							var engine:String->DOMNode->Array<DOMNode> = untyped __js__("
+								(('undefined' != typeof Sizzle && Sizzle) || 
+								(('undefined' != typeof jQuery) && jQuery.find) || 
+								(('undefined' != typeof $) && $.find))
+							");
+							var results = engine(selector, node);
+							newDOMCollection.addCollection(results);
+						}
 					#elseif !macro
 						// This next line is a workaround to a bug in selecthxml
 						// See http://code.google.com/p/selecthxml/issues/detail?id=2
