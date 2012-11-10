@@ -233,8 +233,19 @@ class Tools
 		*/
 		untyped __js__('/in/.test(document.readyState) ? setTimeout("dtx.Tools.ready("+f+")", 9) : f();');
 
-		
-		
 	}
+
+	/** Ensure that Sizzle.js is included as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
+	public static function includeSizzle()
+	{
+		sizzle.Sizzle.select("body", js.Lib.document.body);
+	}
+
+	/** Ensure that jQuery is included, as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
+	public static function includeJQuery()
+	{
+		new js.JQuery("body");
+	}
+
 	#end
 }
