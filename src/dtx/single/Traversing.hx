@@ -188,7 +188,7 @@ class Traversing
 	static public function find(node:DOMNode, selector:String)
 	{
 		var newDOMCollection = new DOMCollection();
-		if (node != null && ElementManipulation.isElement(node))
+		if (node != null && ElementManipulation.isElement(node) || dtx.single.ElementManipulation.isDocument(node))
 		{
 			#if js
 				var element:DOMElement = cast node;

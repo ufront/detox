@@ -203,7 +203,7 @@ class Traversing
 		{
 			for (node in query)
 			{
-				if (dtx.single.ElementManipulation.isElement(node))
+				if (dtx.single.ElementManipulation.isElement(node) || dtx.single.ElementManipulation.isDocument(node))
 				{
 					#if js
 						var element:DOMElement = cast node;
