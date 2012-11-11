@@ -16,7 +16,8 @@ class SelectorEngineExample
 			message = "Using document.querySelectorAll() as a selector engine, will not work in IE6, 7 or 8.";
 		#end
 
-		"p.message".find().setText('message');
-
+		Detox.ready(function () {
+			"p.message".find().setText(message);
+		});
 	}
 }
