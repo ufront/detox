@@ -157,15 +157,15 @@ class Tools
 		return new DOMCollection(Detox.createElement(str));
 	}*/
 
-	static inline function get_document():DocumentOrElement
+	static function get_document():DocumentOrElement
 	{
 		if (document == null) 
 		{
 			#if js 
-			// Sensible default: window.document in JS
-			document = untyped __js__("document");
+				// Sensible default: window.document in JS
+				document = untyped __js__("document");
 			#else 
-			document = Xml.parse("<html></html>");
+				document = Xml.parse("<html></html>");
 			#end
 		}
 		return document;
@@ -225,14 +225,21 @@ class Tools
 		Shim taken from:
 		http://webreflection.blogspot.com.au/2009/11/195-chars-to-help-lazy-loading.html
 		*/
-		untyped __js__('(function(h,a,c,k){if(h[a]==null&&h[c]){h[a]="loading";h[c](k,c=function(){h[a]="complete";h.removeEventListener(k,c,!1)},!1)}})(document,"readyState","addEventListener","DOMContentLoaded");');
+		untyped __js__('(function(h,a,c,k){if(h[a]==null&&h[c]){h[a]="loading";h[c](k,c=function(){h[a]="complete";h.removeEventListener(k,c,!1)},!1)}})(document,"readyState","addEventListener","DOMContentLoaded")');
 
+		// checkReady must be in the window's global namespace so we can call it again with setTimeOut
+		Reflect.setField(get_window(), "checkReady", checkReady);
+		checkReady(f);
+	}
+
+	static function checkReady(f:Void->Void)
+	{
 		/*
 		Mini ready() function taken from:
 		http://dustindiaz.com/smallest-domready-ever
 		*/
-		untyped __js__('/in/.test(document.readyState) ? setTimeout("dtx.Tools.ready("+f+")", 9) : f();');
-
+		// untyped __js__('/in/.test(document.readyState) ? setTimeout("checkReady("+f+")", 9) : f()');
+		untyped __js__('/in/.test(document.readyState) ? setTimeout(function () { checkReady(f) }, 9) : f()');
 	}
 
 	/** Ensure that Sizzle.js is included as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
