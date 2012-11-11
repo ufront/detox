@@ -1394,7 +1394,6 @@ var posProcess = function( selector, context ) {
 };
 
 // EXPOSE
-
 window.Sizzle = Sizzle;
 
 })();

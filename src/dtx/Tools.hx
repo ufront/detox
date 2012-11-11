@@ -245,12 +245,15 @@ class Tools
 	/** Ensure that Sizzle.js is included as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
 	public static function includeSizzle()
 	{
-		sizzle.Sizzle.select("body", js.Lib.document.body);
+		#if !noEmbedJS
+		haxe.macro.Tools.includeFile("sizzle.js");
+		#end
 	}
 
 	/** Ensure that jQuery is included, as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
 	public static function includeJQuery()
 	{
+		// Just do this so that JQuery will be included
 		new js.JQuery("body");
 	}
 
