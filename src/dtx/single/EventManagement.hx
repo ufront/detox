@@ -11,9 +11,6 @@
 
 package dtx.single;
 
-#if js
-import Bean;
-#end
 import dtx.DOMNode;
 /*
 JQuery has these methods.  I'll try break them down into core functionality and implementations of specific events

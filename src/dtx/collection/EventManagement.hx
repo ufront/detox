@@ -11,11 +11,6 @@
 
 package dtx.collection;
 
-#if js
-import Bean;
-#else 
-typedef BnEvent = Dynamic;
-#end
 import dtx.DOMNode;
 
 class EventManagement
