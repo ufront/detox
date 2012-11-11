@@ -30,16 +30,16 @@ If you're using Dead Code Elimination in Haxe, then classes and methods which ar
 
 Obviously, including these older libraries will add to the generated file size.  In this example, the generated file sizes are:
 
-	 16K usingBrowser.js       # Using querySelectorAll()
-	 49K usingSizzle.js
-	106K usingJQuery.js
-	5.7K usingBrowser.js.gzip  # Using querySelectorAll()
-	 15K usingSizzle.js.gzip
-	 37K usingJQuery.js.gzip
+	  5K usingBrowser.js       # Using querySelectorAll()
+	 40K usingSizzle.js
+	 97K usingJQuery.js
+	1.5K usingBrowser.js.gzip  # Using querySelectorAll()
+	 11K usingSizzle.js.gzip
+	 34K usingJQuery.js.gzip
 
 So the cost of including these fallback files:
 
- * Sizzle  (33KB,  9.3KB gzipped)
- * jQuery  (90KB, 31.3KB gzipped)
+ * Sizzle  (35KB,  9.5KB gzipped)
+ * jQuery  (92KB, 32.5KB gzipped)
 
 Obviously, if you're already including jQuery for other plugins etc, you'll be including this anyway - so it's up to you.
