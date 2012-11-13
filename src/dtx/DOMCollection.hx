@@ -77,13 +77,14 @@ class DOMCollection
 		return eq(this.length - 1);
 	}
 
-	public inline function add(node:DOMNode):DOMCollection
+	public inline function add(node:DOMNode, ?pos = -1):DOMCollection
 	{
+		if (pos < 0 || pos > collection.length) pos = collection.length;
 		if (node != null)   
 		{
 			if (Lambda.has(collection, node) == false)
 			{
-				collection.push(node);
+				collection.insert(pos,node);
 			}
 		}
 		return this;
