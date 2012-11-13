@@ -200,7 +200,7 @@ class DOMCollection
 		return q;
 	}
 
-	inline function get_length():Int
+	function get_length():Int
 	{
 		return collection.length;
 	}
