@@ -38,9 +38,14 @@ class Loop<T> extends DOMCollection
 	var items:Array<LoopItem<T>>;
 	var referenceNode:dtx.DOMNode;
 
+	/** Returns the number of items in the loop.  (In comparison to 'length', which returns the total number of DOMNodes in the loop's collection, which may differ from the number of items. */
+	public var numItems(get_numItems,null):Int;
+
 	/** Create a new, empty Loop. */
-	function new()
+	public function new()
 	{
+		super();
+
 		items = [];
 		preventDuplicates = false;
 
@@ -51,7 +56,7 @@ class Loop<T> extends DOMCollection
 		// Just don't go using any methods which duplicate this DOMCollection, or we might be in trouble.
 		// eg. No `myLoop.appendTo('ul'.find());` // append to (and duplicate for) every ul in the body
 		referenceNode = "<!-- Detox Loop -->".parse().getNode();
-		this.collection.add(referenceNode);
+		this.collection.push(referenceNode);
 	}
 	
 	/** If preventDuplicates is true, then every item you add will check to see if an item with the same input already exists, and only add it if it is unique.  
@@ -61,14 +66,16 @@ class Loop<T> extends DOMCollection
 
 	function set_preventDuplicates(v:Bool)
 	{
+		if (v == null) v = false;
 		preventDuplicates = v;
+
 		if (v == true && items.length > 0)
 		{
 			// Remove current duplicates
 			var filteredInputs = [];
 			for (item in items)
 			{
-				if (filteredInputs.has(inputs.get(key))
+				if (filteredInputs.has(item.input) == false)
 				{
 					// This is the first time (not a duplicate), so keep track of it
 					filteredInputs.push(item.input);
@@ -124,43 +131,37 @@ class Loop<T> extends DOMCollection
 	public function generateItem(input:T):LoopItem<T>
 	{
 		// Override this in sub classes...
-		item = new LoopItem(input);
+		var item = new LoopItem(input);
 		item.dom = Std.string(input).parse();
 		return item;
 	}
 
-	/** Adds an item, both to our items array, our collection of Nodes in the loop, and to the DOM itself, each in the correct position. 
-
-	The position you pass in is the position in the array of items, which can
-	be found with getItemPos(item) 
-
-	If the position is out or range or left blank, it will be inserted at the end of the list of items. */
 	public function insertItemAt(item:LoopItem<T>, ?pos:Int = -1)
 	{
 		if (pos < 0 || pos > items.length) pos = items.length;
 		items.insert(pos,item);
 
-		if (items.length == pos+1)
+		if (items.length == 1)
+		{
+			// this is the first item, insert after the referenceNode
+			referenceNode.afterThisInsert(item.dom);
+
+			// add to the end of the collection
+			for (node in item.dom)
+			{
+				this.collection.push(node);
+			}
+		}
+		else if (items.length == pos+1)
 		{
 			// is the last item, Find the item before this one and insert our item after
 			var prevItem = items[pos - 1];
-			prevItem.last().getNode().insertAfterThis(item.dom);
+			prevItem.dom.last().getNode().afterThisInsert(item.dom);
 
 			// add to the end of the collection
 			for (node in item.dom)
 			{
-				this.collection.add(node);
-			}
-		}
-		else if (items.length == 1)
-		{
-			// this is the first item, insert after the referenceNode
-			referenceNode.insertAfterThis(item.dom);
-
-			// add to the end of the collection
-			for (node in item.dom)
-			{
-				this.collection.add(node);
+				this.collection.push(node);
 			}
 		}
 		else 
@@ -168,14 +169,14 @@ class Loop<T> extends DOMCollection
 			// is an item in the middle, there is at least one item after this in the list.  
 			// Add this to the DOM before that item
 			var nextItem = items[pos + 1];
-			nextItem.getNode(0).insertBeforeThis(item.dom);
+			nextItem.dom.getNode(0).beforeThisInsert(item.dom);
 
 			// Insert into the right position in the collection, accounting for the change
 			// in position as we add more elements to the collection.
-			var pos = collection.indexOf(nextItem.getNode(0));
+			var pos = collection.indexOf(nextItem.dom.getNode(0));
 			for (node in item.dom)
 			{
-				this.collection.add(node, pos);
+				this.collection.insert(pos, node);
 				pos++;
 			}
 		}
@@ -184,13 +185,13 @@ class Loop<T> extends DOMCollection
 	/** Remove an item from the items array, the collection, and the DOM. */
 	public function removeItem(item:LoopItem<T>)
 	{
-		if (items.exists(item))
+		if (items.has(item))
 		{
 			items.remove(item);
 			for (node in item.dom)
 			{
 				node.removeFromDOM();
-				this.collection.remove(i);
+				this.collection.remove(node);
 			}
 		}
 	}
@@ -204,16 +205,16 @@ class Loop<T> extends DOMCollection
 	If the item was not found in the list, nothing will be added or modified. */
 	public function changeItem(item:LoopItem<T>, newInput:T)
 	{
-		pos = getItemPos(item);
+		var pos = getItemPos(item);
 		removeItem(item);
 
 		// Only add if the item exists
 		if (pos != -1)
 		{
 			// If this is not a duplicate, or we don't care
-			if (preventDuplicates == false || inputs.has(newInput)) == false)
+			if (preventDuplicates == false || findItem(newInput) == null)
 			{
-				var newItem = generateItem(input);
+				var newItem = generateItem(newInput);
 				insertItemAt(newItem, pos);
 			}
 		}
@@ -241,14 +242,14 @@ class Loop<T> extends DOMCollection
 		/* Does removing the oldPos affect the position we are inserting to?
 		   If newPos <= oldPos, it's to the left, and won't be affected by removing oldPos 
 		   If newPos > oldPos, it's to the right, and will be one less further along after removing oldPos */
+		var oldPos = getItemPos(item);
 		newPos = (newPos > oldPos) ? newPos - 1 : newPos;
-
 
 		// remove the item from it's current location
 		removeItem(item);
 
 		// insert the item into it's new location
-		insertItemAt(newItem, newPos);
+		insertItemAt(item, newPos);
 	}
 	
 	/** Returns the position of an item relative to other items. 
@@ -263,12 +264,14 @@ class Loop<T> extends DOMCollection
 	
 	/** This finds an item based on either the input or the DOM element and returns the LoopItem object.
 
-	If no match is found, it returns null. */
+	If no match is found, it returns null. If both input and dom are provided, it will return an item matching 
+	the input if that exists first, or else an item matching the DOMCollection if that exists.  It will not check
+	that both match - it will search for a match on either criteria. */
 	public function findItem(?input:T, ?dom:DOMCollection):LoopItem<T>
 	{
 		if (input != null)
 		{
-			var results = items.filter(function (item) { item.input == input; });
+			var results = items.filter(function (item) { return item.input == input; });
 			if (results.length > 0)
 			{
 				return results.first();
@@ -276,7 +279,7 @@ class Loop<T> extends DOMCollection
 		}
 		if (dom != null)
 		{
-			var results = items.filter(function (item) { item.dom == dom; });
+			var results = items.filter(function (item) { return item.dom == dom; });
 			if (results.length > 0)
 			{
 				return results.first();
@@ -296,6 +299,11 @@ class Loop<T> extends DOMCollection
 				this.collection.remove(node);
 			}
 		}
+	}
+
+	inline function get_numItems():Int
+	{
+		return items.length;
 	}
 }
 
