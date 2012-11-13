@@ -297,7 +297,7 @@ class WidgetTest
 		
 	}
 
-	@Test @TestDebug
+	@Test
 	public function disaster()
 	{
 		var w = new widgets.Disaster();
