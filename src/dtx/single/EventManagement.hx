@@ -12,6 +12,7 @@
 package dtx.single;
 
 import dtx.DOMNode;
+import Bean;
 /*
 JQuery has these methods.  I'll try break them down into core functionality and implementations of specific events
 For now I'm only testing in Firefox / W3 conforming browsers.  Almost certainly broken in IE8 and below.

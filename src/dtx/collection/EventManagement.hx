@@ -12,6 +12,7 @@
 package dtx.collection;
 
 import dtx.DOMNode;
+import Bean;
 
 class EventManagement
 {
