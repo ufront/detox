@@ -145,6 +145,21 @@ class LoopTest
 	@Test 
 	public function generateItem():Void
 	{
+		var l = new Loop<String>();
+		var i1 = l.generateItem("123");
+		var i2 = l.generateItem("Hello <em>Kind</em> World...");
+
+		Assert.areEqual("123", i1.input);
+		Assert.areEqual("123", i1.dom.html());
+		Assert.isTrue(i1.dom.getNode().isTextNode());
+
+		Assert.areEqual("Hello <em>Kind</em> World...", i2.input);
+		Assert.areEqual("Hello <em>Kind</em> World...", i2.dom.html());
+		Assert.areEqual("Hello Kind World...", i2.dom.text());
+		Assert.isTrue(i2.dom.getNode(0).isTextNode());
+		Assert.isTrue(i2.dom.getNode(1).isElement());
+		Assert.areEqual("em", i2.dom.getNode(1).tagName());
+		Assert.isTrue(i2.dom.getNode(2).isTextNode());
 	}
 
 	@Test 
