@@ -127,11 +127,6 @@ class LoopTest
 	}
 
 	@Test 
-	public function addItemNotT():Void
-	{
-	}
-
-	@Test 
 	public function generateItem():Void
 	{
 	}
@@ -238,11 +233,6 @@ class LoopTest
 
 	@Test 
 	public function changeItemNullInput():Void
-	{
-	}
-
-	@Test 
-	public function changeItemNotT():Void
 	{
 	}
 
