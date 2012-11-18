@@ -14,6 +14,7 @@ import CollectionDOMManipulationTest;
 import TraversingTest;
 import CollectionAnimationTest;
 import EventManagementTest;
+import LoopTest;
 import AnimationTest;
 
 /**
@@ -42,6 +43,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(TraversingTest);
 		add(CollectionAnimationTest);
 		add(EventManagementTest);
+		add(LoopTest);
 		add(AnimationTest);
 	}
 }
