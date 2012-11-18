@@ -73,7 +73,9 @@ class Loop<T> extends DOMCollection
 		{
 			// Remove current duplicates
 			var filteredInputs = [];
-			for (item in items)
+
+			// Because this loop modifies the items array, copy the array and iterate over the copy
+			for (item in items.copy())
 			{
 				if (filteredInputs.has(item.input) == false)
 				{

@@ -44,12 +44,7 @@ class LoopTest
 	}
 
 	@Test 
-	public function length():Void
-	{
-	}
-
-	@Test 
-	public function lengthOfCollection():Void
+	public function numItems():Void
 	{
 	}
 
@@ -106,6 +101,19 @@ class LoopTest
 	@Test 
 	public function preventDuplicatesChangeToTrueWithExistingItems():Void
 	{
+		var l = new Loop<String>();
+		l.setList('A,B,C,D,B,C,E'.split(','));
+		l.addList('A,B,E,F'.split(','));
+
+		Assert.areEqual(false, l.preventDuplicates);
+		Assert.areEqual(11, l.numItems);
+		Assert.areEqual(" Detox Loop ABCDBCEABEF", l.text());
+
+		l.preventDuplicates = true;
+
+		Assert.areEqual(true, l.preventDuplicates);
+		Assert.areEqual(" Detox Loop ABCDEF", l.text());
+		Assert.areEqual(6, l.numItems);
 	}
 
 	@Test
