@@ -165,6 +165,11 @@ class LoopTest
 	@Test 
 	public function generateItemNull():Void
 	{
+		var l = new Loop<String>();
+		var i = l.generateItem(null);
+
+		Assert.areEqual(null, i.input);
+		Assert.areEqual("null", i.dom.html());
 	}
 
 	@Test 
