@@ -116,8 +116,8 @@ class Loop<T> extends DOMCollection
 	{
 		var item:LoopItem<T> = null;
 
-		// If this is not a duplicate, or we don't care
-		if (preventDuplicates == false || findItem(input) == null)
+		// If this is not null AND not a duplicate (or we don't care)
+		if (input != null && (preventDuplicates == false || findItem(input) == null))
 		{
 			// Keep reference to both the original input and the generated item/collection
 			item = generateItem(input);

@@ -124,6 +124,11 @@ class LoopTest
 	@Test 
 	public function addItemNull():Void
 	{
+		var l = new Loop<String>();
+		l.addItem(null);
+		Assert.areEqual(0, l.numItems);
+		Assert.areEqual(1, l.length);
+		Assert.areEqual("<!-- Detox Loop -->", l.html());
 	}
 
 	@Test 
