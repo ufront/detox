@@ -119,6 +119,17 @@ class LoopTest
 	@Test
 	public function addItem():Void
 	{
+		var l = new Loop<String>();
+
+		l.addItem("1");
+		Assert.areEqual(1, l.numItems);
+		Assert.areEqual(2, l.length);
+		Assert.areEqual("<!-- Detox Loop -->1", l.html());
+
+		l.addItem("2");
+		Assert.areEqual(2, l.numItems);
+		Assert.areEqual(3, l.length);
+		Assert.areEqual("<!-- Detox Loop -->12", l.html());
 	}
 
 	@Test 
