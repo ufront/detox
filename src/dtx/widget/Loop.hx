@@ -186,9 +186,13 @@ class Loop<T> extends DOMCollection
 		}
 	}
 	
-	/** Remove an item from the items array, the collection, and the DOM. */
-	public function removeItem(item:LoopItem<T>)
+	/** Remove an item from the items array, the collection, and the DOM. 
+
+	You can either pass a specific item, or a value.  If you pass a value, the first item that matches that value will be removed. */
+	public function removeItem(?item:LoopItem<T>, ?itemValue:T)
 	{
+		if (item == null) item = findItem(itemValue);
+		
 		if (items.has(item))
 		{
 			items.remove(item);
