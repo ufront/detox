@@ -288,16 +288,43 @@ class LoopTest
 	@Test 
 	public function setList():Void
 	{
+		var l = new Loop<String>();
+		l.setList('A,B,C,D'.split(','));
+
+		Assert.areEqual(4, l.numItems);
+
+		l.setList('E,F'.split(','));
+
+		Assert.areEqual(2, l.numItems);
+		Assert.areEqual(" Detox Loop EF", l.text());
 	}
 
 	@Test 
 	public function setListEmpty():Void
 	{
+		var l = new Loop<String>();
+		l.setList('A,B,C,D'.split(','));
+
+		Assert.areEqual(4, l.numItems);
+
+		l.setList([]);
+
+		Assert.areEqual(0, l.numItems);
+		Assert.areEqual(" Detox Loop ", l.text());
 	}
 
 	@Test 
 	public function setListNull():Void
 	{
+		var l = new Loop<String>();
+		l.setList('A,B,C,D'.split(','));
+
+		Assert.areEqual(4, l.numItems);
+
+		l.setList(null);
+
+		Assert.areEqual(0, l.numItems);
+		Assert.areEqual(" Detox Loop ", l.text());
 	}
 
 	@Test 
