@@ -111,7 +111,7 @@ class Loop<T> extends DOMCollection
 	
 	/** Takes an input, generates a LoopItem, and includes it in the loop. 
 
-	It will check for duplicates if `preventDuplicates` is true.  You can also set the position the item is to be inserted at.  Values for pos are 0-based, so 0 will be before the first item, 1 will be after the first item, 3 will be after the 3rd etc.  By default, or if the position given is out of range, the item will be added to the end of the loop. */
+	It will check for duplicates if `preventDuplicates` is true.  You can also set the position the item is to be inserted at.  Values for `pos` are the same as insertItem() */
 	public function addItem(input:T, ?pos:Int = -1):LoopItem<T>
 	{
 		var item:LoopItem<T> = null;
@@ -121,7 +121,7 @@ class Loop<T> extends DOMCollection
 		{
 			// Keep reference to both the original input and the generated item/collection
 			item = generateItem(input);
-			insertItemAt(item, pos);
+			insertItem(item, pos);
 		}
 
 		return item;
@@ -136,7 +136,8 @@ class Loop<T> extends DOMCollection
 		return item;
 	}
 
-	public function insertItemAt(item:LoopItem<T>, ?pos:Int = -1)
+	/** Insert an already defined item into a specific place in the loop.  Values for pos are 0-based, so 0 will be before the first item, 1 will be after the first item, 3 will be after the 3rd etc.  By default, or if the position given is out of range, the item will be added to the end of the loop. */
+	public function insertItem(item:LoopItem<T>, ?pos:Int = -1)
 	{
 		if (pos < 0 || pos > items.length) pos = items.length;
 		items.insert(pos,item);
@@ -215,7 +216,7 @@ class Loop<T> extends DOMCollection
 			if (preventDuplicates == false || findItem(newInput) == null)
 			{
 				var newItem = generateItem(newInput);
-				insertItemAt(newItem, pos);
+				insertItem(newItem, pos);
 			}
 		}
 	}
@@ -249,7 +250,7 @@ class Loop<T> extends DOMCollection
 		removeItem(item);
 
 		// insert the item into it's new location
-		insertItemAt(item, newPos);
+		insertItem(item, newPos);
 	}
 	
 	/** Returns the position of an item relative to other items. 
