@@ -46,6 +46,26 @@ class LoopTest
 	@Test 
 	public function numItems():Void
 	{
+		var l = new Loop();
+		Assert.areEqual(0, l.numItems);
+
+		l.setList('A,B,C,D'.split(','));
+		Assert.areEqual(4, l.numItems);
+
+		l.addList('E,F'.split(','));
+		Assert.areEqual(6, l.numItems);
+
+		l.setList('A,B'.split(','));
+		Assert.areEqual(2, l.numItems);
+
+		l.addItem('C');
+		Assert.areEqual(3, l.numItems);
+
+		l.removeItem('B');
+		Assert.areEqual(2, l.numItems);
+
+		l.empty();
+		Assert.areEqual(2, l.numItems);
 	}
 
 	@Test 
@@ -330,36 +350,118 @@ class LoopTest
 	@Test 
 	public function addList():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+
+		Assert.areEqual(4, l.numItems);
+
+		l.addList('E,F'.split(','));
+
+		Assert.areEqual(6, l.numItems);
+		Assert.areEqual(" Detox Loop ABCDEF", l.text());
 	}
 
 	@Test 
 	public function addListEmpty():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+
+		Assert.areEqual(4, l.numItems);
+
+		l.addList([]);
+
+		Assert.areEqual(4, l.numItems);
+		Assert.areEqual(" Detox Loop ABCD", l.text());
 	}
 
 	@Test 
 	public function addListNull():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+
+		Assert.areEqual(4, l.numItems);
+
+		l.addList(null);
+
+		Assert.areEqual(4, l.numItems);
+		Assert.areEqual(" Detox Loop ABCD", l.text());
 	}
 
 	@Test 
 	public function removeItem():Void
 	{
+		var l = new Loop<String>();
+		var i = l.generateItem("e");
+		l.addList('A,B,C,D'.split(','));
+		l.insertItem(i, 4);
+		l.addList('F,G,H'.split(','));
+
+		Assert.areEqual(" Detox Loop ABCDeFGH", l.text());
+		Assert.areEqual(8, l.numItems);
+
+		l.removeItem(i);
+
+		Assert.areEqual(" Detox Loop ABCDFGH", l.text());
+		Assert.areEqual(7, l.numItems);
+	}
+
+	@Test 
+	public function removeItemByValue():Void
+	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+
+		l.removeItem('C');
+
+		Assert.areEqual(" Detox Loop ABD", l.text());
+		Assert.areEqual(3, l.numItems);
 	}
 
 	@Test 
 	public function removeItemNull():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+
+		l.removeItem(null);
+
+		Assert.areEqual(" Detox Loop ABCD", l.text());
+		Assert.areEqual(4, l.numItems);
 	}
 
 	@Test 
 	public function removeItemNotInList():Void
 	{
+		var l = new Loop<String>();
+		var i = l.generateItem("e");
+		l.addList('A,B,C,D'.split(','));
+
+		l.removeItem(i);
+
+		Assert.areEqual(" Detox Loop ABCD", l.text());
+		Assert.areEqual(4, l.numItems);
 	}
 
 	@Test 
-	public function removeItemInListButNotInDOM():Void
+	public function removeItemInListButNotInDOMOrCollection():Void
 	{
+		var l = new Loop<String>();
+		var i = l.generateItem("e");
+		l.addList('A,B,C,D,E,F'.split(','));
+
+		var e = l.getNode(5);
+		var f = l.getNode(6);
+
+		e.removeFromDOM();
+		l.collection.remove(f);
+
+		l.removeItem('E');
+		l.removeItem('F');
+
+		Assert.areEqual(" Detox Loop ABCD", l.text());
+		Assert.areEqual(4, l.numItems);
 	}
 
 	@Test 
