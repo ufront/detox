@@ -65,7 +65,7 @@ class LoopTest
 		Assert.areEqual(2, l.numItems);
 
 		l.empty();
-		Assert.areEqual(2, l.numItems);
+		Assert.areEqual(0, l.numItems);
 	}
 
 	@Test 
