@@ -292,7 +292,7 @@ class Loop<T> extends DOMCollection
 	/** Empties all items from the current loop, and removes them from the DOM too. */
 	public function empty()
 	{
-		for (item in items)
+		for (item in items.copy())
 		{
 			items.remove(item);
 			for (node in item.dom)

@@ -237,16 +237,52 @@ class LoopTest
 	@Test 
 	public function empty():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+
+		Assert.areEqual(" Detox Loop ABCD", l.text());
+		Assert.areEqual(4, l.numItems);
+		Assert.areEqual(5, l.length);
+		
+		l.empty();
+
+		Assert.areEqual(" Detox Loop ", l.text());
+		Assert.areEqual(0, l.numItems);
+		Assert.areEqual(1, l.length);
 	}
 
 	@Test 
 	public function emptyWhenAlreadyEmpty():Void
 	{
+		var l = new Loop<String>();
+		l.empty();
+
+		Assert.areEqual(" Detox Loop ", l.text());
+		Assert.areEqual(0, l.numItems);
+		Assert.areEqual(1, l.length);
 	}
 
 	@Test 
 	public function emptyWhenRandomStuffInserted():Void
 	{
+		var l = new Loop<String>();
+		Assert.areEqual(0, l.numItems);
+		Assert.areEqual(1, l.length);
+
+		l.addList('A,B,C,D'.split(','));
+		Assert.areEqual(4, l.numItems);
+		Assert.areEqual(5, l.length);
+
+		var n = "<!-- New Comment -->".parse().getNode();
+		l.add(n);
+		Assert.areEqual(4, l.numItems);
+		Assert.areEqual(6, l.length);
+		
+		l.empty();
+
+		Assert.areEqual("<!-- Detox Loop --><!-- New Comment -->", l.html());
+		Assert.areEqual(0, l.numItems);
+		Assert.areEqual(2, l.length);
 	}
 
 	@Test 
