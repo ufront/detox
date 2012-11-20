@@ -173,23 +173,65 @@ class LoopTest
 	}
 
 	@Test 
-	public function insertItemAtDefault():Void
+	public function insertItemDefault():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+		var i = l.generateItem("1");
+		l.insertItem(i);
+
+		Assert.areEqual(" Detox Loop ABCD1", l.text());
+		Assert.areEqual(5, l.numItems);
 	}
 
 	@Test 
-	public function insertItemAtStart():Void
+	public function insertItemStart():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+		var i = l.generateItem("1");
+		l.insertItem(i, 0);
+
+		Assert.areEqual(" Detox Loop 1ABCD", l.text());
+		Assert.areEqual(5, l.numItems);
 	}
 
 	@Test 
-	public function insertItemAtMiddle():Void
+	public function insertItemMiddle():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+		var i = l.generateItem("1");
+		l.insertItem(i, 3);
+
+		Assert.areEqual(" Detox Loop ABC1D", l.text());
+		Assert.areEqual(5, l.numItems);
 	}
 
 	@Test 
-	public function insertItemAtEnd():Void
+	public function insertItemEnd():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+		var i = l.generateItem("1");
+		l.insertItem(i, 4);
+
+		Assert.areEqual(" Detox Loop ABCD1", l.text());
+		Assert.areEqual(5, l.numItems);
+	}
+
+	@Test 
+	public function insertItemOutOfRange():Void
+	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+		var i1 = l.generateItem("1");
+		var i2 = l.generateItem("2");
+		l.insertItem(i1, -99);
+		l.insertItem(i2, 99);
+
+		Assert.areEqual(" Detox Loop ABCD12", l.text());
+		Assert.areEqual(6, l.numItems);
 	}
 
 	@Test 
