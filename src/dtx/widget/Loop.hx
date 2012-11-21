@@ -192,7 +192,7 @@ class Loop<T> extends DOMCollection
 	public function removeItem(?item:LoopItem<T>, ?itemValue:T)
 	{
 		if (item == null) item = findItem(itemValue);
-		
+
 		if (items.has(item))
 		{
 			items.remove(item);
@@ -219,8 +219,8 @@ class Loop<T> extends DOMCollection
 		// Only add if the item exists
 		if (pos != -1)
 		{
-			// If this is not a duplicate, or we don't care
-			if (preventDuplicates == false || findItem(newInput) == null)
+			// If this is not a duplicate, or we don't care, and input isn't null
+			if (newInput != null && (preventDuplicates == false || findItem(newInput) == null))
 			{
 				var newItem = generateItem(newInput);
 				insertItem(newItem, pos);
@@ -230,7 +230,7 @@ class Loop<T> extends DOMCollection
 	
 	/** Move a current item to a new position in the list. 
 
-	Position is zero based, so a position of 0 will insert before the first item, 1 will insert after the first item etc.
+	Position is zero based, so a position of 0 will insert before the first item, 1 will insert after the first item etc.  If a position is not given, or if the position is out of range, the item will be moved to the end of the list.
 	
 	As part of the moving process, the position of elements will be bumped around.  The position you put in is the position BEFORE anything changes.  So if you have loop items:
 
@@ -243,21 +243,29 @@ class Loop<T> extends DOMCollection
 	And your items will now look like:
 
 		[b,c,a,d]
+
+	If the item is null, nothing will change.  If the item is not in the list, it will be inserted at the given position.
 	*/
-	public function moveItem(item:LoopItem<T>, newPos:Int)
+	public function moveItem(item:LoopItem<T>, ?newPos:Int = -1)
 	{
-		// make sure the positions are correct
-		/* Does removing the oldPos affect the position we are inserting to?
-		   If newPos <= oldPos, it's to the left, and won't be affected by removing oldPos 
-		   If newPos > oldPos, it's to the right, and will be one less further along after removing oldPos */
-		var oldPos = getItemPos(item);
-		newPos = (newPos > oldPos) ? newPos - 1 : newPos;
+		if (item != null)
+		{
+			// make sure the positions are correct
+			/* Does removing the oldPos affect the position we are inserting to?
+			   If newPos <= oldPos, it's to the left, and won't be affected by removing oldPos 
+			   If newPos > oldPos, it's to the right, and will be one less further along after removing oldPos 
 
-		// remove the item from it's current location
-		removeItem(item);
+			   Also worth noting: if oldPos is -1, (item is not found), then newPos should not change.
+			*/
+			var oldPos = getItemPos(item);
+			newPos = (oldPos > -1 && newPos > oldPos) ? newPos - 1 : newPos;
 
-		// insert the item into it's new location
-		insertItem(item, newPos);
+			// remove the item from it's current location
+			removeItem(item);
+
+			// insert the item into it's new location
+			insertItem(item, newPos);
+		}
 	}
 	
 	/** Returns the position of an item relative to other items. 

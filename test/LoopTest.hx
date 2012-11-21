@@ -467,91 +467,295 @@ class LoopTest
 	@Test 
 	public function changeItem():Void
 	{
+		var l = new Loop<String>();
+		var i = l.generateItem("e");
+		l.addList('A,B,C,D'.split(','));
+		l.insertItem(i, 4);
+		l.addList('F,G,H'.split(','));
+
+		Assert.areEqual(" Detox Loop ABCDeFGH", l.text());
+		Assert.areEqual(8, l.numItems);
+
+		l.changeItem(i, "z");
+
+		Assert.areEqual(" Detox Loop ABCDzFGH", l.text());
+		Assert.areEqual(8, l.numItems);
 	}
 
 	@Test 
 	public function changeItemNullItem():Void
 	{
+		var l = new Loop<String>();
+		var i = l.generateItem("e");
+		l.addList('A,B,C,D'.split(','));
+		l.insertItem(i, 4);
+		l.addList('F,G,H'.split(','));
+
+		Assert.areEqual(" Detox Loop ABCDeFGH", l.text());
+		Assert.areEqual(8, l.numItems);
+
+		l.changeItem(null, "z");
+
+		Assert.areEqual(" Detox Loop ABCDeFGH", l.text());
+		Assert.areEqual(8, l.numItems);
 	}
 
 	@Test 
 	public function changeItemNullInput():Void
 	{
+		var l = new Loop<String>();
+		var i = l.generateItem("e");
+		l.addList('A,B,C,D'.split(','));
+		l.insertItem(i, 4);
+		l.addList('F,G,H'.split(','));
+
+		Assert.areEqual(" Detox Loop ABCDeFGH", l.text());
+		Assert.areEqual(8, l.numItems);
+
+		l.changeItem(i, null);
+
+		Assert.areEqual(" Detox Loop ABCDFGH", l.text());
+		Assert.areEqual(7, l.numItems);
 	}
 
 	@Test 
 	public function changeItemNotFound():Void
 	{
+		var l = new Loop<String>();
+		var i = l.generateItem("e");
+		l.addList('A,B,C,D'.split(','));
+
+		Assert.areEqual(" Detox Loop ABCD", l.text());
+		Assert.areEqual(4, l.numItems);
+
+		l.changeItem(i, "z");
+
+		Assert.areEqual(" Detox Loop ABCD", l.text());
+		Assert.areEqual(4, l.numItems);
 	}
 
 	@Test 
 	public function changeItemDuplicateExists():Void
 	{
+		var l = new Loop<String>();
+		l.preventDuplicates = true;
+		l.addList('A,B,C,D'.split(','));
+		var i = l.findItem("C");
+
+		Assert.areEqual(" Detox Loop ABCD", l.text());
+		Assert.areEqual(4, l.numItems);
+
+		l.changeItem(i, "A");
+
+		Assert.areEqual(" Detox Loop ABD", l.text());
+		Assert.areEqual(3, l.numItems);
 	}
 
 	@Test 
 	public function moveItemForward():Void
 	{
+		var l = new Loop<String>();
+		l.preventDuplicates = true;
+		l.addList('A,1,B,C,D'.split(','));
+
+		// Place '1' after 'C'
+		var i = l.findItem("1");
+		l.moveItem(i, 4);
+
+		Assert.areEqual(" Detox Loop ABC1D", l.text());
+		Assert.areEqual(5, l.numItems);
 	}
 
 	@Test 
 	public function moveItemBackward():Void
 	{
+		var l = new Loop<String>();
+		l.preventDuplicates = true;
+		l.addList('A,B,C,1,D'.split(','));
+
+		// Place '1' after 'A'
+		var i = l.findItem("1");
+		l.moveItem(i, 1);
+
+		Assert.areEqual(" Detox Loop A1BCD", l.text());
+		Assert.areEqual(5, l.numItems);
 	}
 
 	@Test 
 	public function moveItemSameLocation():Void
 	{
+		var l = new Loop<String>();
+		l.preventDuplicates = true;
+		l.addList('A,B,1,C,D'.split(','));
+
+		// Move '1' to after 'B', where it already was
+		var i = l.findItem("1");
+		l.moveItem(i, 2);
+
+		Assert.areEqual(" Detox Loop AB1CD", l.text());
+		Assert.areEqual(5, l.numItems);
 	}
 
 	@Test 
 	public function moveItemNullPos():Void
 	{
+		var l = new Loop<String>();
+		l.preventDuplicates = true;
+		l.addList('A,B,1,C,D'.split(','));
+
+		// Move '1' to a position of null, should move it to the end
+		var i = l.findItem("1");
+		l.moveItem(i);
+
+		Assert.areEqual(" Detox Loop ABCD1", l.text());
+		Assert.areEqual(5, l.numItems);
 	}
 
 	@Test 
 	public function moveItemNullItem():Void
 	{
+		var l = new Loop<String>();
+		l.preventDuplicates = true;
+		l.addList('A,B,1,C,D'.split(','));
+
+		// Attempt to move item 'null', nothing should change
+		var i = l.findItem("1");
+		l.moveItem(null, 0);
+
+		Assert.areEqual(" Detox Loop AB1CD", l.text());
+		Assert.areEqual(5, l.numItems);
 	}
 
 	@Test 
 	public function moveItemItemNotFound():Void
 	{
+		var l = new Loop<String>();
+		l.preventDuplicates = true;
+		l.addList('A,B,C,D'.split(','));
+
+		// Attempt to move item that is not in list, it should be inserted
+		var i = l.generateItem("1");
+		l.moveItem(i, 3);
+
+		Assert.areEqual(" Detox Loop ABC1D", l.text());
+		Assert.areEqual(5, l.numItems);
 	}
 
 	@Test 
 	public function moveItemPositionOutOfRange():Void
 	{
+		var l = new Loop<String>();
+		l.preventDuplicates = true;
+		l.addList('A,B,C,D'.split(','));
+
+		// Move '1' to a position of null, should move it to the end
+		var a = l.findItem("A");
+		var b = l.findItem("B");
+		l.moveItem(a, -100);
+		l.moveItem(b, 100);
+
+		Assert.areEqual(" Detox Loop CDAB", l.text());
+		Assert.areEqual(4, l.numItems);
 	}
 
 	@Test 
 	public function moveItemWasAlreadyMovedOnDOM():Void
 	{
+		var div = "div".create();
+
+		var l = new Loop<String>();
+		l.appendTo(div);
+		l.preventDuplicates = true;
+		l.addList('A,1,B,C,D'.split(','));
+		Assert.areEqual("<!-- Detox Loop -->A1BCD", div.innerHTML());
+
+		// On the DOM, move the 1 to the end
+		var i = l.findItem("1");
+		i.dom.insertThisAfter(l.last());
+		Assert.areEqual("<!-- Detox Loop -->ABCD1", div.innerHTML());
+
+		// In the Loop, place '1' at the beginning
+		l.moveItem(i, 0);
+		Assert.areEqual("<!-- Detox Loop -->1ABCD", div.innerHTML());
 	}
 
 	@Test 
 	public function moveItemItemWasRemovedOnDOM():Void
 	{
+		var div = "div".create();
+
+		var l = new Loop<String>();
+		l.appendTo(div);
+		l.preventDuplicates = true;
+		l.addList('A,1,B,C,D'.split(','));
+		Assert.areEqual("<!-- Detox Loop -->A1BCD", div.innerHTML());
+
+		// On the DOM, remove the one
+		var i = l.findItem("1");
+		i.dom.removeFromDOM();
+		Assert.areEqual("<!-- Detox Loop -->ABCD", div.innerHTML());
+
+		// In the Loop, place '1' at the beginning
+		l.moveItem(i, 0);
+		Assert.areEqual("<!-- Detox Loop -->1ABCD", div.innerHTML());
 	}
 
 	@Test 
 	public function getItemPos():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+		
+		var i = l.generateItem('1');
+		l.insertItem(i, 2);
+		Assert.areEqual(" Detox Loop AB1CD", l.text());
+		Assert.areEqual(2, l.getItemPos(i));
+
+		l.moveItem(i);
+		Assert.areEqual(" Detox Loop ABCD1", l.text());
+		Assert.areEqual(4, l.getItemPos(i));
 	}
 
 	@Test 
 	public function getItemPosNull():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+		Assert.areEqual(-1, l.getItemPos(null));
 	}
 
 	@Test 
 	public function getItemPosNotInList():Void
 	{
+		var l = new Loop<String>();
+		var i = l.generateItem('1');
+		l.addList('A,B,C,D'.split(','));
+		Assert.areEqual(-1, l.getItemPos(i));
 	}
 
 	@Test 
 	public function getItemPosItemMovedInDOM():Void
 	{
+		var div = "div".create();
+		var l = new Loop<String>();
+		l.appendTo(div);
+		l.preventDuplicates = true;
+		l.addList('A,1,B,C,D'.split(','));
+		var i = l.findItem("1");
+
+		// Test starting position
+		Assert.areEqual("<!-- Detox Loop -->A1BCD", div.innerHTML());
+		Assert.areEqual(1, l.getItemPos(i));
+
+		// On the DOM, move the 1 to the end
+		i.dom.insertThisAfter(l.last());
+		Assert.areEqual("<!-- Detox Loop -->ABCD1", div.innerHTML());
+		Assert.areEqual(1, l.getItemPos(i));
+
+		// In the Loop, place '1' at the beginning
+		l.moveItem(i, 0);
+		Assert.areEqual("<!-- Detox Loop -->1ABCD", div.innerHTML());
+		Assert.areEqual(0, l.getItemPos(i));
 	}
 
 	@Test 
