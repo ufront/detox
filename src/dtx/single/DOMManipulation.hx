@@ -92,7 +92,7 @@ class DOMManipulation
 	}
 
 	/** Prepend this node to the specified parent */
-	static public inline function prependTo(child:DOMNode, ?parentNode:DOMNode = null, ?parentCollection:DOMCollection = null)
+	static public function prependTo(child:DOMNode, ?parentNode:DOMNode = null, ?parentCollection:DOMCollection = null)
 	{
 		if (parentNode != null)
 		{
@@ -118,12 +118,11 @@ class DOMManipulation
 		{
 			if (targetNode != null)
 			{
-				#if js
-				var parent:DOMNode = targetNode.parentNode;
-				#else 
-				var parent:DOMNode = targetNode.parent;
-				#end
-				parent.insertBefore(content, targetNode);
+				var parent:DOMNode = #if js targetNode.parentNode; #else targetNode.parent; #end
+				if (parent != null)
+				{
+					parent.insertBefore(content, targetNode);
+				}
 			}
 			if (targetCollection != null)
 			{
@@ -131,12 +130,11 @@ class DOMManipulation
 				for (target in targetCollection)
 				{
 					var childToInsert = (firstChildUsed) ? content.cloneNode(true) : content;
-					#if js
-					var parent:DOMNode = target.parentNode;
-					#else 
-					var parent:DOMNode = target.parent;
-					#end
-					parent.insertBefore(childToInsert, target);
+					var parent:DOMNode = #if js target.parentNode; #else target.parent; #end
+					if (parent != null)
+					{
+						parent.insertBefore(childToInsert, target);
+					}
 					
 					firstChildUsed = true;
 				}
@@ -145,23 +143,27 @@ class DOMManipulation
 		return content;
 	}
 
-	static public inline function insertThisAfter(content:DOMNode, ?targetNode:DOMNode, ?targetCollection:DOMCollection)
+	static public function insertThisAfter(content:DOMNode, ?targetNode:DOMNode, ?targetCollection:DOMCollection)
 	{
 		if (content != null)
 		{
 			if (targetNode != null)
 			{
 				var next = #if js targetNode.nextSibling #else targetNode.nextSibling() #end;
+				var parent:DOMNode = #if js targetNode.parentNode #else targetNode.parentNode() #end;
 				if (next != null)
 				{
-					var parent:DOMNode = #if js targetNode.parentNode #else targetNode.parentNode() #end;
-					var next = #if js targetNode.nextSibling #else targetNode.nextSibling() #end;
-					parent.insertBefore(content, next);
+					if (parent != null)
+					{
+						parent.insertBefore(content, next);
+					}
 				}
 				else 
 				{
-					var parent:DOMNode = #if js targetNode.parentNode #else targetNode.parentNode() #end;
-					parent.appendChild(content);
+					if (parent != null)
+					{
+						parent.appendChild(content);
+					}
 				}
 			}
 			if (targetCollection != null)
@@ -178,7 +180,10 @@ class DOMManipulation
 						// add the (possibly cloned) child after.the target
 						// (that is, before the targets next sibling)
 						var parent:DOMNode = #if js target.parentNode #else target.parentNode() #end;
-						parent.insertBefore(childToInsert, next);
+						if (parent != null)
+						{
+							parent.insertBefore(childToInsert, next);
+						}
 					}
 					else 
 					{
@@ -231,17 +236,13 @@ class DOMManipulation
 	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
 	static public function remove(childToRemove:DOMNode)
 	{
-
-		if (childToRemove != null 
-			#if js && childToRemove.parentNode != null
-			#else && childToRemove.parent != null #end)
+		if (childToRemove != null)
 		{
-			#if js
-			var parent:DOMNode = childToRemove.parentNode;
-			#else 
-			var parent:DOMNode = childToRemove.parent;
-			#end
-			parent.removeChild(childToRemove);
+			var parent:DOMNode = #if js childToRemove.parentNode; #else childToRemove.parent; #end
+			if (parent != null)
+			{
+				parent.removeChild(childToRemove);
+			}
 		}
 		return childToRemove;
 	}

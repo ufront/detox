@@ -57,33 +57,34 @@ class DOMCollection
 		return collection.iterator();
 	}
 
-	public inline function getNode(?i:Int = 0)
+	public function getNode(?i:Int = 0)
 	{
 		return if (collection.length > i && i >= 0) collection[i] else null;
 	}
 
-	public inline function eq(?i:Int = 0)
+	public function eq(?i:Int = 0)
 	{
 		return new DOMCollection(getNode(i));
 	}
 
-	public inline function first()
+	public function first()
 	{
 		return eq(0);
 	}
 
-	public inline function last()
+	public function last()
 	{
 		return eq(this.length - 1);
 	}
 
-	public inline function add(node:DOMNode):DOMCollection
+	public function add(node:DOMNode, ?pos = -1):DOMCollection
 	{
+		if (pos < 0 || pos > collection.length) pos = collection.length;
 		if (node != null)   
 		{
 			if (Lambda.has(collection, node) == false)
 			{
-				collection.push(node);
+				collection.insert(pos,node);
 			}
 		}
 		return this;
@@ -141,7 +142,7 @@ class DOMCollection
 		return this;
 	}
 
-	inline function removeNode(n)
+	function removeNode(n)
 	{
 		#if flash 
 		// Fix bug with Flash where the usual array.remove() didn't work.
@@ -165,7 +166,7 @@ class DOMCollection
 		#end 
 	}
 
-	public inline function each(f : DOMNode -> Void):DOMCollection
+	public function each(f : DOMNode -> Void):DOMCollection
 	{
 		if (f != null) { Lambda.iter(collection, f); }
 		return this; 

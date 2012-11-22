@@ -20,7 +20,7 @@ class XMLWrapper
 		return xml.parent;
 	}
 
-	static public inline function hasChildNodes(xml:Xml):Bool 
+	static public function hasChildNodes(xml:Xml):Bool 
 	{
 		return xml.iterator().hasNext();
 	}
@@ -28,98 +28,120 @@ class XMLWrapper
 	static public function lastChild(xml:Xml)
 	{
 		var lastChild:Xml = null;
-		for (child in xml)
-		{
-			lastChild = child;
-		}
+		
+		if (xml != null) 
+			for (child in xml)
+				lastChild = child;
 		return lastChild;
 	}
 
-	static public inline function appendChild(xml:Xml, child:Xml)
+	static public function appendChild(xml:Xml, child:Xml)
 	{
-		xml.insertChild(child, Lambda.count(xml));
+		if (xml != null) xml.addChild(child);
 	}
 
-	static public inline function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
+	static public function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
 	{
-		#if flash
-			var targetIndex = untyped target._node.childIndex();
-		#else 
-			var targetIndex = 0;
-			var iter = xml.iterator();
-			while (iter.hasNext() && iter.next() != target)
-			{
-				targetIndex++;
-			}
-		#end
-		xml.insertChild(content, targetIndex);
+		if (xml != null && content != null && target != null)
+		{
+			#if flash
+				var targetIndex = untyped target._node.childIndex();
+			#else 
+				var targetIndex = 0;
+				var iter = xml.iterator();
+				while (iter.hasNext() && iter.next() != target)
+				{
+					targetIndex++;
+				}
+			#end
+			xml.insertChild(content, targetIndex);
+		}
 	}
 
-	static public inline function nextSibling(xml:Xml)
+	static public function nextSibling(xml:Xml)
 	{
 		#if flash 
 			var sibling:Xml = null;
-			// get the flash node
-			var flashXML:flash.xml.XML = untyped xml._node;
-			// get the index
-			var i = flashXML.childIndex();
-			// get the siblings
-			var children:flash.xml.XMLList = flashXML.parent().children();
-			// get the previous item
-			var index = i + 1;
-			if (index >= 0 && index < children.length())
+			if (xml != null)
 			{
-				sibling = untyped Xml.wrap( children[index] );
+				// get the flash node
+				var flashXML:flash.xml.XML = untyped xml._node;
+				// get the index
+				var i = flashXML.childIndex();
+				// get the siblings
+				var children:flash.xml.XMLList = flashXML.parent().children();
+				// get the previous item
+				var index = i + 1;
+				if (index >= 0 && index < children.length())
+				{
+					sibling = untyped Xml.wrap( children[index] );
+				}
 			}
 			return sibling;
 		#else 
-			var p = xml.parent;
-			var itsTheNextOne = false;
 			var sibling:Xml = null;
-			for (child in p)
+
+			if (xml != null)
 			{
-				if (itsTheNextOne)
+				var itsTheNextOne = false;
+				var p = xml.parent;
+				if (p != null)
 				{
-					sibling = child;
-					break;
+					for (child in p)
+					{
+						if (itsTheNextOne)
+						{
+							sibling = child;
+							break;
+						}
+						if (child == xml) itsTheNextOne = true;
+					}
 				}
-				if (child == xml) itsTheNextOne = true;
 			}
 			return sibling;
 		#end
 	}
 
-	static public inline function previousSibling(xml:Xml)
+	static public function previousSibling(xml:Xml)
 	{
 		#if flash
 			var sibling:Xml = null;
-			// get the flash node
-			var flashXML:flash.xml.XML = untyped xml._node;
-			// get the index
-			var i = flashXML.childIndex();
-			// get the siblings
-			var children:flash.xml.XMLList = flashXML.parent().children();
-			// get the previous item
-			var index = i - 1;
-			if (index >= 0 && index < children.length())
+			if (xml != null)
 			{
-				sibling = untyped Xml.wrap( children[index] );
+				// get the flash node
+				var flashXML:flash.xml.XML = untyped xml._node;
+				// get the index
+				var i = flashXML.childIndex();
+				// get the siblings
+				var children:flash.xml.XMLList = flashXML.parent().children();
+				// get the previous item
+				var index = i - 1;
+				if (index >= 0 && index < children.length())
+				{
+					sibling = untyped Xml.wrap( children[index] );
+				}
 			}
 			return sibling;
 		#else 
-			var p = xml.parent;
-			var sibling:Xml;
-			for (child in p)
+			var sibling:Xml = null;
+			if (xml != null)
 			{
-				if (child != xml)
+				var p = xml.parent;
+				if (p != null)
 				{
-					sibling = child;
-				}
-				else
-				{
-					// If it's equal, leave "sibling" set to the previous value,
-					// and exit the loop...
-					break;
+					for (child in p)
+					{
+						if (child != xml)
+						{
+							sibling = child;
+						}
+						else
+						{
+							// If it's equal, leave "sibling" set to the previous value,
+							// and exit the loop...
+							break;
+						}
+					}
 				}
 			}
 			return sibling;
@@ -128,39 +150,45 @@ class XMLWrapper
 
 	static public function empty(xml:Xml)
 	{
-		while (xml.firstChild() != null)
+		if (xml != null)
 		{
-			xml.removeChild(xml.firstChild());
+			while (xml.firstChild() != null)
+			{
+				xml.removeChild(xml.firstChild());
+			}
 		}
 	}
 
 	static public function textContent(xml:Xml)
 	{
 		var ret = "";
-		if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
+		if (xml != null)
 		{
-			var allDescendants:DOMCollection;
-			var textDescendants:DOMCollection;
-			
-			allDescendants = dtx.single.Traversing.descendants(xml, false);
-			
-			textDescendants = allDescendants.filter(function(x:Xml)
+			if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
 			{
-				return x.nodeType == dtx.DOMType.TEXT_NODE;
-			});
-			
-			
-			var s = new StringBuf();
-			for (textNode in textDescendants)
-			{
-				s.add(textNode.toString());
+				var allDescendants:DOMCollection;
+				var textDescendants:DOMCollection;
+				
+				allDescendants = dtx.single.Traversing.descendants(xml, false);
+				
+				textDescendants = allDescendants.filter(function(x:Xml)
+				{
+					return x.nodeType == dtx.DOMType.TEXT_NODE;
+				});
+				
+				
+				var s = new StringBuf();
+				for (textNode in textDescendants)
+				{
+					s.add(textNode.toString());
+				}
+				
+				ret = s.toString();
 			}
-			
-			ret = s.toString();
-		}
-		else 
-		{
-			ret = xml.nodeValue;
+			else 
+			{
+				ret = xml.nodeValue;
+			}
 		}
 		return ret;
 	}
