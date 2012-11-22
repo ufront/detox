@@ -99,9 +99,11 @@ class LoopTest
 	@Test 
 	public function preventDuplicatesNull():Void
 	{
-		var l = new Loop<String>();
-		l.preventDuplicates = null;
-		Assert.areEqual(false, l.preventDuplicates);
+		#if (js || neko || php )
+			var l = new Loop<String>();
+			l.preventDuplicates = null;
+			Assert.areEqual(false, l.preventDuplicates);
+		#end 
 	}
 
 	@Test 

@@ -66,7 +66,10 @@ class Loop<T> extends DOMCollection
 
 	function set_preventDuplicates(v:Bool)
 	{
-		if (v == null) v = false;
+		#if (js || neko || php)
+			if (v == null) v = false;
+		#end 
+
 		preventDuplicates = v;
 
 		if (v == true && items.length > 0)
