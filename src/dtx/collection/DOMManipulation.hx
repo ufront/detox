@@ -81,7 +81,7 @@ class DOMManipulation
 	}
 
 	/** Prepend this node to the specified parent */
-	static public inline function prependTo(children:DOMCollection, ?parentNode:DOMNode = null, ?parentCollection:DOMCollection = null)
+	static public function prependTo(children:DOMCollection, ?parentNode:DOMNode = null, ?parentCollection:DOMCollection = null)
 	{
 		if (children != null)
 		{
@@ -169,7 +169,7 @@ class DOMManipulation
 		return content;
 	}
 
-	static public inline function beforeThisInsert(target:DOMCollection, ?contentNode:DOMNode, ?contentCollection:DOMCollection)
+	static public function beforeThisInsert(target:DOMCollection, ?contentNode:DOMNode, ?contentCollection:DOMCollection)
 	{
 		if (contentNode != null)
 		{
@@ -185,7 +185,7 @@ class DOMManipulation
 		return target;
 	}
 
-	static public inline function afterThisInsert(target:DOMCollection, ?contentNode:DOMNode, ?contentCollection:DOMCollection)
+	static public function afterThisInsert(target:DOMCollection, ?contentNode:DOMNode, ?contentCollection:DOMCollection)
 	{
 		if (contentNode != null)
 		{

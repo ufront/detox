@@ -92,7 +92,7 @@ class DOMManipulation
 	}
 
 	/** Prepend this node to the specified parent */
-	static public inline function prependTo(child:DOMNode, ?parentNode:DOMNode = null, ?parentCollection:DOMCollection = null)
+	static public function prependTo(child:DOMNode, ?parentNode:DOMNode = null, ?parentCollection:DOMCollection = null)
 	{
 		if (parentNode != null)
 		{
@@ -145,7 +145,7 @@ class DOMManipulation
 		return content;
 	}
 
-	static public inline function insertThisAfter(content:DOMNode, ?targetNode:DOMNode, ?targetCollection:DOMCollection)
+	static public function insertThisAfter(content:DOMNode, ?targetNode:DOMNode, ?targetCollection:DOMCollection)
 	{
 		if (content != null)
 		{
