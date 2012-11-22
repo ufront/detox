@@ -35,9 +35,9 @@ class XMLWrapper
 		return lastChild;
 	}
 
-	static public inline function appendChild(xml:Xml, child:Xml)
+	static public function appendChild(xml:Xml, child:Xml)
 	{
-		if (xml != null) xml.insertChild(child, Lambda.count(xml));
+		if (xml != null) xml.addChild(child);
 	}
 
 	static public function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
