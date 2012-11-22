@@ -191,7 +191,7 @@ class LoopTest
 		var i = l.generateItem(null);
 
 		Assert.areEqual(null, i.input);
-		Assert.areEqual("null", i.dom.html());
+		// As long as this doesn't throw an error, we should be okay.
 	}
 
 	@Test 
@@ -735,15 +735,51 @@ class LoopTest
 		Assert.areEqual(-1, l.getItemPos(i));
 	}
 
-	@Test 
+	// @Test 
+	// @TestDebug
+	// public function testStupidBehaviour():Void 
+	// {
+	// 	var d:Xml = Xml.parse("<a>A</a><b>B</b><i>I</i>");
+	// 	var aTextNode:Xml = null;
+	// 	var bTextNode:Xml = null;
+	// 	var iElement:Xml = null;
+	// 	for (e in d.elements())
+	// 	{
+	// 		switch (e.nodeName.toLowerCase())
+	// 		{
+	// 			case "a":
+	// 				aTextNode = e.firstChild();
+	// 			case "b":
+	// 				bTextNode = e.firstChild();
+	// 			case "i":
+	// 				iElement = e;
+	// 		}
+	// 	}
+		
+	// 	Assert.areEqual("<a>A</a><b>B</b><i>I</i>", d.html());
+	// 	Assert.areEqual("<a>A</a>", aTextNode.parent.html());
+	// 	Assert.areEqual("<b>B</b>", bTextNode.parent.html());
+	// 	Assert.areEqual("<i>I</i>", iElement.html());
+
+	// 	iElement.addChild(aTextNode);
+	// 	iElement.addChild(bTextNode);
+
+	// 	Assert.areEqual("<a/><b/><i>IAB</i>", d.html());
+	// 	Assert.areEqual("<i>IAB</i>", aTextNode.parent.html());
+	// 	Assert.areEqual("<i>IAB</i>", bTextNode.parent.html());
+	// }
+
+	@Test
 	public function getItemPosItemMovedInDOM():Void
 	{
-		var div = "div".create();
+		var div = "body".create();
 		var l = new Loop<String>();
 		l.appendTo(div);
 		l.preventDuplicates = true;
 		l.addList('A,1,B,C,D'.split(','));
 		var i = l.findItem("1");
+
+		trace (div.innerHTML());
 
 		// Test starting position
 		Assert.areEqual("<!-- Detox Loop -->A1BCD", div.innerHTML());
