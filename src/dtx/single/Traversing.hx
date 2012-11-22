@@ -156,7 +156,7 @@ class Traversing
 		}
 
 		// This will either be null or the next valid sibling
-		return cast sibling;
+		return sibling;
 	}
 
 	static public function prev(node:DOMNode, ?elementsOnly:Bool = true):DOMNode
