@@ -20,7 +20,7 @@ class XMLWrapper
 		return xml.parent;
 	}
 
-	static public inline function hasChildNodes(xml:Xml):Bool 
+	static public function hasChildNodes(xml:Xml):Bool 
 	{
 		return xml.iterator().hasNext();
 	}
@@ -40,7 +40,7 @@ class XMLWrapper
 		xml.insertChild(child, Lambda.count(xml));
 	}
 
-	static public inline function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
+	static public function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
 	{
 		#if flash
 			var targetIndex = untyped target._node.childIndex();
@@ -55,7 +55,7 @@ class XMLWrapper
 		xml.insertChild(content, targetIndex);
 	}
 
-	static public inline function nextSibling(xml:Xml)
+	static public function nextSibling(xml:Xml)
 	{
 		#if flash 
 			var sibling:Xml = null;
@@ -89,7 +89,7 @@ class XMLWrapper
 		#end
 	}
 
-	static public inline function previousSibling(xml:Xml)
+	static public function previousSibling(xml:Xml)
 	{
 		#if flash
 			var sibling:Xml = null;
