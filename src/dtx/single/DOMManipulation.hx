@@ -150,10 +150,9 @@ class DOMManipulation
 			if (targetNode != null)
 			{
 				var next = #if js targetNode.nextSibling #else targetNode.nextSibling() #end;
+				var parent:DOMNode = #if js targetNode.parentNode #else targetNode.parentNode() #end;
 				if (next != null)
 				{
-					var parent:DOMNode = #if js targetNode.parentNode #else targetNode.parentNode() #end;
-					var next = #if js targetNode.nextSibling #else targetNode.nextSibling() #end;
 					if (parent != null)
 					{
 						parent.insertBefore(content, next);
@@ -161,7 +160,6 @@ class DOMManipulation
 				}
 				else 
 				{
-					var parent:DOMNode = #if js targetNode.parentNode #else targetNode.parentNode() #end;
 					if (parent != null)
 					{
 						parent.appendChild(content);
