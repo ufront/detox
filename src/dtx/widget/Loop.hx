@@ -280,10 +280,12 @@ class Loop<T> extends DOMCollection
 	
 	/** This finds an item based on either the input or the DOM element and returns the LoopItem object.
 
+	You can pass in either input (T), a single node (DOMNode), or a collection of nodes to match against (DOMCollection)
+
 	If no match is found, it returns null. If both input and dom are provided, it will return an item matching 
 	the input if that exists first, or else an item matching the DOMCollection if that exists.  It will not check
 	that both match - it will search for a match on either criteria. */
-	public function findItem(?input:T, ?dom:DOMCollection):LoopItem<T>
+	public function findItem(?input:T, ?node:DOMNode, ?collection:DOMCollection):LoopItem<T>
 	{
 		if (input != null)
 		{
@@ -293,12 +295,25 @@ class Loop<T> extends DOMCollection
 				return results.first();
 			}
 		}
-		if (dom != null)
+		if (node != null)
 		{
-			var results = items.filter(function (item) { return item.dom == dom; });
-			if (results.length > 0)
+			var results = items.filter(function (item) { return item.dom.has(node); });
+			if (results.length > 0) return results.first();
+		}
+		if (collection != null)
+		{
+			for (n in collection)
 			{
-				return results.first();
+				for (item in items)
+				{
+					for (itemNode in item.dom)
+					{
+						if (n == itemNode)
+						{
+							return item;
+						}
+					}
+				}
 			}
 		}
 		return null;

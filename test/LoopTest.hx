@@ -761,26 +761,106 @@ class LoopTest
 	@Test 
 	public function findItemValue():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C,D'.split(','));
+
+		var i1 = l.findItem('B');
+		var i2 = l.findItem('D');
+
+		Assert.areEqual('B', i1.dom.text());
+		Assert.areEqual(1, l.getItemPos(i1));
+		Assert.areEqual('D', i2.dom.text());
+		Assert.areEqual(3, l.getItemPos(i2));
 	}
 
 	@Test 
-	public function findItemDom():Void
+	public function findItemDomNode():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B<b>B</b>,C,D,I<i>I</i>'.split(','));
+
+		var node1 = l.getNode(3); // <b>B</b>
+		var node2 = node1.next(false); // C
+
+		var i1 = l.findItem(node1);
+		var i2 = l.findItem(node2);
+
+		Assert.areEqual('BB', i1.dom.text());
+		Assert.areEqual('C', i2.dom.text());
+	}
+
+	@Test 
+	public function findItemDomCollection():Void
+	{
+		var div = "div".create();
+		div.setInnerHTML("<p><b>Something</b></p> goes in <b>here</b>");
+
+		var l = new Loop<String>();
+		l.appendTo(div);
+		l.addList('A,B<b>B</b>,C,D,I<i>I</i>'.split(','));
+
+		var collection = div.find("b");
+
+		var i1 = l.findItem(collection);
+
+		Assert.areEqual('BB', i1.dom.text());
 	}
 
 	@Test 
 	public function findItemNull():Void
 	{
+		var l = new Loop<String>();
+		l.addList('A,B,C'.split(','));
+
+		var i1 = l.findItem(null, null, null);
+		var i2 = l.findItem();
+
+		Assert.isNull(i1);
+		Assert.isNull(i2);
 	}
 
 	@Test 
-	public function findItemBoth():Void
+	public function findItemCorrectOrder():Void
 	{
+		// Return first match in this order: value, node, collection
+
+		var l = new Loop<String>();
+		var a = l.addItem('A');
+		var b = l.addItem('B');
+		var z = l.generateItem("Z");
+
+		l.addList('C,D,E,F'.split(','));
+
+		// Should match the value 1st, not test the 2nd and 3rd
+		var i1 = l.findItem(a.input, b.dom.getNode(), b.dom);
+
+		// Will fail on the 1st, match the 2nd, and not test the 3rd
+		var i2 = l.findItem(z.input, a.dom.getNode(), b.dom);
+
+		// Will fail on 1st and 2nd, match the 3rd
+		var i3 = l.findItem(z.input, z.dom.getNode(), a.dom);
+
+		Assert.areEqual("A", i1.dom.text());
+		Assert.areEqual("A", i2.dom.text());
+		Assert.areEqual("A", i3.dom.text());
 	}
 
 	@Test 
 	public function findItemNotInList():Void
 	{
+		var l = new Loop<String>();
+		var i = l.generateItem('F');
+		var node = i.dom.getNode();
+
+		l.addList('A,B,C,D'.split(','));
+
+		var i1 = l.findItem('E');
+		var i2 = l.findItem(i.dom);
+		var i3 = l.findItem(node);
+
+		Assert.isNull(i1);
+		Assert.isNull(i2);
+		Assert.isNull(i3);
 	}
 
 	@Test 
