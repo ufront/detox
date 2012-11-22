@@ -868,15 +868,57 @@ class LoopTest
 	@Test 
 	public function insertLoopIntoDOM():Void
 	{
+		var div = "<div><p>Paragraph</p><span>Span</span></div>".parse();
+		var l = new Loop<String>();
+		l.appendTo(div.find("p"));
+		l.addList('A,B,C,D'.split(','));
+
+		Assert.areEqual("<div><p>Paragraph<!-- Detox Loop -->ABCD</p><span>Span</span></div>", div.html());
+		Assert.areEqual(6, div.find("p").children(false).length);
+
+		l.addItem('E');
+
+		Assert.areEqual("<div><p>Paragraph<!-- Detox Loop -->ABCDE</p><span>Span</span></div>", div.html());
+		Assert.areEqual(7, div.find("p").children(false).length);
 	}
 
 	@Test 
 	public function removeLoopFromDOM():Void
 	{
+		var div = "<div><p>Paragraph</p><span>Span</span></div>".parse();
+		var l = new Loop<String>();
+		l.appendTo(div.find("p"));
+		l.addList('A,B,C,D'.split(','));
+
+		Assert.areEqual("<div><p>Paragraph<!-- Detox Loop -->ABCD</p><span>Span</span></div>", div.html());
+		Assert.areEqual(6, div.find("p").children(false).length);
+
+		l.removeFromDOM();
+
+		Assert.areEqual("<div><p>Paragraph</p><span>Span</span></div>", div.html());
+		Assert.areEqual(1, div.find("p").children(false).length);
 	}
 
 	@Test 
 	public function removeLoopAndReattach():Void
 	{
+		var div = "<div><p>Paragraph</p><span>Span</span></div>".parse();
+		var l = new Loop<String>();
+		l.appendTo(div.find("p"));
+		l.addList('A,B,C,D'.split(','));
+
+		Assert.areEqual("<div><p>Paragraph<!-- Detox Loop -->ABCD</p><span>Span</span></div>", div.html());
+		Assert.areEqual(6, div.find("p").children(false).length);
+
+		l.removeFromDOM();
+		l.addItem('E');
+
+		Assert.areEqual("<div><p>Paragraph</p><span>Span</span></div>", div.html());
+		Assert.areEqual(1, div.find("p").children(false).length);
+
+		l.appendTo(div.find("p"));
+
+		Assert.areEqual("<div><p>Paragraph<!-- Detox Loop -->ABCDE</p><span>Span</span></div>", div.html());
+		Assert.areEqual(7, div.find("p").children(false).length);
 	}
 }
