@@ -807,19 +807,6 @@ class LoopTest
 	}
 
 	@Test 
-	public function findItemNull():Void
-	{
-		var l = new Loop<String>();
-		l.addList('A,B,C'.split(','));
-
-		var i1 = l.findItem(null, null, null);
-		var i2 = l.findItem();
-
-		Assert.isNull(i1);
-		Assert.isNull(i2);
-	}
-
-	@Test 
 	public function findItemCorrectOrder():Void
 	{
 		// Return first match in this order: value, node, collection
@@ -843,6 +830,19 @@ class LoopTest
 		Assert.areEqual("A", i1.dom.text());
 		Assert.areEqual("A", i2.dom.text());
 		Assert.areEqual("A", i3.dom.text());
+	}
+
+	@Test 
+	public function findItemNull():Void
+	{
+		var l = new Loop<String>();
+		l.addList('A,B,C'.split(','));
+
+		var i1 = l.findItem(null, null, null);
+		var i2 = l.findItem();
+
+		Assert.isNull(i1);
+		Assert.isNull(i2);
 	}
 
 	@Test 
