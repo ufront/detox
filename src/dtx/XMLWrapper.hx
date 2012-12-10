@@ -37,7 +37,13 @@ class XMLWrapper
 
 	static public function appendChild(xml:Xml, child:Xml)
 	{
-		if (xml != null) xml.addChild(child);
+		if (xml != null && child != null)
+		{
+			#if flash 
+				if (child.parent != null) child.parent.removeChild(child);
+			#end
+			if (xml != null) xml.addChild(child);
+		}
 	}
 
 	static public function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
@@ -45,7 +51,10 @@ class XMLWrapper
 		if (xml != null && content != null && target != null)
 		{
 			#if flash
-				var targetIndex = untyped target._node.childIndex();
+				if (content.parent != null) content.parent.removeChild(content);
+				if( xml.nodeType != Xml.Element && xml.nodeType != Xml.Document )
+					throw "bad nodeType";
+				untyped xml._node.insertChildBefore(target._node, content._node);
 			#else 
 				var targetIndex = 0;
 				var iter = xml.iterator();
@@ -53,8 +62,8 @@ class XMLWrapper
 				{
 					targetIndex++;
 				}
+				xml.insertChild(content, targetIndex);
 			#end
-			xml.insertChild(content, targetIndex);
 		}
 	}
 

@@ -113,6 +113,22 @@ class DOMManipulationTest
 		Assert.isTrue(sampleListItem == a.children().getNode(3));
 	}
 
+	@Test
+	public function appendNodeThatIsAlreadyAttached()
+	{
+		Assert.areEqual(a.html(), a2.parents().html());
+		Assert.areEqual(0, b.find('#a2').length);
+		Assert.areEqual(3, a.children().length);
+		Assert.areEqual(3, b.children().length);
+
+		b.append(a2);
+
+		Assert.areEqual(b.html(), a2.parents().html());
+		Assert.areEqual(0, a2.find('#a2').length);
+		Assert.areEqual(2, a.children().length);
+		Assert.areEqual(4, b.children().length);
+	}
+
 	@Test 
 	public function appendCollection()
 	{
