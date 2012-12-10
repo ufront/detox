@@ -78,12 +78,16 @@ class XMLWrapper
 				// get the index
 				var i = flashXML.childIndex();
 				// get the siblings
-				var children:flash.xml.XMLList = flashXML.parent().children();
-				// get the previous item
-				var index = i + 1;
-				if (index >= 0 && index < children.length())
+				var parent = flashXML.parent();
+				if (parent != null)
 				{
-					sibling = untyped Xml.wrap( children[index] );
+					var children:flash.xml.XMLList = parent.children();
+					// get the previous item
+					var index = i + 1;
+					if (index >= 0 && index < children.length())
+					{
+						sibling = untyped Xml.wrap( children[index] );
+					}
 				}
 			}
 			return sibling;
