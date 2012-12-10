@@ -484,6 +484,44 @@ class DOMManipulationTest
 		Assert.isTrue(before == a.innerHTML());
 	}
 
+	@Test
+	public function afterThisInsert_CheckReference()
+	{
+		Assert.areEqual("Start<!--Comment-->End", nonElements.innerHTML());
+		Assert.areEqual(3, nonElements.children(false).length);
+		Assert.areEqual(7, a.children(false).length);
+
+		// Move it to a different location
+		a2.afterThisInsert(comment);
+
+		Assert.areEqual("StartEnd", nonElements.innerHTML());
+		Assert.areEqual(2, nonElements.children(false).length);
+		Assert.areEqual(8, a.children(false).length);
+
+		// Update the inner text, and check the new location updates
+		comment.setInnerHTML("Two");
+
+		Assert.areEqual("<!--Two-->", a.find("#a2").next(false).html());
+	}
+
+	@Test
+	public function afterThisInsert_CheckReferenceDOM()
+	{
+		// Start with a collection, things labelled "before"
+		insertSiblingTargetDOMCollection.setInnerHTML("BEFORE");
+		Assert.areEqual(7, a.children(false).length);
+
+		// Move it to a different location
+		a2.afterThisInsert(insertSiblingTargetDOMCollection);
+		Assert.areEqual(9, a.children(false).length);
+		Assert.areEqual("BEFOREBEFORE", a.find("i.target").text());
+
+		// Update the inner text, and check the new location updates
+		insertSiblingTargetDOMCollection.setInnerHTML("AFTER");
+		Assert.areEqual(9, a.children(false).length);
+		Assert.areEqual("AFTERAFTER", a.find("i.target").text());
+	}
+
 	@Test 
 	public function removeFromDOM()
 	{
