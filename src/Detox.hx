@@ -23,12 +23,6 @@
 // However, by using `typedef = dtx.Tools`
 // We can include that class with haxe's "using" magic.
 
-// dtx.Tools provides 3 handy functions:
-// 
-//    "div".create();
-//    "<b>Some Text</b>".parse();
-//    "#title".find();
-typedef Detox = dtx.Tools;
 
 // 
 // Core classes
@@ -48,6 +42,14 @@ typedef CollectionTraversing = dtx.collection.Traversing;
 
 typedef DOMNode = dtx.DOMNode;
 typedef DOMCollection = dtx.DOMCollection;
+
+// dtx.Tools provides 3 handy functions:
+// 
+//    "div".create();
+//    "<b>Some Text</b>".parse();
+//    "#title".find();
+typedef Detox = dtx.Tools;
+
 // 
 // Client JS only classes
 // 
