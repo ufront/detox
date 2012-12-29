@@ -48,13 +48,21 @@ class Tools
 {
 	public static var document(get_document,null):DocumentOrElement;
 	#if js 
-	public static var body(get_body,null):dtx.DOMNode;
+	public static var body(get_body,null):DOMNode;
 	public static var window(get_window,null):Window; 
 	#end
 
 	function new()
 	{
 		
+	}
+
+	/**
+	* A helper function to turn a single node into a collection
+	*/
+	public static function toCollection(n:DOMNode)
+	{
+		return new DOMCollection(n);
 	}
 
 	/**
