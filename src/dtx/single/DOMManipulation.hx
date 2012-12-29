@@ -149,8 +149,8 @@ class DOMManipulation
 		{
 			if (targetNode != null)
 			{
-				var next = #if js targetNode.nextSibling #else targetNode.nextSibling() #end;
-				var parent:DOMNode = #if js targetNode.parentNode #else targetNode.parentNode() #end;
+				var next = targetNode.nextSibling #if !js () #end;
+				var parent:DOMNode = targetNode.parentNode #if !js () #end;
 				if (parent != null)
 				{
 					if (next != null)
