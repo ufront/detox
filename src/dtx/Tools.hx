@@ -12,10 +12,15 @@
 package dtx;
 
 #if js
-import js.w3c.level3.Core;
-import js.w3c.level3.Events;
-import CommonJS; 
-import UserAgentContext;
+	#if haxe_211
+		typedef Window = js.html.DOMWindow;
+		import js.html.EventTarget;
+	#else 
+		import js.w3c.level3.Core;
+		import js.w3c.level3.Events;
+		import CommonJS; 
+		import UserAgentContext;
+	#end
 #end
 import dtx.DOMCollection;
 import dtx.DOMNode;
