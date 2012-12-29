@@ -40,9 +40,13 @@ class XMLWrapper
 		if (xml != null && child != null)
 		{
 			#if flash 
-				if (child.parent != null) child.parent.removeChild(child);
+				var flashXML:flash.xml.XML = untyped xml._node;
+				if( xml.nodeType != Xml.Element && xml.nodeType != Xml.Document )
+					throw "bad nodeType";		
+				flashXML.appendChild(untyped child._node);
+			#else 
+				xml.addChild(child);
 			#end
-			if (xml != null) xml.addChild(child);
 		}
 	}
 
