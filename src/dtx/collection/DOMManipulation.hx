@@ -140,9 +140,8 @@ class DOMManipulation
 				// insert this collection of content into a single parent
 				for (childToAdd in content)
 				{
-					// insert a single child just before a single target
 					dtx.single.DOMManipulation.insertThisAfter(childToAdd, currentTarget);
-
+					
 					// target the next one to go after this one
 					currentTarget = childToAdd;
 				}
