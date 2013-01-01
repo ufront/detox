@@ -519,13 +519,19 @@ class WidgetTools
             {
                 // this is not a boolean, does it need to be processed separately?
             }
-            else if (attName.startsWith('dtx-loop'))
+            else if (attName == 'dtx-loop')
             {
                 // loop this element...
             }
-            else if (attName.startsWith('dtx-value'))
+            else if (attName == 'dtx-value')
             {
                 // Every time the value changes, change this.
+            }
+            else if (attName == 'dtx-name')
+            {
+                var name = node.attr(attName);
+                node.removeAttr(attName);
+                createNamedPropertyForElement(node, name);
             }
             else if (attName.startsWith('dtx-'))
             {
