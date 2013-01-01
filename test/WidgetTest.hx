@@ -269,6 +269,21 @@ class WidgetTest
 		Assert.areEqual("<doc><header><title>Test Partial</title></header><section><h1>New Partial</h1><p>Paragraph</p></section></doc>", w.html());
 	}
 
+	@Test 
+	public function namedElements()
+	{
+		var w = new widgets.WidgetWithNamedElements();
+
+		Assert.areEqual("This is the head", w.head.text());
+		Assert.areEqual("This is the body", w.body.text());
+
+		w.head.setInnerHTML("The <b>Head!</b>");
+		w.body.setInnerHTML("The <b>Body!</b>");
+
+		Assert.areEqual("The <b>Head!</b>", w.head.innerHTML());
+		Assert.areEqual("The <b>Body!</b>", w.body.innerHTML());
+	}
+
 	// @Test 
 	// public function includeNamedPartial()
 	// {
