@@ -543,6 +543,39 @@ class WidgetTools
         }
     }
 
+    static function createNamedPropertyForElement(node:dtx.DOMNode, name:String)
+    {
+        if (name != "")
+        {
+            var selector = getUniqueSelectorForNode(node); // Returns for example: dtx.collection.Traversing.find(this, $selectorTextAsExpr)
+
+            // Set up a public field in the widget, public var $name(default,set_$name):$type
+            var propType = TPath({
+                sub: null,
+                params: [],
+                pack: ['dtx'],
+                name: "DOMCollection"
+            });
+            var prop = BuildTools.getOrCreateProperty(name, propType, true, false);
+            
+            // Change the setter to null
+            switch (prop.property.kind)
+            {
+                case FieldType.FProp(get, set, t, e):
+                    prop.property.kind = FieldType.FProp(get, "null", t, e);
+                default:
+            }
+
+            // Change the getter body
+            switch( prop.getter.kind )
+            {
+                case FFun(f):
+                    f.expr = macro return $selector;
+                default: 
+            }
+        }
+    }
+
     static var uniqueDtxID:Int = 0;
     
     /** Get a unique selector for the node, creating a data attribute if necessary */
