@@ -11,8 +11,12 @@
 
 package dtx.single;
 
-import js.w3c.level3.Core;
-import js.w3c.css.CSSOM;
+#if haxe_211
+	import js.html.CSSStyleDeclaration;
+#else 
+	import js.w3c.level3.Core;
+	import js.w3c.css.CSSOM;
+#end 
 
 /* 
 Functionality to implement:

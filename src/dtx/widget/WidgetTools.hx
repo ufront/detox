@@ -183,6 +183,10 @@ class WidgetTools
     
     static function createField_get_template(template:String, widgetPos:Position):Field
     {
+        // Clear whitespace from the start and end of the widget
+        var whitespaceStartOrEnd = ~/^\s+|\s+$/g;
+        template = whitespaceStartOrEnd.replace(template, "");
+
         return { 
             name : "get_template", 
             doc : null, 
@@ -292,6 +296,7 @@ class WidgetTools
                 {
                     interpolateTextNodes(node);
                 }
+                clearWhitespaceFromTextnode(node);
             }
         }
 
@@ -312,6 +317,28 @@ class WidgetTools
 
         return { template: xml.html(), fields: fieldsToAdd };
     }
+
+    static function clearWhitespaceFromTextnode(node:dtx.DOMNode)
+    {
+        var text = node.text();
+        if (node.prev() == null)
+        {
+            // if it's the first, get rid of stuff at the start
+            var re = ~/^\s+/g;
+            text = re.replace(text, "");
+        }
+        if (node.next() == null)
+        {
+            // if it's the last node, get rid of stuff at the end
+            var re = ~/\s+$/g;
+            text = re.replace(text, "");   
+        }
+
+        if (text == "" || ~/^\s+$/.match(text))
+            node.removeFromDOM();
+        else 
+            node.setText(text);
+    }
     
     static function processPartialDeclarations(node:dtx.DOMNode, wholeTemplate:dtx.DOMCollection)
     {
@@ -329,11 +356,19 @@ class WidgetTools
 
         // Create a class for this partial
 
+        var p = Context.currentPos();
         var localClass = haxe.macro.Context.getLocalClass();
         var name = node.nodeName;
-        var partialTpl = node.innerHTML();
         var pack = localClass.get().pack;
-        var p = Context.currentPos();
+        // Before getting the partial TPL, let's clear out any whitespace
+        for (d in node.descendants(false))
+        {
+            if (d.isTextNode())
+            {
+                clearWhitespaceFromTextnode(d);
+            }
+        }
+        var partialTpl = node.innerHTML();
 
         var className = localClass.get().name + name;
         var classKind = TypeDefKind.TDClass({
@@ -484,13 +519,19 @@ class WidgetTools
             {
                 // this is not a boolean, does it need to be processed separately?
             }
-            else if (attName.startsWith('dtx-loop'))
+            else if (attName == 'dtx-loop')
             {
                 // loop this element...
             }
-            else if (attName.startsWith('dtx-value'))
+            else if (attName == 'dtx-value')
             {
                 // Every time the value changes, change this.
+            }
+            else if (attName == 'dtx-name')
+            {
+                var name = node.attr(attName);
+                node.removeAttr(attName);
+                createNamedPropertyForElement(node, name);
             }
             else if (attName.startsWith('dtx-'))
             {
@@ -504,6 +545,39 @@ class WidgetTools
                 {
                     interpolateAttributes(node, attName);
                 }
+            }
+        }
+    }
+
+    static function createNamedPropertyForElement(node:dtx.DOMNode, name:String)
+    {
+        if (name != "")
+        {
+            var selector = getUniqueSelectorForNode(node); // Returns for example: dtx.collection.Traversing.find(this, $selectorTextAsExpr)
+
+            // Set up a public field in the widget, public var $name(default,set_$name):$type
+            var propType = TPath({
+                sub: null,
+                params: [],
+                pack: ['dtx'],
+                name: "DOMCollection"
+            });
+            var prop = BuildTools.getOrCreateProperty(name, propType, true, false);
+            
+            // Change the setter to null
+            switch (prop.property.kind)
+            {
+                case FieldType.FProp(get, set, t, e):
+                    prop.property.kind = FieldType.FProp(get, "null", t, e);
+                default:
+            }
+
+            // Change the getter body
+            switch( prop.getter.kind )
+            {
+                case FFun(f):
+                    f.expr = macro return $selector;
+                default: 
             }
         }
     }

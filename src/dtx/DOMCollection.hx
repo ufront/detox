@@ -19,10 +19,7 @@ package dtx;
 * - create()
 * - parse()
 **/
-#if js
-import js.w3c.level3.Core;
-import CommonJS;
-#else 
+#if !js
 using dtx.XMLWrapper; 
 #end
 import dtx.DOMNode;

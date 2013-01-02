@@ -37,7 +37,17 @@ class XMLWrapper
 
 	static public function appendChild(xml:Xml, child:Xml)
 	{
-		if (xml != null) xml.addChild(child);
+		if (xml != null && child != null)
+		{
+			#if flash 
+				var flashXML:flash.xml.XML = untyped xml._node;
+				if( xml.nodeType != Xml.Element && xml.nodeType != Xml.Document )
+					throw "bad nodeType";		
+				flashXML.appendChild(untyped child._node);
+			#else 
+				xml.addChild(child);
+			#end
+		}
 	}
 
 	static public function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
@@ -45,7 +55,10 @@ class XMLWrapper
 		if (xml != null && content != null && target != null)
 		{
 			#if flash
-				var targetIndex = untyped target._node.childIndex();
+				if (content.parent != null) content.parent.removeChild(content);
+				if( xml.nodeType != Xml.Element && xml.nodeType != Xml.Document )
+					throw "bad nodeType";
+				untyped xml._node.insertChildBefore(target._node, content._node);
 			#else 
 				var targetIndex = 0;
 				var iter = xml.iterator();
@@ -53,8 +66,8 @@ class XMLWrapper
 				{
 					targetIndex++;
 				}
+				xml.insertChild(content, targetIndex);
 			#end
-			xml.insertChild(content, targetIndex);
 		}
 	}
 
@@ -69,12 +82,16 @@ class XMLWrapper
 				// get the index
 				var i = flashXML.childIndex();
 				// get the siblings
-				var children:flash.xml.XMLList = flashXML.parent().children();
-				// get the previous item
-				var index = i + 1;
-				if (index >= 0 && index < children.length())
+				var parent = flashXML.parent();
+				if (parent != null)
 				{
-					sibling = untyped Xml.wrap( children[index] );
+					var children:flash.xml.XMLList = parent.children();
+					// get the previous item
+					var index = i + 1;
+					if (index >= 0 && index < children.length())
+					{
+						sibling = untyped Xml.wrap( children[index] );
+					}
 				}
 			}
 			return sibling;

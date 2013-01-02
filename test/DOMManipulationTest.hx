@@ -113,6 +113,22 @@ class DOMManipulationTest
 		Assert.isTrue(sampleListItem == a.children().getNode(3));
 	}
 
+	@Test
+	public function appendNodeThatIsAlreadyAttached()
+	{
+		Assert.areEqual(a.html(), a2.parents().html());
+		Assert.areEqual(0, b.find('#a2').length);
+		Assert.areEqual(3, a.children().length);
+		Assert.areEqual(3, b.children().length);
+
+		b.append(a2);
+
+		Assert.areEqual(b.html(), a2.parents().html());
+		Assert.areEqual(0, a2.find('#a2').length);
+		Assert.areEqual(2, a.children().length);
+		Assert.areEqual(4, b.children().length);
+	}
+
 	@Test 
 	public function appendCollection()
 	{
@@ -466,6 +482,44 @@ class DOMManipulationTest
 		var before = a.innerHTML();
 		a2.afterThisInsert(null);
 		Assert.isTrue(before == a.innerHTML());
+	}
+
+	@Test
+	public function afterThisInsert_CheckReference()
+	{
+		Assert.areEqual("Start<!--Comment-->End", nonElements.innerHTML());
+		Assert.areEqual(3, nonElements.children(false).length);
+		Assert.areEqual(7, a.children(false).length);
+
+		// Move it to a different location
+		a2.afterThisInsert(comment);
+
+		Assert.areEqual("StartEnd", nonElements.innerHTML());
+		Assert.areEqual(2, nonElements.children(false).length);
+		Assert.areEqual(8, a.children(false).length);
+
+		// Update the inner text, and check the new location updates
+		comment.setInnerHTML("Two");
+
+		Assert.areEqual("<!--Two-->", a.find("#a2").next(false).html());
+	}
+
+	@Test
+	public function afterThisInsert_CheckReferenceDOM()
+	{
+		// Start with a collection, things labelled "before"
+		insertSiblingTargetDOMCollection.setInnerHTML("BEFORE");
+		Assert.areEqual(7, a.children(false).length);
+
+		// Move it to a different location
+		a2.afterThisInsert(insertSiblingTargetDOMCollection);
+		Assert.areEqual(9, a.children(false).length);
+		Assert.areEqual("BEFOREBEFORE", a.find("i.target").text());
+
+		// Update the inner text, and check the new location updates
+		insertSiblingTargetDOMCollection.setInnerHTML("AFTER");
+		Assert.areEqual(9, a.children(false).length);
+		Assert.areEqual("AFTERAFTER", a.find("i.target").text());
 	}
 
 	@Test 

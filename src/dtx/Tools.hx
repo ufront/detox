@@ -12,10 +12,15 @@
 package dtx;
 
 #if js
-import js.w3c.level3.Core;
-import js.w3c.level3.Events;
-import CommonJS; 
-import UserAgentContext;
+	#if haxe_211
+		typedef Window = js.html.DOMWindow;
+		import js.html.EventTarget;
+	#else 
+		import js.w3c.level3.Core;
+		import js.w3c.level3.Events;
+		import CommonJS; 
+		import UserAgentContext;
+	#end
 #end
 import dtx.DOMCollection;
 import dtx.DOMNode;
@@ -48,13 +53,21 @@ class Tools
 {
 	public static var document(get_document,null):DocumentOrElement;
 	#if js 
-	public static var body(get_body,null):dtx.DOMNode;
+	public static var body(get_body,null):DOMNode;
 	public static var window(get_window,null):Window; 
 	#end
 
 	function new()
 	{
 		
+	}
+
+	/**
+	* A helper function to turn a single node into a collection
+	*/
+	public static function toCollection(n:DOMNode)
+	{
+		return new DOMCollection(n);
 	}
 
 	/**

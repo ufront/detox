@@ -26,11 +26,11 @@ JQuery has these classes, let's copy:
 
 class ElementManipulation
 {
-	static var NodeTypeElement = 1;
-	static var NodeTypeAttribute = 2;
-	static var NodeTypeText = 3;
-	static var NodeTypeComment = 8;
-	static var NodeTypeDocument = 9;
+	static inline var NodeTypeElement = 1;
+	static inline var NodeTypeAttribute = 2;
+	static inline var NodeTypeText = 3;
+	static inline var NodeTypeComment = 8;
+	static inline var NodeTypeDocument = 9;
 
 	public static function isElement(node:DOMNode):Bool
 	{

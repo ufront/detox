@@ -31,6 +31,7 @@
 
 -cp test
 -js build/js_test.js
+-D embed_js
 
 --next
 
