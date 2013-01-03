@@ -258,8 +258,14 @@ class Tools
 	/** Ensure that Sizzle.js is included as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
 	public static function includeSizzle()
 	{
-		#if !noEmbedJS
-		haxe.macro.Tools.includeFile("sizzle.js");
+		#if haxe_211
+			#if embed_js
+				untyped haxe.macro.Compiler.includeFile("sizzle.js");
+			#end
+		#else
+			#if !noEmbedJS
+				haxe.macro.Tools.includeFile("sizzle.js");
+			#end
 		#end
 	}
 
