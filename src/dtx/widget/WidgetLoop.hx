@@ -1,6 +1,10 @@
 package dtx.widget;
 
-class WidgetLoop<T> extends dtx.widget.Loop<T>
+import dtx.widget.Loop;
+import ufcommon.view.dbadmin.*;
+using Detox;
+
+class WidgetLoop<T> extends Loop<T>
 {
 	var widgetClass:Class<dtx.widget.Widget>;
 	var propName:String;
@@ -12,10 +16,14 @@ class WidgetLoop<T> extends dtx.widget.Loop<T>
 		this.propName = propName;
 	}
 
-	override function generateItem(input:T):DOMCollection
+	override function generateItem(input:T):LoopItem<T>
 	{
-		var w = Type.createInstance(widgetClass, []);
-		w.setProperty(w, propName, input);
-		return w;
+		// Create a new instance of [widgetClass]
+		// Remember dtx.widget.Widget has one optional constructor argument, we'll leave it null.
+		var w:dtx.widget.Widget = Type.createInstance(widgetClass, [null]);
+
+		// Set the property - this should be a fancy 
+		Reflect.setProperty(w, propName, input);
+		return new LoopItem(input, w);
 	}
 }
