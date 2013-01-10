@@ -371,31 +371,54 @@ class WidgetTools
         var partialTpl = node.innerHTML();
 
         var className = localClass.get().name + name;
-        var classKind = TypeDefKind.TDClass({
-            sub: null,
-            params: [],
-            pack: ['dtx','widget'],
-            name: "Widget"
-        });
         var classMeta = [{
             pos: p,
             params: [Context.makeExpr(partialTpl, p)],
             name: "template"
         }];
-        var fields:Array<Field> = [];
 
-        var partialDefinition = {
-            pos: p,
-            params: [],
-            pack: pack,
-            name: className,
-            meta: classMeta,
-            kind: classKind,
-            isExtern: false,
-            fields: fields
-        };
+        // Find out if the type has already been defined
+        var existingClass:Null<haxe.macro.Type>;
+        try { existingClass = Context.getType(className); }
+        catch (e:Dynamic) { existingClass = null; }
 
-        haxe.macro.Context.defineType(partialDefinition);
+        if (existingClass != null)
+        {
+            switch (existingClass)
+            {
+                case TInst(t, params):
+                    var metaAccess = t.get().meta;
+                    if (metaAccess.has("template") == false && metaAccess.has("loadTemplate") == false)
+                    {
+                        // No template has been defined, use ours
+                        metaAccess.add("template", [Context.makeExpr(partialTpl, p)], p);
+                    }
+                default:
+            }
+        }
+        else 
+        {
+            var classKind = TypeDefKind.TDClass({
+                sub: null,
+                params: [],
+                pack: ['dtx','widget'],
+                name: "Widget"
+            });
+            var fields:Array<Field> = [];
+
+            var partialDefinition = {
+                pos: p,
+                params: [],
+                pack: pack,
+                name: className,
+                meta: classMeta,
+                kind: classKind,
+                isExtern: false,
+                fields: fields
+            };
+
+            haxe.macro.Context.defineType(partialDefinition);
+        }
     }
 
     static function processPartialCalls(node:dtx.DOMNode, wholeTemplate:dtx.DOMCollection, t:Int)
