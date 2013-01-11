@@ -43,7 +43,7 @@ class WidgetLoop<T> extends Loop<T>
 		if (autoPropMap)
 		{
 			var fieldNames:Array<String>;
-			switch (Type.typeOf(input))
+			switch (Type.typeof(input))
 			{
 				case TObject:
 					// Anonymous object, use Reflect.fields()
