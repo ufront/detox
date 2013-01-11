@@ -626,7 +626,17 @@ class WidgetTools
         } 
 
         var selectorTextAsExpr = Context.makeExpr(selector, Context.currentPos());
-        var selectorExpr = isTopLevelElement(node) ? macro this : macro dtx.collection.Traversing.find(this, $selectorTextAsExpr);
+        var selectorExpr:Expr;
+        if (isTopLevelElement(node))
+        {
+            var indexInCollection = node.parent.indexOf(node).toExpr();
+            selectorExpr = (node.parent.count() == 1) ? macro this : macro dtx.collection.Traversing.find(dtx.collection.Traversing.parent(this), $selectorTextAsExpr);
+        }
+        else 
+        {
+            selectorExpr = macro dtx.collection.Traversing.find(this, $selectorTextAsExpr);
+        }
+
         return selectorExpr;
     }
 
