@@ -58,11 +58,8 @@ class WidgetLoop<T> extends Loop<T>
 
 			for (fieldName in fieldNames)
 			{
-				if (Reflect.hasField(w, fieldName))
-				{
-					var modelValue = Reflect.getProperty(input, fieldName);
-					Reflect.setProperty(w, fieldName, modelValue);
-				}
+				var modelValue = Reflect.getProperty(input, fieldName);
+				Reflect.setProperty(w, fieldName, modelValue);
 			}
 		}
 		return new LoopItem(input, w);
