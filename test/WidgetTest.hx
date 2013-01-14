@@ -50,36 +50,10 @@ class WidgetTest
 	}
 
 	@Test 
-	public function createWidgetFromString()
-	{
-		var w = new Widget("<div>My Widget</div>");
-		Assert.areEqual("div", w.tagName());
-		Assert.areEqual(1, w.length);
-		Assert.areEqual("My Widget", w.innerHTML());
-	}
-
-	@Test 
-	public function createWidgetNull()
-	{
-		var w = new Widget(null);
-		Assert.areEqual("div", w.tagName());
-		Assert.areEqual(1, w.length);
-		Assert.areEqual("", w.innerHTML());
-	}
-
-	@Test 
-	public function createWidgetEmpty()
-	{
-		var w = new Widget("");
-		Assert.areEqual(0, w.length);
-		Assert.areEqual("", w.html());
-	}
-
-	@Test 
 	public function createWidgetNonElement()
 	{
-		var w1 = new Widget("<!--comment-->");
-		var w2 = new Widget("text node");
+		var w1 = new SimpleTestWidget("<!--comment-->");
+		var w2 = new SimpleTestWidget("text node");
 		Assert.isTrue(w1.getNode().isComment());
 		Assert.areEqual("comment", w1.innerHTML());
 		Assert.areEqual(1, w1.length);
@@ -91,7 +65,7 @@ class WidgetTest
 	@Test 
 	public function createWidgetMultipleElements()
 	{
-		var w = new Widget("<h1>Title</h1> <p>Paragraph</p>");
+		var w = new SimpleTestWidget("<h1>Title</h1> <p>Paragraph</p>");
 		Assert.areEqual(3, w.length);
 		Assert.isTrue(w.getNode(0).isElement());
 		Assert.areEqual("h1", w.getNode(0).tagName());
@@ -328,4 +302,20 @@ class WidgetTest
 	// 	var expected = "<doc><h1 class='student' data-dtx-id='0' id='user_joneil'>We've been expecting you, Jason O'Neil</h1><p data-dtx-id='1' title='Jason has their birthday on 16/10/87'>Hover over this paragraph to see Jason's birthday</p><p data-dtx-id='2'>This paragraph <em>purely</em> exists to try show that we can substitute in names like Jason <em>or</em> O'Neil into anywhere and our text nodes won't get messed up.  Also, works with birthdays like <span class='date' data-dtx-id='3'>16/10/87</span></p></doc>";
 	// 	Assert.areEqual("", w.html());
 	// }
+}
+
+
+class SimpleTestWidget extends dtx.widget.Widget
+{
+	var _tpl:String;
+	public function new(tpl:String)
+	{
+		_tpl = tpl;
+		super();
+	}
+
+	override function get_template()
+	{
+		return _tpl;
+	}
 }
