@@ -3,6 +3,7 @@
 -lib munit
 -lib hamcrest
 -lib selecthxml
+-lib tink_macros
 -cp src
 
 -cp test
@@ -28,7 +29,6 @@
 -lib xirsys_stdjs
 -lib beanhx
 -lib tink_macros
-
 -cp test
 -js build/js_test.js
 -D embed_js
@@ -40,6 +40,7 @@
 -lib munit
 -lib hamcrest
 -lib selecthxml
+-lib tink_macros
 -cp src
 
 -cp test
@@ -52,6 +53,7 @@
 -lib munit
 -lib hamcrest
 -lib selecthxml
+-lib tink_macros
 -cp src
 
 -cp test
