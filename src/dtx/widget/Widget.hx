@@ -19,13 +19,12 @@ import dtx.widget.WidgetTools;
 	/** Create a new widget by parsing some "template" html, and use that as our collection.
 	When your class extends this, it will automatically work with the dtx API (through using).  
 	Therefore your class can have very tight integration between haxe features and the DOM. */
-	public function new(?tpl:String)
+	public function new()
 	{
 		super();
 
 		// If get_template() hasn't been overridden by a subclass (or a macro) then
 		// this allows us to set the template by passing one in.
-		if (tpl != null) _tpl = tpl;
 		var q = Detox.parse(get_template());
 		this.collection = q.collection;
 	}
@@ -35,7 +34,7 @@ import dtx.widget.WidgetTools;
 	templating will automatically override this method. */
 	function get_template()
 	{
-		return _tpl;
+		return "";
 	}
 
 	/** When using widgets, this runs immediately after all partials and variables have been initialised.
