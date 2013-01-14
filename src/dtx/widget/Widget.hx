@@ -28,8 +28,7 @@ import dtx.widget.WidgetTools;
 		var q = Detox.parse(get_template());
 		this.collection = q.collection;
 	}
-
-	var _tpl:String = "<div></div>";
+	
 	/** Override this method in your subclass to get template some other way.  Using detox 
 	templating will automatically override this method. */
 	function get_template()
