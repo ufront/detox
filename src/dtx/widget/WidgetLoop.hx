@@ -24,7 +24,7 @@ class WidgetLoop<T> extends Loop<T>
 	{
 		// Create a new instance of [widgetClass]
 		// Remember dtx.widget.Widget has one optional constructor argument, we'll leave it null.
-		var w:dtx.widget.Widget = Type.createInstance(widgetClass, [null]);
+		var w:dtx.widget.Widget = Type.createInstance(widgetClass, []);
 
 		// Set the property or the map of properties
 		if (propName != null)
