@@ -105,14 +105,15 @@ class Loop<T> extends DOMCollection
 	/** Add a new group of items to the current set of items */
 	public function addList(list:Iterable<T>):Array<LoopItem<T>>
 	{
+		var newItems = [];
 		if (list != null)
 		{
 			for (item in list)
 			{
-				var item = addItem(item);
+				newItems.push(addItem(item));
 			}
 		}
-		return items;
+		return newItems;
 	}
 	
 	/** Takes an input, generates a LoopItem, and includes it in the loop. 
