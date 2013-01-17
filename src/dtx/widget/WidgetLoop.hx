@@ -4,14 +4,14 @@ import dtx.widget.Loop;
 import ufcommon.view.dbadmin.*;
 using Detox;
 
-class WidgetLoop<T> extends Loop<T>
+class WidgetLoop<T, W:dtx.widget.Widget> extends Loop<T>
 {
-	var widgetClass:Class<dtx.widget.Widget>;
+	var widgetClass:Class<W>;
 	var propName:String;
 	var propMap:Dynamic<String>;
 	var autoPropMap:Bool;
 
-	public function new(widgetClass:Class<dtx.widget.Widget>, ?propName:String = null, ?propMap:Dynamic<String> = null, ?autoPropMap = true)
+	public function new(widgetClass:Class<W>, ?propName:String = null, ?propMap:Dynamic<String> = null, ?autoPropMap = true)
 	{
 		super();
 		this.widgetClass = widgetClass;
@@ -23,8 +23,7 @@ class WidgetLoop<T> extends Loop<T>
 	override function generateItem(input:T):LoopItem<T>
 	{
 		// Create a new instance of [widgetClass]
-		// Remember dtx.widget.Widget has one optional constructor argument, we'll leave it null.
-		var w:dtx.widget.Widget = Type.createInstance(widgetClass, []);
+		var w:W = Type.createInstance(widgetClass, []);
 
 		// Set the property or the map of properties
 		if (propName != null)
