@@ -14,6 +14,7 @@ package dtx.widget;
 import dtx.DOMCollection;
 import dtx.widget.WidgetTools;
 
+@:keepSub
 @:autoBuild(dtx.widget.WidgetTools.buildWidget()) class Widget extends DOMCollection
 {
 	/** Create a new widget by parsing some "template" html, and use that as our collection.
