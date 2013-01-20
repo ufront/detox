@@ -48,26 +48,39 @@ import dtx.widget.WidgetTools;
 
 	}
 
-	public function mapData(input:Dynamic)
+	/** You can either map an Input, and we'll try to match each field on the input with a field on the
+	widget.  Or you can do a propMap, like propMap = { templateVarA = myValue, templateVarB = getBValue() }*/
+	public function mapData(?input:Dynamic, ?propMap:Dynamic<Dynamic>)
 	{
-		var fieldNames:Array<String>;
-		switch (Type.typeof(input))
+		if (propMap != null)
 		{
-			case TObject:
-				// Anonymous object, use Reflect.fields()
-				fieldNames = Reflect.fields(input);
-			case TClass(c):
-				// Class instance, use Type.getInstanceFields()
-				fieldNames = Type.getInstanceFields(c);
-			default:
-				// This is not an object, so don't do property mapping
-				fieldNames = [];
+			for (templateVar in Reflect.fields(propMap))
+			{
+				var modelValue = Reflect.field(propMap, templateVar);
+				Reflect.setProperty(this, templateVar, modelValue);
+			}
 		}
-
-		for (fieldName in fieldNames)
+		else if (input != null)
 		{
-			var modelValue = Reflect.getProperty(input, fieldName);
-			Reflect.setProperty(this, fieldName, modelValue);
+			var fieldNames:Array<String>;
+			switch (Type.typeof(input))
+			{
+				case TObject:
+					// Anonymous object, use Reflect.fields()
+					fieldNames = Reflect.fields(input);
+				case TClass(c):
+					// Class instance, use Type.getInstanceFields()
+					fieldNames = Type.getInstanceFields(c);
+				default:
+					// This is not an object, so don't do property mapping
+					fieldNames = [];
+			}
+
+			for (fieldName in fieldNames)
+			{
+				var modelValue = Reflect.getProperty(input, fieldName);
+				Reflect.setProperty(this, fieldName, modelValue);
+			}
 		}
 	}
 }

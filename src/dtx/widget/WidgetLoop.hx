@@ -32,12 +32,7 @@ class WidgetLoop<T, W:dtx.widget.Widget> extends Loop<T>
 		}
 		if (propMap != null)
 		{
-			for (modelVar in Reflect.fields(propMap))
-			{
-				var templateVar = Reflect.field(propMap, modelVar);
-				var modelValue = Reflect.getProperty(input, modelVar);
-				Reflect.setProperty(w, templateVar, modelValue);
-			}
+			w.mapData(input, propMap);
 		}
 		if (autoPropMap)
 		{
