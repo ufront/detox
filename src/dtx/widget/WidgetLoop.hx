@@ -20,7 +20,7 @@ class WidgetLoop<T, W:dtx.widget.Widget> extends Loop<T>
 		this.autoPropMap = autoPropMap;
 	}
 
-	override function generateItem(input:T):LoopItem<T>
+	override function generateItem(input:T):WidgetLoopItem<T, W>
 	{
 		// Create a new instance of [widgetClass]
 		var w:W = Type.createInstance(widgetClass, []);
@@ -43,6 +43,26 @@ class WidgetLoop<T, W:dtx.widget.Widget> extends Loop<T>
 		{
 			w.mapData(input);
 		}
-		return new LoopItem(input, w);
+		return new WidgetLoopItem(input, w);
+	}
+
+	public function getWidgetLoopItems():Array<WidgetLoopItem<T, W>>
+	{
+		return cast items;
+	}
+}
+
+class WidgetLoopItem<T, W:dtx.widget.Widget> extends LoopItem<T>
+{
+	public var widget(get,null):W;
+
+	public function new(?input:T, ?dom:W)
+	{
+		super(input, dom);
+	}
+
+	public function get_widget()
+	{
+		return cast dom;
 	}
 }
