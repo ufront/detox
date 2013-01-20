@@ -47,4 +47,27 @@ import dtx.widget.WidgetTools;
 	{
 
 	}
+
+	public function mapData(input:Dynamic)
+	{
+		var fieldNames:Array<String>;
+		switch (Type.typeof(input))
+		{
+			case TObject:
+				// Anonymous object, use Reflect.fields()
+				fieldNames = Reflect.fields(input);
+			case TClass(c):
+				// Class instance, use Type.getInstanceFields()
+				fieldNames = Type.getInstanceFields(c);
+			default:
+				// This is not an object, so don't do property mapping
+				fieldNames = [];
+		}
+
+		for (fieldName in fieldNames)
+		{
+			var modelValue = Reflect.getProperty(input, fieldName);
+			Reflect.setProperty(this, fieldName, modelValue);
+		}
+	}
 }
