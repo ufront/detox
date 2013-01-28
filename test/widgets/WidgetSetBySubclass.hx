@@ -2,8 +2,8 @@ package widgets;
 
 class WidgetSetBySubclass extends dtx.widget.Widget
 {
-	public function new()
+	override function get_template()
 	{
-		super("<h1>Widget set by subclass</h1>");
+		return "<h1>Widget set by subclass</h1>";
 	}
 }

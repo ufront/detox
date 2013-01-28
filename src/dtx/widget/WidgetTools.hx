@@ -142,43 +142,60 @@ class WidgetTools
         var template = BuildTools.getClassMetadata_String("template", true);
         if (template == null)
         {
-            // Get the template file if declared in metadata
-            var templateFile = BuildTools.getClassMetadata_String("loadTemplate", true);
-            if (templateFile == null)
+            // Check if we are loading a partial from in another template
+            var partialInside = BuildTools.getClassMetadata_ArrayOfStrings("partialInside", true);
+            if (partialInside != null && partialInside.length > 0)
             {
-                // If there is no metadata for the template, look for a file in the same 
-                // spot but with ".html" instead of ".hx" at the end.
-                templateFile = className.replace(".", "/") + ".html";
+                if (partialInside.length == 2)
+                {
+                    var templateFile = partialInside[0];
+                    var partialName = partialInside[1];
+                    template = loadPartialFromInTemplate(templateFile, partialName);
+                }
+                else Context.error('@partialInside() metadata should be 2 strings: @partialInside("MyView.html", "_NameOfPartial")', p);
             }
 
-            // Attempt to load the file
-            try 
+            // Check if a template file is declared in metadata
+            if (template == null)
             {
-                template = neko.io.File.getContent(Context.resolvePath(templateFile));
-            } 
-            catch( e : Dynamic ) 
-            {
-                try 
+                var templateFile = BuildTools.getClassMetadata_String("loadTemplate", true);
+                if (templateFile == null)
                 {
-                    // That was searching by fully qualified classpath, but try just the same folder....
-                    var file = Std.string(localClass);  // eg. my.pack.Widget
-                    var arr = file.split(".");          // eg. [my,pack,Widget]
-                    arr.pop();                          // eg. [my,pack]
-                    var path = arr.join("/");           // eg. my/pack
+                    // If there is no metadata for the template, look for a file in the same 
+                    // spot but with ".html" instead of ".hx" at the end.
+                    templateFile = className.replace(".", "/") + ".html";
+                }
 
-                    path = (path.length > 0) ? path + "/" : "./"; // add a trailing slash, unless we're on the current directory
-                    template = neko.io.File.getContent(Context.resolvePath(path + templateFile));
-                }
-                catch (e : Dynamic)
-                {
-                    // If it fails, give an error message at compile time
-                    var errorMessage = "Could not load the widget template: " + templateFile;
-                    Context.warning(errorMessage, p);
-                    template = null;
-                }
+                // Attempt to load the file
+                template = BuildTools.loadFileFromLocalContext(templateFile);
+                if (template == null) Context.warning('Could not load the widget template: $templateFile', p);
             }
+            
         }
         return template;
+    }
+
+    static function loadPartialFromInTemplate(templateFile:String, partialName:String)
+    {
+        var p = Context.getLocalClass().get().pos;                       // Position where the original Widget class is declared
+        var partialTemplate:String = null;
+        
+        var fullTemplate = BuildTools.loadFileFromLocalContext(templateFile);
+        if (fullTemplate != null) 
+        {
+            var tpl = fullTemplate.parse();
+            var allNodes = Lambda.concat(tpl, tpl.descendants());
+            var partialMatches = allNodes.filter(function (n) { return n.nodeType == Xml.Element && n.nodeName == partialName; });
+            if (partialMatches.length == 1)
+            {
+                partialTemplate = partialMatches.first().innerHTML();
+            }
+            else if (partialMatches.length > 1) Context.warning('The partial $partialName was found more than once in the template $templateFile... confusing!', p);
+            else Context.warning('The partial $partialName was not found in the template $templateFile', p);
+        }
+        else Context.warning('Could not load the file $templateFile that $partialName is supposedly in.', p);
+
+        return partialTemplate;
     }
     
     static function createField_get_template(template:String, widgetPos:Position):Field
@@ -371,31 +388,54 @@ class WidgetTools
         var partialTpl = node.innerHTML();
 
         var className = localClass.get().name + name;
-        var classKind = TypeDefKind.TDClass({
-            sub: null,
-            params: [],
-            pack: ['dtx','widget'],
-            name: "Widget"
-        });
         var classMeta = [{
             pos: p,
             params: [Context.makeExpr(partialTpl, p)],
             name: "template"
         }];
-        var fields:Array<Field> = [];
 
-        var partialDefinition = {
-            pos: p,
-            params: [],
-            pack: pack,
-            name: className,
-            meta: classMeta,
-            kind: classKind,
-            isExtern: false,
-            fields: fields
-        };
+        // Find out if the type has already been defined
+        var existingClass:Null<haxe.macro.Type>;
+        try { existingClass = Context.getType(className); }
+        catch (e:Dynamic) { existingClass = null; }
 
-        haxe.macro.Context.defineType(partialDefinition);
+        if (existingClass != null)
+        {
+            switch (existingClass)
+            {
+                case TInst(t, params):
+                    var metaAccess = t.get().meta;
+                    if (metaAccess.has("template") == false && metaAccess.has("loadTemplate") == false)
+                    {
+                        // No template has been defined, use ours
+                        metaAccess.add("template", [Context.makeExpr(partialTpl, p)], p);
+                    }
+                default:
+            }
+        }
+        else 
+        {
+            var classKind = TypeDefKind.TDClass({
+                sub: null,
+                params: [],
+                pack: ['dtx','widget'],
+                name: "Widget"
+            });
+            var fields:Array<Field> = [];
+
+            var partialDefinition = {
+                pos: p,
+                params: [],
+                pack: pack,
+                name: className,
+                meta: classMeta,
+                kind: classKind,
+                isExtern: false,
+                fields: fields
+            };
+
+            haxe.macro.Context.defineType(partialDefinition);
+        }
     }
 
     static function processPartialCalls(node:dtx.DOMNode, wholeTemplate:dtx.DOMCollection, t:Int)
@@ -603,7 +643,17 @@ class WidgetTools
         } 
 
         var selectorTextAsExpr = Context.makeExpr(selector, Context.currentPos());
-        var selectorExpr = isTopLevelElement(node) ? macro this : macro dtx.collection.Traversing.find(this, $selectorTextAsExpr);
+        var selectorExpr:Expr;
+        if (isTopLevelElement(node))
+        {
+            var indexInCollection = node.parent.indexOf(node).toExpr();
+            selectorExpr = (node.parent.count() == 1) ? macro this : macro dtx.collection.Traversing.find(dtx.collection.Traversing.parent(this), $selectorTextAsExpr);
+        }
+        else 
+        {
+            selectorExpr = macro dtx.collection.Traversing.find(this, $selectorTextAsExpr);
+        }
+
         return selectorExpr;
     }
 

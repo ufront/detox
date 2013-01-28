@@ -108,6 +108,8 @@ class Tools
 		return elm;
 	}
 
+	static var firstTag = ~/<([a-z]+)[ \/>]/;
+	// static var firstTag = ~/^[^<]<([a-z]+)[ \/>]/;
 	/**
 	* A helper function that lets you do this:
 	* "<div>Hello <i>There</i></div>".parse().find('i');
@@ -117,7 +119,27 @@ class Tools
 		var q:DOMCollection;
 		if (html != null && html != "")
 		{
-			var n:DOMNode = create('div');
+			#if js 
+				var parentTag = "div";
+				if (firstTag.match(html))
+				{
+					// It begins with a 
+					var tagName = firstTag.matched(1);
+					parentTag = switch(tagName) {
+						case "tbody": "table";
+						case "tfoot": "table";
+						case "thead": "table";
+						case "tr": "tbody";
+						case "th": "tr";
+						case "td": "tr";
+						default: "div";
+					};
+				}
+				var n:DOMNode = create(parentTag);
+			#else 
+				var n:DOMNode = create("div");
+			#end
+
 			//
 			// TODO: report this bug to haxe mailing list.
 			// this is allowed:
@@ -258,8 +280,14 @@ class Tools
 	/** Ensure that Sizzle.js is included as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
 	public static function includeSizzle()
 	{
-		#if !noEmbedJS
-		haxe.macro.Tools.includeFile("sizzle.js");
+		#if haxe_211
+			#if embed_js
+				untyped haxe.macro.Compiler.includeFile("sizzle.js");
+			#end
+		#else
+			#if !noEmbedJS
+				haxe.macro.Tools.includeFile("sizzle.js");
+			#end
 		#end
 	}
 

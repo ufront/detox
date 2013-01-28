@@ -35,8 +35,8 @@ Of course, you could also make your own variation where you override the `genera
 */
 class Loop<T> extends DOMCollection
 {
-	var items:Array<LoopItem<T>>;
 	var referenceNode:dtx.DOMNode;
+	var items:Array<LoopItem<T>>;
 
 	/** Returns the number of items in the loop.  (In comparison to 'length', which returns the total number of DOMNodes in the loop's collection, which may differ from the number of items. */
 	public var numItems(get_numItems,null):Int;
@@ -105,14 +105,15 @@ class Loop<T> extends DOMCollection
 	/** Add a new group of items to the current set of items */
 	public function addList(list:Iterable<T>):Array<LoopItem<T>>
 	{
+		var newItems = [];
 		if (list != null)
 		{
 			for (item in list)
 			{
-				var item = addItem(item);
+				newItems.push(addItem(item));
 			}
 		}
-		return items;
+		return newItems;
 	}
 	
 	/** Takes an input, generates a LoopItem, and includes it in the loop. 
@@ -333,6 +334,13 @@ class Loop<T> extends DOMCollection
 				this.collection.remove(node);
 			}
 		}
+	}
+
+	/** Returns the array of the LoopItems, so each one holds a reference to the input and to the resulting DOM.  Useful for gaining access to the individual nodes/widgets and their respective inputs. 
+	Changing this array directly could break things, be warned. */
+	public function getItems()
+	{
+		return items;
 	}
 
 	inline function get_numItems():Int

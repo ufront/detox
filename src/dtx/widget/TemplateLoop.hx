@@ -1,5 +1,7 @@
 package dtx.widget;
 
+using Detox;
+
 class TemplateLoop<T> extends dtx.widget.Loop<T>
 {
 	var template:T->String;

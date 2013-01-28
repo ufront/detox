@@ -68,12 +68,19 @@ class BuildTools
     }
 
     /** Searches the metadata for the current class - expects to find a single string @dataName("my string"), returns null in none found.  Generates an error if one was found but it was the wrong type. Can search recursively up the super-classes if 'recursive' is true */
-    public static function getClassMetadata_String(dataName:String, recursive=false, ?cl:Ref<ClassType>)
+    public static function getClassMetadata_String(dataName:String, recursive=false, ?cl:Ref<ClassType>):String
+    {
+        var array = getClassMetadata_ArrayOfStrings(dataName, recursive, cl);
+        return (array != null && array.length > 0) ? array[0] : null;
+    }
+    
+    /** Searches the metadata for the current class - expects to find one or more strings @dataName("my string", "2nd string"), returns empty array in none found.  Generates an error if one was found but it was the wrong type. Can search recursively up the super-classes if 'recursive' is true */
+    public static function getClassMetadata_ArrayOfStrings(dataName:String, recursive=false, ?cl:Ref<ClassType>):Array<String>
     {
         var p = Context.currentPos();                           // Position where the original Widget class is declared
         var localClass = (cl == null) ? haxe.macro.Context.getLocalClass() : cl;    // Class that is being declared, or class that is passed in
         var meta = localClass.get().meta;                       // Metadata of the this class
-        var result = null;
+        var result = [];
         if (meta.has(dataName))
         {
             for (metadataItem in meta.get())
@@ -89,8 +96,7 @@ class BuildTools
                                 switch(c) 
                                 {
                                     case CString(str): 
-                                        result = str;
-                                        break;
+                                        result.push(str);
                                     default: 
                                         Context.error("Metadata for " + dataName + "() existed, but was not a constant String.", p);
                                 }
@@ -107,7 +113,7 @@ class BuildTools
             if (localClass.get().superClass != null)
             {
                 var superClass = localClass.get().superClass.t;
-                result = getClassMetadata_String(dataName, true, superClass);
+                result = getClassMetadata_ArrayOfStrings(dataName, true, superClass);
             }
         }
         return result;
@@ -372,6 +378,40 @@ class BuildTools
         }
 
         return variablesInside;
+    }
+
+
+
+    /** Reads a file, relative either to the project class paths, or relative to a specific class.  It will try an absolute path 
+    first (testing against each of the class paths), and then a relative path, testing against each of the class paths in the directory
+    specified by "currentPath".  If currentPath is not given, it will be set to Context.getLocalClass(); */
+    public static function loadFileFromLocalContext(filename:String, ?currentPath:String):String
+    {
+        if (currentPath == null) currentPath = Context.getLocalClass().toString();
+        var fileContents = null;
+        try 
+        {
+            fileContents = neko.io.File.getContent(Context.resolvePath(filename));
+        }
+        catch (e:Dynamic)
+        {
+            try 
+            {
+                // That was searching by fully qualified classpath, but try just the same folder....
+                currentPath;                        // eg. my.pack.Widget
+                var arr = currentPath.split(".");   // eg. [my,pack,Widget]
+                arr.pop();                          // eg. [my,pack]
+                var path = arr.join("/");           // eg. my/pack
+
+                path = (path.length > 0) ? path + "/" : "./"; // add a trailing slash, unless we're on the current directory
+                fileContents = neko.io.File.getContent(Context.resolvePath(path + filename));
+            }
+            catch (e : Dynamic)
+            {
+                fileContents = null;
+            }
+        }
+        return fileContents;
     }
 
     /** 
