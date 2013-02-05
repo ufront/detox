@@ -191,6 +191,35 @@ class ToolsTest
 	}
 
 	@Test 
+	public function parseTableElements() 
+	{
+		// On the JS target, the browser can be a douché and mess with the parsing of an element if it 
+		// deems it to be bad html.  This mostly shows with elements used in tables - they fail to create
+		// correctly unless they have the correct parent element.  
+		// This test ensures that our workarounds work - and that the elements are created correctly.
+		var q1 = Detox.parse("<td>Table Data Cell</td>");
+		Assert.areEqual("td", q1.tagName());
+
+		var q2 = Detox.parse("<th>Table Header Cell</th>");
+		Assert.areEqual("th", q2.tagName());
+
+		var q3 = Detox.parse("<tr>Table Row</tr>");
+		Assert.areEqual("tr", q3.tagName());
+
+		var q4 = Detox.parse("<colgroup>Table Column Group</colgroup>");
+		Assert.areEqual("colgroup", q4.tagName());
+
+		var q5 = Detox.parse("<col>Table Column</col>");
+		Assert.areEqual("col", q5.tagName());
+
+		var q6 = Detox.parse("<tbody>Table Body</tbody>");
+		Assert.areEqual("tbody", q6.tagName());
+
+		var q7 = Detox.parse("<thead>Table Body</thead>");
+		Assert.areEqual("thead", q7.tagName());
+	}
+
+	@Test 
 	public function setDocument()
 	{
 		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
