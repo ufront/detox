@@ -258,6 +258,16 @@ class WidgetTest
 		Assert.areEqual("The <b>Body!</b>", w.body.innerHTML());
 	}
 
+	@Test 
+	public function initTest()
+	{
+		var w = new widgets.Init();
+
+		Assert.areNotEqual(-1, w.html().indexOf("Init Test"));
+		Assert.areNotEqual(-1, w.html().indexOf("My Partial"));
+		Assert.areNotEqual(-1, w.html().indexOf("Some Content"));
+	}
+
 	// @Test 
 	// public function includeNamedPartial()
 	// {
