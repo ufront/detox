@@ -129,6 +129,8 @@ class Tools
 						case "tbody": "table";
 						case "tfoot": "table";
 						case "thead": "table";
+						case "colgroup": "table";
+						case "col": "colgroup";
 						case "tr": "tbody";
 						case "th": "tr";
 						case "td": "tr";
