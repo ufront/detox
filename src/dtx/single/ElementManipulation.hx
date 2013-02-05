@@ -62,7 +62,7 @@ class ElementManipulation
 		#if js
 			return Lambda.indexOf(dtx.single.Traversing.children(dtx.single.Traversing.parents(n), false), n);
 		#else
-			return Lambda.indexOf(n.parent, n);
+			return (n != null && n.parent != null) ? Lambda.indexOf(n.parent, n) : -1;
 		#end 
 	}
 

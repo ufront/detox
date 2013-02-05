@@ -16,7 +16,7 @@ class ElementManipulation
 	/** Find the index of the node relevent to it's siblings.  First child of parent has an index of 0.  When operating on a collection, this returns the index of the first element. */
 	public static function index(q:dtx.DOMCollection):Int 
 	{
-		return dtx.single.ElementManipulation.index(q.getNode());
+		return (q != null) ? dtx.single.ElementManipulation.index(q.getNode()) : -1;
 	}
 
 	/** Assume we're operating on the first element. */
