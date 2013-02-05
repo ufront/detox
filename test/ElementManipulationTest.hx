@@ -566,7 +566,24 @@ class ElementManipulationTest
 		Assert.areEqual(h2.text(), newH2.text());
 	}
 
-	@Test function testChaining():Void 
+	@Test 
+	function testIndexNormal():Void 
+	{
+		Assert.areEqual(1, h1.index());
+		Assert.areEqual(3, h2.index());
+		Assert.areEqual(0, text.index());
+		Assert.areEqual(9, parent.index());
+		Assert.areEqual(0, child.index());
+	}
+
+	@Test 
+	function testIndexNull():Void 
+	{
+		Assert.areEqual(-1, nullnode.index());
+	}
+
+	@Test 
+	function testChaining():Void 
 	{
 		var originalElement:DOMNode = "div".create().setAttr("id", "original");
 		var returnedElement:DOMNode;

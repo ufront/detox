@@ -664,6 +664,25 @@ class CollectionElementManipulationTest
 	}
 
 	@Test 
+	function testIndexNormal():Void 
+	{
+		// As long as it checks the index of the first node, we're good.
+		Assert.areEqual(3, lists.index());
+	}
+
+	@Test 
+	function testIndexNull():Void 
+	{
+		Assert.areEqual(-1, nullDOMCollection.index());
+	}
+
+	@Test 
+	function testIndexEmpty():Void 
+	{
+		Assert.areEqual(-1, emptyCollection.index());
+	}
+
+	@Test 
 	public function chaining()
 	{
 		// Run every possible chaining command
