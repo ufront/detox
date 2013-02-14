@@ -168,7 +168,16 @@ class WidgetTools
 
                 // Attempt to load the file
                 template = BuildTools.loadFileFromLocalContext(templateFile);
-                if (template == null) Context.warning('Could not load the widget template: $templateFile', p);
+                
+                // If still no template, check if @noTpl() was declared, if not, throw error.
+                if (template == null) 
+                {
+                    var metadata = localClass.get().meta.get();
+                    if (!metadata.exists(function(metaItem) return metaItem.name == "noTpl"))
+                    {
+                        Context.warning('Could not load the widget template: $templateFile', p);
+                    }
+                }
             }
             
         }
