@@ -268,6 +268,15 @@ class WidgetTest
 		Assert.areNotEqual(-1, w.html().indexOf("Some Content"));
 	}
 
+	@Test 
+	public function noTplTest()
+	{
+		var w = new widgets.NoTplWidget();
+		Assert.areEqual("", untyped w.get_template());
+		Assert.areEqual("", w.html());
+		Assert.areEqual(0, w.length);
+	}
+
 	// @Test 
 	// public function includeNamedPartial()
 	// {
