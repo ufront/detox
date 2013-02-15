@@ -277,11 +277,14 @@ class WidgetTest
 		Assert.areEqual(0, w.length);
 	}
 
-	// @Test 
-	// public function includeNamedPartial()
-	// {
-	// 	Assert.isTrue(false);
-	// }
+	@Test 
+	public function includeNamedPartial()
+	{
+		var w = new widgets.PartialInSameFile3();
+		w.btn1.setText("btn1");
+		w.btn2.setText("btn2");
+		Assert.areEqual("btn1btn2", w.find("a").text());
+	}
 
 	// @Test 
 	// public function variablesNotSet()
