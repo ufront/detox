@@ -280,35 +280,73 @@ class WidgetTest
 	@Test 
 	public function includeNamedPartial()
 	{
-		var w = new widgets.PartialInSameFile3();
-		w.btn1.setText("btn1");
-		w.btn2.setText("btn2");
+		var w = new widgets.PartialInSameFile4();
+		w.btn1.btnName = "btn1";
+		w.btn2.btnName = "btn2";
 		Assert.areEqual("btn1btn2", w.find("a").text());
 	}
 
-	// @Test 
-	// public function variablesNotSet()
-	// {
-		
-	// }
+	@Test 
+	public function interpolationNotSetStrings()
+	{
+		var w = new widgets.InterpolationBasic();
+		Assert.areEqual("", w.name);
+		Assert.areEqual("", w.age);
+		Assert.areEqual("", w.belief);
+		Assert.areEqual("My name is , I am  years old and I believe in ", w.text());
+	}
 
-	// @Test 
-	// public function variablesSet()
-	// {
-		
-	// }
+	@Test 
+	public function interpolationNotSetOtherTypes()
+	{
+		var w = new widgets.InterpolationDifferentTypes();
+		Assert.areEqual("", w.name);
+		Assert.areEqual(0, w.age);
+		Assert.areEqual(null, w.birthday);
+		Assert.areEqual(null, w.pets);
+		Assert.areEqual(0, w.favouriteNumber);
+		Assert.areEqual("My name is , I am 0 years old, my birthday is null and I have these pets: null. My favourite number is 0", w.text());
+	}
 
-	// @Test 
-	// public function variableUpdate()
-	// {
-		
-	// }
+	@Test 
+	public function interpolationSetStrings()
+	{
+		var w = new widgets.InterpolationBasic();
+		w.name = "Jason";
+		w.age = "25";
+		w.belief = "gravity";
+		Assert.areEqual("My name is Jason, I am 25 years old and I believe in gravity", w.text());
+	}
 
-	// @Test 
-	// public function noVariables()
-	// {
-		
-	// }
+	@Test 
+	public function interpolationSetOtherTypes()
+	{
+		var w = new widgets.InterpolationDifferentTypes();
+		w.name = "Jason";
+		w.age = 25;
+		w.birthday = new Date(1987,09,16,0,0,0);
+		w.pets = ["Cuddles","Theodore"];
+		w.favouriteNumber = 3.14;
+
+		// Slightly different date.toString() output...
+		#if js 
+			Assert.areEqual("My name is Jason, I am 25 years old, my birthday is Fri Oct 16 1987 00:00:00 GMT+0800 (WST) and I have these pets: [Cuddles,Theodore]. My favourite number is 3.14", w.text());
+		#else 
+			Assert.areEqual("My name is Jason, I am 25 years old, my birthday is 1987-10-16 00:00:00 and I have these pets: [Cuddles,Theodore]. My favourite number is 3.14", w.text());
+		#end 
+	}
+
+	@Test 
+	public function interpolationUpdateVariables()
+	{
+		var w = new widgets.InterpolationBasic();
+		w.name = "Jason";
+		w.age = "25";
+		w.belief = "gravity";
+		w.age = "5";
+		w.belief = "getting younger";
+		Assert.areEqual("My name is Jason, I am 5 years old and I believe in getting younger", w.text());
+	}
 
 	// @Test
 	// public function disaster()
