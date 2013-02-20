@@ -333,8 +333,8 @@ class WidgetTools
         if ("new".fieldExists())
         {
             var constructor = "new".getField();
-            var lineToAdd = macro init();
-            BuildTools.addLinesToFunction(constructor, lineToAdd);
+            var expr = macro init();
+            BuildTools.addLinesToFunction(constructor, expr);
         }
 
 
@@ -525,20 +525,7 @@ class WidgetTools
         // }
 
         // Get the constructor, instantiate our partial
-        var constructorBody = macro { super(); }
-        var constructor = BuildTools.getOrCreateField({
-            pos: p,
-            name: "new",
-            meta: [],
-            kind: FieldType.FFun({
-                    ret: null,
-                    params: [],
-                    expr: constructorBody,
-                    args: []
-                }),
-            doc: "",
-            access: [APublic]
-        });
+        var constructor = BuildTools.getOrCreateField(getConstructorTemplate());
         linesToAdd = macro {
             $variableRef = new $typeName();
         };
@@ -556,6 +543,24 @@ class WidgetTools
                 };
                 BuildTools.addLinesToFunction(constructor, linesToAdd);
             }
+        }
+    }
+
+    static function getConstructorTemplate()
+    {
+        var constructorBody = macro { super(); }
+        return {
+            pos: Context.currentPos(),
+            name: "new",
+            meta: [],
+            kind: FieldType.FFun({
+                    ret: null,
+                    params: [],
+                    expr: constructorBody,
+                    args: []
+                }),
+            doc: "",
+            access: [APublic]
         }
     }
 
@@ -699,8 +704,11 @@ class WidgetTools
         //var bindingExpr = macro this.children(false).getNode($indexAsExpr).setText($interpolationExpr);
         var bindingExpr = macro dtx.single.ElementManipulation.setText(dtx.collection.Traversing.children($selectorAsExpr, false).getNode($indexAsExpr), $interpolationExpr);
         
-        // Go through array of all variables again
+        // Add binding expression to all setters.  
         addExprToAllSetters(bindingExpr, variablesInside, true);
+
+        // Initialise variables
+        addExprInitialisationToConstructor(variablesInside);
     }
 
     static function addExprToAllSetters(expr:Expr, variables:Array<String>, ?prepend)
@@ -711,6 +719,39 @@ class WidgetTools
             var prop = BuildTools.getField(varName);
             var setter = BuildTools.getSetterFromField(prop);
             BuildTools.addLinesToFunction(setter, expr, 1);
+        }
+    }
+
+    static function addExprInitialisationToConstructor(variables:Array<String>)
+    {
+        for (varName in variables)
+        {
+            // Initialise strings as empty, everything else as null.
+            var field = varName.getField();
+            var typeName:String = null;
+            switch (field.kind)
+            {
+                case FProp(get,set,type,e):
+                    switch (type)
+                    {
+                        case TPath(path):
+                            typeName = path.name;
+                        default:
+                    }
+                default:
+            }
+            if (typeName != null)
+            {
+                var constructor = BuildTools.getOrCreateField(getConstructorTemplate());
+                var varRef = varName.resolve();
+                var expr = switch (typeName) {
+                    case "String": macro $varRef = "";
+                    case "Int": macro $varRef = 0;
+                    case "Float": macro $varRef = 0;
+                    default: macro $varRef = null;
+                }
+                BuildTools.addLinesToFunction(constructor, expr);
+            }
         }
     }
 
