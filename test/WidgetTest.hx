@@ -305,7 +305,8 @@ class WidgetTest
 		Assert.areEqual(null, w.birthday);
 		Assert.areEqual(null, w.pets);
 		Assert.areEqual(0, w.favouriteNumber);
-		Assert.areEqual("My name is , I am 0 years old, my birthday is null and I have these pets: null. My favourite number is 0", w.text());
+		Assert.areEqual(false, w.wasTruth);
+		Assert.areEqual("My name is , I am 0 years old, my birthday is null and I have these pets: null. My favourite number is 0, and the statement I just made was false", w.text());
 	}
 
 	@Test 

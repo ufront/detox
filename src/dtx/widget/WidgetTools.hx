@@ -763,6 +763,7 @@ class WidgetTools
                 var constructor = BuildTools.getOrCreateField(getConstructorTemplate());
                 var varRef = varName.resolve();
                 var expr = switch (typeName) {
+                    case "Bool": macro $varRef = false;
                     case "String": macro $varRef = "";
                     case "Int": macro $varRef = 0;
                     case "Float": macro $varRef = 0;

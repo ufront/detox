@@ -9,4 +9,5 @@ class InterpolationDifferentTypes extends Widget
 	public var age:Int;
 	public var pets:Array<String>;
 	public var favouriteNumber:Float;
+	public var wasTruth:Bool;
 }
