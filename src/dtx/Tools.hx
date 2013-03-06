@@ -24,8 +24,6 @@ import dtx.DOMNode;
 		import UserAgentContext;
 	#end
 #end
-import dtx.DOMCollection;
-import dtx.DOMNode;
 
 /** 
 * Designed to be used with "using dtx.Tools;" this gives you access
