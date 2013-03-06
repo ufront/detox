@@ -349,6 +349,14 @@ class WidgetTest
 		Assert.areEqual("My name is Jason, I am 5 years old and I believe in getting younger", w.text());
 	}
 
+	@Test 
+	public function htmlCharacterEncodings()
+	{
+		var w = new widgets.WidgetWithHtmlEncoding();
+		var expected = '<p title="All about apples &amp; bananas">Apples &amp; Bananas, <i title="&laquo;More Info&raquo;">&laquo;&nbsp;Both are fruit&nbsp;&raquo</i></p>';
+		Assert.areEqual(expected, untyped w.get_template());
+	}
+
 	// @Test
 	// public function disaster()
 	// {

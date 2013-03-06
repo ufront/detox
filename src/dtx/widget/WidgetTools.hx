@@ -322,6 +322,11 @@ class WidgetTools
                 {
                     interpolateTextNodes(node);
                 }
+                // Get rid of HTML encoding.  Haxe3 does this automatically, but we want it to remain unencoded.  
+                // (I think?  While it might be nice to have it do the encoding for you, it is not expected, so violates principal of least surprise.  Also, how does '&nbsp;' get entered?)
+                // And it appears to only affect the top level element, not any descendants.  Weird...
+                node.setText(node.text().htmlUnescape());
+
                 clearWhitespaceFromTextnode(node);
             }
         }
@@ -337,11 +342,24 @@ class WidgetTools
             BuildTools.addLinesToFunction(constructor, expr);
         }
 
-
         // var bindingExpressions = new Array<Expr>();
         // var toAddToConstructor = new Array<Expr>();
 
-        return { template: xml.html(), fields: fieldsToAdd };
+        // More escaping hoop-jumping.  Basically, xml.html() will encode the text nodes, but not the attributes. Gaarrrh
+        // So if we go through the attributes on each of our top level nodes, and escape them, then we can unescape the whole thing.
+        for (node in xml)
+        {
+            if (node.isElement())
+            {
+                for (att in node.attributes())
+                {
+                    node.setAttr(att, node.attr(att).htmlEscape());
+                }
+            }
+        }
+        var html = xml.html().htmlUnescape();
+
+        return { template: html, fields: fieldsToAdd };
     }
 
     static function clearWhitespaceFromTextnode(node:dtx.DOMNode)
