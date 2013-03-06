@@ -11,7 +11,7 @@
 
 package dtx.single;
 
-#if haxe_211
+#if (haxe_211 || haxe3)
 	import js.html.CSSStyleDeclaration;
 #else 
 	import js.w3c.level3.Core;

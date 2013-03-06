@@ -24,7 +24,7 @@ using Detox;
 #if macro 
 class BuildTools 
 {
-	static var fieldsForClass:Hash<Array<Field>> = new Hash();
+	static var fieldsForClass:Map<String, Array<Field>> = new Map();
 
 	/** Allow us to get a list of fields, but will keep a local copy, in case we make changes.  This way 
 	in an autobuild macro you can use BuildTools.getFields() over and over, and modify the array each time,
@@ -48,7 +48,7 @@ class BuildTools
     /** Return a field, assuming it already exists */
     public static function getField(name:String)
     {
-        return getFields().filter(function (f) { return f.name == name; }).first();
+        return getFields().filter(function (f) { return f.name == name; })[0];
     }
 
     /** Return a field, assuming it already exists */
@@ -56,12 +56,12 @@ class BuildTools
     {
         switch (field.kind)
         {
-            case FieldType.FProp(get, set, t, e):
+            case FieldType.FProp(_, set, _, _):
                 return getField(set);
-            case FieldType.FVar(t,e): 
+            case FieldType.FVar(_,_): 
                 throw "Was expecting " + field.name + " to be a property, but it was a var.";
                 return null;
-            case FieldType.FFun(fn): 
+            case FieldType.FFun(_): 
                 throw "Was expecting " + field.name + " to be a property, but it was a function.";
                 return null;
         }
@@ -162,7 +162,7 @@ class BuildTools
 
         switch (property.kind)
         {
-            case FieldType.FProp(get, set, t, e):
+            case FieldType.FProp(get, set, t, _):
                 // Read the getter / setter string, in case it already exists and was different
                 getterString = get;
                 setterString = set;
@@ -173,7 +173,7 @@ class BuildTools
                 // If there's demand I might change my mind on this...
                 property.kind = FieldType.FProp(getterString, setterString, type, expr);
                 propertyType = type;
-            case FieldType.FFun(f):
+            case FieldType.FFun(_):
                 var className = Context.getLocalClass().toString();
                 var msg = "Trying to create a property called " + propertyName + " on class " + className + " but a function with the same name already exists.";
                 Context.error(msg, Context.currentPos());
@@ -321,7 +321,7 @@ class BuildTools
                 // Add part 1, recursively checking for more Binops
                 switch (data.e1.expr)
                 {
-                    case EBinop(op,e1,e2):
+                    case EBinop(_,_,_):
                         // It's another Binop, get all the parts and add them each...
                         for (p in getAllPartsOfBinOp(data.e1))
                         {
@@ -348,10 +348,10 @@ class BuildTools
         var variablesInside:Array<String> = [];
         switch(expr.expr)
         {
-            case ECheckType(e,t):
+            case ECheckType(e,_):
                 switch (e.expr)
                 {
-                    case EBinop(op,e1,e2):
+                    case EBinop(_,_,_):
                         var parts = getAllPartsOfBinOp(e);
                         for (p in parts)
                         {
@@ -391,7 +391,7 @@ class BuildTools
         var fileContents = null;
         try 
         {
-            fileContents = neko.io.File.getContent(Context.resolvePath(filename));
+            fileContents = sys.io.File.getContent(Context.resolvePath(filename));
         }
         catch (e:Dynamic)
         {
@@ -404,7 +404,7 @@ class BuildTools
                 var path = arr.join("/");           // eg. my/pack
 
                 path = (path.length > 0) ? path + "/" : "./"; // add a trailing slash, unless we're on the current directory
-                fileContents = neko.io.File.getContent(Context.resolvePath(path + filename));
+                fileContents = sys.io.File.getContent(Context.resolvePath(path + filename));
             }
             catch (e : Dynamic)
             {

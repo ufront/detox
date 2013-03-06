@@ -34,7 +34,7 @@ class WidgetTools
     * Once it finds it, it overrides the get_template() method, and makes it return
     * the correct template as a String constant.  So each widget gets its own template
     */
-    @:macro public static function buildWidget():Array<Field>
+    macro public static function buildWidget():Array<Field>
     {
         var widgetPos = Context.currentPos();                   // Position where the original Widget class is declared
         var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
@@ -412,7 +412,7 @@ class WidgetTools
         {
             switch (existingClass)
             {
-                case TInst(t, params):
+                case TInst(t, _):
                     var metaAccess = t.get().meta;
                     if (metaAccess.has("template") == false && metaAccess.has("loadTemplate") == false)
                     {
@@ -480,7 +480,7 @@ class WidgetTools
         // Alternatively use: type = Context.typeof(macro new $typeName()), see what works
         switch (type)
         {
-            case TInst(t,params):
+            case TInst(t,_):
                 // get the type
                 var classType = t.get();
                 pack = classType.pack;
@@ -621,7 +621,7 @@ class WidgetTools
             // Change the setter to null
             switch (prop.property.kind)
             {
-                case FieldType.FProp(get, set, t, e):
+                case FieldType.FProp(get, _, t, e):
                     prop.property.kind = FieldType.FProp(get, "null", t, e);
                 default:
             }
@@ -731,7 +731,7 @@ class WidgetTools
             var typeName:String = null;
             switch (field.kind)
             {
-                case FProp(get,set,type,e):
+                case FProp(_,_,type,_):
                     switch (type)
                     {
                         case TPath(path):
@@ -867,13 +867,13 @@ class WidgetTools
         return wasDtxAttr;
     }
 
-    static var booleanSetters:Hash<Hash<{ trueBlock:Array<Expr>, falseBlock:Array<Expr> }>> = null;
+    static var booleanSetters:Map<String,Map<String, { trueBlock:Array<Expr>, falseBlock:Array<Expr> }>> = null;
     static function getBooleanSetterParts(booleanName:String)
     {
         // If a list of boolean setters for this class doesn't exist yet, set one up
         var className = Context.getLocalClass().toString();
-        if (booleanSetters == null) booleanSetters = new Hash();
-        if (booleanSetters.exists(className) ==  false) booleanSetters.set(className, new Hash());
+        if (booleanSetters == null) booleanSetters = new Map();
+        if (booleanSetters.exists(className) ==  false) booleanSetters.set(className, new Map());
 
         // If this boolean setter doesn't exist yet, create it.  
         if (booleanSetters.get(className).exists(booleanName) == false)
@@ -897,7 +897,7 @@ class WidgetTools
             var falseBlock:Array<Expr>;
             switch (ifStatement.expr)
             {
-                case EIf(econd,eif,eelse):
+                case EIf(_,eif,eelse):
                     switch (eif.expr)
                     {
                         case EBlock(b):

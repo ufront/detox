@@ -12,7 +12,7 @@
 package dtx;
 
 #if js
-	#if haxe_211
+	#if haxe3
 		typedef NodeList = js.html.NodeList;
 		typedef DOMNode = js.html.Node;
 		typedef DOMElement = js.html.Element;

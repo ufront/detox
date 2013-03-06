@@ -296,13 +296,13 @@ class Loop<T> extends DOMCollection
 			var results = items.filter(function (item) { return item.input == input; });
 			if (results.length > 0)
 			{
-				return results.first();
+				return results[0];
 			}
 		}
 		if (node != null)
 		{
 			var results = items.filter(function (item) { return item.dom.has(node); });
-			if (results.length > 0) return results.first();
+			if (results.length > 0) return results[0];
 		}
 		if (collection != null)
 		{

@@ -142,7 +142,7 @@ class LoopTest
 	public function addItem():Void
 	{
 		var l = new Loop<String>();
-
+		
 		l.addItem("1");
 		Assert.areEqual(1, l.numItems);
 		Assert.areEqual(2, l.length);
@@ -349,7 +349,7 @@ class LoopTest
 		Assert.areEqual(" Detox Loop ", l.text());
 	}
 
-	@Test 
+	@Test
 	public function addList():Void
 	{
 		var l = new Loop<String>();

@@ -65,7 +65,7 @@ live // deprecated
 die(?eventType) - remove all event handlers // deprecated
 */ 
 
-#if haxe_211
+#if (haxe_211 || haxe3)
 	import js.html.EventListener;
 	typedef DtxEvent = js.html.Event;
 #else 

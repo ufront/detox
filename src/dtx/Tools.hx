@@ -11,10 +11,12 @@
 
 package dtx;
 
+import dtx.DOMCollection;
+import dtx.DOMNode;
 #if js
-	#if haxe_211
-		typedef Window = js.html.DOMWindow;
+	#if (haxe_211 || haxe3)
 		import js.html.EventTarget;
+		typedef Window = js.html.DOMWindow;
 	#else 
 		import js.w3c.level3.Core;
 		import js.w3c.level3.Events;
@@ -282,7 +284,7 @@ class Tools
 	/** Ensure that Sizzle.js is included as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
 	public static function includeSizzle()
 	{
-		#if haxe_211
+		#if (haxe_211 || haxe3)
 			#if embed_js
 				untyped haxe.macro.Compiler.includeFile("sizzle.js");
 			#end

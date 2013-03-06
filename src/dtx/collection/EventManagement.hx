@@ -13,7 +13,7 @@ package dtx.collection;
 
 import dtx.DOMNode;
 
-#if haxe_211
+#if (haxe_211 || haxe3)
 	import js.html.EventListener;
 	typedef DtxEvent = js.html.Event;
 #else 
