@@ -6,14 +6,11 @@ class Main
 {
 	public static function main()
 	{
-		// Set up trace to use the console
-		haxe.Log.trace = haxe.Firebug.trace;
-
 		// Run out function when the page is ready
-		Detox.window.onload = run;
+		Detox.ready(run);
 	}
 
-	public static function run(e)
+	public static function run()
 	{
 		var form = "form".find();
 		var titleInput = "#title".find();
@@ -27,7 +24,9 @@ class Main
 			// Append this widget to our notifications area
 			"#notifications".find().prepend(n);
 
-			e.stop();
+			e.stopPropagation();
+			e.preventDefault();
+			return false;
 		});
 
 		// When the "Notify + Progress" button is clicked
@@ -47,7 +46,9 @@ class Main
 			// Now attach the notification (with progress bar) to the notifications area
 			"#notifications".find().prepend(n);
 
-			e.stop();
+			e.stopPropagation();
+			e.preventDefault();
+			return false;
 		});
 	}
 

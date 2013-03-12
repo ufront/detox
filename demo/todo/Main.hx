@@ -5,14 +5,11 @@ class Main
 {
 	static public function main()
 	{
-		// Set up traces to go to the console
-		haxe.Log.trace = haxe.Firebug.trace;
-
 		// Run out app after the window has finished loading.
-		Detox.window.onload = run;
+		Detox.ready(run);
 	}
 
-	static function run(e)
+	static function run()
 	{
 		trace ("Welcome to my app!");
 
@@ -41,7 +38,7 @@ class Main
 
 		// When someone clicks on a task, toggle it
 		tasks.click(function (e) {
-			var target = e.target.toNode();
+			var target:DOMNode = cast e.target;
 			if (target.tagName() == "li")
 			{
 				target.toggleClass('completed');

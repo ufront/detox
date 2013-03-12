@@ -6,6 +6,7 @@
 -lib detox 
 -lib beanhx 
 -lib tink_macros
+-D embed_js
 
 # Classpaths used for demo
 -cp demo/todo
@@ -15,7 +16,7 @@
 -js demo/todo/build/demo-todo.js
 
 # This should keep our code size down
---dead-code-elimination
+-dce full
 
 
 --next
@@ -28,6 +29,7 @@
 -lib detox 
 -lib beanhx 
 -lib tink_macros
+-D embed_js
 
 # Classpaths used for demo
 -cp demo/growl
@@ -37,7 +39,7 @@
 -js demo/growl/build/demo-growl.js
 
 # This should keep our code size down
---dead-code-elimination
+-dce full
 
 --next 
 
@@ -49,6 +51,7 @@
 -lib detox 
 -lib beanhx 
 -lib tink_macros
+-D embed_js
 
 # Classpaths used for demo
 -cp demo/events
@@ -58,5 +61,5 @@
 -js demo/events/build/demo-events.js
 
 # This should keep our code size down
---dead-code-elimination
+-dce full
 

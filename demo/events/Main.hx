@@ -4,9 +4,6 @@ class Main
 {
 	public static function main()
 	{
-		// Set up trace to use the console
-		haxe.Log.trace = haxe.Firebug.trace;
-
 		// Run out function when the page is ready
 		Detox.ready(run);
 	}
