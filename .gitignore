@@ -4,7 +4,6 @@ Editor files
 
 Compiled Files
 *.zip
-build/
 package/
 doc/
 report/
