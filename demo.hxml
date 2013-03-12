@@ -6,6 +6,7 @@
 -lib detox 
 -lib beanhx 
 -lib tink_macros
+-dce full
 -D embed_js
 
 # Classpaths used for demo
@@ -16,7 +17,6 @@
 -js demo/todo/build/demo-todo.js
 
 # This should keep our code size down
--dce full
 
 
 --next
