@@ -6,7 +6,6 @@
 -lib detox 
 -lib beanhx 
 -lib tink_macros
--dce full
 -D embed_js
 
 # Classpaths used for demo
@@ -17,6 +16,8 @@
 -js demo/todo/build/demo-todo.js
 
 # This should keep our code size down
+-dce full
+-cmd gzip -c demo/todo/build/demo-todo.js > demo/todo/build/demo-todo.js.gzip
 
 
 --next
@@ -34,12 +35,13 @@
 # Classpaths used for demo
 -cp demo/growl
 
-# The main class for our todo
+# The main class for our growl demo
 -main Main 						
 -js demo/growl/build/demo-growl.js
 
 # This should keep our code size down
 -dce full
+-cmd gzip -c demo/growl/build/demo-growl.js > demo/growl/build/demo-growl.js.gzip
 
 --next 
 
@@ -53,7 +55,7 @@
 -lib tink_macros
 -D embed_js
 
-# Classpaths used for demo
+# Classpaths used for event test
 -cp demo/events
 
 # The main class for our todo
@@ -62,4 +64,5 @@
 
 # This should keep our code size down
 -dce full
+-cmd gzip -c demo/events/build/demo-events.js > demo/events/build/demo-events.js.gzip
 
