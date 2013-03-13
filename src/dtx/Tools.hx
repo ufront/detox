@@ -296,8 +296,15 @@ class Tools
 	/** Ensure that jQuery is included, as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
 	public static function includeJQuery()
 	{
-		// Just do this so that JQuery will be included
-		new js.JQuery("body");
+		#if (haxe_211 || haxe3)
+			#if embed_js
+				untyped haxe.macro.Compiler.includeFile("js/jquery-latest.min.js");
+			#end
+		#else
+			#if !noEmbedJS
+				haxe.macro.Tools.includeFile("js/jquery-latest.min.js");
+			#end
+		#end
 	}
 
 	#end
