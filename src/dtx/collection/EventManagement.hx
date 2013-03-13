@@ -23,11 +23,11 @@ import dtx.DOMNode;
 
 class EventManagement
 {
-	public static function trigger(targetCollection:DOMCollection, eventString:String):DOMCollection
+	public static function trigger(targetCollection:DOMCollection, eventType:String):DOMCollection
 	{
 		for (target in targetCollection)
 		{
-			dtx.single.EventManagement.trigger(target, eventType, selector, listener);
+			dtx.single.EventManagement.trigger(target, eventType);
 		}
 		return targetCollection;
 	}
