@@ -41,7 +41,7 @@ class EventManagement
 		return targetCollection;
 	}
 
-	public static function off(targetCollection:DOMCollection, eventType:String, listener:EventListener):DOMCollection
+	public static function off(targetCollection:DOMCollection, eventType:String, ?listener:EventListener=null):DOMCollection
 	{
 		for (target in targetCollection)
 		{

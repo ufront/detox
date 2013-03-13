@@ -119,7 +119,7 @@ class EventManagement
 		return target;
 	}
 
-	public static function off(target:DOMNode, eventType:String, listener:EventListener):DOMNode
+	public static function off(target:DOMNode, eventType:String, ?listener:EventListener=null):DOMNode
 	{
 		#if js 
 		Bean.off(target, eventType, listener);
