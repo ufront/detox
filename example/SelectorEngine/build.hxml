@@ -1,8 +1,8 @@
 -js build/usingBrowser.js
 -main SelectorEngineExample
 -lib detox
---js-modern
---dead-code-elimination
+-dce full
+-D embed_js
 -cmd gzip -c build/usingBrowser.js > build/usingBrowser.js.gzip
 
 --next 
@@ -10,9 +10,9 @@
 -js build/usingJQuery.js
 -main SelectorEngineExample
 -lib detox
---js-modern
---dead-code-elimination
+-dce full
 -D usingJQuery
+-D embed_js
 -cmd gzip -c build/usingJQuery.js > build/usingJQuery.js.gzip
 
 --next
@@ -20,7 +20,7 @@
 -js build/usingSizzle.js
 -main SelectorEngineExample
 -lib detox
---js-modern
---dead-code-elimination
+-dce full
 -D usingSizzle
+-D embed_js
 -cmd gzip -c build/usingSizzle.js > build/usingSizzle.js.gzip
