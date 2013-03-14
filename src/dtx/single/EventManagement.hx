@@ -66,7 +66,7 @@ die(?eventType) - remove all event handlers // deprecated
 */ 
 
 #if (haxe_211 || haxe3)
-	import js.html.EventListener;
+	import js.html.*;
 	typedef DtxEvent = js.html.Event;
 #else 
 	typedef EventListener = BnEvent->Void;
@@ -144,57 +144,57 @@ class EventManagement
 		return target;
 	}
 
-	public static inline function mousedown(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
+	public static inline function mousedown(target:DOMNode, ?selector:String, listener:MouseEvent->Void):DOMNode
 	{
-		return on(target, "mousedown", selector, listener);
+		return on(target, "mousedown", selector, untyped listener);
 	}
 
-	public static inline function mouseenter(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
+	public static inline function mouseenter(target:DOMNode, ?selector:String, listener:MouseEvent->Void):DOMNode
 	{
-		return on(target, "mouseover", selector, listener);
+		return on(target, "mouseover", selector, untyped listener);
 	}
 
-	public static inline function mouseleave(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
+	public static inline function mouseleave(target:DOMNode, ?selector:String, listener:MouseEvent->Void):DOMNode
 	{
-		return on(target, "mouseout", selector, listener);
+		return on(target, "mouseout", selector, untyped listener);
 	}
 
-	public static inline function mousemove(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
+	public static inline function mousemove(target:DOMNode, ?selector:String, listener:MouseEvent->Void):DOMNode
 	{
-		return on(target, "mousemove", selector, listener);
+		return on(target, "mousemove", selector, untyped listener);
 	}
 
-	public static inline function mouseout(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
+	public static inline function mouseout(target:DOMNode, ?selector:String, listener:MouseEvent->Void):DOMNode
 	{
-		return on(target, "mouseout", selector, listener);
+		return on(target, "mouseout", selector, untyped listener);
 	}
 
-	public static inline function mouseover(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
+	public static inline function mouseover(target:DOMNode, ?selector:String, listener:MouseEvent->Void):DOMNode
 	{
-		return on(target, "mouseover", selector, listener);
+		return on(target, "mouseover", selector, untyped listener);
 	}
 
-	public static inline function mouseup(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
+	public static inline function mouseup(target:DOMNode, ?selector:String, listener:MouseEvent->Void):DOMNode
 	{
-		return on(target, "mouseup", selector, listener);
+		return on(target, "mouseup", selector, untyped listener);
 	}
 
-	public static inline function keydown(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
+	public static inline function keydown(target:DOMNode, ?selector:String, listener:KeyboardEvent->Void):DOMNode
 	{
-		return on(target, "keydown", selector, listener);
+		return on(target, "keydown", selector, untyped listener);
 	}
 
-	public static inline function keypress(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
+	public static inline function keypress(target:DOMNode, ?selector:String, listener:KeyboardEvent->Void):DOMNode
 	{
-		return on(target, "keypress", selector, listener);
+		return on(target, "keypress", selector, untyped listener);
 	}
 
-	public static inline function keyup(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
+	public static inline function keyup(target:DOMNode, ?selector:String, listener:KeyboardEvent->Void):DOMNode
 	{
-		return on(target, "keyup", selector, listener);
+		return on(target, "keyup", selector, untyped listener);
 	}
 
-	public static function hover(target:DOMNode, ?selector:String, listener1:EventListener, ?listener2:EventListener = null):DOMNode
+	public static function hover(target:DOMNode, ?selector:String, listener1:MouseEvent->Void, ?listener2:MouseEvent->Void = null):DOMNode
 	{
 		mouseenter(target, selector, listener1);
 
@@ -216,30 +216,30 @@ class EventManagement
 		return on(target, "submit", selector, listener);
 	}
 
-	public static function toggleClick(target:DOMNode, ?selector:String, listenerFirstClick:EventListener, listenerSecondClick:EventListener):DOMNode
+	public static function toggleClick(target:DOMNode, ?selector:String, listenerFirstClick:MouseEvent->Void, listenerSecondClick:MouseEvent->Void):DOMNode
 	{
 		// Declare and initialise now so they can reference each other in their function bodies.
-		var fn1:EventListener = null;
-		var fn2:EventListener = null;
+		var fn1:MouseEvent->Void = null;
+		var fn2:MouseEvent->Void = null;
 
 		// Wrap the first click function to run once, then remove itself and add the second click function
-		fn1 = function (e:DtxEvent)
+		fn1 = function (e:MouseEvent)
 		{
 			listenerFirstClick(e);
-			off(target, "click", fn1);
-			on(target, "click", selector, fn2);
+			off(target, "click", untyped fn1);
+			on(target, "click", selector, untyped fn2);
 		}
 
 		// Wrap the second click function to run once, then remove itself and add the first click function
-		fn2 = function (e:DtxEvent)
+		fn2 = function (e:MouseEvent)
 		{
 			listenerSecondClick(e);
-			off(target, "click", fn2);
-			on(target, "click", selector, fn1);
+			off(target, "click", untyped fn2);
+			on(target, "click", selector, untyped fn1);
 		}
 
 		// Add the first one to begin with
-		on(target, "click", selector, fn1);
+		on(target, "click", selector, untyped fn1);
 
 		return target;
 	}

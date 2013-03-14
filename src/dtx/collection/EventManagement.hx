@@ -14,7 +14,7 @@ package dtx.collection;
 import dtx.DOMNode;
 
 #if (haxe_211 || haxe3)
-	import js.html.EventListener;
+	import js.html.*;
 	typedef DtxEvent = js.html.Event;
 #else 
 	typedef EventListener = BnEvent->Void;
@@ -59,57 +59,57 @@ class EventManagement
 		return targetCollection;
 	}
 
-	public static inline function mousedown(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
+	public static inline function mousedown(target:DOMCollection, ?selector:String, listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mousedown", selector, listener);
+		return on(target, "mousedown", selector, untyped listener);
 	}
 
-	public static inline function mouseenter(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
+	public static inline function mouseenter(target:DOMCollection, ?selector:String, listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mouseenter", selector, listener);
+		return on(target, "mouseenter", selector, untyped listener);
 	}
 
-	public static inline function mouseleave(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
+	public static inline function mouseleave(target:DOMCollection, ?selector:String, listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mouseleave", selector, listener);
+		return on(target, "mouseleave", selector, untyped listener);
 	}
 
-	public static inline function mousemove(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
+	public static inline function mousemove(target:DOMCollection, ?selector:String, listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mousemove", selector, listener);
+		return on(target, "mousemove", selector, untyped listener);
 	}
 
-	public static inline function mouseout(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
+	public static inline function mouseout(target:DOMCollection, ?selector:String, listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mouseout", selector, listener);
+		return on(target, "mouseout", selector, untyped listener);
 	}
 
-	public static inline function mouseover(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
+	public static inline function mouseover(target:DOMCollection, ?selector:String, listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mouseover", selector, listener);
+		return on(target, "mouseover", selector, untyped listener);
 	}
 
-	public static inline function mouseup(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
+	public static inline function mouseup(target:DOMCollection, ?selector:String, listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mouseup", selector, listener);
+		return on(target, "mouseup", selector, untyped listener);
 	}
 
-	public static inline function keydown(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
+	public static inline function keydown(target:DOMCollection, ?selector:String, listener:KeyboardEvent->Void):DOMCollection
 	{
-		return on(target, "keydown", selector, listener);
+		return on(target, "keydown", selector, untyped listener);
 	}
 
-	public static inline function keypress(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
+	public static inline function keypress(target:DOMCollection, ?selector:String, listener:KeyboardEvent->Void):DOMCollection
 	{
-		return on(target, "keypress", selector, listener);
+		return on(target, "keypress", selector, untyped listener);
 	}
 
-	public static inline function keyup(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
+	public static inline function keyup(target:DOMCollection, ?selector:String, listener:KeyboardEvent->Void):DOMCollection
 	{
-		return on(target, "keyup", selector, listener);
+		return on(target, "keyup", selector, untyped listener);
 	}
 
-	public static function hover(targetCollection:DOMCollection, ?selector: String, listener1:EventListener, ?listener2:EventListener = null):DOMCollection
+	public static function hover(targetCollection:DOMCollection, ?selector: String, listener1:MouseEvent->Void, ?listener2:MouseEvent->Void = null):DOMCollection
 	{
 		for (node in targetCollection)
 		{
@@ -123,7 +123,7 @@ class EventManagement
 		return on(target, "submit", selector, listener);
 	}
 
-	public static function toggleClick(targetCollection:DOMCollection, ?selector: String, listenerFirstClick:EventListener, listenerSecondClick:EventListener):DOMCollection
+	public static function toggleClick(targetCollection:DOMCollection, ?selector: String, listenerFirstClick:MouseEvent->Void, listenerSecondClick:MouseEvent->Void):DOMCollection
 	{
 		for (target in targetCollection)
 		{
