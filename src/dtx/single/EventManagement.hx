@@ -119,12 +119,15 @@ class EventManagement
 		return target;
 	}
 
-	public static function off(target:DOMNode, eventType:String, ?listener:EventListener=null):DOMNode
+	public static function off(target:DOMNode, ?eventType:String = null, ?listener:EventListener=null):DOMNode
 	{
 		#if js 
-		Bean.off(target, eventType, listener);
+			if (eventType != null && listener != null) Bean.off(target, eventType, listener);
+			else if (eventType != null) Bean.off(target, eventType);
+			else if (listener != null) Bean.off(target, listener);
+			else Bean.off(target);
 		#else 
-		trace ("Detox events only work on the Javascript target, sorry.");
+			trace ("Detox events only work on the Javascript target, sorry.");
 		#end
 		return target;
 	}
