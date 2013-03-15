@@ -39,9 +39,10 @@ class WidgetTools
         var widgetPos = Context.currentPos();                   // Position where the original Widget class is declared
         var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
         var fields = BuildTools.getFields();
-        
+
         // If get_template() already exists, don't recreate it
-        if (fields.exists(function (f) { return f.name == "get_template"; }) == false)
+        var useParentTemplate = BuildTools.hasClassMetadata("useParentTemplate");
+        if (!useParentTemplate && fields.exists(function (f) return f.name == "get_template") == false)
         {
             // Load the template
             var template = loadTemplate(localClass);
@@ -52,12 +53,6 @@ class WidgetTools
                 // This function processes the template, and returns any binding statements
                 // that may be needed for bindings / variables etc.
                 var result = processTemplate(template);
-                // var fnBody = new Array<Expr>();
-                // for (expr in result.bindings)
-                // {
-                //     fnBody.push(expr);
-                // }
-                // fields.push(createField_refresh(fnBody, false));
 
                 // Push the extra class properties that came during our processing
                 for (f in result.fields)
@@ -77,53 +72,6 @@ class WidgetTools
             return null;
         }
     }
-
-    /**
-    * This build macro runs on every subclass of DataWidget.
-    * It trsfd
-    */
-    // @:macro public static function buildDataWidget():Array<Field>
-    // {
-    //     var p = Context.currentPos();                           // Position where the original Widget class is declared
-    //     var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
-    //     var fields = haxe.macro.Context.getBuildFields();
-
-    //     var dataType = localClass.get().superClass.params[0];
-
-    //     // If get_template() already exists, don't recreate it
-    //     if (fields.exists(function (f) { return f.name == "get_template"; }) == false)
-    //     {
-    //         // Load the template
-    //         var template = loadTemplate(localClass);
-    //         var fnBody = new Array<Expr>();
-
-    //         // Collect all the statements we use
-    //         switch (dataType)
-    //         {
-    //             case TInst(t,params):
-    //                 var dataClass = t.get();
-    //                 for (expr in setupBindingVariables(dataClass))
-    //                 {
-    //                     fnBody.push(expr);
-    //                 }
-    //             default:
-    //                 haxe.macro.Context.error("DataWidget can only have a class instance as a type parameter", p);
-
-    //         }
-    //         var result = processTemplate(template);
-    //         for (expr in result.bindings)
-    //         {
-    //             fnBody.push(expr);
-    //         }
-            
-    //         // Create the get_template() field and the refresh() field
-    //         fields.push(createField_refresh(fnBody, true));
-    //         fields.push(createField_get_template(result.template, p));
-    //     }
-
-
-    //     return fields;
-    // }
 
     /**
       * Helper functions
@@ -244,21 +192,6 @@ class WidgetTools
             pos: widgetPos
         }
     }
-
-    // static function setupBindingVariables(c:ClassType):Array<Expr>
-    // {
-    //     var p = Context.currentPos();
-    //     var bindings = new Array();
-
-    //     for (f in c.fields.get())
-    //     {
-    //         var varValue = ("o." + f.name).resolve();
-    //         var expr = f.name.define(varValue);
-    //         bindings.push(expr);
-    //     }
-
-    //     return bindings;
-    // }
 
     static var topLevelElements:Array<dtx.DOMNode>;
     static function trackTopLevelElements(xml:DOMCollection)
@@ -946,23 +879,6 @@ class WidgetTools
         return booleanSetters.get(className).get(booleanName);
     }
 
-    // static function createField_refresh(fnBody:Array<Expr>, isOverride:Bool):Field
-    // {
-    //     var pos = Context.currentPos();
-    //     return { 
-    //         name : "refresh", 
-    //         doc : null, 
-    //         meta : [], 
-    //         access : (isOverride) ? [AOverride, APublic] : [APublic], 
-    //         kind : FFun({ 
-    //             args: [], 
-    //             expr: fnBody.toBlock(), 
-    //             params: [], 
-    //             ret: null 
-    //         }), 
-    //         pos: pos
-    //     }
-    // }
     #end
 }
 

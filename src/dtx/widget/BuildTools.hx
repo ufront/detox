@@ -67,6 +67,26 @@ class BuildTools
         }
     }
 
+    public static function hasClassMetadata(dataName:String, recursive=false, ?cl:Ref<ClassType>):Bool 
+    {
+        var p = Context.currentPos();                           // Position where the original Widget class is declared
+        var localClass = (cl == null) ? haxe.macro.Context.getLocalClass() : cl;    // Class that is being declared, or class that is passed in
+        var meta = localClass.get().meta;                       // Metadata of the this class
+        
+        if (meta.has(dataName)) 
+            return true;
+        else if (recursive)
+        {
+            // Check if there is a super class, and check recursively for metadata
+            if (localClass.get().superClass != null)
+            {
+                var superClass = localClass.get().superClass.t;
+                if (hasClassMetadata(dataName, true, superClass)) return true;
+            }
+        }
+        return false;
+    }
+
     /** Searches the metadata for the current class - expects to find a single string @dataName("my string"), returns null in none found.  Generates an error if one was found but it was the wrong type. Can search recursively up the super-classes if 'recursive' is true */
     public static function getClassMetadata_String(dataName:String, recursive=false, ?cl:Ref<ClassType>):String
     {
