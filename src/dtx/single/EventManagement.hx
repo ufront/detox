@@ -289,6 +289,16 @@ class EventManagement
 		return on(target, "scroll", selector, listener);
 	}
 
+	public static function wheel(target:DOMNode, ?selector:String, listener:js.html.WheelEvent->Void):DOMNode
+	{
+		// Just use the HTML5 standard for now.  Works in IE9+ and FF17+, probably not webkit/opera yet.
+		target.addEventListener("wheel", untyped listener);
+		return target;
+		
+		// Later, we can try implement this, which has good fallbacks
+		// https://developer.mozilla.org/en-US/docs/Mozilla_event_reference/wheel?redirectlocale=en-US&redirectslug=DOM%2FDOM_event_reference%2Fwheel
+	}
+
 	public static inline function select(target:DOMNode, ?selector:String, listener:EventListener):DOMNode
 	{
 		return on(target, "select", selector, listener);

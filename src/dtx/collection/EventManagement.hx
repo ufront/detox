@@ -177,6 +177,15 @@ class EventManagement
 		return on(target, "scroll", selector, listener);
 	}
 
+	public static function wheel(target:DOMCollection, ?selector:String, listener:js.html.WheelEvent->Void):DOMCollection
+	{
+		for (n in target)
+		{
+			dtx.single.EventManagement.wheel(n, selector, listener);
+		}
+		return target;
+	}
+
 	public static inline function select(target:DOMCollection, ?selector:String, listener:EventListener):DOMCollection
 	{
 		return on(target, "select", selector, listener);
