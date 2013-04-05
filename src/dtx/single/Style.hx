@@ -41,34 +41,49 @@ class Style
 		var style:CSSStyleDeclaration = null;
 		if (ElementManipulation.isElement(node))
 		{
-			//style = DOMCollection.window.getComputedStyle(cast node).width;
+			style = Detox.window.getComputedStyle(cast node);
 		}
 		return style;
 	}
-
 	
-	public static function css(node:DOMNode, property:String)
+	public static function css(node:DOMNode, prop:String)
 	{
-		getComputedStyle(node).getPropertyValue("property");
+		return getComputedStyle(node).getPropertyValue(prop);
 	}
 
-	public static function setCSS(node:DOMNode, property:String, value:String)
+	public static function setCSS(node:DOMNode, prop:String, val:String)
 	{
 		if (ElementManipulation.isElement(node))
 		{
 			var style:Dynamic = untyped node.style;
-			Reflect.setField(style, property, value);
+			Reflect.setField(style, prop, val);
 		}
+		return node;
 	}
 
-	/** Get the current computed width for the first element in the set of matched elements, including padding but not border. */
-	public static function innerWidth(node:DOMNode):Int
+	public static function show(n:DOMNode) return setCSS(n, "display", "");
+	public static function hide(n:DOMNode) return setCSS(n, "display", "none");
+
+	public static function pos(node:DOMNode)
 	{
-		var style = getComputedStyle(cast node);
-		if (style != null)
+		if (ElementManipulation.isElement(node)) 
 		{
-			
+			var e:js.html.Element = cast node;
+			return {
+				top: e.offsetTop,
+				left: e.offsetLeft,
+				width: e.offsetWidth,
+				height: e.offsetHeight
+			}
+		} 
+		else 
+		{
+			return {
+				top: 0,
+				left: 0,
+				width: 0,
+				height: 0
+			}
 		}
-		return 0;
 	}
 } 
