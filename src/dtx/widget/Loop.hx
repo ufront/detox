@@ -332,6 +332,7 @@ class Loop<T> extends DOMCollection
 			for (node in item.dom)
 			{
 				this.collection.remove(node);
+				node.removeFromDOM();
 			}
 		}
 	}
