@@ -238,4 +238,18 @@ class ToolsTest
 		Assert.areEqual("My Element", "b".find().innerHTML());
 	}
 
+	#if js 
+
+	@Test 
+	public function toDetox()
+	{
+		var x = Xml.parse("<div>123</div><p>ABC</p>");
+		var xNull:Xml = null;
+
+		Assert.areEqual(2, x.toDetox().length);
+		Assert.areEqual(0, xNull.toDetox().length);
+	}
+	
+	#end 
+
 }

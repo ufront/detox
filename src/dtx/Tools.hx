@@ -174,11 +174,22 @@ class Tools
 	} 
 
 	#if js
+
+	/**
+	* Let's you turn Haxe Xml into a Detox Collection
+	* 
+	* Xml.parse(...).toDetox()
+	*/
+	public static function toDetox(x:Xml)
+	{
+		return (x != null) ? parse(x.toString()) : new DOMCollection();
+	} 
+	
 	/**
 	* A helper function that lets you do this in an event listener:
 	* e.target.toNode().toggleClass('selected')
 	*/
-	public static function toDOMNode(eventHandler:EventTarget)
+	public static function toNode(eventHandler:EventTarget)
 	{
 		var elm:DOMNode;
 		try {
