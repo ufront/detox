@@ -134,10 +134,13 @@ class Traversing
 	{
 		var descendantList = new dtx.DOMCollection();
 
-		for (node in query)
+		if (query != null)
 		{
-			var l = dtx.single.Traversing.descendants(node, elementsOnly);
-			descendantList.addCollection(l);
+			for (node in query)
+			{
+				var l = dtx.single.Traversing.descendants(node, elementsOnly);
+				descendantList.addCollection(l);
+			}
 		}
 
 		// Then pass the list back up the line...
