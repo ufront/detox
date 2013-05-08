@@ -1,8 +1,9 @@
 package dtx.widget;
 
+import dtx.widget.Loop;
 using Detox;
 
-class TemplateLoop<T> extends dtx.widget.Loop<T>
+class TemplateLoop<T> extends Loop<T>
 {
 	var template:T->String;
 
@@ -12,9 +13,9 @@ class TemplateLoop<T> extends dtx.widget.Loop<T>
 		this.template = template;
 	}
 
-	override function generateItem(input:T):DOMCollection
+	override function generateItem(input:T):LoopItem<T>
 	{
 		var html = this.template(input);
-		return html.parse();
+		return new LoopItem(input, html.parse());
 	}
 }
