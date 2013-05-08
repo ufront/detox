@@ -1,0 +1,12 @@
+# JS
+-js _
+-main DetoxDoc
+-lib beanhx
+-lib tink_macros
+-cp src
+-xml src/haxedoc.xml
+
+--macro include('dtx', true, null, ['src'])
+
+# Delete unnecessary neko file
+-cmd rm -Rf _

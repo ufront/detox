@@ -4,6 +4,7 @@ Editor files
 
 Compiled Files
 *.zip
+src/haxedoc.xml
 build/
 package/
 doc/
