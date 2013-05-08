@@ -1,0 +1,16 @@
+<project name="detox" url="https://github.com/jasononeil/detox" license="MIT">
+	<user name="jason"/>
+	<tag v="js" />
+	<tag v="dom" />
+	<tag v="jquery" />
+	<tag v="xml" />
+	<tag v="domtools" />
+	<tag v="dtx" />
+	<tag v="detox" />
+	<description>Detox (previously called DOMTools) - A cross-target library for Haxe to make working with Xml and the DOM easy... not dissimilar from jQuery etc but works wherever Haxe works.</description>
+	<version name="0.8.0.0">Rename to detox, working on JS (client), Neko, CPP and Flash9+.  Major additions to Widgets, (more to come), more fixes and unit tests</version>
+	<depends name="xirsys_stdjs"/>
+	<depends name="tink_macros"/>
+	<depends name="beanhx"/>
+	<depends name="selecthxml"/>
+</project>
