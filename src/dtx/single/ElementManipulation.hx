@@ -203,6 +203,8 @@ class ElementManipulation
 					"#text";
 				case dtx.DOMType.COMMENT_NODE:
 					"#comment";
+				default:
+					"#other";
 			}
 			
 		}
