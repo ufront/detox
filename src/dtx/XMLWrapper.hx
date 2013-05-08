@@ -13,6 +13,7 @@ package dtx;
 import dtx.DOMNode;
 import dtx.DOMCollection;
 
+#if !js
 class XMLWrapper
 {
 	static public inline function parentNode(xml:Xml)
@@ -275,3 +276,4 @@ class XMLWrapper
 		return Xml.parse(xml.toString()).firstChild();
 	}
 }
+#end
