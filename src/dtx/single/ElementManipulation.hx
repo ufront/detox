@@ -360,16 +360,54 @@ class ElementManipulation
 	}
 
 	// JS doesn't have a built in html() method
-	public static inline function html(elm:DOMNode):String
+	public static function html(elm:DOMNode):String
 	{
 		#if js
-		var div = Detox.create("div");
-		dtx.single.DOMManipulation.append(div, clone(elm));
-		return innerHTML(div);
+			var div = Detox.create("div");
+			dtx.single.DOMManipulation.append(div, clone(elm));
+			return innerHTML(div);
 		#else 
-		return (elm != null) ? elm.toString() : "";
+			if ( elm == null ) return "";
+			
+			var sb = new StringBuf();
+			printHtml( elm, sb );
+			return sb.toString();
 		#end
 	}
 
+	#if !js
+		static var selfClosingElms = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
+		static function printHtml( n:DOMNode, sb:StringBuf ) {
+			if ( isElement(n) ) {
+				var elmName = tagName(n);
+				sb.add('<$elmName');
+				
+				for ( a in n.attributes() ) {
+					var value = attr(n, a);
+					sb.add(' $a="$value"');
+				}
+				
+				if ( dtx.single.Traversing.children(n, false).length > 0 ) {
+					sb.add(">");
+					for ( child in dtx.single.Traversing.children(n, false) ) {
+						printHtml( child, sb );
+					}
+					sb.add('</$elmName>');
+				}
+				else {
+					sb.add( 
+						if ( Lambda.has(selfClosingElms, tagName(n)) ) " />" 
+						else '></$elmName>' 
+					);
+				}
+			} else if ( isDocument(n) ) {
+				for ( child in dtx.single.Traversing.children(n, false) ) {
+					printHtml( child, sb );
+				}
+			} else {
+				sb.add( n.toString() );
+			}
+		}
+	#end
 }
 
