@@ -52,6 +52,7 @@ class WidgetTools
                 // Process the template looking for partials, variables etc
                 // This function processes the template, and returns any binding statements
                 // that may be needed for bindings / variables etc.
+                
                 var result = processTemplate(template);
 
                 // Push the extra class properties that came during our processing
@@ -427,7 +428,12 @@ class WidgetTools
         node.replaceWith("div".create().setAttr("data-dtx-partial", name).setText(' '));
 
         var pack = [];
-        var type = Context.getType(typeName);
+        var type = try {
+            Context.getType(typeName);
+        } catch (e:Dynamic) {
+            Context.error('Unable to find Widget/Partial "$typeName" in Widget Template $widgetClass', widgetClass.get().pos);
+        }
+
         // Alternatively use: type = Context.typeof(macro new $typeName()), see what works
         switch (type)
         {
