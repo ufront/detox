@@ -486,6 +486,19 @@ class ElementManipulationTest
 		Assert.areEqual("<i>World</i>", helloworld.find("i").html());
 	}
 
+	@Test
+	public function testHtmlSelfClosing():Void 
+	{
+		var div = "<div id='1'>Test</div>".parse().getNode();
+		var emptyDiv = "<div id='1' />".parse().getNode();
+		var emptyImg = "<img id='1' />".parse().getNode();
+
+		Assert.areEqual('<div id="1">Test</div>', div.html());
+		Assert.areEqual('<div id="1"></div>', emptyDiv.html());
+		Assert.isTrue(emptyImg.html().indexOf(">") > -1);
+		Assert.isTrue(emptyImg.html().indexOf("</img>") == -1);
+	}
+
 	@Test 
 	public function htmlWithDifferentNodeTypes() 
 	{
