@@ -184,19 +184,15 @@ class ElementManipulation
 
 	public static inline function html(collection:DOMCollection):String
 	{
-		var str = "";
+		var sb = new StringBuf();
 		if (collection != null)
 		{
 			for (node in collection)
 			{
-				#if js
-				str += dtx.single.ElementManipulation.html(node);
-				#else 
-				str += node.toString();
-				#end
+				sb.add( dtx.single.ElementManipulation.html(node) );
 			}
 		}
-		return str;
+		return sb.toString();
 	}
 
 }
