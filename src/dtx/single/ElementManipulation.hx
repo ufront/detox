@@ -222,6 +222,7 @@ class ElementManipulation
 			{
 				case dtx.DOMType.ELEMENT_NODE:
 					#if js
+					// TODO: Make this more intelligent. Handle <select> especiallyg
 					val = Reflect.field(node, 'value');
 					
 					// If the value is null, that means
@@ -253,6 +254,8 @@ class ElementManipulation
 			switch (node.nodeType)
 			{
 				case DOMType.ELEMENT_NODE:
+					// TODO: Make this more intelligent. Handle <select> especially
+
 					// Set value with Javascript
 					#if js
 					Reflect.setField(node, "value", val);
