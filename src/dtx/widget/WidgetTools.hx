@@ -430,8 +430,10 @@ class WidgetTools
         var pack = [];
         var type = try {
             Context.getType(typeName);
-        } catch (e:Dynamic) {
-            Context.error('Unable to find Widget/Partial "$typeName" in Widget Template $widgetClass', widgetClass.get().pos);
+        } catch (e:String) {
+            if ( e=="Type not found '" + typeName + "'" ) 
+                Context.error('Unable to find Widget/Partial "$typeName" in Widget Template $widgetClass', widgetClass.get().pos);
+            else throw e;
         }
 
         // Alternatively use: type = Context.typeof(macro new $typeName()), see what works
