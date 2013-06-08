@@ -28,8 +28,8 @@ class WidgetTools
     * 
     * It's purpose is to get the template for each Widget Class
     * It looks for: 
-    *  - Metadata in the form: @template("<div></div>") class MyWidget ...
-    *  - Metadata in the form: @loadTemplate("MyWidgetTemplate.html") class MyWidget ...
+    *  - Metadata in the form: @:template("<div></div>") class MyWidget ...
+    *  - Metadata in the form: @:loadTemplate("MyWidgetTemplate.html") class MyWidget ...
     *  - Take a guess at a filename... use current filename, but replace ".hx" with ".html"
     * Once it finds it, it overrides the get_template() method, and makes it return
     * the correct template as a String constant.  So each widget gets its own template
@@ -88,11 +88,11 @@ class WidgetTools
         var template:String = "";                               // If the template is directly in metadata, use that.
 
         // Get the template content if declared in metadata
-        var template = BuildTools.getClassMetadata_String("template", true);
+        var template = BuildTools.getClassMetadata_String(":template", true);
         if (template == null)
         {
             // Check if we are loading a partial from in another template
-            var partialInside = BuildTools.getClassMetadata_ArrayOfStrings("partialInside", true);
+            var partialInside = BuildTools.getClassMetadata_ArrayOfStrings(":partialInside", true);
             if (partialInside != null && partialInside.length > 0)
             {
                 if (partialInside.length == 2)
@@ -101,13 +101,13 @@ class WidgetTools
                     var partialName = partialInside[1];
                     template = loadPartialFromInTemplate(templateFile, partialName);
                 }
-                else Context.error('@partialInside() metadata should be 2 strings: @partialInside("MyView.html", "_NameOfPartial")', p);
+                else Context.error('@:partialInside() metadata should be 2 strings: @:partialInside("MyView.html", "_NameOfPartial")', p);
             }
 
             // Check if a template file is declared in metadata
             if (template == null)
             {
-                var templateFile = BuildTools.getClassMetadata_String("loadTemplate", true);
+                var templateFile = BuildTools.getClassMetadata_String(":loadTemplate", true);
                 if (templateFile == null)
                 {
                     // If there is no metadata for the template, look for a file in the same 
@@ -118,11 +118,11 @@ class WidgetTools
                 // Attempt to load the file
                 template = BuildTools.loadFileFromLocalContext(templateFile);
                 
-                // If still no template, check if @noTpl() was declared, if not, throw error.
+                // If still no template, check if @:noTpl() was declared, if not, throw error.
                 if (template == null) 
                 {
                     var metadata = localClass.get().meta.get();
-                    if (!metadata.exists(function(metaItem) return metaItem.name == "noTpl"))
+                    if (!metadata.exists(function(metaItem) return metaItem.name == ":noTpl"))
                     {
                         Context.warning('Could not load the widget template: $templateFile', p);
                     }
@@ -352,7 +352,7 @@ class WidgetTools
         var classMeta = [{
             pos: p,
             params: [Context.makeExpr(partialTpl, p)],
-            name: "template"
+            name: ":template"
         }];
 
         // Find out if the type has already been defined
@@ -366,10 +366,10 @@ class WidgetTools
             {
                 case TInst(t, _):
                     var metaAccess = t.get().meta;
-                    if (metaAccess.has("template") == false && metaAccess.has("loadTemplate") == false)
+                    if (metaAccess.has(":template") == false && metaAccess.has(":loadTemplate") == false)
                     {
                         // No template has been defined, use ours
-                        metaAccess.add("template", [Context.makeExpr(partialTpl, p)], p);
+                        metaAccess.add(":template", [Context.makeExpr(partialTpl, p)], p);
                     }
                 default:
             }
