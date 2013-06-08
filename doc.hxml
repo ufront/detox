@@ -5,6 +5,7 @@
 -lib tink_macros
 -cp src
 -xml src/haxedoc.xml
+-dce no
 
 --macro include('dtx', true, null, ['src'])
 
