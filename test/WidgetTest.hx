@@ -289,7 +289,7 @@ class WidgetTest
 	@Test 
 	public function interpolationNotSetStrings()
 	{
-		var w = new widgets.InterpolationBasic();
+		var w = new widgets.Interpolation.InterpolationBasic();
 		Assert.areEqual("", w.name);
 		Assert.areEqual("", w.age);
 		Assert.areEqual("", w.belief);
@@ -299,7 +299,7 @@ class WidgetTest
 	@Test 
 	public function interpolationNotSetOtherTypes()
 	{
-		var w = new widgets.InterpolationDifferentTypes();
+		var w = new widgets.Interpolation.InterpolationDifferentTypes();
 		Assert.areEqual("", w.name);
 		Assert.areEqual(0, w.age);
 		Assert.areEqual(null, w.birthday);
@@ -312,7 +312,7 @@ class WidgetTest
 	@Test 
 	public function interpolationSetStrings()
 	{
-		var w = new widgets.InterpolationBasic();
+		var w = new widgets.Interpolation.InterpolationBasic();
 		w.name = "Jason";
 		w.age = "25";
 		w.belief = "gravity";
@@ -322,7 +322,7 @@ class WidgetTest
 	@Test 
 	public function interpolationSetOtherTypes()
 	{
-		var w = new widgets.InterpolationDifferentTypes();
+		var w = new widgets.Interpolation.InterpolationDifferentTypes();
 		w.name = "Jason";
 		w.age = 25;
 		w.birthday = new Date(1987,09,16,0,0,0);
@@ -341,13 +341,20 @@ class WidgetTest
 	@Test
 	public function interpolationUpdateVariables()
 	{
-		var w = new widgets.InterpolationBasic();
+		var w = new widgets.Interpolation.InterpolationBasic();
 		w.name = "Jason";
 		w.age = "25";
 		w.belief = "gravity";
 		w.age = "5";
 		w.belief = "getting younger";
 		Assert.areEqual("My name is Jason, I am 5 years old and I believe in getting younger", w.text());
+	}
+
+	@Test 
+	public function interpolationComplexExpr()
+	{
+		var w = new widgets.Interpolation.InterpolationComplexExpr();
+		Assert.areEqual("The SHA of 8 is fe5dbbcea5ce7e2988b8c69bcfdfde8904aabc1f", w.text());
 	}
 
 	@Test 

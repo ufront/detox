@@ -1,6 +1,6 @@
 package widgets;
 
-@template("<doc>
+@:template("<doc>
 	<header dtx-name='head'>This is the head</header>
 	<section dtx-name='body'>This is the body</section>
 </doc>")

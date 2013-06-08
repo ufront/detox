@@ -1,3 +1,5 @@
 package widgets;
 
-class PartialInSameFile1 extends dtx.widget.Widget { }
+import dtx.widget.Widget;
+
+class PartialInSameFile1 extends Widget { }
