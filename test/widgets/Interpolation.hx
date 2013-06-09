@@ -16,5 +16,8 @@ class InterpolationDifferentTypes extends Widget
 	public var wasTruth:Bool;
 }
 
-@:template("<p>The SHA of ${3+5} is ${haxe.crypto.Sha1.encode(3 + 5)}</p>")
+@:template("<p>The SHA of ${3+5} is ${haxe.crypto.Sha1.encode('8')}</p>")
+class InterpolationNonVarExpr extends Widget {}
+
+@:template("<p>The word $name is ${name.length} letters long and the first letter is ${name.substr(0,1)}</p>")
 class InterpolationComplexExpr extends Widget {}

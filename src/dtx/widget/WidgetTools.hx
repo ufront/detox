@@ -672,6 +672,13 @@ class WidgetTools
 
     static function addExprToAllSetters(expr:Expr, variables:Array<String>, ?prepend)
     {
+        if (variables.length == 0)
+        {
+            // Add it to the constructor instead
+            var constructor = BuildTools.getOrCreateField(getConstructorTemplate());
+            BuildTools.addLinesToFunction(constructor, expr);
+        }
+
         for (varName in variables)
         {
             // Add bindingExpr to every setter.  Add at position `1`, so after the first line, which should be 'this.field = v;'

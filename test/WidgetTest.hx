@@ -351,10 +351,18 @@ class WidgetTest
 	}
 
 	@Test 
-	public function interpolationComplexExpr()
+	public function interpolationNonVariableExpression()
+	{
+		var w = new widgets.Interpolation.InterpolationNonVarExpr();
+		Assert.areEqual("The SHA of 8 is fe5dbbcea5ce7e2988b8c69bcfdfde8904aabc1f", w.text());
+	}
+
+	@Test 
+	public function interpolationComplexExpression()
 	{
 		var w = new widgets.Interpolation.InterpolationComplexExpr();
-		Assert.areEqual("The SHA of 8 is fe5dbbcea5ce7e2988b8c69bcfdfde8904aabc1f", w.text());
+		w.name = "Detox";
+		Assert.areEqual("The word Detox is 5 letters long and the first letter is D", w.text());
 	}
 
 	@Test 
