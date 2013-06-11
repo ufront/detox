@@ -408,23 +408,27 @@ class BuildTools
                                 case ECall(e, params):
                                     // Look for variables to add in the paramaters
                                     for (param in params) {
-                                        switch (param.expr) {
-                                            case EConst(CIdent(varName)):
-                                                if ( fieldExists(varName) )
-                                                    variablesInside.push( ExtractedVarType.Call(varName) );
-                                                else {
-                                                    var localClass = Context.getLocalClass();
-                                                    var printer = new Printer("  ");
-                                                    var callString = printer.printExpr(part);
-                                                    Context.error('In the Detox template for $localClass, in function call `$callString`, variable "$varName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
-                                                }
-                                            case _:
+                                        var varName = getLeftMostVariable(param);
+                                        if (varName != null) {
+                                            if ( fieldExists(varName) )
+                                                variablesInside.push( ExtractedVarType.Call(varName) );
+                                            else {
+                                                var localClass = Context.getLocalClass();
+                                                var printer = new Printer("  ");
+                                                var callString = printer.printExpr(part);
+                                                Context.error('In the Detox template for $localClass, in function call `$callString`, variable "$varName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                            }
                                         }
                                     }
                                     // See if the function itself is on a variable we need to add
                                     var leftMostVarName = getLeftMostVariable(e);
-                                    if ( fieldExists(leftMostVarName) )
-                                        variablesInside.push( ExtractedVarType.Field(leftMostVarName) );
+                                    if ( fieldExists(leftMostVarName) ) {
+                                        switch ( getField(leftMostVarName).kind ) {
+                                            case FVar(_,_) | FProp(_,_,_,_):
+                                                variablesInside.push( ExtractedVarType.Field(leftMostVarName) );
+                                            case _:
+                                        }
+                                    }
                                     // else: don't throw error.  They might be doing "haxe.crypto.Sha1.encode()" or "Math.max(a,b)" etc. If they do something invalid the compiler will catch it, the error message just won't be as obvious
                                 default:
                                     // do nothing
@@ -440,28 +444,51 @@ class BuildTools
         return variablesInside;
     }
 
-    public static function getLeftMostVariable(expr:Expr)
+    /** Takes an expression and tries to find the left-most plain variable.  For example "student" in `student.name`, "age" in `person.age`, "name" in `name.length`.
+    
+    It will try to ignore "this", for example it will match "person" in `this.person.age`.
+
+    Note it will also match packages: "haxe" in "haxe.crypto.Sha1.encode"
+    */
+    public static function getLeftMostVariable(expr:Expr):Null<String>
     {
         var leftMostVarName = null;
+        var error = false;
+
         switch (expr.expr)
         {
+            case EConst(CIdent(varName)):
+                leftMostVarName = varName;
             case EField(e, field):
+                // Recurse until we find it.
                 var currentExpr = e;
-                while (leftMostVarName == null) {
-                    switch (currentExpr.expr) {
-                        case EConst(CIdent(varName)):
-                            leftMostVarName = varName;
-                        case EField(e,f):
+                var currentName:String;
+                while ( leftMostVarName==null ) {
+                    switch ( currentExpr.expr ) {
+                        case EConst(CIdent(varName)): 
+                            if (varName == "this") 
+                                leftMostVarName = currentName;
+                            else 
+                                leftMostVarName = varName;
+                        case EField(e, field): 
+                            currentName = field;
                             currentExpr = e;
-                        default:
-                            var localClass = Context.getLocalClass();
-                            var printer = new Printer("  ");
-                            var exprString = printer.printExpr(expr);
-                            Context.error('In the Detox template for $localClass, the expression `$exprString`, was too complicated for the poor Detox macro to understand.', localClass.get().pos);
+                        case _: 
+                            error = true;
+                            break;
                     }
                 }
-            case _: 
+            case EConst(_): // A constant.  Leave it null
+            case _: error = true;
         }
+        if (error)
+        {
+            var localClass = Context.getLocalClass();
+            var printer = new Printer("  ");
+            var exprString = printer.printExpr( expr );
+            Context.error('In the Detox template for $localClass, the expression `$exprString`, was too complicated for the poor Detox macro to understand.', localClass.get().pos);
+        }
+
         return leftMostVarName;
     }
 

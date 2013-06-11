@@ -39,7 +39,7 @@ class InterpolationOutsideFunction extends Widget {
 	public var b:Int;
 }
 
-@:template("<p>My name is ${person.name} (and my name has ${person.name.length} letters!) and I am ${person.age} years old.</p>")
+@:template("<p>My name is ${person.name} (and my name has ${person.name.length} letters!) and I am ${this.person.age} years old.</p>")
 class InterpolationFieldAccess extends Widget {
 	public var person:{ name:String, age:Int };
 }
@@ -48,6 +48,12 @@ class InterpolationFieldAccess extends Widget {
 class InterpolationFieldMemberFunction extends Widget {
 	public var person:Person;
 }
+
+@:template("<p>Your encoded email address is [${StringTools.urlEncode(this.person.email)}]</p>")
+class InterpolationFieldAccessAsFunctionArg extends Widget {
+	public var person:{ name:String, email:String };
+}
+
 class Person {
 
 	public var firstName:String;

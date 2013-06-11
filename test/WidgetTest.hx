@@ -421,6 +421,18 @@ class WidgetTest
 		Assert.areEqual("Greet N. Cannasse: Hello Nicolas", w.text());
 	}
 
+	@Test
+	public function interpolationFieldAccessAsFunctionArg()
+	{
+		var jason = {
+			name: "Jason",
+			email: "jason.oneil@example.com"
+		}
+		var w = new widgets.Interpolation.InterpolationFieldAccessAsFunctionArg();
+		w.person = jason;
+		Assert.areEqual("Your encoded email address is [jason.oneil%40example.com]", w.text());
+	}
+
 	// @Test
 	// public function disaster()
 	// {
