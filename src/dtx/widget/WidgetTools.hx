@@ -694,30 +694,37 @@ class WidgetTools
         {
             // Initialise strings as empty, everything else as null.
             var field = varName.getField();
-            var typeName:String = null;
             switch (field.kind)
             {
-                case FProp(_,_,type,_):
+                case FProp(get,set,type,e):
                     switch (type)
                     {
                         case TPath(path):
-                            typeName = path.name;
+                            var typeName = path.name;
+                            var constructor = BuildTools.getOrCreateField(getConstructorTemplate());
+                            var varRef = varName.resolve();
+                            var expr:Expr;
+                            switch (typeName) {
+                                case "Bool": 
+                                    expr = macro false;
+                                case "String": 
+                                    expr = macro "";
+                                case "Int": 
+                                    expr = macro 0;
+                                case "Float": 
+                                    expr = macro 0;
+                                default: 
+                                    expr = macro null;
+                            }
+                            var setExpr = macro $varRef = $expr;
+                            BuildTools.addLinesToFunction(constructor, setExpr);
+                            if (e == null) {
+                                // If the init expression was null, use a a different one
+                                field.kind = FProp(get,set,type,expr);
+                            }
                         default:
                     }
                 default:
-            }
-            if (typeName != null)
-            {
-                var constructor = BuildTools.getOrCreateField(getConstructorTemplate());
-                var varRef = varName.resolve();
-                var expr = switch (typeName) {
-                    case "Bool": macro $varRef = false;
-                    case "String": macro $varRef = "";
-                    case "Int": macro $varRef = 0;
-                    case "Float": macro $varRef = 0;
-                    default: macro $varRef = null;
-                }
-                BuildTools.addLinesToFunction(constructor, expr);
             }
         }
     }
@@ -728,48 +735,59 @@ class WidgetTools
         var interpolationExpr = Format.format(stringAsExpr);
         
         // Get an array of all the variables in interpolationExpr
-        var variables:Array<String> = BuildTools.extractVariablesUsedInInterpolation(interpolationExpr);
+        var variables:Array<ExtractedVarType> = BuildTools.extractVariablesUsedInInterpolation(interpolationExpr);
+        var variableNames:Array<String> = [];
 
-        for (varName in variables)
+        for (extractedVar in variables)
         {
-            var propType = TPath({
-                sub: null,
-                params: [],
-                pack: [],
-                name: "String"
-            });
-            var prop = BuildTools.getOrCreateProperty(varName, propType, false, true);
-
-            if (BuildTools.fieldExists("print_" + varName))
+            switch (extractedVar)
             {
-                // If yes, in interpolationExpr replace calls to $name with print_$name($name)
-                var fn = BuildTools.getField("print_" + varName);
+                case Ident(varName):
+                    var propType = TPath({
+                        sub: null,
+                        params: [],
+                        pack: [],
+                        name: "String"
+                    });
+                    var prop = BuildTools.getOrCreateProperty(varName, propType, false, true);
 
-                var exprToLookFor = EConst(CIdent(varName));
-                var functionName = "print_" + varName;
-                var functionNameExpr = functionName.resolve();
-                var exprToReplaceWith = macro $functionNameExpr();
+                    if (BuildTools.fieldExists("print_" + varName))
+                    {
+                        // If yes, in interpolationExpr replace calls to $name with print_$name($name)
+                        var fn = BuildTools.getField("print_" + varName);
 
-                // Use tink_macros' transform() to look for the old expression and replace it
-                interpolationExpr = interpolationExpr.transform(function (oldExpr) {
-                    if (Type.enumEq(oldExpr.expr, exprToLookFor))
-                    {
-                        return {
-                            expr: exprToReplaceWith.expr,
-                            pos: oldExpr.pos
-                        };
+                        var exprToLookFor = EConst(CIdent(varName));
+                        var functionName = "print_" + varName;
+                        var functionNameExpr = functionName.resolve();
+                        var exprToReplaceWith = macro $functionNameExpr();
+
+                        // Use tink_macros' transform() to look for the old expression and replace it
+                        interpolationExpr.transform(function (oldExpr) {
+                            if (Type.enumEq(oldExpr.expr, exprToLookFor))
+                            {
+                                return {
+                                    expr: exprToReplaceWith.expr,
+                                    pos: oldExpr.pos
+                                };
+                            }
+                            else 
+                            {
+                                return oldExpr;
+                            }
+                        });
                     }
-                    else 
-                    {
-                        return oldExpr;
-                    }
-                });
+                    variableNames.push(varName);
+                case Call(varName):
+                    variableNames.push(varName);
+                case Field(varName):
+                    interpolationExpr = macro (($i{varName} != null) ? $interpolationExpr : "");
+                    variableNames.push(varName);
             }
         }
 
         return {
             expr: interpolationExpr,
-            variablesInside: variables
+            variablesInside: variableNames
         };
     }
 

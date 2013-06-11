@@ -14,6 +14,7 @@ package dtx.widget;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Format;
+import haxe.macro.Printer;
 import haxe.macro.Type;
 import tink.macro.tools.MacroTools;
 using tink.macro.tools.MacroTools;
@@ -377,7 +378,7 @@ class BuildTools
     Basic implementation so far, only looks for basic EConst(CIdent(myvar)) */
     public static function extractVariablesUsedInInterpolation(expr:Expr)  
     {
-        var variablesInside:Array<String> = [];
+        var variablesInside:Array<ExtractedVarType> = [];
         switch(expr.expr)
         {
             case ECheckType(e,_):
@@ -385,19 +386,46 @@ class BuildTools
                 {
                     case EBinop(_,_,_):
                         var parts = getAllPartsOfBinOp(e);
-                        for (p in parts)
+                        for (part in parts)
                         {
-                            switch (p.expr)
+                            switch (part.expr)
                             {
-                                case EConst(c):
-                                    // could be string, ident, int etc.  We want ident.
-                                    switch (c)
-                                    {
-                                        case CIdent(varName):
-                                            variablesInside.push(varName);
-                                        default:
-                                            // do nothing
+                                case EConst(CIdent(varName)):
+                                    variablesInside.push( ExtractedVarType.Ident(varName) );
+                                case EField(e, field):
+                                    // Get the left-most field, add it to the array
+                                    var leftMostVarName = getLeftMostVariable(part);
+                                    if (leftMostVarName != null) {
+                                        if ( fieldExists(leftMostVarName) )
+                                            variablesInside.push( ExtractedVarType.Field(leftMostVarName) );
+                                        else {
+                                            var localClass = Context.getLocalClass();
+                                            var printer = new Printer("  ");
+                                            var partString = printer.printExpr(part);
+                                            Context.error('In the Detox template for $localClass, in the expression `$partString`, variable "$leftMostVarName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                        }
                                     }
+                                case ECall(e, params):
+                                    // Look for variables to add in the paramaters
+                                    for (param in params) {
+                                        switch (param.expr) {
+                                            case EConst(CIdent(varName)):
+                                                if ( fieldExists(varName) )
+                                                    variablesInside.push( ExtractedVarType.Call(varName) );
+                                                else {
+                                                    var localClass = Context.getLocalClass();
+                                                    var printer = new Printer("  ");
+                                                    var callString = printer.printExpr(part);
+                                                    Context.error('In the Detox template for $localClass, in function call `$callString`, variable "$varName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                                }
+                                            case _:
+                                        }
+                                    }
+                                    // See if the function itself is on a variable we need to add
+                                    var leftMostVarName = getLeftMostVariable(e);
+                                    if ( fieldExists(leftMostVarName) )
+                                        variablesInside.push( ExtractedVarType.Field(leftMostVarName) );
+                                    // else: don't throw error.  They might be doing "haxe.crypto.Sha1.encode()" or "Math.max(a,b)" etc. If they do something invalid the compiler will catch it, the error message just won't be as obvious
                                 default:
                                     // do nothing
                             }
@@ -412,7 +440,30 @@ class BuildTools
         return variablesInside;
     }
 
-
+    public static function getLeftMostVariable(expr:Expr)
+    {
+        var leftMostVarName = null;
+        switch (expr.expr)
+        {
+            case EField(e, field):
+                var currentExpr = e;
+                while (leftMostVarName == null) {
+                    switch (currentExpr.expr) {
+                        case EConst(CIdent(varName)):
+                            leftMostVarName = varName;
+                        case EField(e,f):
+                            currentExpr = e;
+                        default:
+                            var localClass = Context.getLocalClass();
+                            var printer = new Printer("  ");
+                            var exprString = printer.printExpr(expr);
+                            Context.error('In the Detox template for $localClass, the expression `$exprString`, was too complicated for the poor Detox macro to understand.', localClass.get().pos);
+                    }
+                }
+            case _: 
+        }
+        return leftMostVarName;
+    }
 
     /** Reads a file, relative either to the project class paths, or relative to a specific class.  It will try an absolute path 
     first (testing against each of the class paths), and then a relative path, testing against each of the class paths in the directory
@@ -454,5 +505,12 @@ class BuildTools
     {
 
     }
+}
+
+enum ExtractedVarType
+{
+    Ident(name:String);
+    Field(name:String);
+    Call(name:String);
 }
 #end

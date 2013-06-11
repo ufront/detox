@@ -365,12 +365,60 @@ class WidgetTest
 		Assert.areEqual("The word Detox is 5 letters long and the first letter is D", w.text());
 	}
 
+	@Test
+	public function interpolationMemberFunction()
+	{
+		var w = new widgets.Interpolation.InterpolationMemberFunction();
+		w.a = 10;
+		w.b = 20;
+		Assert.areEqual("Sum = 30", w.text());
+		w.a = 1;
+		w.b = 2;
+		Assert.areEqual("Sum = 3", w.text());
+	}
+
+	@Test 
+	public function interpolationOutsideFunction()
+	{
+		var w = new widgets.Interpolation.InterpolationOutsideFunction();
+		w.a = 10;
+		w.b = 20;
+		Assert.areEqual("Max = 20", w.text());
+		w.a = 1;
+		w.b = 2;
+		Assert.areEqual("Max = 2", w.text());
+	}
+
 	@Test 
 	public function htmlCharacterEncodings()
 	{
 		var w = new widgets.WidgetWithHtmlEncoding();
 		var expected = '<p title="All about apples &amp; bananas">Apples &amp; Bananas, <i title="&laquo;More Info&raquo;">&laquo;&nbsp;Both are fruit&nbsp;&raquo</i></p>';
 		Assert.areEqual(expected, untyped w.get_template());
+	}
+
+	@Test
+	public function interpolationFieldAccess()
+	{
+		var jason = {
+			name: "Jason",
+			age: 25
+		}
+		var w = new widgets.Interpolation.InterpolationFieldAccess();
+		w.person = jason;
+		Assert.areEqual("My name is Jason (and my name has 5 letters!) and I am 25 years old.", w.text());
+	}
+
+	@Test
+	public function interpolationFieldMemberFunction()
+	{
+		var w = new widgets.Interpolation.InterpolationFieldMemberFunction();
+		var jason = new widgets.Interpolation.Person("Jason", "O'Neil");
+		var nicolas = new widgets.Interpolation.Person("Nicolas", "Cannasse");
+		w.person = jason;
+		Assert.areEqual("Greet J. O'Neil: Hello Jason", w.text());
+		w.person = nicolas;
+		Assert.areEqual("Greet N. Cannasse: Hello Nicolas", w.text());
 	}
 
 	// @Test
@@ -388,7 +436,6 @@ class WidgetTest
 	// 	Assert.areEqual("", w.html());
 	// }
 }
-
 
 class SimpleTestWidget extends dtx.widget.Widget
 {
