@@ -14,6 +14,7 @@ package dtx.widget;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Format;
+import haxe.macro.Printer;
 import tink.macro.tools.MacroTools;
 using tink.macro.tools.MacroTools;
 using StringTools;
@@ -735,7 +736,7 @@ class WidgetTools
         var interpolationExpr = Format.format(stringAsExpr);
         
         // Get an array of all the variables in interpolationExpr
-        var variables:Array<ExtractedVarType> = BuildTools.extractVariablesUsedInInterpolation(interpolationExpr);
+        var variables:Array<ExtractedVarType> = extractVariablesUsedInInterpolation(interpolationExpr);
         var variableNames:Array<String> = [];
 
         for (extractedVar in variables)
@@ -789,6 +790,124 @@ class WidgetTools
             expr: interpolationExpr,
             variablesInside: variableNames
         };
+    }
+
+    /** Takes the output of an expression such as Std.format(), and searches for variables used... 
+    Basic implementation so far, only looks for basic EConst(CIdent(myvar)) */
+    public static function extractVariablesUsedInInterpolation(expr:Expr)  
+    {
+        var variablesInside:Array<ExtractedVarType> = [];
+        switch(expr.expr)
+        {
+            case ECheckType(e,_):
+                switch (e.expr)
+                {
+                    case EBinop(_,_,_):
+                        var parts = BuildTools.getAllPartsOfBinOp(e);
+                        for (part in parts)
+                        {
+                            switch (part.expr)
+                            {
+                                case EConst(CIdent(varName)):
+                                    variablesInside.push( ExtractedVarType.Ident(varName) );
+                                case EField(e, field):
+                                    // Get the left-most field, add it to the array
+                                    var leftMostVarName = getLeftMostVariable(part);
+                                    if (leftMostVarName != null) {
+                                        if ( leftMostVarName.fieldExists() )
+                                            variablesInside.push( ExtractedVarType.Field(leftMostVarName) );
+                                        else {
+                                            var localClass = Context.getLocalClass();
+                                            var printer = new Printer("  ");
+                                            var partString = printer.printExpr(part);
+                                            Context.error('In the Detox template for $localClass, in the expression `$partString`, variable "$leftMostVarName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                        }
+                                    }
+                                case ECall(e, params):
+                                    // Look for variables to add in the paramaters
+                                    for (param in params) {
+                                        var varName = getLeftMostVariable(param);
+                                        if (varName != null) {
+                                            if ( varName.fieldExists() )
+                                                variablesInside.push( ExtractedVarType.Call(varName) );
+                                            else {
+                                                var localClass = Context.getLocalClass();
+                                                var printer = new Printer("  ");
+                                                var callString = printer.printExpr(part);
+                                                Context.error('In the Detox template for $localClass, in function call `$callString`, variable "$varName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                            }
+                                        }
+                                    }
+                                    // See if the function itself is on a variable we need to add
+                                    var leftMostVarName = getLeftMostVariable(e);
+                                    if ( leftMostVarName.fieldExists() ) {
+                                        switch ( leftMostVarName.getField().kind ) {
+                                            case FVar(_,_) | FProp(_,_,_,_):
+                                                variablesInside.push( ExtractedVarType.Field(leftMostVarName) );
+                                            case _:
+                                        }
+                                    }
+                                    // else: don't throw error.  They might be doing "haxe.crypto.Sha1.encode()" or "Math.max(a,b)" etc. If they do something invalid the compiler will catch it, the error message just won't be as obvious
+                                default:
+                                    // do nothing
+                            }
+                        }
+                    default:
+                        haxe.macro.Context.error("extractVariablesUsedInInterpolation() only works when the expression inside ECheckType is EBinOp, as with the output of Format.format()", Context.currentPos());
+                }
+            default:
+                haxe.macro.Context.error("extractVariablesUsedInInterpolation() only works on ECheckType, the output of Format.format()", Context.currentPos());
+        }
+
+        return variablesInside;
+    }
+
+    /** Takes an expression and tries to find the left-most plain variable.  For example "student" in `student.name`, "age" in `person.age`, "name" in `name.length`.
+    
+    It will try to ignore "this", for example it will match "person" in `this.person.age`.
+
+    Note it will also match packages: "haxe" in "haxe.crypto.Sha1.encode"
+    */
+    public static function getLeftMostVariable(expr:Expr):Null<String>
+    {
+        var leftMostVarName = null;
+        var error = false;
+
+        switch (expr.expr)
+        {
+            case EConst(CIdent(varName)):
+                leftMostVarName = varName;
+            case EField(e, field):
+                // Recurse until we find it.
+                var currentExpr = e;
+                var currentName:String;
+                while ( leftMostVarName==null ) {
+                    switch ( currentExpr.expr ) {
+                        case EConst(CIdent(varName)): 
+                            if (varName == "this") 
+                                leftMostVarName = currentName;
+                            else 
+                                leftMostVarName = varName;
+                        case EField(e, field): 
+                            currentName = field;
+                            currentExpr = e;
+                        case _: 
+                            error = true;
+                            break;
+                    }
+                }
+            case EConst(_): // A constant.  Leave it null
+            case _: error = true;
+        }
+        if (error)
+        {
+            var localClass = Context.getLocalClass();
+            var printer = new Printer("  ");
+            var exprString = printer.printExpr( expr );
+            Context.error('In the Detox template for $localClass, the expression `$exprString`, was too complicated for the poor Detox macro to understand.', localClass.get().pos);
+        }
+
+        return leftMostVarName;
     }
 
     static function processDtxBoolAttributes(node:dtx.DOMNode, attName:String)
