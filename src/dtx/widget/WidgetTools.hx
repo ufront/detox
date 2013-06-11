@@ -262,20 +262,6 @@ class WidgetTools
             }
         }
 
-        // All our variable definitions are added to the end of the constructor.
-        // So if the developer wants to work with the partials in the constructor, they find out that
-        // the partials are still null.  (D'OH!)  Call init(), which the developer can then use
-        // instead of putting their code in the constructor.
-        if ("new".fieldExists())
-        {
-            var constructor = "new".getField();
-            var expr = macro init();
-            BuildTools.addLinesToFunction(constructor, expr);
-        }
-
-        // var bindingExpressions = new Array<Expr>();
-        // var toAddToConstructor = new Array<Expr>();
-
         // More escaping hoop-jumping.  Basically, xml.html() will encode the text nodes, but not the attributes. Gaarrrh
         // So if we go through the attributes on each of our top level nodes, and escape them, then we can unescape the whole thing.
         for (node in xml)
@@ -464,7 +450,7 @@ class WidgetTools
         }
         BuildTools.addLinesToFunction(prop.setter, linesToAdd, 0);
 
-        // Now that we can set it via the property setter, we do so in our constructor.
+        // Now that we can set it via the property setter, we do so in our init function.
         // With something like:
         // 
         // $name = new $type()
@@ -480,12 +466,12 @@ class WidgetTools
         //   partial_1 = btn;
         // }
 
-        // Get the constructor, instantiate our partial
-        var constructor = BuildTools.getOrCreateField(getConstructorTemplate());
+        // Get the init function, instantiate our partial
+        var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
         linesToAdd = macro {
             $variableRef = new $typeName();
         };
-        BuildTools.addLinesToFunction(constructor, linesToAdd);
+        BuildTools.addLinesToFunction(initFn, linesToAdd);
 
         // Set any variables for the partial
         for (attName in node.attributes())
@@ -497,26 +483,26 @@ class WidgetTools
                 linesToAdd = macro {
                     $propertyRef = $valueExpr;
                 };
-                BuildTools.addLinesToFunction(constructor, linesToAdd);
+                BuildTools.addLinesToFunction(initFn, linesToAdd);
             }
         }
     }
 
-    static function getConstructorTemplate()
+    static function getInitFnTemplate()
     {
-        var constructorBody = macro { super(); }
+        var body = macro {};
         return {
             pos: Context.currentPos(),
-            name: "new",
+            name: "init",
             meta: [],
             kind: FieldType.FFun({
                     ret: null,
                     params: [],
-                    expr: constructorBody,
+                    expr: body,
                     args: []
                 }),
             doc: "",
-            access: [APublic]
+            access: [APrivate,AOverride]
         }
     }
 
@@ -671,9 +657,9 @@ class WidgetTools
     {
         if (variables.length == 0)
         {
-            // Add it to the constructor instead
-            var constructor = BuildTools.getOrCreateField(getConstructorTemplate());
-            BuildTools.addLinesToFunction(constructor, expr);
+            // Add it to the init() function instead instead
+            var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
+            BuildTools.addLinesToFunction(initFn, expr);
         }
 
         for (varName in variables)
@@ -698,7 +684,7 @@ class WidgetTools
                     {
                         case TPath(path):
                             var typeName = path.name;
-                            var constructor = BuildTools.getOrCreateField(getConstructorTemplate());
+                            var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
                             var varRef = varName.resolve();
                             var expr:Expr;
                             switch (typeName) {
@@ -714,9 +700,9 @@ class WidgetTools
                                     expr = macro null;
                             }
                             var setExpr = macro $varRef = $expr;
-                            BuildTools.addLinesToFunction(constructor, setExpr);
+                            BuildTools.addLinesToFunction(initFn, setExpr);
                             if (e == null) {
-                                // If the init expression was null, use a a different one
+                                // Only change the "init" expression if it wasn't explicitly supplied.
                                 field.kind = FProp(get,set,type,expr);
                             }
                         default:
