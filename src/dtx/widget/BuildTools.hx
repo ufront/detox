@@ -51,18 +51,22 @@ class BuildTools
         return getFields().filter(function (f) { return f.name == name; })[0];
     }
 
-    /** Return a field, assuming it already exists */
+    /** Return a setter from a field.  
+
+    If it is a FProp, it returns the existing setter, or creates one if it did not have a setter already.
+
+    If it is a FVar, it will transform it into FProp(default,set) to create the setter and return it.
+
+    If it is a FFun
+    */
     public static function getSetterFromField(field:Field)
     {
         switch (field.kind)
         {
-            case FieldType.FProp(_, set, _, _):
-                return getField(set);
-            case FieldType.FVar(_,_): 
-                throw "Was expecting " + field.name + " to be a property, but it was a var.";
-                return null;
+            case FieldType.FProp(_, _, t, _) | FieldType.FVar(t,_): 
+                return getOrCreateProperty(field.name, t, false, true).setter;
             case FieldType.FFun(_): 
-                throw "Was expecting " + field.name + " to be a property, but it was a function.";
+                throw "Was expecting " + field.name + " to be a var or property, but it was a function.";
                 return null;
         }
     }
@@ -160,9 +164,17 @@ class BuildTools
         }
     }
 
-    /** Creates a new property on the class, with the given name and type.  Optionally can set a setter or 
-    a getter.  Returns a simple object containing the fields for the property, the setter and the getter. */
-    public static function getOrCreateProperty(propertyName:String, propertyType:haxe.macro.ComplexType, useGetter:Bool, useSetter:Bool):{ property:Field, getter:Field, setter:Field }
+    /** Gets an existing (or creates a new) property on the class, with the given name and type.  Optionally can set a setter or 
+    a getter.  
+
+    If the property already exists and was explicitly typed, it will not be changed. 
+
+    If the property already exists and is a FVar, it will be transformed into a FProp
+
+    If the property already exists and is a FProp, the existing setter and getter will be used.
+
+    Returns a simple object containing the fields for the property, the setter and the getter.  */
+    public static function getOrCreateProperty(propertyName:String, propertyType:ComplexType, useGetter:Bool, useSetter:Bool):{ property:Field, getter:Field, setter:Field }
     {
         var p = Context.currentPos();                           // Position where the original Widget class is declared
         
