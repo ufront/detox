@@ -41,7 +41,7 @@ class WidgetTools
         var fields = BuildTools.getFields();
 
         // If get_template() already exists, don't recreate it
-        var useParentTemplate = BuildTools.hasClassMetadata("useParentTemplate");
+        var useParentTemplate = BuildTools.hasClassMetadata(":useParentTemplate");
         if (!useParentTemplate && fields.exists(function (f) return f.name == "get_template") == false)
         {
             // Load the template
