@@ -65,14 +65,11 @@ class WidgetTools
                 // Create and add the get_template() field.  
                 template = result.template;
                 fields.push(createField_get_template(template, widgetPos));
+                return fields;
             }
-            return fields;
         }
-        else
-        {
-            // Leave the fields as is
-            return null;
-        }
+        // Leave the fields as is
+        return null;
     }
 
     /**
