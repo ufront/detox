@@ -261,7 +261,6 @@ class WidgetTools
                 // (I think?  While it might be nice to have it do the encoding for you, it is not expected, so violates principal of least surprise.  Also, how does '&nbsp;' get entered?)
                 // And it appears to only affect the top level element, not any descendants.  Weird...
                 node.setText(node.text().htmlUnescape());
-
                 clearWhitespaceFromTextnode(node);
             }
         }
