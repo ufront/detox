@@ -1,0 +1,16 @@
+{
+  "name": "detox",
+  "license": "MIT",
+  "tags": ["js","dom","jquery","xml","domtools","dtx","detox"],
+  "description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
+  "contributors": ["jason"],
+  "releasenote": "First Haxe 3 release.  The widget handling code is beginning to stabilize (slowly!). Added support for node.change() syntax to trigger change event. Small fixes all over. Js, Neko and CPP targets are working reliably. Flash has some weird issues with the Haxe Xml implementation when moving DOM elements around, but it mostly works for reading Xml.",
+  "version": "0.10.0",
+  "url": "https://github.com/jasononeil/detox",
+  "classPath": "src/",
+  "dependencies": {
+    "selecthxml": "",
+    "tink_macro": "0.0.0-alpha",
+    "beanhx": ""
+  }
+}
