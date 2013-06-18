@@ -62,9 +62,8 @@ class WidgetTools
                     fields.push(f);
                 }
 
-                // Create and add the get_template() field.  
-                template = result.template;
-                fields.push(createField_get_template(template, widgetPos));
+                // Create and add the get_template() field. 
+                fields.push(createField_get_template(result.template, template, widgetPos));
                 return fields;
             }
         }
@@ -126,7 +125,6 @@ class WidgetTools
                     }
                 }
             }
-            
         }
         return template;
     }
@@ -154,7 +152,7 @@ class WidgetTools
         return partialTemplate;
     }
     
-    static function createField_get_template(template:String, widgetPos:Position):Field
+    static function createField_get_template(template:String, original:String, widgetPos:Position):Field
     {
         // Clear whitespace from the start and end of the widget
         var whitespaceStartOrEnd = ~/^\s+|\s+$/g;
@@ -162,9 +160,9 @@ class WidgetTools
 
         return { 
             name : "get_template", 
-            doc : null, 
+            doc : "__Template__:\n\n```\n" + original + "\n```", 
             meta : [], 
-            access : [AOverride], 
+            access : [APublic,AOverride], 
             kind : FFun({ 
                 args: [], 
                 expr: { 
