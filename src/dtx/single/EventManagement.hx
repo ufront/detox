@@ -94,7 +94,7 @@ class EventManagement
 	public static inline function trigger(target:DOMNode, eventString:String):DOMNode
 	{
 		#if js 
-		Bean.fire(target, eventString);
+		if (target!=null) Bean.fire(target, eventString);
 		#else 
 		trace ("Detox events only work on the Javascript target, sorry.");
 		#end
@@ -111,12 +111,15 @@ class EventManagement
 	public static inline function on(target:DOMNode, eventType:String, ?selector:String, ?listener:EventListener):DOMNode
 	{
 		#if js 
-			if (listener != null)
+			if (target != null)
 			{
-				if (selector != null) Bean.on(target, eventType, selector, listener);
-				else Bean.on(target, eventType, listener);
+				if (listener != null)
+				{
+					if (selector!=null) Bean.on(target, eventType, selector, listener);
+					else Bean.on(target, eventType, listener);
+				}
+				else trigger (target, eventType);
 			}
-			else trigger (target, eventType);
 		#else 
 			trace ("Detox events only work on the Javascript target, sorry.");
 		#end
@@ -126,10 +129,13 @@ class EventManagement
 	public static function off(target:DOMNode, ?eventType:String = null, ?listener:EventListener=null):DOMNode
 	{
 		#if js 
-			if (eventType != null && listener != null) Bean.off(target, eventType, listener);
-			else if (eventType != null) Bean.off(target, eventType);
-			else if (listener != null) Bean.off(target, listener);
-			else Bean.off(target);
+			if (target != null)
+			{
+				if (eventType != null && listener != null) Bean.off(target, eventType, listener);
+				else if (eventType != null) Bean.off(target, eventType);
+				else if (listener != null) Bean.off(target, listener);
+				else Bean.off(target);
+			}
 		#else 
 			trace ("Detox events only work on the Javascript target, sorry.");
 		#end
@@ -140,8 +146,11 @@ class EventManagement
 	public static function one(target:DOMNode, eventType:String, ?selector:String, listener:EventListener):DOMNode
 	{
 		#if js 
-			if (selector != null) Bean.one(target, eventType, selector, listener);
-			else Bean.one(target, eventType, listener);
+			if (target != null)
+			{
+				if (selector != null) Bean.one(target, eventType, selector, listener);
+				else Bean.one(target, eventType, listener);
+			}
 		#else 
 			trace ("Detox events only work on the Javascript target, sorry.");
 		#end
