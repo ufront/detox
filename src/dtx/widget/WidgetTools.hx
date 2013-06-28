@@ -17,6 +17,7 @@ import haxe.macro.Format;
 import haxe.macro.Printer;
 import tink.macro.tools.MacroTools;
 using tink.macro.tools.MacroTools;
+using haxe.macro.ExprTools;
 using StringTools;
 using Lambda;
 using Detox;
@@ -663,8 +664,7 @@ class WidgetTools
         for (varName in variables)
         {
             // Add bindingExpr to every setter.  Add at position `1`, so after the first line, which should be 'this.field = v;'
-            var prop = BuildTools.getField(varName);
-            var setter = BuildTools.getSetterFromField(prop);
+            var setter = varName.getField().getSetter();
             BuildTools.addLinesToFunction(setter, expr, 1);
         }
     }
@@ -673,37 +673,44 @@ class WidgetTools
     {
         for (varName in variables)
         {
-            // Initialise strings as empty, everything else as null.
             var field = varName.getField();
             switch (field.kind)
             {
                 case FProp(get,set,type,e):
-                    switch (type)
+                    var initValueExpr:Expr = null;
+                    var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
+                    if ( e!=null ) 
+                        initValueExpr = e;
+                    else 
                     {
-                        case TPath(path):
-                            var typeName = path.name;
-                            var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
-                            var varRef = varName.resolve();
-                            var expr:Expr;
-                            switch (typeName) {
-                                case "Bool": 
-                                    expr = macro false;
-                                case "String": 
-                                    expr = macro "";
-                                case "Int": 
-                                    expr = macro 0;
-                                case "Float": 
-                                    expr = macro 0;
-                                default: 
-                                    expr = macro null;
-                            }
-                            var setExpr = macro $varRef = $expr;
-                            BuildTools.addLinesToFunction(initFn, setExpr);
-                            if (e == null) {
-                                // Only change the "init" expression if it wasn't explicitly supplied.
-                                field.kind = FProp(get,set,type,expr);
-                            }
-                        default:
+                        if ( type == null ) throw 'Unknown type when trying to initialize $varName on class ${Context.getLocalClass()}';
+                        switch (type)
+                        {
+                            case TPath(path):
+                                switch (path.name) {
+                                    case "Bool": 
+                                        initValueExpr = macro false;
+                                    case "String": 
+                                        initValueExpr = macro "";
+                                    case "Int": 
+                                        initValueExpr = macro 0;
+                                    case "Float": 
+                                        initValueExpr = macro 0;
+                                    default: 
+                                        initValueExpr = macro null;
+                                }
+                            default:
+                        }
+                    }
+                    if ( initValueExpr!=null )
+                    {
+                        // Update the init expression, and add to the init function
+                        // We want both, the init function so that setters fire, and the init expression
+                        // so that all values are initialized by the time the first setter fires also...
+                        field.kind = FProp(get,set,type,initValueExpr);
+                        var varRef = varName.resolve();
+                        var setExpr = macro $varRef = $initValueExpr;
+                        BuildTools.addLinesToFunction(initFn, setExpr);
                     }
                 default:
             }
@@ -940,11 +947,24 @@ class WidgetTools
 
         if (wasDtxAttr)
         {
-            // Get setter parts, add statements, remove our dtx-* attribute
-            var booleanName = node.attr(attName);
-            var setterParts = getBooleanSetterParts(booleanName);
-            BuildTools.addLinesToBlock(setterParts.trueBlock, trueStatement);
-            BuildTools.addLinesToBlock(setterParts.falseBlock, falseStatement);
+            var className = Context.getLocalClass().toString();
+            var classPos = Context.getLocalClass().get().pos;
+
+            // Turn the attribute into an expression, and check it is a Bool, so we can use it in an if statement
+            var testExprStr = node.attr(attName);
+            var testExpr = 
+                try 
+                    Context.parse( testExprStr, classPos )
+                catch (e:Dynamic) 
+                    Context.error('Error parsing $attName="$testExprStr" in $className template. \nError: $e \nNode: ${node.html()}', classPos);
+
+            // Extract all the variables used, create the `if(test) ... else ...` expr, add to setters, initialize variables
+            var idents =  testExpr.extractIdents();
+            var bindingExpr = macro if ($testExpr) $trueStatement else $falseStatement;
+            addExprToAllSetters(bindingExpr,idents, true);
+            addExprInitialisationToConstructor(idents);
+
+            // Remove the attribute now that we've processed it
             node.removeAttr(attName);
         }
             

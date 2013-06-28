@@ -297,6 +297,16 @@ class WidgetTest
 	}
 
 	@Test 
+	public function interpolationNotSetButWithInitialization()
+	{
+		var w = new widgets.Interpolation.InterpolationWithInitialisation();
+		Assert.areEqual("Jason", w.name);
+		Assert.areEqual(26, w.age);
+		Assert.areEqual(true, w.isTall);
+		Assert.areEqual("My name is Jason, I am 26 years old and it is true that I am tall", w.text());
+	}
+
+	@Test 
 	public function interpolationNotSetOtherTypes()
 	{
 		var w = new widgets.Interpolation.InterpolationDifferentTypes();
@@ -306,7 +316,6 @@ class WidgetTest
 		Assert.areEqual(null, w.pets);
 		Assert.areEqual(0, w.favouriteNumber);
 		Assert.areEqual(false, w.wasTruth);
-		Assert.areEqual("My name is , I am 0 years old, my birthday is null and I have these pets: null. My favourite number is 0, and the statement I just made was false", w.text());
 	}
 
 	@Test 
@@ -387,6 +396,32 @@ class WidgetTest
 		w.a = 1;
 		w.b = 2;
 		Assert.areEqual("Max = 2", w.text());
+	}
+
+	@Test 
+	public function showHideBoolAttributes()
+	{
+		var w = new widgets.BoolAttributes.ShowHideBasic();
+
+		// Test the constants
+		Assert.isFalse( w.alwaysShow.hasClass("hidden") );
+		Assert.isTrue( w.alwaysHide.hasClass("hidden") );
+		Assert.isTrue( w.neverShow.hasClass("hidden") );
+		Assert.isFalse( w.neverHide.hasClass("hidden") );
+
+		// Test the intial state of the Booleans
+		Assert.isFalse( w.showIfSomeFlag.hasClass("hidden") );
+		Assert.isTrue( w.hideIfSomeFlag.hasClass("hidden") );
+		Assert.isTrue( w.showIfSomeString.hasClass("hidden") );
+		Assert.isFalse( w.hideIfSomeString.hasClass("hidden") );
+
+		// Test the changed state of the Booleans
+		w.someFlag = false;
+		w.someString = "Jason";
+		Assert.isTrue( w.showIfSomeFlag.hasClass("hidden") );
+		Assert.isFalse( w.hideIfSomeFlag.hasClass("hidden") );
+		Assert.isFalse( w.showIfSomeString.hasClass("hidden") );
+		Assert.isTrue( w.hideIfSomeString.hasClass("hidden") );
 	}
 
 	@Test 

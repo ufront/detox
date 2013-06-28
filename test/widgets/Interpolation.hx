@@ -5,6 +5,14 @@ import dtx.widget.Widget;
 @:template("<p>My name is $name, I am $age years old and I believe in $belief</p>")
 class InterpolationBasic extends Widget {}
 
+@:template("<p>My name is $name, I am $age years old and it is $isTall that I am tall</p>")
+class InterpolationWithInitialisation extends Widget 
+{
+	public var name = "Jason";
+	public var age = 26;
+	public var isTall = true;
+}
+
 @:template("<p>My name is $name, I am $age years old, my birthday is $birthday and I have these pets: $pets. My favourite number is $favouriteNumber, and the statement I just made was $wasTruth</p>")
 class InterpolationDifferentTypes extends Widget
 {

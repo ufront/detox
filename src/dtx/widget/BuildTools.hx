@@ -16,8 +16,8 @@ import haxe.macro.Context;
 import haxe.macro.Format;
 import haxe.macro.Printer;
 import haxe.macro.Type;
-import tink.macro.tools.MacroTools;
 using tink.macro.tools.MacroTools;
+using haxe.macro.ExprTools;
 using StringTools;
 using Lambda;
 using Detox;
@@ -60,7 +60,7 @@ class BuildTools
 
     If it is a FFun
     */
-    public static function getSetterFromField(field:Field)
+    public static function getSetter(field:Field)
     {
         switch (field.kind)
         {
@@ -338,6 +338,26 @@ class BuildTools
         }
     }
 
+    /** Extract all the idents in an expression */
+    public static function extractIdents(expr:Expr):Array<String>
+    {
+        var parts = [];
+        var getIdent:Expr->Void = null;
+        getIdent = function (e) { 
+            switch(e.expr) { 
+                case EConst(CIdent(s)): 
+                    // If first letter is capital, it's a Type. If not, it's an ident. Only add idents
+                    if ( s.charAt(0) != s.charAt(0).toUpperCase() ) 
+                        if ( s!="null" && s!="true" && s!="false" ) 
+                            parts.push(s);
+                case _: 
+                    e.iter(getIdent); 
+            }
+        }
+        getIdent(expr);
+        return parts;
+    }
+
     /** Takes a bunch of Binop functions `x + " the " + y + 10` and returns an array of each part. */
     public static function getAllPartsOfBinOp(binop:Expr):Array<Expr>
     {
@@ -368,9 +388,6 @@ class BuildTools
             case Failure(failure):
                 throw failure;
         }
-
-
-        
         return parts;
     }
 
