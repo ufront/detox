@@ -37,6 +37,7 @@ class Widget extends DOMCollection
 			if ( att!="" ) {
 				var id = Std.parseInt(att);
 				_dtxWidgetNodeIndex[id] = n;
+				n.removeAttr("data-dtx-id");
 			}
 		}
 
