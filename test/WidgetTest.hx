@@ -398,40 +398,6 @@ class WidgetTest
 		Assert.areEqual("Max = 2", w.text());
 	}
 
-	@Test 
-	public function showHideBoolAttributes()
-	{
-		var w = new widgets.BoolAttributes.ShowHideBasic();
-
-		// Test the constants
-		Assert.isFalse( w.alwaysShow.hasClass("hidden") );
-		Assert.isTrue( w.alwaysHide.hasClass("hidden") );
-		Assert.isTrue( w.neverShow.hasClass("hidden") );
-		Assert.isFalse( w.neverHide.hasClass("hidden") );
-
-		// Test the intial state of the Booleans
-		Assert.isFalse( w.showIfSomeFlag.hasClass("hidden") );
-		Assert.isTrue( w.hideIfSomeFlag.hasClass("hidden") );
-		Assert.isTrue( w.showIfSomeString.hasClass("hidden") );
-		Assert.isFalse( w.hideIfSomeString.hasClass("hidden") );
-
-		// Test the changed state of the Booleans
-		w.someFlag = false;
-		w.someString = "Jason";
-		Assert.isTrue( w.showIfSomeFlag.hasClass("hidden") );
-		Assert.isFalse( w.hideIfSomeFlag.hasClass("hidden") );
-		Assert.isFalse( w.showIfSomeString.hasClass("hidden") );
-		Assert.isTrue( w.hideIfSomeString.hasClass("hidden") );
-	}
-
-	@Test 
-	public function htmlCharacterEncodings()
-	{
-		var w = new widgets.WidgetWithHtmlEncoding();
-		var expected = '<p title="All about apples &amp; bananas">Apples &amp; Bananas, <i title="&laquo;More Info&raquo;">&laquo;&nbsp;Both are fruit&nbsp;&raquo</i></p>';
-		Assert.areEqual(expected, untyped w.get_template());
-	}
-
 	@Test
 	public function interpolationFieldAccess()
 	{
@@ -466,6 +432,40 @@ class WidgetTest
 		var w = new widgets.Interpolation.InterpolationFieldAccessAsFunctionArg();
 		w.person = jason;
 		Assert.areEqual("Your encoded email address is [jason.oneil%40example.com]", w.text());
+	}
+
+	@Test 
+	public function showHideBoolAttributes()
+	{
+		var w = new widgets.BoolAttributes.ShowHideBasic();
+
+		// Test the constants
+		Assert.isFalse( w.alwaysShow.hasClass("hidden") );
+		Assert.isTrue( w.alwaysHide.hasClass("hidden") );
+		Assert.isTrue( w.neverShow.hasClass("hidden") );
+		Assert.isFalse( w.neverHide.hasClass("hidden") );
+
+		// Test the intial state of the Booleans
+		Assert.isFalse( w.showIfSomeFlag.hasClass("hidden") );
+		Assert.isTrue( w.hideIfSomeFlag.hasClass("hidden") );
+		Assert.isTrue( w.showIfSomeString.hasClass("hidden") );
+		Assert.isFalse( w.hideIfSomeString.hasClass("hidden") );
+
+		// Test the changed state of the Booleans
+		w.someFlag = false;
+		w.someString = "Jason";
+		Assert.isTrue( w.showIfSomeFlag.hasClass("hidden") );
+		Assert.isFalse( w.hideIfSomeFlag.hasClass("hidden") );
+		Assert.isFalse( w.showIfSomeString.hasClass("hidden") );
+		Assert.isTrue( w.hideIfSomeString.hasClass("hidden") );
+	}
+
+	@Test 
+	public function htmlCharacterEncodings()
+	{
+		var w = new widgets.WidgetWithHtmlEncoding();
+		var expected = '<p title="All about apples &amp; bananas">Apples &amp; Bananas, <i title="&laquo;More Info&raquo;">&laquo;&nbsp;Both are fruit&nbsp;&raquo</i></p>';
+		Assert.areEqual(expected, untyped w.get_template());
 	}
 
 	// @Test
