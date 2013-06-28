@@ -52,6 +52,52 @@ class BuildTools
         return getFields().filter(function (f) { return f.name == name; })[0];
     }
 
+    /** Get the fully qualified name for a type, or null if not found */
+    public static function getFullTypeName(t:haxe.macro.Type):Null<String>
+    {
+        switch (t) {
+            case TMono(ref):
+                return ref.toString();
+            case TEnum(ref,_):
+                return ref.toString();
+            case TInst(ref,_):
+                return ref.toString();
+            case TType(ref,_):
+                return ref.toString();
+            case TAnonymous(ref):
+                return ref.toString();
+            case TAbstract(ref,_):
+                return ref.toString();
+            case _:
+                return null;
+        }
+    }
+
+    /** Print a single specific field */
+    public static function printField( f:Field )
+    {
+        return printFields( [f] );
+    }
+
+    /** Print the source code for the given fields (or for all fields in the current build) */
+    public static function printFields( ?fields:Array<Field> )
+    {
+        var className = getFullTypeName( Context.getLocalType() );
+        if ( fields==null ) fields = getFields();
+
+        Sys.println("----------------------------------");
+        Sys.println('Fields in $className: ');
+
+        for ( f in fields ) {
+            var typeSource = new Printer( "  " ).printField( f );
+            typeSource = typeSource.split("\n").map(function(s) return '  $s').join("\n");
+            Sys.println( '$typeSource' );
+            Sys.println( '' );
+        }
+
+        Sys.println("----------------------------------");
+    }
+
     /** Return a setter from a field.  
 
     If it is a FProp, it returns the existing setter, or creates one if it did not have a setter already.

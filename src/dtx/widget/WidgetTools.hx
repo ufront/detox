@@ -65,9 +65,19 @@ class WidgetTools
 
                 // Create and add the get_template() field. 
                 fields.push(createField_get_template(result.template, template, widgetPos));
+
+                // If @:dtxdebug metadata is found, print the class
+                if ( BuildTools.hasClassMetadata(":dtxdebug") )
+                {
+                    // Add a callback for this class
+                    BuildTools.printFields();
+                }
+
                 return fields;
             }
         }
+
+
         // Leave the fields as is
         return null;
     }
@@ -77,6 +87,7 @@ class WidgetTools
       */
 
     #if macro
+
     static function loadTemplate(localClass:Null<haxe.macro.Type.Ref<haxe.macro.Type.ClassType>>):String
     {
         var p = localClass.get().pos;                           // Position where the original Widget class is declared
