@@ -582,7 +582,7 @@ class WidgetTools
             switch( prop.getter.kind )
             {
                 case FFun(f):
-                    f.expr = macro return $selector;
+                    f.expr = macro return dtx.Tools.toCollection($selector);
                 default: 
             }
         }
@@ -593,34 +593,21 @@ class WidgetTools
     /** Get a unique selector for the node, creating a data attribute if necessary */
     static function getUniqueSelectorForNode(node:dtx.DOMNode):Expr
     {
-        var selector:String;
-
-        if (node.attr("data-dtx-id") != "") 
+        // Get an existing data-dtx-id, or set a new one 
+        var id:Int;
+        var attValue = node.attr("data-dtx-id");
+        if (attValue=="") 
         {
-            // If the element has data-dtx-id, use that
-            selector = "[data-dtx-id=\'" + node.attr("data-dtx-id") + "\']";
-        }
-        else
-        {
-            // If not, create data-dtx-id=ID, use that
-            node.setAttr("data-dtx-id", Std.string(uniqueDtxID));
-            selector = "[data-dtx-id=\'" + node.attr("data-dtx-id") + "\']";
-            uniqueDtxID++;
-        } 
-
-        var selectorTextAsExpr = Context.makeExpr(selector, Context.currentPos());
-        var selectorExpr:Expr;
-        if (isTopLevelElement(node))
-        {
-            var indexInCollection = node.parent.indexOf(node).toExpr();
-            selectorExpr = (node.parent.count() == 1) ? macro this : macro dtx.collection.Traversing.find(dtx.collection.Traversing.parent(this), $selectorTextAsExpr);
+            id = uniqueDtxID++;
+            node.setAttr("data-dtx-id", '$id');
         }
         else 
         {
-            selectorExpr = macro dtx.collection.Traversing.find(this, $selectorTextAsExpr);
+            id = Std.parseInt(attValue);
         }
 
-        return selectorExpr;
+        var idExpr = id.toExpr();
+        return macro _dtxWidgetNodeIndex[$idExpr];
     }
 
     static function interpolateAttributes(node:dtx.DOMNode, attName:String)
@@ -635,7 +622,7 @@ class WidgetTools
 
         // Set up bindingExpr
         //var bindingExpr = macro this.find($selectorAsExpr).setAttr($nameAsExpr, $interpolationExpr);
-        var bindingExpr = macro dtx.collection.ElementManipulation.setAttr($selectorExpr, $nameAsExpr, $interpolationExpr);
+        var bindingExpr = macro dtx.single.ElementManipulation.setAttr($selectorExpr, $nameAsExpr, $interpolationExpr);
         
         // Go through array of all variables again
         addExprToAllSetters(bindingExpr, variablesInside, true);
@@ -654,7 +641,7 @@ class WidgetTools
 
         // Set up bindingExpr
         //var bindingExpr = macro this.children(false).getNode($indexAsExpr).setText($interpolationExpr);
-        var bindingExpr = macro dtx.single.ElementManipulation.setText(dtx.collection.Traversing.children($selectorAsExpr, false).getNode($indexAsExpr), $interpolationExpr);
+        var bindingExpr = macro dtx.single.ElementManipulation.setText(dtx.single.Traversing.children($selectorAsExpr, false).getNode($indexAsExpr), $interpolationExpr);
         
         // Add binding expression to all setters.  
         addExprToAllSetters(bindingExpr, variablesInside, true);
@@ -675,8 +662,12 @@ class WidgetTools
         for (varName in variables)
         {
             // Add bindingExpr to every setter.  Add at position `1`, so after the first line, which should be 'this.field = v;'
-            var setter = varName.getField().getSetter();
-            BuildTools.addLinesToFunction(setter, expr, 1);
+            if (varName.fieldExists())
+            {
+                var setter = varName.getField().getSetter();
+                BuildTools.addLinesToFunction(setter, expr, 1);
+            }
+            else throw ('Field $varName not found in ${Context.getLocalClass()}');
         }
     }
 
@@ -922,32 +913,32 @@ class WidgetTools
             {
                 case "dtx-show":
                     var className = "hidden".toExpr();
-                    trueStatement = macro dtx.collection.ElementManipulation.removeClass($selector, $className);
-                    falseStatement = macro dtx.collection.ElementManipulation.addClass($selector, $className);
+                    trueStatement = macro dtx.single.ElementManipulation.removeClass($selector, $className);
+                    falseStatement = macro dtx.single.ElementManipulation.addClass($selector, $className);
                 case "dtx-hide":
                     var className = "hidden".toExpr();
-                    trueStatement = macro dtx.collection.ElementManipulation.addClass($selector, $className);
-                    falseStatement = macro dtx.collection.ElementManipulation.removeClass($selector, $className);
+                    trueStatement = macro dtx.single.ElementManipulation.addClass($selector, $className);
+                    falseStatement = macro dtx.single.ElementManipulation.removeClass($selector, $className);
                 case "dtx-enabled":
-                    trueStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "disabled");
-                    falseStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "disabled", "disabled");
+                    trueStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "disabled");
+                    falseStatement = macro dtx.single.ElementManipulation.setAttr($selector, "disabled", "disabled");
                 case "dtx-disabled":
-                    trueStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "disabled", "disabled");
-                    falseStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "disabled");
+                    trueStatement = macro dtx.single.ElementManipulation.setAttr($selector, "disabled", "disabled");
+                    falseStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "disabled");
                 case "dtx-checked":
-                    trueStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "checked", "checked");
-                    falseStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "checked");
+                    trueStatement = macro dtx.single.ElementManipulation.setAttr($selector, "checked", "checked");
+                    falseStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "checked");
                 case "dtx-unchecked":
-                    trueStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "checked");
-                    falseStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "checked", "checked");
+                    trueStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "checked");
+                    falseStatement = macro dtx.single.ElementManipulation.setAttr($selector, "checked", "checked");
                 default:
                     if (attName.startsWith('dtx-class-'))
                     {
                         // add a class
                         var className = attName.substring(10);
                         var classNameAsExpr = className.toExpr();
-                        trueStatement = macro dtx.collection.ElementManipulation.addClass($selector, $classNameAsExpr);
-                        falseStatement = macro dtx.collection.ElementManipulation.removeClass($selector, $classNameAsExpr);
+                        trueStatement = macro dtx.single.ElementManipulation.addClass($selector, $classNameAsExpr);
+                        falseStatement = macro dtx.single.ElementManipulation.removeClass($selector, $classNameAsExpr);
                     }
                     else
                     {

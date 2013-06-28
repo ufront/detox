@@ -259,6 +259,63 @@ class WidgetTest
 	}
 
 	@Test 
+	public function topLevelNamedElements()
+	{
+		var w = new widgets.WidgetWithNamedElements.TopLevelNamedElements2();
+
+		Assert.areEqual("Paragraph", w.paragraph.text());
+		Assert.areEqual("Div", w.div.text());
+
+		w.paragraph.setInnerHTML("1");
+		w.div.setInnerHTML("2");
+
+		Assert.areEqual("1", w.paragraph.text());
+		Assert.areEqual("2", w.div.text());
+	}
+
+	@Test 
+	public function namedElementsClash1()
+	{
+		var div = "div".create();
+		var w1 = new widgets.WidgetWithNamedElements.TopLevelNamedElements1();
+		var w2 = new widgets.WidgetWithNamedElements.TopLevelNamedElements1();
+		div.append(w1).append(w2);
+
+		Assert.areEqual("Paragraph", w1.paragraph.text());
+		Assert.areEqual("Paragraph", w1.paragraph.text());
+
+		w1.paragraph.setInnerHTML("1");
+		w2.paragraph.setInnerHTML("2");
+
+		Assert.areEqual("1", w1.paragraph.text());
+		Assert.areEqual("2", w2.paragraph.text());
+	}
+
+	@Test 
+	public function namedElementsClash2()
+	{
+		var div = "div".create();
+		var w1 = new widgets.WidgetWithNamedElements.TopLevelNamedElements2();
+		var w2 = new widgets.WidgetWithNamedElements.TopLevelNamedElements2();
+		div.append(w1).append(w2);
+
+		Assert.areEqual("Paragraph", w1.paragraph.text());
+		Assert.areEqual("Div", w1.div.text());
+		Assert.areEqual("Paragraph", w2.paragraph.text());
+		Assert.areEqual("Div", w2.div.text());
+
+		w1.paragraph.setInnerHTML("1");
+		w1.div.setInnerHTML("2");
+		w2.paragraph.setInnerHTML("3");
+		w2.div.setInnerHTML("4");
+
+		Assert.areEqual("1", w1.paragraph.text());
+		Assert.areEqual("2", w1.div.text());
+		Assert.areEqual("3", w2.paragraph.text());
+		Assert.areEqual("4", w2.div.text());
+	}
+
+	@Test 
 	public function initTest()
 	{
 		var w = new widgets.Init();

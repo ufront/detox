@@ -11,20 +11,36 @@
 
 package dtx.widget;
 
-import dtx.DOMCollection;
 import dtx.widget.WidgetTools;
+using Detox;
 
 @:keepSub
 @:autoBuild(dtx.widget.WidgetTools.buildWidget()) 
 class Widget extends DOMCollection
 {
+	var _dtxWidgetNodeIndex:Array<DOMNode>;
+
 	/** Create a new widget by parsing some "template" html, and use that as our collection.
 	When your class extends this, it will automatically work with the dtx API (through using).  
 	Therefore your class can have very tight integration between haxe features and the DOM. */
 	public function new() {
 		super();
-		var q = Detox.parse(get_template());
+
+		// Parse the template and make it the collection for this widget
+		var q = Detox.parse( get_template() );
 		this.collection = q.collection;
+
+		// Initialize the widget/node index of nodes that need to be referenced
+		_dtxWidgetNodeIndex = [];
+		for ( n in this.collection.concat(this.descendants().collection) ) {
+			var att = n.attr("data-dtx-id");
+			if ( att!="" ) {
+				var id = Std.parseInt(att);
+				_dtxWidgetNodeIndex[id] = n;
+			}
+		}
+
+		// Run init(), which will create all of our partials etc
 		init();
 	}
 	
