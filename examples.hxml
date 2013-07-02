@@ -2,7 +2,7 @@
 # JavaScript
 -main DataWidgetExample
 -lib xirsys_stdjs
--lib tink_macros
+-lib tink_macro
 -lib selecthxml
 -lib random
 -cp src

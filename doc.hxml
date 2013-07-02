@@ -2,7 +2,7 @@
 -js _
 -main DetoxDoc
 -lib beanhx
--lib tink_macros
+-lib tink_macro
 -cp src
 -xml haxedoc.xml
 -dce no
