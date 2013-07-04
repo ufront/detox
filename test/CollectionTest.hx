@@ -2,8 +2,8 @@ package;
 
 import massive.munit.Assert;
 
-import dtx.DOMCollection;
-import dtx.DOMNode;
+
+
 using Detox;
 
 /**
@@ -29,12 +29,12 @@ class CollectionTest
 		// trace ("AfterClass");
 	}
 
-	var sampleDocument:DOMCollection;
-	var h1:DOMCollection;
-	var lists:DOMCollection;
-	var list1:DOMCollection;
-	var list2:DOMCollection;
-	var listItems:DOMCollection;
+	var sampleDocument:Nodes;
+	var h1:Nodes;
+	var lists:Nodes;
+	var list1:Nodes;
+	var list2:Nodes;
+	var listItems:Nodes;
 	
 	@Before
 	public function setup():Void
@@ -95,26 +95,15 @@ class CollectionTest
 	@Test 
 	public function createEmptyQuery()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		Assert.areEqual(0, q.length);
-	}
-
-	@Test 
-	public function createQueryFromSelector()
-	{
-		var q1 = new DOMCollection("div");
-		var q2 = new DOMCollection("li");
-		var q3 = new DOMCollection("table > *");
-		Assert.areEqual(1, q1.length);
-		Assert.areEqual(6, q2.length);
-		Assert.areEqual(2, q3.length);
 	}
 
 	@Test 
 	public function createQueryFromNode()
 	{
-		var q1 = new DOMCollection(h1.getNode());
-		var q2 = new DOMCollection(list1.getNode());
+		var q1:Nodes = [ h1.getNode() ];
+		var q2:Nodes = [ list1.getNode() ];
 		Assert.areEqual(1, q1.length);
 		Assert.areEqual(1, q2.length);
 	}
@@ -125,8 +114,8 @@ class CollectionTest
 		var arr = ["#a1".find().getNode(), "#b2".find().getNode(), "#a3".find().getNode()];
 		var query = lists;
 
-		var q1 = new DOMCollection(arr);
-		var q2 = new DOMCollection(query);
+		var q1:Nodes = arr;
+		var q2:Nodes = query;
 		Assert.areEqual(3, q1.length);
 		Assert.areEqual(2, q2.length);
 	}
@@ -146,7 +135,8 @@ class CollectionTest
 	public function iteratorOnEmpty()
 	{
 		var total = 0;
-		for (i in new DOMCollection())
+		var nodes:Nodes = [];
+		for (i in nodes)
 		{
 			total++;
 		}
@@ -169,7 +159,7 @@ class CollectionTest
 	@Test 
 	public function getNodeFromEmpty()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		Assert.isNull(q.getNode());
 	}
 
@@ -180,61 +170,39 @@ class CollectionTest
 	}
 
 	@Test 
-	public function eq()
-	{
-		Assert.areEqual(1, listItems.eq(3).length);
-		Assert.areEqual("b1", listItems.eq(3).attr('id'));
-	}
-
-	@Test 
-	public function eqDefault()
-	{
-		Assert.areEqual(1, listItems.eq().length);
-		Assert.areEqual("a1", listItems.eq().attr('id'));
-	}
-
-	@Test 
-	public function eqOutOfBounds()
-	{
-		Assert.areEqual(0, listItems.eq(100).length);
-		// This should not throw any errors, but silently fail
-		Assert.areEqual("", listItems.eq(100).attr('id'));
-	}
-
-	@Test 
 	public function first()
 	{
-		Assert.areEqual(1, listItems.first().length);
-		Assert.areEqual("a1", listItems.first().attr("id"));
+		Assert.areNotEqual(null, listItems.first);
+		Assert.areEqual("a1", listItems.first.attr("id"));
 	}
 
 	@Test 
 	public function firstOnEmpty()
 	{
-		var q = new DOMCollection();
-		Assert.areEqual(0, q.first().length);
-		Assert.areEqual("", q.first().attr("id"));
+		var q:Nodes = [];
+		Assert.areEqual(null, q.first);
+		Assert.areEqual("", q.first.attr("id"));
 	}
 
 	@Test 
 	public function last()
 	{
-		Assert.areEqual(1, listItems.last().length);
-		Assert.areEqual("b3", listItems.last().attr("id"));
+		Assert.areNotEqual(null, listItems.last);
+		Assert.areEqual("b3", listItems.last.attr("id"));
 	}
 
 	@Test 
 	public function lastOnEmpty()
 	{
-		var q = new DOMCollection();
-		Assert.areEqual(0, q.last().length);
-		Assert.areEqual("", q.last().attr("id"));
+		var q:Nodes = [];
+		Assert.areEqual(null, q.last);
+		Assert.areEqual("", q.last.attr("id"));
 	}
 
 	@Test 
 	public function add()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		Assert.areEqual(0, q.length);
 		
 		q.add(h1.getNode());
@@ -247,7 +215,7 @@ class CollectionTest
 	@Test 
 	public function addNull()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		q.add(null);
 		Assert.areEqual(0, q.length);
 	}
@@ -255,7 +223,7 @@ class CollectionTest
 	@Test 
 	public function addAlreadyInCollection()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		Assert.areEqual(0, q.length);
 		
 		q.add(h1.getNode());
@@ -269,7 +237,7 @@ class CollectionTest
 	@Test 
 	public function addCollection()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		var arr = ["h1".create(), "h2".create(), "h3".create()];
 		q.addCollection(arr);
 
@@ -279,8 +247,8 @@ class CollectionTest
 	@Test 
 	public function addCollectionNull()
 	{
-		var q = new DOMCollection();
-		var arr:Array<DOMNode> = null;
+		var q:Nodes = [];
+		var arr:Array<Node> = null;
 		q.addCollection(arr);
 		
 		Assert.areEqual(0, q.length);
@@ -289,7 +257,7 @@ class CollectionTest
 	@Test 
 	public function addCollectionWithNull()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		var arr = ["h1".create(), null, "h3".create()];
 		q.addCollection(arr);
 		
@@ -299,20 +267,20 @@ class CollectionTest
 	@Test 
 	public function addCollectionElementsOnly()
 	{
-		var q1 = new DOMCollection();
-		var q2 = new DOMCollection();
-		var q3 = new DOMCollection();
+		var q1:Nodes = [];
+		var q2:Nodes = [];
+		var q3:Nodes = [];
 		#if js
-		var nodeList = "table".find().getNode().childNodes;
+		var nodeList = "table".find().getNode().toDom().childNodes;
 		#else 
 		var nodeList = "table".find().getNode();
 		#end
-		var collection = new DOMCollection().addNodeList(nodeList, false);
+		var collection:Nodes = nodeList;
 		
-		// The default should be true
-		q1.addCollection(collection);
-		q2.addCollection(collection, true);
-		q3.addCollection(collection, false);
+		// The default should be false
+		q1.addCollection(collection.children);
+		q2.addCollection(collection.children, true);
+		q3.addCollection(collection.children, false);
 
 		Assert.areEqual(5, q1.length);
 		Assert.areEqual(2, q2.length);
@@ -322,37 +290,13 @@ class CollectionTest
 	@Test 
 	public function addNodeList()
 	{
-		var q = new DOMCollection();
+		var q:Nodes;
 		#if js 
-		var nodeList = Detox.document.querySelectorAll("li", null);
+			q = Detox.document.toElement().querySelectorAll("li");
 		#else
-		var nodeList = Detox.document.find("li");
+			q = Detox.document.find("li");
 		#end 
-		q.addNodeList(cast nodeList);
 		Assert.areEqual(6, q.length);
-	}
-
-	@Test 
-	public function addNodeListElementsOnly()
-	{
-		var q1 = new DOMCollection();
-		var q2 = new DOMCollection();
-		var q3 = new DOMCollection();
-
-		#if js
-		var nodeList = "table".find().getNode().childNodes;
-		#else 
-		var nodeList = "table".find().getNode();
-		#end
-		
-		// The default should be true
-		q1.addNodeList(nodeList);
-		q2.addNodeList(nodeList, true);
-		q3.addNodeList(nodeList, false);
-
-		Assert.areEqual(2, q1.length);
-		Assert.areEqual(2, q2.length);
-		Assert.areEqual(5, q3.length);
 	}
 
 	@Test 
@@ -428,7 +372,7 @@ class CollectionTest
 	@Test 
 	public function eachOnEmpty()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		var total = 0;
 		q.each(function (li) {
 			// Count the total number of times this function is called
@@ -464,7 +408,7 @@ class CollectionTest
 	@Test 
 	public function filterOnEmpty()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		var total = 0;
 
 		var filteredList = q.filter(function (li) {

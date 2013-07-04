@@ -150,11 +150,11 @@ class WidgetTools
         if (fullTemplate != null) 
         {
             var tpl = fullTemplate.parse();
-            var allNodes = Lambda.concat(tpl, tpl.descendants());
-            var partialMatches = allNodes.filter(function (n) { return n.nodeType == Xml.Element && n.nodeName == partialName; });
-            if (partialMatches.length == 1)
-            {
-                partialTemplate = partialMatches.first().innerHTML();
+            var allNodes = tpl.descendants;
+            allNodes.addCollection(tpl);
+            var partialMatches = allNodes.filter(function (n) return n.isElement() && (n.tagName==partialName) );
+            if (partialMatches.length == 1) {
+                partialTemplate = partialMatches.first.innerHTML;
             }
             else if (partialMatches.length > 1) Context.warning('The partial $partialName was found more than once in the template $templateFile... confusing!', p);
             else Context.warning('The partial $partialName was not found in the template $templateFile', p);
@@ -202,8 +202,8 @@ class WidgetTools
         }
     }
 
-    static var topLevelElements:Array<dtx.DOMNode>;
-    static function trackTopLevelElements(xml:DOMCollection)
+    static var topLevelElements:Array<dtx.Node>;
+    static function trackTopLevelElements(xml:Nodes)
     {
         if (topLevelElements == null) topLevelElements = [];
         for (node in xml)
@@ -212,7 +212,7 @@ class WidgetTools
         }
     }
 
-    static function isTopLevelElement(n:dtx.DOMNode)
+    static function isTopLevelElement(n:dtx.Node)
     {
         return (topLevelElements != null) ? topLevelElements.has(n) : false;
     }
@@ -224,30 +224,30 @@ class WidgetTools
         var xml = template.parse();
         trackTopLevelElements(xml);
 
-        var allNodes = new dtx.DOMCollection();
+        var allNodes:Nodes = [];
         allNodes.addCollection(xml);
-        allNodes.addCollection(xml.descendants(false));
+        allNodes.addCollection(xml.descendants);
 
         var fieldsToAdd = new Array<Field>();
-        var t=0; // Used to create name if none given, eg partial_4:DOMCollection
+        var t=0; // Used to create name if none given, eg partial_4:Nodes
 
         // Look for special things (variables, loops, partials etc)
 
         for (node in allNodes)
         {
-            if (node.isElement() && node.tagName().startsWith('_'))
+            if (node.isElement() && node.tagName.startsWith('_'))
             {
                 // This is a partial declaration <_MyPartial>template</_MyPartial>
                 processPartialDeclarations(node, xml);
             }
-            else if (node.isElement() && node.tagName() == "dtx:loop")
+            else if (node.isElement() && node.tagName == "dtx:loop")
             {
                 // It's a loop element... either: 
                 //    <dtx:loop><dt>$name</dt><dd>$age</dd></dtx:loop> OR
                 //    <dtx:loop partial="Something" />
 
             }
-            else if (node.isElement() && node.tagName().startsWith('dtx:'))
+            else if (node.isElement() && node.tagName.startsWith('dtx:'))
             {
                 // This is a partial call.  <dtx:_MyPartial /> or <dtx:SomePartial /> etc
                 t++;
@@ -260,14 +260,14 @@ class WidgetTools
             else if (node.isTextNode())
             {
                 // look for variable interpolation eg "Welcome back, $name..."
-                if (node.text().indexOf('$') > -1)
+                if (node.text.indexOf('$') > -1)
                 {
                     interpolateTextNodes(node);
                 }
                 // Get rid of HTML encoding.  Haxe3 does this automatically, but we want it to remain unencoded.  
                 // (I think?  While it might be nice to have it do the encoding for you, it is not expected, so violates principal of least surprise.  Also, how does '&nbsp;' get entered?)
                 // And it appears to only affect the top level element, not any descendants.  Weird...
-                node.setText(node.text().htmlUnescape());
+                node.setText(node.text.htmlUnescape());
                 clearWhitespaceFromTextnode(node);
             }
         }
@@ -278,27 +278,28 @@ class WidgetTools
         {
             if (node.isElement())
             {
-                for (att in node.attributes())
+                var xml:Xml = node;
+                for (att in xml.attributes())
                 {
                     node.setAttr(att, node.attr(att).htmlEscape());
                 }
             }
         }
-        var html = xml.html().htmlUnescape();
+        var html = xml.html.htmlUnescape();
 
         return { template: html, fields: fieldsToAdd };
     }
 
-    static function clearWhitespaceFromTextnode(node:dtx.DOMNode)
+    static function clearWhitespaceFromTextnode(node:dtx.Node)
     {
-        var text = node.text();
-        if (node.prev() == null)
+        var text = node.text;
+        if (node.prev == null)
         {
             // if it's the first, get rid of stuff at the start
             var re = ~/^\s+/g;
             text = re.replace(text, "");
         }
-        if (node.next() == null)
+        if (node.next == null)
         {
             // if it's the last node, get rid of stuff at the end
             var re = ~/\s+$/g;
@@ -311,7 +312,7 @@ class WidgetTools
             node.setText(text);
     }
     
-    static function processPartialDeclarations(node:dtx.DOMNode, wholeTemplate:dtx.DOMCollection)
+    static function processPartialDeclarations(node:dtx.Node, wholeTemplate:dtx.Nodes)
     {
         // Remove the partial from the template
 
@@ -329,17 +330,17 @@ class WidgetTools
 
         var p = Context.currentPos();
         var localClass = haxe.macro.Context.getLocalClass();
-        var name = node.nodeName;
+        var name = node.tagName;
         var pack = localClass.get().pack;
         // Before getting the partial TPL, let's clear out any whitespace
-        for (d in node.descendants(false))
+        for (d in node.descendants)
         {
             if (d.isTextNode())
             {
                 clearWhitespaceFromTextnode(d);
             }
         }
-        var partialTpl = node.innerHTML();
+        var partialTpl = node.innerHTML;
 
         var className = localClass.get().name + name;
         var classMeta = [{
@@ -392,7 +393,7 @@ class WidgetTools
         }
     }
 
-    static function processPartialCalls(node:dtx.DOMNode, wholeTemplate:dtx.DOMCollection, t:Int)
+    static function processPartialCalls(node:dtx.Node, wholeTemplate:dtx.Nodes, t:Int)
     {
         // Elements beginning with <dtx:SomeTypeName /> or <dtx:my.package.SomeTypeName />
         // May have attributes <dtx:Button text="Click Me" />
@@ -406,7 +407,7 @@ class WidgetTools
 
         // Resolve the type for the partial.  If it begins with dtx:_, then it is local to this file.
         // Otherwise, just resolve it as a class name.
-        var typeName = node.nodeName.substring(4);
+        var typeName = node.tagName.substring(4);
         if (typeName.startsWith("_"))
         {
             // partial inside this file
@@ -484,7 +485,8 @@ class WidgetTools
         BuildTools.addLinesToFunction(initFn, linesToAdd);
 
         // Set any variables for the partial
-        for (attName in node.attributes())
+        var xml:Xml = node;
+        for (attName in xml.attributes())
         {
             if (attName != "dtx-name")
             {
@@ -516,10 +518,11 @@ class WidgetTools
         }
     }
 
-    static function processAttributes(node:dtx.DOMNode)
+    static function processAttributes(node:dtx.Node)
     {
         // A regular element
-        for (attName in node.attributes())
+        var xml:Xml = node;
+        for (attName in xml.attributes())
         {
             if (attName.startsWith('dtx-on-'))
             {
@@ -547,7 +550,7 @@ class WidgetTools
             else 
             {
                 // look for variable interpolation eg <div id="person_$name">...</div>
-                if (node.get(attName).indexOf('$') > -1)
+                if (node.attr(attName).indexOf('$') > -1)
                 {
                     interpolateAttributes(node, attName);
                 }
@@ -555,7 +558,7 @@ class WidgetTools
         }
     }
 
-    static function createNamedPropertyForElement(node:dtx.DOMNode, name:String)
+    static function createNamedPropertyForElement(node:dtx.Node, name:String)
     {
         if (name != "")
         {
@@ -566,7 +569,7 @@ class WidgetTools
                 sub: null,
                 params: [],
                 pack: ['dtx'],
-                name: "DOMCollection"
+                name: "Nodes"
             });
             var prop = BuildTools.getOrCreateProperty(name, propType, true, false);
             
@@ -591,7 +594,7 @@ class WidgetTools
     static var uniqueDtxID:Int = 0;
     
     /** Get a unique selector for the node, creating a data attribute if necessary */
-    static function getUniqueSelectorForNode(node:dtx.DOMNode):Expr
+    static function getUniqueSelectorForNode(node:dtx.Node):Expr
     {
         // Get an existing data-dtx-id, or set a new one 
         var id:Int;
@@ -610,7 +613,7 @@ class WidgetTools
         return macro _dtxWidgetNodeIndex[$idExpr];
     }
 
-    static function interpolateAttributes(node:dtx.DOMNode, attName:String)
+    static function interpolateAttributes(node:dtx.Node, attName:String)
     {
         var selectorExpr = getUniqueSelectorForNode(node);
 
@@ -628,14 +631,14 @@ class WidgetTools
         addExprToAllSetters(bindingExpr, variablesInside, true);
     }
 
-    static function interpolateTextNodes(node:dtx.DOMNode)
+    static function interpolateTextNodes(node:dtx.Node)
     {
         // Get (or set) ID on parent, get selector
         var selectorAsExpr = getUniqueSelectorForNode(node.parent);
-        var index = node.index();
+        var index = node.index;
         var indexAsExpr = index.toExpr();
         
-        var result = processVariableInterpolation(node.text());
+        var result = processVariableInterpolation(node.text);
         var interpolationExpr = result.expr;
         var variablesInside = result.variablesInside;
 
@@ -899,7 +902,7 @@ class WidgetTools
         return leftMostVarName;
     }
 
-    static function processDtxBoolAttributes(node:dtx.DOMNode, attName:String)
+    static function processDtxBoolAttributes(node:dtx.Node, attName:String)
     {
         var wasDtxAttr = false;
         var trueStatement:Expr = null;
@@ -958,7 +961,7 @@ class WidgetTools
                 try 
                     Context.parse( testExprStr, classPos )
                 catch (e:Dynamic) 
-                    Context.error('Error parsing $attName="$testExprStr" in $className template. \nError: $e \nNode: ${node.html()}', classPos);
+                    Context.error('Error parsing $attName="$testExprStr" in $className template. \nError: $e \nNode: $node', classPos);
 
             // Extract all the variables used, create the `if(test) ... else ...` expr, add to setters, initialize variables
             var idents =  testExpr.extractIdents();

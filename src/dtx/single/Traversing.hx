@@ -11,8 +11,11 @@
 
 package dtx.single;
 
-import dtx.DOMNode;
-#if !js using dtx.XMLWrapper; #end
+#if js 
+	import js.html.Element;
+#else 
+	using dtx.XMLWrapper;
+#end
 
 /*
 	parentsUntil(selector)
@@ -23,90 +26,53 @@ import dtx.DOMNode;
 	siblings
 	closest() - 
 */
+import Detox;
 
-
-
-/** When returning a Null<Node>, it might be worth creating a static NullNode that won't generate errors (so we can chain easily and carelessly) but also not affect the DOM.   For now I'll leave it null.  */
 class Traversing
 {
 	/** Return a collection of all child nodes of the current node. */
-	static public function children(node:DOMNode, ?elementsOnly = true)
+	static public function children(node:Node, ?elementsOnly = true):Nodes
 	{
-		var children = new DOMCollection();
-		if (node != null && ElementManipulation.isElement(node))
+		var children:Nodes = null;
+		if (node != null && node.isElement())
 		{
 			// Add any child elements
 			#if js
-			children.addNodeList(node.childNodes, elementsOnly);
+				var n:js.html.Node = node;
+				children = Nodes.fromNodeList(node.toDom().childNodes);
 			#else 
-			// With Xml, "node" itself is iterable, so we can just pass that
-			children.addCollection(node, elementsOnly);
+				// With Xml, "node" itself is iterable, so we can just pass that
+				children = [];
+				for(c in node.toXml()) {
+					children.add(c, elementsOnly);
+				}
 			#end
-
 		}
 		return children;
 	}
 
-	static public function firstChildren(node:DOMNode, ?elementsOnly = true)
-	{
-		var firstChild:DOMNode = null;
-		if (node != null && ElementManipulation.isElement(node))
-		{
-			// Add first child node that is an element
-			var e = #if js node.firstChild #else node.firstChild() #end;
-			while (elementsOnly == true && e != null && ElementManipulation.isElement(cast e) == false)
-			{
-				e = #if js e.nextSibling #else e.nextSibling() #end;
-			}
-			if (e != null) firstChild = cast e;
-		}
-		return firstChild;
-	}
-
-	static public function lastChildren(node:DOMNode, ?elementsOnly = true):DOMNode
-	{
-		var lastChild:DOMNode = null;
-		if (node != null && ElementManipulation.isElement(node))
-		{
-			// Add last child node that is an element
-			var e = #if js node.lastChild #else node.lastChild() #end;
-			while (elementsOnly == true && e != null && ElementManipulation.isElement(cast e) == false)
-			{
-				e = #if js e.previousSibling #else e.previousSibling() #end;
-			}
-			if (e != null) lastChild = cast e;
-		}
-		return cast lastChild;
-	}
-
 	/** Gets the direct parents of each element in the collection. */
-	static public function parent(node:DOMNode)
+	static public function parent(node:Node):Null<Node>
 	{
-		var p:DOMNode = null;
-		if (node != null && node.parentNode != null && node != Detox.document)
+		var p:Node = null;
+		if (node != null && !node.isDocument())
 		{
 			#if js
-			p = node.parentNode;
+				p = node.toDom().parentNode;
 			#else 
-			p = node.parentNode();
+				p = node.parentNode();
 			#end
 		}
 		return p;
 	}
 
-	/** This is identical to parent() but it's necessary to use this on non 
-	JS platforms if you want to have null-safety etc. */
-	static inline public function parents(node:DOMNode)
-	{
-		return parent(node);
-	}
-
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
-	static public function ancestors(node:DOMNode):DOMCollection
+	static public function ancestors(node:Node):Nodes
 	{
 		// start with the direct parents
-		var ancestorsList:DOMCollection = new DOMCollection();
+		var ancestorsList:Nodes = [];
 		var parent = parent(node);
+
 		ancestorsList.add(parent);
 
 		// if there were any parents on this round, then add the parents of the parents, recursively
@@ -120,12 +86,12 @@ class Traversing
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
-	static public function descendants(node:DOMNode, ?elementsOnly:Bool = true):DOMCollection
+	static public function descendants(node:Node, ?elementsOnly:Bool = true):Nodes
 	{
-		var descendantList = new dtx.DOMCollection();
+		var descendantList:Nodes = [];
 
-		for (child in children(node, elementsOnly))
-		{
+		var childNodes = (elementsOnly) ? node.elements : node.children;
+		for ( child in childNodes ) {
 			// Add this child
 			descendantList.add(child);
 
@@ -137,11 +103,11 @@ class Traversing
 		return descendantList;
 	}
 
-	static public function next(node:DOMNode, ?elementsOnly:Bool = true):DOMNode
+	static public function next(node:Node, ?elementsOnly:Bool = true):Null<Node>
 	{
 		// Get the next sibling if we're not null already
 		var sibling = (node != null) 
-			? #if js node.nextSibling #else node.nextSibling() #end : null;
+			? #if js node.toDom().nextSibling #else node.nextSibling() #end : null;
 
 		// While this "nextSibling" actually still exists
 		// and if we only want elements
@@ -159,11 +125,11 @@ class Traversing
 		return sibling;
 	}
 
-	static public function prev(node:DOMNode, ?elementsOnly:Bool = true):DOMNode
+	static public function prev(node:Node, ?elementsOnly:Bool = true):Null<Node>
 	{
 		// Get the previous sibling if it's not already null
 		var sibling = (node != null) 
-			? #if js node.previousSibling #else node.previousSibling() #end : null;
+			? #if js node.toDom().previousSibling #else node.previousSibling() #end : null;
 
 		// While this "previousSibling" actually still exists
 		// and if we only want elements
@@ -185,27 +151,28 @@ class Traversing
 		return cast sibling;
 	}
 
-	static public function find(node:DOMNode, selector:String)
+	static public function find(node:Null<Node>, selector:String):Nodes
 	{
-		var newDOMCollection = new DOMCollection();
-		if (node != null && ElementManipulation.isElement(node) || dtx.single.ElementManipulation.isDocument(node))
+		var newDOMCollection:Nodes = null;
+		if (node!=null && selector!=null && selector!="" && node.isElement() || node.isDocument())
 		{
 			#if js
-				var element:DOMElement = cast node;
+				var element:Element = cast node;
 				if (untyped __js__("document.querySelectorAll"))
 				{
 					var results = element.querySelectorAll(selector);
-					newDOMCollection.addNodeList(results);
+					newDOMCollection = results;
 				}
 				else 
 				{
-					var engine:String->DOMNode->Array<DOMNode> = untyped __js__("
+					var engine:String->Node->Array<Node> = untyped __js__("
 						(('undefined' != typeof Sizzle && Sizzle) || 
 						(('undefined' != typeof jQuery) && jQuery.find) || 
 						(('undefined' != typeof $) && $.find))
 					");
 					var results = engine(selector, node);
-					newDOMCollection.addCollection(results);
+					throw "DETOX TODO: Need to iterate over results and add them manually";
+					newDOMCollection = results;
 				}
 			#elseif !macro
 				var results = selecthxml.SelectDom.runtimeSelect(node, selector);
@@ -214,12 +181,12 @@ class Traversing
 				// only searches descendant nodes.  Therefore, remove the current node
 				// if it was returned as a match.
 				results.remove(node);
-				
-				newDOMCollection.addCollection(results);
+				newDOMCollection = results;
 			#else 
 				throw "Sorry, our selector engine doesn't currently work in macros, so you can't use find()";
 			#end
 		}
+		if (newDOMCollection == null) newDOMCollection = [];
 		return newDOMCollection;
 	}
 }

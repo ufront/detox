@@ -14,18 +14,18 @@ package dtx.collection;
 class ElementManipulation
 {
 	/** Find the index of the node relevent to it's siblings.  First child of parent has an index of 0.  When operating on a collection, this returns the index of the first element. */
-	public static function index(q:dtx.DOMCollection):Int 
+	public static function index(q:Nodes):Int 
 	{
 		return (q != null) ? dtx.single.ElementManipulation.index(q.getNode()) : -1;
 	}
 
 	/** Assume we're operating on the first element. */
-	public static function attr(query:DOMCollection, attName:String):String
+	public static function attr(query:Nodes, attName:String):String
 	{
 		return (query != null && query.length > 0) ? dtx.single.ElementManipulation.attr(query.getNode(), attName) : "";
 	}
 
-	public static function setAttr(query:DOMCollection, attName:String, attValue:String):DOMCollection
+	public static function setAttr(query:Nodes, attName:String, attValue:String):Nodes
 	{
 		if (query != null)
 		{
@@ -37,7 +37,7 @@ class ElementManipulation
 		return query;
 	}
 
-	public static function removeAttr(query:DOMCollection, attName:String):DOMCollection
+	public static function removeAttr(query:Nodes, attName:String):Nodes
 	{
 		if (query != null)
 		{
@@ -50,7 +50,7 @@ class ElementManipulation
 	}
 
 	/** Checks if every element in the collection has the given class */
-	public static function hasClass(query:DOMCollection, className:String):Bool
+	public static function hasClass(query:Nodes, className:String):Bool
 	{
 		var result = false;
 
@@ -73,7 +73,7 @@ class ElementManipulation
 		return result;
 	}
 
-	public static function addClass(query:DOMCollection, className:String):DOMCollection
+	public static function addClass(query:Nodes, className:String):Nodes
 	{
 		if (query != null)
 		{
@@ -85,7 +85,7 @@ class ElementManipulation
 		return query;
 	}
 
-	public static function removeClass(query:DOMCollection, className:String):DOMCollection
+	public static function removeClass(query:Nodes, className:String):Nodes
 	{
 		if (query != null)
 		{
@@ -97,7 +97,7 @@ class ElementManipulation
 		return query;
 	}
 
-	public static function toggleClass(query:DOMCollection, className:String):DOMCollection
+	public static function toggleClass(query:Nodes, className:String):Nodes
 	{
 		if (query != null)
 		{
@@ -109,17 +109,17 @@ class ElementManipulation
 		return query;
 	}
 
-	public static inline function tagName(query:DOMCollection):String
+	public static inline function tagName(query:Nodes):String
 	{
 		return (query != null && query.length > 0) ? dtx.single.ElementManipulation.tagName(query.getNode()) : "";
 	}
 
-	public static function val(query:DOMCollection):String
+	public static function val(query:Nodes):String
 	{
 		return (query != null && query.length > 0) ? dtx.single.ElementManipulation.val(query.getNode()) : "";
 	}
 
-	public static function setVal(query:DOMCollection, val:Dynamic)
+	public static function setVal(query:Nodes, val:Dynamic)
 	{
 		var value = Std.string(val);
 		if (query != null)
@@ -132,7 +132,7 @@ class ElementManipulation
 		return query;
 	}
 	
-	public static function text(query:DOMCollection):String
+	public static function text(query:Nodes):String
 	{
 		var text = "";
 		if (query != null)
@@ -145,7 +145,7 @@ class ElementManipulation
 		return text;
 	}
 	
-	public static function setText(query:DOMCollection, text:String):DOMCollection
+	public static function setText(query:Nodes, text:String):Nodes
 	{
 		if (query != null)
 		{
@@ -157,7 +157,7 @@ class ElementManipulation
 		return query;
 	}
 
-	public static function innerHTML(query:DOMCollection):String
+	public static function innerHTML(query:Nodes):String
 	{
 		var ret = "";
 		if (query != null)
@@ -170,7 +170,7 @@ class ElementManipulation
 		return ret;
 	}
 
-	public static function setInnerHTML(query:DOMCollection, html:String):DOMCollection
+	public static function setInnerHTML(query:Nodes, html:String):Nodes
 	{
 		if (query != null)
 		{
@@ -182,7 +182,7 @@ class ElementManipulation
 		return query;
 	}
 
-	public static inline function html(collection:DOMCollection):String
+	public static inline function html(collection:Nodes):String
 	{
 		var sb = new StringBuf();
 		if (collection != null)

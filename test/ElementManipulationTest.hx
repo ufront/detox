@@ -2,7 +2,6 @@ package;
 
 import massive.munit.Assert;
 
-import dtx.DOMNode;
 using Detox;
 
 /**
@@ -12,16 +11,16 @@ using Detox;
 */
 class ElementManipulationTest 
 {
-	var sampleDocument:DOMNode;
-	var h1:DOMNode;
-	var h2:DOMNode;
-	var comment:DOMNode;
-	var text:DOMNode;
+	var sampleDocument:Node;
+	var h1:Node;
+	var h2:Node;
+	var comment:Node;
+	var text:Node;
 
-	var parent:DOMNode;
-	var child:DOMNode;
-	var classTest:DOMNode;
-	var nullnode:DOMNode;
+	var parent:Node;
+	var child:Node;
+	var classTest:Node;
+	var nullnode:Node;
 	
 	public function new() 
 	{
@@ -54,8 +53,8 @@ class ElementManipulationTest
 		sampleDocument = html.parse().getNode();
 		h1 = sampleDocument.find('h1').getNode();
 		h2 = sampleDocument.find('h2').getNode();
-		comment = sampleDocument.find('.containscomment').getNode().firstChild#if !js () #end;
-		text = sampleDocument.find('.containstext').getNode().firstChild#if !js () #end;
+		comment = sampleDocument.find('.containscomment').getNode().children.first;
+		text = sampleDocument.find('.containstext').getNode().children.first;
 		parent = sampleDocument.find('.parent').getNode();
 		child = sampleDocument.find('.child').getNode();
 		classTest = sampleDocument.find('#classtest').getNode();
@@ -136,11 +135,11 @@ class ElementManipulationTest
 	{
 		h1.removeAttr('id');
 		#if js
-		Assert.isFalse(h1.hasAttributes());
+			Assert.isFalse(h1.toDom().hasAttributes());
 		#else 
-		var i = 0;
-		for (attr in h1.attributes()) i++;
-		Assert.areEqual(0, i);
+			var i = 0;
+			for (attr in h1.toXml().attributes()) i++;
+			Assert.areEqual(0, i);
 		#end
 	}
 
@@ -297,17 +296,17 @@ class ElementManipulationTest
 	@Test
 	public function testTagName():Void 
 	{
-		Assert.areEqual("h1", h1.tagName());
-		Assert.areEqual("h2", h2.tagName());
-		Assert.areEqual("myxml", sampleDocument.tagName());
+		Assert.areEqual("h1", h1.tagName);
+		Assert.areEqual("h2", h2.tagName);
+		Assert.areEqual("myxml", sampleDocument.tagName);
 	}
 
 	@Test
 	public function testTagNameOfNonElement():Void 
 	{
-		Assert.areEqual("#text", text.tagName());
-		Assert.areEqual("#comment", comment.tagName());
-		Assert.areEqual("", nullnode.tagName());
+		Assert.areEqual("#text", text.tagName);
+		Assert.areEqual("#comment", comment.tagName);
+		Assert.areEqual("", nullnode.tagName);
 	}
 
 	@Test
@@ -319,7 +318,7 @@ class ElementManipulationTest
 		#else 
 		input.setAttr("value", "myvalue"); 
 		#end
-		Assert.areEqual("myvalue", input.val());
+		Assert.areEqual("myvalue", input.val);
 	}
 
 	@Test
@@ -331,32 +330,32 @@ class ElementManipulationTest
 		#else 
 		ta.setAttr("value", "myvalue");
 		#end
-		Assert.areEqual("myvalue", ta.val());
+		Assert.areEqual("myvalue", ta.val);
 	}
 
 	@Test
 	public function testValOnComment():Void 
 	{
-		Assert.areEqual(" A comment ", comment.val());
+		Assert.areEqual(" A comment ", comment.val);
 	}
 
 	@Test
 	public function testValOnTextNode():Void 
 	{
-		Assert.areEqual("Text", text.val());
+		Assert.areEqual("Text", text.val);
 	}
 
 	@Test
 	public function testValOnAttribute():Void 
 	{
 		var div = "<div value='attr'></div>".parse().getNode();
-		Assert.areEqual("attr", div.val());
+		Assert.areEqual("attr", div.val);
 	}
 
 	@Test
 	public function testNullVal():Void
 	{
-		Assert.areEqual("", nullnode.val());
+		Assert.areEqual("", nullnode.val);
 	}
 
 	@Test
@@ -364,7 +363,7 @@ class ElementManipulationTest
 	{
 		var input = "<input type='text' value='attr' />".parse().getNode();
 		input.setVal("newvalue");
-		Assert.areEqual("newvalue", input.val());
+		Assert.areEqual("newvalue", input.val);
 	}
 
 	@Test
@@ -378,27 +377,27 @@ class ElementManipulationTest
 	public function testSetValComment():Void 
 	{
 		comment.setVal("mycomment");
-		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML());
+		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML);
 	}
 
 	@Test
 	public function testSetValTextNode():Void 
 	{
 		text.setVal("NewText");
-		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML());
+		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML);
 	}
 
 	@Test
 	public function testText():Void 
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
-		Assert.areEqual("Hello World", helloworld.text());
+		Assert.areEqual("Hello World", helloworld.text);
 	}
 
 	@Test
 	public function testNullText():Void 
 	{
-		Assert.areEqual("", nullnode.text());
+		Assert.areEqual("", nullnode.text);
 	}
 
 	@Test
@@ -406,7 +405,7 @@ class ElementManipulationTest
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
 		helloworld.setText("Goodbye Planet");
-		Assert.areEqual("Goodbye Planet", helloworld.innerHTML());
+		Assert.areEqual("Goodbye Planet", helloworld.innerHTML);
 	}
 
 	@Test
@@ -419,35 +418,35 @@ class ElementManipulationTest
 	public function testSetTextComment():Void 
 	{
 		comment.setText("mycomment");
-		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML());
+		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML);
 	}
 
 	@Test
 	public function testSetTextTextNode():Void 
 	{
 		text.setText("NewText");
-		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML());
+		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML);
 	}
 
 	@Test
 	public function testInnerHTML():Void 
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
-		Assert.areEqual("Hello <i>World</i>", helloworld.innerHTML());
-		Assert.areEqual("World", helloworld.find("i").innerHTML());
+		Assert.areEqual("Hello <i>World</i>", helloworld.innerHTML);
+		Assert.areEqual("World", helloworld.find("i").innerHTML);
 	}
 
 	@Test
 	public function testNullInnerHTML():Void 
 	{
-		Assert.areEqual("", nullnode.innerHTML());
+		Assert.areEqual("", nullnode.innerHTML);
 	}
 
 	@Test
 	public function testInnerHTMLOnNonElements():Void 
 	{
-		Assert.areEqual(" A comment ", comment.innerHTML());
-		Assert.areEqual("Text", text.innerHTML());
+		Assert.areEqual(" A comment ", comment.innerHTML);
+		Assert.areEqual("Text", text.innerHTML);
 	}
 
 	@Test
@@ -455,7 +454,7 @@ class ElementManipulationTest
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
 		helloworld.setInnerHTML("Goodbye <i>Cruel</i> Planet");
-		Assert.areEqual("Goodbye <i>Cruel</i> Planet", helloworld.innerHTML());
+		Assert.areEqual("Goodbye <i>Cruel</i> Planet", helloworld.innerHTML);
 	}
 
 	@Test
@@ -468,22 +467,22 @@ class ElementManipulationTest
 	public function testSetInnerHTMLComment():Void 
 	{
 		comment.setInnerHTML("mycomment");
-		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML());
+		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML);
 	}
 
 	@Test
 	public function testSetInnerHTMLTextNode():Void 
 	{
 		text.setInnerHTML("NewText");
-		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML());
+		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML);
 	}
 
 	@Test
 	public function testHtml():Void 
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
-		Assert.areEqual("<div>Hello <i>World</i></div>", helloworld.html());
-		Assert.areEqual("<i>World</i>", helloworld.find("i").html());
+		Assert.areEqual("<div>Hello <i>World</i></div>", helloworld.html);
+		Assert.areEqual("<i>World</i>", helloworld.find("i").html);
 	}
 
 	@Test
@@ -493,10 +492,10 @@ class ElementManipulationTest
 		var emptyDiv = "<div id='1' />".parse().getNode();
 		var emptyImg = "<img id='1' />".parse().getNode();
 
-		Assert.areEqual('<div id="1">Test</div>', div.html());
-		Assert.areEqual('<div id="1"></div>', emptyDiv.html());
-		Assert.isTrue(emptyImg.html().indexOf(">") > -1);
-		Assert.isTrue(emptyImg.html().indexOf("</img>") == -1);
+		Assert.areEqual('<div id="1">Test</div>', div.html);
+		Assert.areEqual('<div id="1"></div>', emptyDiv.html);
+		Assert.isTrue(emptyImg.html.indexOf(">") > -1);
+		Assert.isTrue(emptyImg.html.indexOf("</img>") == -1);
 	}
 
 	@Test 
@@ -507,24 +506,24 @@ class ElementManipulationTest
 		var expected = "<p>Text <i>Node</i> </p>  <p>  Text Node with Spaces  </p> <!-- Comment -->";
 		var xml = expected.parse();
 		Assert.areEqual(5, xml.length);
-		Assert.areEqual("<p>Text <i>Node</i> </p>", xml.getNode(0).html());
-		Assert.areEqual("  ", xml.getNode(1).html());
-		Assert.areEqual("<p>  Text Node with Spaces  </p>", xml.getNode(2).html());
-		Assert.areEqual(" ", xml.getNode(3).html());
-		Assert.areEqual("<!-- Comment -->", xml.getNode(4).html());
+		Assert.areEqual("<p>Text <i>Node</i> </p>", xml.getNode(0).html);
+		Assert.areEqual("  ", xml.getNode(1).html);
+		Assert.areEqual("<p>  Text Node with Spaces  </p>", xml.getNode(2).html);
+		Assert.areEqual(" ", xml.getNode(3).html);
+		Assert.areEqual("<!-- Comment -->", xml.getNode(4).html);
 	}
 
 	@Test
 	public function testNullHtml():Void 
 	{
-		Assert.areEqual("", nullnode.html());
+		Assert.areEqual("", nullnode.html);
 	}
 
 	@Test
 	public function testHtmlOnNonElements():Void 
 	{
-		Assert.areEqual("<!-- A comment -->", comment.html());
-		Assert.areEqual("Text", text.html());
+		Assert.areEqual("<!-- A comment -->", comment.html);
+		Assert.areEqual("Text", text.html);
 	}
 
 	@Test
@@ -555,12 +554,12 @@ class ElementManipulationTest
 	public function testCloneElement():Void 
 	{
 		var newH1 = h1.clone();
-		Assert.areEqual(h1.text(), newH1.text());
+		Assert.areEqual(h1.text, newH1.text);
 		Assert.areEqual(h1.attr('id'), newH1.attr('id'));
 
 		newH1.setText("Different");
 		newH1.setAttr("id", "differentid");
-		Assert.areNotEqual(h1.text(), newH1.text());
+		Assert.areNotEqual(h1.text, newH1.text);
 		Assert.areNotEqual(h1.attr('id'), newH1.attr('id'));
 	}
 
@@ -573,33 +572,33 @@ class ElementManipulationTest
 		newH1.setText("Different");
 		newH1.setAttr("id", "differentid");
 
-		Assert.areNotEqual(h1.text(), newH1.text());
+		Assert.areNotEqual(h1.text, newH1.text);
 		Assert.areNotEqual(h1.attr('id'), newH1.attr('id'));
-		Assert.areNotEqual(sampleDocument.innerHTML(), newSampleDoc.innerHTML());
-		Assert.areEqual(h2.text(), newH2.text());
+		Assert.areNotEqual(sampleDocument.innerHTML, newSampleDoc.innerHTML);
+		Assert.areEqual(h2.text, newH2.text);
 	}
 
 	@Test 
 	function testIndexNormal():Void 
 	{
-		Assert.areEqual(1, h1.index());
-		Assert.areEqual(3, h2.index());
-		Assert.areEqual(0, text.index());
-		Assert.areEqual(9, parent.index());
-		Assert.areEqual(0, child.index());
+		Assert.areEqual(1, h1.index);
+		Assert.areEqual(3, h2.index);
+		Assert.areEqual(0, text.index);
+		Assert.areEqual(9, parent.index);
+		Assert.areEqual(0, child.index);
 	}
 
 	@Test 
 	function testIndexNull():Void 
 	{
-		Assert.areEqual(-1, nullnode.index());
+		Assert.areEqual(-1, nullnode.index);
 	}
 
 	@Test 
 	function testChaining():Void 
 	{
-		var originalElement:DOMNode = "div".create().setAttr("id", "original");
-		var returnedElement:DOMNode;
+		var originalElement:Node = "div".create().setAttr("id", "original");
+		var returnedElement:Node;
 
 		returnedElement = originalElement
 			.setAttr("title", "")

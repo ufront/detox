@@ -36,24 +36,24 @@ Functionality to implement:
 
 class Style
 {
-	public static function getComputedStyle(node:DOMNode)
+	public static function getComputedStyle(node:Node)
 	{
 		var style:CSSStyleDeclaration = null;
-		if (ElementManipulation.isElement(node))
+		if (node.isElement())
 		{
 			style = Detox.window.getComputedStyle(cast node);
 		}
 		return style;
 	}
 	
-	public static function css(node:DOMNode, prop:String)
+	public static function css(node:Node, prop:String)
 	{
 		return getComputedStyle(node).getPropertyValue(prop);
 	}
 
-	public static function setCSS(node:DOMNode, prop:String, val:String)
+	public static function setCSS(node:Node, prop:String, val:String)
 	{
-		if (ElementManipulation.isElement(node))
+		if (node.isElement())
 		{
 			var style:Dynamic = untyped node.style;
 			Reflect.setField(style, prop, val);
@@ -61,12 +61,12 @@ class Style
 		return node;
 	}
 
-	public static function show(n:DOMNode) return setCSS(n, "display", "");
-	public static function hide(n:DOMNode) return setCSS(n, "display", "none");
+	public static function show(n:Node) return setCSS(n, "display", "");
+	public static function hide(n:Node) return setCSS(n, "display", "none");
 
-	public static function pos(node:DOMNode)
+	public static function pos(node:Node)
 	{
-		if (ElementManipulation.isElement(node)) 
+		if (node.isElement()) 
 		{
 			var e:js.html.Element = cast node;
 			return {

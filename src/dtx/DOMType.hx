@@ -20,10 +20,10 @@ class DOMType
 		static public var TEXT_NODE(get,null):Int;
 		static public var COMMENT_NODE(get,null):Int;
 
-		static inline function get_DOCUMENT_NODE() return dtx.DOMNode.DOCUMENT_NODE;
-		static inline function get_ELEMENT_NODE() return dtx.DOMNode.ELEMENT_NODE;
-		static inline function get_TEXT_NODE() return dtx.DOMNode.TEXT_NODE;
-		static inline function get_COMMENT_NODE() return dtx.DOMNode.COMMENT_NODE;
+		static inline function get_DOCUMENT_NODE() return js.html.Node.DOCUMENT_NODE;
+		static inline function get_ELEMENT_NODE() return js.html.Node.ELEMENT_NODE;
+		static inline function get_TEXT_NODE() return js.html.Node.TEXT_NODE;
+		static inline function get_COMMENT_NODE() return js.html.Node.COMMENT_NODE;
 	#else 
 		static public var DOCUMENT_NODE(get,null):Xml.XmlType;
 		static public var ELEMENT_NODE(get,null):Xml.XmlType;

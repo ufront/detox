@@ -2,9 +2,6 @@ package;
 
 import massive.munit.Assert;
 
-import Detox;
-import dtx.DOMCollection;
-import dtx.DOMNode;
 using Detox;
 
 /**
@@ -40,7 +37,7 @@ class ToolsTest
 			<p>Two</p>
 			<div></div>
 		</myxml>".parse();
-		Detox.setDocument(sampleDocument.getNode());
+		// Detox.setDocument(sampleDocument.getNode());
 	}
 	
 	@After
@@ -61,11 +58,11 @@ class ToolsTest
 		Assert.areEqual(2, "p".find().length);
 	}
 
-	@Test 
+	@Test @TestDebug
 	public function create_via_using()
 	{
-		Assert.areEqual(#if js "DIV" #else "div" #end, "div".create().nodeName);
-		Assert.areEqual(#if js "P" #else "p" #end, "p".create().nodeName);
+		Assert.areEqual(#if js "DIV" #else "div" #end, "div".create().tagName);
+		Assert.areEqual(#if js "P" #else "p" #end, "p".create().tagName);
 		Assert.isNull("non element".create());
 		Assert.isNull("".create());
 	}
@@ -81,17 +78,17 @@ class ToolsTest
 	@Test 
 	public function create() 
 	{
-		var div:DOMNode = Detox.create("div");
-		Assert.areEqual("div", div.tagName());
-		Assert.areEqual("", div.innerHTML());
+		var div:Node = Detox.create("div");
+		Assert.areEqual("div", div.tagName);
+		Assert.areEqual("", div.innerHTML);
 	}
 
 	@Test 
 	public function createBadInput() 
 	{
-		var elm:DOMNode = Detox.create("actual_element");
-		Assert.areEqual("actual_element", elm.tagName());
-		Assert.areEqual("", elm.innerHTML());
+		var elm:Node = Detox.create("actual_element");
+		Assert.areEqual("actual_element", elm.tagName);
+		Assert.areEqual("", elm.innerHTML);
 
 		var bad = Detox.create("non existent element");
 		Assert.isNull(bad);
@@ -116,9 +113,9 @@ class ToolsTest
 	{
 		var q = Detox.parse("<div id='test'>Hello</div>");
 
-		Assert.areEqual('div', q.tagName());
+		Assert.areEqual('div', q.tagName);
 		Assert.areEqual('test', q.attr('id'));
-		Assert.areEqual('Hello', q.innerHTML());
+		Assert.areEqual('Hello', q.innerHTML);
 	}
 
 	@Test 
@@ -127,9 +124,9 @@ class ToolsTest
 		var q = Detox.parse("<div id='test1'>Hello</div><p id='test2'>World</p><!--comment-->");
 
 		Assert.areEqual(3, q.length);
-		Assert.areEqual("div", q.eq(0).tagName());
-		Assert.areEqual("p", q.eq(1).tagName());
-		Assert.areEqual("comment", q.eq(2).val());
+		Assert.areEqual("div", q[0].tagName);
+		Assert.areEqual("p", q[1].tagName);
+		Assert.areEqual("comment", q[2].val);
 	}
 
 	@Test 
@@ -198,25 +195,25 @@ class ToolsTest
 		// correctly unless they have the correct parent element.  
 		// This test ensures that our workarounds work - and that the elements are created correctly.
 		var q1 = Detox.parse("<td>Table Data Cell</td>");
-		Assert.areEqual("td", q1.tagName());
+		Assert.areEqual("td", q1.tagName);
 
 		var q2 = Detox.parse("<th>Table Header Cell</th>");
-		Assert.areEqual("th", q2.tagName());
+		Assert.areEqual("th", q2.tagName);
 
 		var q3 = Detox.parse("<tr>Table Row</tr>");
-		Assert.areEqual("tr", q3.tagName());
+		Assert.areEqual("tr", q3.tagName);
 
 		var q4 = Detox.parse("<colgroup>Table Column Group</colgroup>");
-		Assert.areEqual("colgroup", q4.tagName());
+		Assert.areEqual("colgroup", q4.tagName);
 
 		var q5 = Detox.parse("<col>Table Column</col>");
-		Assert.areEqual("col", q5.tagName());
+		Assert.areEqual("col", q5.tagName);
 
 		var q6 = Detox.parse("<tbody>Table Body</tbody>");
-		Assert.areEqual("tbody", q6.tagName());
+		Assert.areEqual("tbody", q6.tagName);
 
 		var q7 = Detox.parse("<thead>Table Body</thead>");
-		Assert.areEqual("thead", q7.tagName());
+		Assert.areEqual("thead", q7.tagName);
 	}
 
 	@Test 
@@ -224,7 +221,7 @@ class ToolsTest
 	{
 		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
 		Detox.setDocument(node);
-		Assert.areEqual("My Element", "b".find().innerHTML());
+		Assert.areEqual("My Element", "b".find().innerHTML);
 	}
 
 	@Test 
@@ -235,21 +232,6 @@ class ToolsTest
 		Detox.setDocument(null);
 
 		// The document should still be 'node', because null is rejected.
-		Assert.areEqual("My Element", "b".find().innerHTML());
+		Assert.areEqual("My Element", "b".find().innerHTML);
 	}
-
-	#if js 
-
-	@Test 
-	public function toDetox()
-	{
-		var x = Xml.parse("<div>123</div><p>ABC</p>");
-		var xNull:Xml = null;
-
-		Assert.areEqual(2, x.toDetox().length);
-		Assert.areEqual(0, xNull.toDetox().length);
-	}
-	
-	#end 
-
 }

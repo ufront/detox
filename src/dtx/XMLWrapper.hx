@@ -10,8 +10,7 @@
 ****/
 
 package dtx;
-import dtx.DOMNode;
-import dtx.DOMCollection;
+import dtx.Node;
 
 #if !js
 class XMLWrapper
@@ -51,7 +50,7 @@ class XMLWrapper
 		}
 	}
 
-	static public function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
+	static public function insertBefore(xml:Xml, content:Node, target:Node)
 	{
 		if (xml != null && content != null && target != null)
 		{
@@ -184,8 +183,8 @@ class XMLWrapper
 		{
 			if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
 			{
-				var allDescendants:DOMCollection;
-				var textDescendants:DOMCollection;
+				var allDescendants:Nodes;
+				var textDescendants:Nodes;
 				
 				allDescendants = dtx.single.Traversing.descendants(xml, false);
 				
@@ -211,7 +210,7 @@ class XMLWrapper
 		return ret;
 	}
 
-	static public function setTextContent(xml:DOMNode, text:String)
+	static public function setTextContent(xml:Xml, text:String)
 	{
 		// if element or document
 		if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
@@ -228,7 +227,7 @@ class XMLWrapper
 		return text;
 	}
 
-	static public function innerHTML(xml:DOMNode)
+	static public function innerHTML(xml:Xml)
 	{
 		var html = "";
 		for (child in xml)
@@ -238,7 +237,7 @@ class XMLWrapper
 		return html;
 	}
 
-	static public function setInnerHTML(xml:DOMNode, html:String)
+	static public function setInnerHTML(xml:Xml, html:String)
 	{
 		var xmlDocNode:Xml = null;
 		try {
@@ -271,7 +270,7 @@ class XMLWrapper
 		return html;
 	}
 
-	static public function cloneNode(xml:DOMNode, ?deep:Bool = true)
+	static public function cloneNode(xml:Node, ?deep:Bool = true)
 	{
 		return Xml.parse(xml.toString()).firstChild();
 	}

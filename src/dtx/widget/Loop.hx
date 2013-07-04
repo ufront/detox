@@ -44,9 +44,10 @@ There are two main extensions of Loop:
 Of course, you could also make your own variation where you override the `generateItem()` method with your own crazy ideas.
 
 */
-class Loop<T> extends DOMCollection
+class Loop<T>
 {
-	var referenceNode:dtx.DOMNode;
+	public var nodes:Nodes;
+	var referenceNode:dtx.Node;
 	var items:Array<LoopItem<T>>;
 
 	/** Returns the number of items in the loop.  (In comparison to 'length', which returns the total number of DOMNodes in the loop's collection, which may differ from the number of items. */
@@ -55,8 +56,7 @@ class Loop<T> extends DOMCollection
 	/** Create a new, empty Loop. */
 	public function new()
 	{
-		super();
-
+		nodes = [];
 		items = [];
 		preventDuplicates = false;
 
@@ -67,7 +67,7 @@ class Loop<T> extends DOMCollection
 		// Just don't go using any methods which duplicate this DOMCollection, or we might be in trouble.
 		// eg. No `myLoop.appendTo('ul'.find());` // append to (and duplicate for) every ul in the body
 		referenceNode = "<!-- Detox Loop -->".parse().getNode();
-		this.collection.push(referenceNode);
+		nodes.add(referenceNode);
 	}
 	
 	/** If preventDuplicates is true, then every item you add will check to see if an item with the same input already exists, and only add it if it is unique.  
@@ -166,21 +166,19 @@ class Loop<T> extends DOMCollection
 			referenceNode.afterThisInsert(item.dom);
 
 			// add to the end of the collection
-			for (node in item.dom)
-			{
-				this.collection.push(node);
+			for (node in item.dom) {
+				nodes.add(node);
 			}
 		}
 		else if (items.length == pos+1)
 		{
 			// is the last item, Find the item before this one and insert our item after
 			var prevItem = items[pos - 1];
-			prevItem.dom.last().getNode().afterThisInsert(item.dom);
+			prevItem.dom.last.afterThisInsert(item.dom);
 
 			// add to the end of the collection
-			for (node in item.dom)
-			{
-				this.collection.push(node);
+			for (node in item.dom) {
+				nodes.add(node);
 			}
 		}
 		else 
@@ -192,10 +190,10 @@ class Loop<T> extends DOMCollection
 
 			// Insert into the right position in the collection, accounting for the change
 			// in position as we add more elements to the collection.
-			var pos = collection.indexOf(nextItem.dom.getNode(0));
+			var pos = nodes.toArray().indexOf(nextItem.dom.getNode(0));
 			for (node in item.dom)
 			{
-				this.collection.insert(pos, node);
+				nodes.add(node,pos);
 				pos++;
 			}
 		}
@@ -214,7 +212,7 @@ class Loop<T> extends DOMCollection
 			for (node in item.dom)
 			{
 				node.removeFromDOM();
-				this.collection.remove(node);
+				nodes.removeFromCollection(node);
 			}
 		}
 	}
@@ -300,7 +298,7 @@ class Loop<T> extends DOMCollection
 	If no match is found, it returns null. If both input and dom are provided, it will return an item matching 
 	the input if that exists first, or else an item matching the DOMCollection if that exists.  It will not check
 	that both match - it will search for a match on either criteria. */
-	public function findItem(?input:T, ?node:DOMNode, ?collection:DOMCollection):LoopItem<T>
+	public function findItem(?input:T, ?node:Node, ?collection:Nodes):LoopItem<T>
 	{
 		if (input != null)
 		{
@@ -342,7 +340,7 @@ class Loop<T> extends DOMCollection
 			items.remove(item);
 			for (node in item.dom)
 			{
-				this.collection.remove(node);
+				nodes.removeFromCollection(node);
 				node.removeFromDOM();
 			}
 		}
@@ -373,5 +371,5 @@ class LoopItem<T>
 	}
 
 	public var input:T;
-	public var dom:dtx.DOMCollection;
+	public var dom:Nodes;
 }

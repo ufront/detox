@@ -28,20 +28,8 @@
 // Core classes
 // 
 
-// Include ElementManipulation
-typedef SingleElementManipulation = dtx.single.ElementManipulation;
-typedef CollectionElementManipulation = dtx.collection.ElementManipulation;
-
-// Include DOMManipulation
-typedef SingleDOMManipulation = dtx.single.DOMManipulation;
-typedef CollectionDOMManipulation = dtx.collection.DOMManipulation;
-
-// Include Traversing
-typedef SingleTraversing = dtx.single.Traversing;
-typedef CollectionTraversing = dtx.collection.Traversing;
-
-typedef DOMNode = dtx.DOMNode;
-typedef DOMCollection = dtx.DOMCollection;
+typedef Node = dtx.Node;
+typedef Nodes = dtx.Nodes;
 
 // dtx.Tools provides 3 handy functions:
 // 
@@ -49,25 +37,4 @@ typedef DOMCollection = dtx.DOMCollection;
 //    "<b>Some Text</b>".parse();
 //    "#title".find();
 typedef Detox = dtx.Tools;
-
-// 
-// Client JS only classes
-// 
-
-#if (js && !nodejs)
-
-// Include Style
-typedef SingleStyle = dtx.single.Style;
-typedef CollectionStyle = dtx.collection.Style;
-
-// Include Animation
-//typedef SingleAnimation = dtx.single.Animation;
-//typedef CollectionAnimation = dtx.collection.Animation;
-
-// Include EventManagement
-typedef SingleEventManagement = dtx.single.EventManagement;
-typedef CollectionEventManagement = dtx.collection.EventManagement;
-
-#end
-
 

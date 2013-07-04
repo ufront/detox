@@ -7,20 +7,20 @@ using StringTools;
 class DetoxLayout extends dtx.DOMCollection
 {
 	public var dtd:String;
-	public var head:DOMNode;
-	public var body:DOMNode;
+	public var head:Node;
+	public var body:Node;
 	public var title(get_title, set_title):String;
-	public var content(default, set_content):DOMCollection;
-	public var navigation(default, set_navigation):DOMCollection;
+	public var content(default, set_content):Nodes;
+	public var navigation(default, set_navigation):Nodes;
 
-	var contentDOM:DOMNode;
-	var titleDOM:DOMNode;
-	var navigationDOM:DOMNode;
+	var contentDOM:Node;
+	var titleDOM:Node;
+	var navigationDOM:Node;
 	
 	public var scripts:StringMap<DOMCollection>;
 	public var stylesheets:StringMap<DOMCollection>;
 
-	public function new(?template:String, ?layout:DOMNode, dtd:String = "<!DOCTYPE html>", contentSelector = "#main-content", navSelector = "#main-nav")
+	public function new(?template:String, ?layout:Node, dtd:String = "<!DOCTYPE html>", contentSelector = "#main-content", navSelector = "#main-nav")
 	{
 		super();
 

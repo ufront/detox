@@ -11,18 +11,12 @@
 
 package dtx.single;
 
-import dtx.DOMNode;
 import dtx.DOMType;
-#if !js using dtx.XMLWrapper; #end
-
-/*
-JQuery has these classes, let's copy:
-
-	//later? outerHTML()
-	//later? setOuterHTML()
-	clone() - create a deep copy of this set of matched elements
-*/ 
-
+#if js 
+	import js.html.Element;
+#else
+	using dtx.XMLWrapper;
+#end
 
 class ElementManipulation
 {
@@ -32,90 +26,82 @@ class ElementManipulation
 	static inline var NodeTypeComment = 8;
 	static inline var NodeTypeDocument = 9;
 
-	public static function isElement(node:DOMNode):Bool
+	public static function toNodes(n:Node):Nodes
 	{
-		return node != null && node.nodeType == dtx.DOMType.ELEMENT_NODE;
+		return [n];
 	}
 
-	public static function isComment(node:DOMNode):Bool
+	public static function index(n:Node):Int 
 	{
-		return node != null && node.nodeType == dtx.DOMType.COMMENT_NODE;
+		return n.parent.children.indexOf(n);
 	}
 
-	public static function isTextNode(node:DOMNode):Bool
+	public static function hasAttr(elm:Node, attName:String):Bool
 	{
-		return node != null && node.nodeType == dtx.DOMType.TEXT_NODE;
+		var ret = false;
+		if (elm.isElement())
+		{
+			#if js
+				var element:Element = cast elm.toDom();
+				var attr = element.getAttribute(attName);
+			#else 
+				var attr = elm.toXml().get(attName);
+			#end 
+			ret = (attr == null);
+		}
+		return ret;
 	}
 
-	public static function isDocument(node:DOMNode):Bool
-	{
-		return node != null && node.nodeType == dtx.DOMType.DOCUMENT_NODE;
-	}
-
-	public static function toQuery(n:DOMNode):DOMCollection
-	{
-		return new DOMCollection(n);
-	}
-
-	public static function index(n:DOMNode):Int 
-	{
-		#if js
-			return Lambda.indexOf(dtx.single.Traversing.children(dtx.single.Traversing.parents(n), false), n);
-		#else
-			return (n != null && n.parent != null) ? Lambda.indexOf(n.parent, n) : -1;
-		#end 
-	}
-
-	public static function attr(elm:DOMNode, attName:String):String
+	public static function attr(elm:Node, attName:String):String
 	{
 		var ret = "";
-		if (isElement(elm))
+		if (elm.isElement())
 		{
-			var element:DOMElement = cast elm;
 			#if js
-			ret = element.getAttribute(attName);
+				var element:Element = cast elm;
+				ret = element.getAttribute(attName);
 			#else 
-			ret = element.get(attName);
+				ret = elm.toXml().get(attName);
 			#end 
 			if (ret == null) ret = "";
 		}
 		return ret;
 	}
 
-	public static function setAttr(elm:DOMNode, attName:String, attValue:String):DOMNode
+	public static function setAttr(elm:Node, attName:String, attValue:String):Node
 	{
 		if (elm!= null && elm.nodeType == dtx.DOMType.ELEMENT_NODE)
 		{
-			var element:DOMElement = cast elm;
 			#if js
-			element.setAttribute(attName, attValue);
+				var element:Element = cast elm;
+				element.setAttribute(attName, attValue);
 			#else 
-			element.set(attName, attValue);
+				elm.toXml().set(attName, attValue);
 			#end 
 		}
 		return elm;
 	}
 
-	public static function removeAttr(elm:DOMNode, attName:String):DOMNode
+	public static function removeAttr(elm:Node, attName:String):Node
 	{
 		if (elm!=null && elm.nodeType == dtx.DOMType.ELEMENT_NODE)
 		{
-			var element:DOMElement = cast elm;
 			#if js 
-			element.removeAttribute(attName);
+				var element:Element = cast elm;
+				element.removeAttribute(attName);
 			#else 
-			element.remove(attName);
+				elm.toXml().remove(attName);
 			#end 
 		}
 		return elm;
 	}
 
-	private static inline function testForClass(elm:DOMNode, className:String):Bool
+	private static inline function testForClass(elm:Node, className:String):Bool
 	{
 		return ((" " + attr(elm, "class") + " ").indexOf(" " + className + " ") > -1);
 	}
 
-	public static function hasClass(elm:DOMNode, className:String):Bool
+	public static function hasClass(elm:Node, className:String):Bool
 	{
 		var hasClass = true;
 		if (className.indexOf(' ') > -1)
@@ -134,7 +120,7 @@ class ElementManipulation
 		return hasClass;
 	}
 
-	public static function addClass(elm:DOMNode, className:String):DOMNode
+	public static function addClass(elm:Node, className:String):Node
 	{
 		for (name in className.split(' '))
 		{
@@ -149,7 +135,7 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static function removeClass(elm:DOMNode, className:String):DOMNode
+	public static function removeClass(elm:Node, className:String):Node
 	{
 		// Get the current list of classes
 		var classes = attr(elm, "class").split(" ");
@@ -168,51 +154,46 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static function toggleClass(elm:DOMNode, className:String):DOMNode
+	public static function toggleClass(elm:Node, className:String):Node
 	{
-		for (name in className.split(' '))
-		{
-			if (hasClass(elm, name))
-			{
-				removeClass(elm,name);
-			}
-			else 
-			{
-				addClass(elm,name);
-			}
+		for (name in className.split(' ')) {
+			if (hasClass(elm, name)) removeClass(elm,name);
+			else addClass(elm,name);
 		}
 		return elm;
 	}
 
-	public static inline function tagName(elm:DOMNode):String
+	public static inline function tagName(elm:Node):String
 	{
 		#if js
-		return (elm == null) ? "" : elm.nodeName.toLowerCase();
+			var node:js.html.Node = elm;
+			return (node == null) ? "" : node.nodeName.toLowerCase();
 		#else 
-		var ret = "";
-		// Make XML behaviour mimic the JS DOM behaviour
-		if (elm != null)
-		{
-			ret = switch (elm.nodeType)
+			var ret = "";
+			// Make XML behaviour mimic the JS DOM behaviour
+			if (elm != null)
 			{
-				case dtx.DOMType.ELEMENT_NODE:
-					elm.nodeName.toLowerCase();
-				case dtx.DOMType.DOCUMENT_NODE:
-					"#document";
-				case dtx.DOMType.TEXT_NODE:
-					"#text";
-				case dtx.DOMType.COMMENT_NODE:
-					"#comment";
-				default:
-					"#other";
+				var node = elm.toXml();
+				ret = switch (node.nodeType)
+				{
+					case DOMType.ELEMENT_NODE:
+						node.nodeName.toLowerCase();
+					case DOMType.DOCUMENT_NODE:
+						"#document";
+					case DOMType.TEXT_NODE:
+						"#text";
+					case DOMType.COMMENT_NODE:
+						"#comment";
+					default:
+						"#other";
+				}
+				
 			}
-			
-		}
-		return ret;
+			return ret;
 		#end
 	}
 
-	public static function val(node:DOMNode):String
+	public static function val(node:Node):String
 	{
 		var val = "";
 
@@ -220,7 +201,7 @@ class ElementManipulation
 		{
 			switch (node.nodeType)
 			{
-				case dtx.DOMType.ELEMENT_NODE:
+				case DOMType.ELEMENT_NODE:
 					#if js
 					// TODO: Make this more intelligent. Handle <select> especiallyg
 					val = Reflect.field(node, 'value');
@@ -247,7 +228,7 @@ class ElementManipulation
 		return val;
 	}
 
-	public static function setVal(node:DOMNode, val:Dynamic)
+	public static function setVal(node:Node, val:Dynamic)
 	{
 		if (node != null)
 		{
@@ -266,21 +247,25 @@ class ElementManipulation
 					#end
 				default:
 					// For comments, text nodes etc, set the nodeValue directly...
-					node.nodeValue = val;
+					#if js 
+						node.toDom().nodeValue = val;
+					#else 
+						node.toXml().nodeValue = val;
+					#end
 			}
 		}
 
 		return node;
 	}
 	
-	public static inline function text(elm:DOMNode):String
+	public static inline function text(elm:Node):String
 	{
 		var text = "";
 		if (elm != null) 
 		{
-			if (isElement(elm))
+			if (elm.isElement())
 			{
-				text = #if js elm.textContent #else elm.textContent() #end;
+				text = #if js elm.toDom().textContent #else elm.textContent() #end;
 			}
 			else 
 			{
@@ -290,14 +275,14 @@ class ElementManipulation
 		return text;
 	}
 	
-	public static function setText(elm:DOMNode, text:String):DOMNode
+	public static function setText(elm:Node, text:String):Node
 	{
 		if (elm != null)
 		{
-			if (isElement(elm))
+			if (elm.isElement())
 			{
 				#if js
-				elm.textContent = text;
+				elm.toDom().textContent = text;
 				#else 
 				elm.setTextContent(text);
 				#end
@@ -311,44 +296,48 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static function innerHTML(elm:DOMNode):String
+	public static function innerHTML(elm:Node):String
 	{
 		var ret = "";
 		if (elm != null)
 		{
 			switch (elm.nodeType)
 			{
-				case dtx.DOMType.ELEMENT_NODE:
-					var element:DOMElement = cast elm;
+				case DOMType.ELEMENT_NODE:
 					#if js
-					ret = element.innerHTML;
+						var element:Element = cast elm;
+						ret = element.innerHTML;
 					#else 
-					ret = element.innerHTML();
+						ret = dtx.XMLWrapper.innerHTML( elm );
 					#end
 				default:
-					ret = #if js elm.textContent #else elm.textContent() #end; 
+					#if js 
+						ret = elm.toDom().textContent; 
+					#else 
+						ret = elm.toXml().textContent(); 
+					#end 
 
 			}
 		}
 		return ret;
 	}
 
-	public static function setInnerHTML(elm:DOMNode, html:String):DOMNode
+	public static function setInnerHTML(elm:Node, html:String):Node
 	{
 		if (elm != null)
 		{
 			switch (elm.nodeType)
 			{
-				case dtx.DOMType.ELEMENT_NODE:
-					var element:DOMElement = cast elm;
+				case DOMType.ELEMENT_NODE:
 					#if js
-					element.innerHTML = html;
-					#else 
-					elm.setInnerHTML(html);
+						var element:Element = cast elm;
+						element.innerHTML = html;
+					#else
+						XMLWrapper.setInnerHTML(elm, html);
 					#end
 				default:
 					#if js
-					elm.textContent = html;
+					elm.toDom().textContent = html;
 					#else 
 					elm.setTextContent(html);
 					#end
@@ -357,59 +346,49 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static inline function clone(elm:DOMNode, ?deep:Bool = true):DOMNode
+	public static inline function clone(elm:Node, ?deep:Bool = true):Node
 	{
-		return (elm == null) ? null : elm.cloneNode(deep);
-	}
-
-	// JS doesn't have a built in html() method
-	public static function html(elm:DOMNode):String
-	{
-		#if js
-			var div = Detox.create("div");
-			dtx.single.DOMManipulation.append(div, clone(elm));
-			return innerHTML(div);
+		#if js 
+			return (elm == null) ? null : elm.toDom().cloneNode(deep);
 		#else 
-			if ( elm == null ) return "";
-			
-			var sb = new StringBuf();
-			printHtml( elm, sb );
-			return sb.toString();
+			return (elm == null) ? null : XMLWrapper.cloneNode(elm, deep);
 		#end
 	}
 
 	#if !js
 		static var selfClosingElms = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
-		static function printHtml( n:DOMNode, sb:StringBuf ) {
-			if ( isElement(n) ) {
-				var elmName = tagName(n);
+		static public function printHtml( n:Xml, sb:StringBuf ) {
+			if ( n.nodeType == DOMType.ELEMENT_NODE ) {
+				var elmName = n.nodeName;
 				sb.add('<$elmName');
 				
 				for ( a in n.attributes() ) {
-					var value = attr(n, a);
+					var value = n.get(a);
 					sb.add(' $a="$value"');
 				}
 				
-				if ( dtx.single.Traversing.children(n, false).length > 0 ) {
+				var children = Lambda.array(n);
+				if ( children.length > 0 ) {
 					sb.add(">");
-					for ( child in dtx.single.Traversing.children(n, false) ) {
+					for ( child in children ) {
 						printHtml( child, sb );
 					}
 					sb.add('</$elmName>');
 				}
 				else {
 					sb.add( 
-						if ( Lambda.has(selfClosingElms, tagName(n)) ) " />" 
+						if ( Lambda.has(selfClosingElms, elmName) ) " />" 
 						else '></$elmName>' 
 					);
 				}
-			} else if ( isDocument(n) ) {
-				for ( child in dtx.single.Traversing.children(n, false) ) {
+			} else if ( n.nodeType == DOMType.DOCUMENT_NODE ) {
+				for ( child in n ) {
 					printHtml( child, sb );
 				}
 			} else {
 				sb.add( n.toString() );
 			}
+			return sb;
 		}
 	#end
 }

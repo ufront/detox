@@ -2,10 +2,7 @@ package;
 
 import massive.munit.Assert;
 
-import Detox;
 using Detox;
-import dtx.DOMCollection;
-import dtx.DOMNode;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -30,9 +27,9 @@ class CollectionTraversingTest
 		// trace ("AfterClass");
 	}
 
-	var sampleDocument:DOMCollection;
-	var nullDOMCollection:DOMCollection;
-	var emptyDOMCollection:DOMCollection;
+	var sampleDocument:Nodes;
+	var nullDOMCollection:Nodes;
+	var emptyDOMCollection:Nodes;
 	
 	@Before
 	public function setup():Void
@@ -64,7 +61,7 @@ class CollectionTraversingTest
 			</div>
 		</myxml>".parse();
 		nullDOMCollection = null;
-		emptyDOMCollection = new DOMCollection();
+		emptyDOMCollection = [];
 
 		Detox.setDocument(sampleDocument.getNode());
 
@@ -79,15 +76,15 @@ class CollectionTraversingTest
 	@Test 
 	public function children_normal()
 	{
-		var q1 = 'ul'.find().children();
+		var q1 = 'ul'.find().elements;
 		Assert.areEqual(8, q1.length);
 	}
 
 	@Test 
 	public function children_elementsOnly()
 	{
-		var q1 = '#nonElements'.find().children();
-		var q2 = '#nonElements'.find().children(false);
+		var q1 = '#nonElements'.find().elements;
+		var q2 = '#nonElements'.find().children;
 		Assert.areEqual(0, q1.length);
 		Assert.areEqual(3, q2.length);
 	}
@@ -95,7 +92,7 @@ class CollectionTraversingTest
 	@Test 
 	public function children_onNull()
 	{
-		Assert.areEqual(0, nullDOMCollection.children().length);
+		Assert.areEqual(0, nullDOMCollection.elements.length);
 	}
 
 	@Test 
@@ -103,108 +100,108 @@ class CollectionTraversingTest
 	{
 		var q1 = ".empty".find();
 		Assert.areEqual(2, q1.length);
-		Assert.areEqual(0, q1.children().length);
+		Assert.areEqual(0, q1.elements.length);
 	}
 
 	@Test 
 	public function children_onEmptyCollection()
 	{
-		Assert.areEqual(0, emptyDOMCollection.children().length);
+		Assert.areEqual(0, emptyDOMCollection.elements.length);
 	}
 
 	@Test 
-	public function firstChildren()
+	public function firstChild()
 	{
-		var q1 = "ul".find().firstChildren();
+		var q1 = '#nonElements'.find().firstChild;
+		var q2 = '#nonElements'.find().firstElement;
+		Assert.areEqual(1, q1.length);
+		Assert.areEqual(0, q2.length);
+	}
+
+	@Test 
+	public function firstElement()
+	{
+		var q1 = "ul".find().firstElement;
 		Assert.areEqual(2, q1.length);
-		Assert.areEqual("a1", q1.eq(0).attr('id'));
-		Assert.areEqual("b1", q1.eq(1).attr('id'));
+		Assert.areEqual("a1", q1[0].attr('id'));
+		Assert.areEqual("b1", q1[1].attr('id'));
 	}
 
 	@Test 
-	public function firstChildren_elementsOnly()
+	public function firstChild_onNull()
 	{
-		var q1 = '#nonElements'.find().firstChildren();
-		var q2 = '#nonElements'.find().firstChildren(false);
-		Assert.areEqual(0, q1.length);
-		Assert.areEqual(1, q2.length);
+		Assert.areEqual(0, nullDOMCollection.firstChild.length);
 	}
 
 	@Test 
-	public function firstChildren_onNull()
-	{
-		Assert.areEqual(0, nullDOMCollection.firstChildren().length);
-	}
-
-	@Test 
-	public function firstChildren_onEmptyParent()
+	public function firstChild_onEmptyParent()
 	{
 		var q1 = ".empty".find();
 		Assert.areEqual(2, q1.length);
-		Assert.areEqual(0, q1.firstChildren().length);
+		Assert.areEqual(0, q1.firstChild.length);
 	}
 
 	@Test 
 	public function firstChildren_onEmptyCollection()
 	{
-		Assert.areEqual(0, emptyDOMCollection.firstChildren().length);
+		Assert.areEqual(0, emptyDOMCollection.firstChild.length);
 	}
 
 	@Test 
-	public function lastChildren()
+	public function lastElement()
 	{
-		var q1 = "ul".find().lastChildren();
+		var q1 = "ul".find().lastElement;
 		Assert.areEqual(2, q1.length);
-		Assert.areEqual("a4", q1.eq(0).attr('id'));
-		Assert.areEqual("b4", q1.eq(1).attr('id'));
+		Assert.areEqual("a4", q1[0].attr('id'));
+		Assert.areEqual("b4", q1[1].attr('id'));
 	}
 
 	@Test 
-	public function lastChildren_elementsOnly()
+	public function lastChild()
 	{
-		var q1 = '#nonElements'.find().lastChildren();
-		var q2 = '#nonElements'.find().lastChildren(false);
+		var q1 = '#nonElements'.find().lastElement;
+		var q2 = '#nonElements'.find().lastChild;
 		Assert.areEqual(0, q1.length);
 		Assert.areEqual(1, q2.length);
 	}
 
 	@Test 
-	public function lastChildren_onNull()
+	public function lastChild_onNull()
 	{
-		Assert.areEqual(0, nullDOMCollection.lastChildren().length);
+		Assert.areEqual(0, nullDOMCollection.lastChild.length);
 	}
 
 	@Test 
-	public function lastChildren_onEmptyCollection()
+	public function lastChild_onEmptyCollection()
 	{
-		Assert.areEqual(0, emptyDOMCollection.lastChildren().length);
+		Assert.areEqual(0, emptyDOMCollection.lastChild.length);
 	}
 
 	@Test 
-	public function lastChildren_onEmptyParent()
+	public function lastChild_onEmptyParent()
 	{
 		var q1 = ".empty".find();
 		Assert.areEqual(2, q1.length);
-		Assert.areEqual(0, q1.lastChildren().length);
+		Assert.areEqual(0, q1.lastChild.length);
 	}
 
 	@Test 
 	public function parent()
 	{
 		var l4 = ".level4".find();
-		Assert.isTrue(l4.parent().hasClass('level3'));
+		Assert.isTrue(l4.parent.hasClass('level3'));
 	}
 
 	@Test 
 	public function parent_onNull()
 	{
-		Assert.areEqual(0, nullDOMCollection.parent().length);
+		Assert.areEqual(0, nullDOMCollection.parent.length);
 	}
 
 	@Test 
 	public function parent_onEmptyCollection()
 	{
-		Assert.areEqual(0, emptyDOMCollection.parent().length);
+		Assert.areEqual(0, emptyDOMCollection.parent.length);
 	}
 
 	@Test 
@@ -212,36 +209,36 @@ class CollectionTraversingTest
 	{
 		// eg Document
 		#if js 
-		var doc:DOMNode = untyped __js__('document');
+		var doc:Node = untyped __js__('document');
 		#else 
 		var doc = Xml.createDocument();
 		#end
-		var q = new DOMCollection(doc);
-		Assert.areEqual(0, q.parent().length);
+		var q:Nodes = [doc];
+		Assert.areEqual(0, q.parent.length);
 	}
 
 	@Test 
 	public function ancestors()
 	{
 		var l4 = ".level4".find();
-		var a = l4.ancestors();
+		var a = l4.ancestors;
 		Assert.areEqual(4, a.length);
-		Assert.isTrue(a.eq(0).hasClass('level3'));
-		Assert.isTrue(a.eq(1).hasClass('level2'));
-		Assert.isTrue(a.eq(2).hasClass('level1'));
-		Assert.areEqual("myxml", a.eq(3).tagName());
+		Assert.isTrue(a[0].hasClass('level3'));
+		Assert.isTrue(a[1].hasClass('level2'));
+		Assert.isTrue(a[2].hasClass('level1'));
+		Assert.areEqual("myxml", a[3].tagName);
 	}
 
 	@Test 
 	public function ancestors_onNull()
 	{
-		Assert.areEqual(0, nullDOMCollection.ancestors().length);
+		Assert.areEqual(0, nullDOMCollection.ancestors.length);
 	}
 
 	@Test 
 	public function ancestors_onEmptyCollection()
 	{
-		Assert.areEqual(0, emptyDOMCollection.ancestors().length);
+		Assert.areEqual(0, emptyDOMCollection.ancestors.length);
 	}
 
 	@Test 
@@ -249,132 +246,131 @@ class CollectionTraversingTest
 	{
 		// eg Document
 		#if js
-		var doc:DOMNode = untyped __js__('document');
+		var doc:Node = untyped __js__('document');
 		#else 
 		var doc = Xml.createDocument();
 		#end
-		var q = new DOMCollection(doc);
-		var a = q.ancestors();
+		var q:Nodes = [doc];
+		var a = q.ancestors;
 		Assert.areEqual(0, a.length);
 	}
 
 	@Test 
 	public function descendants()
 	{
-		Assert.areEqual(8, "ul".find().descendants().length);
-		Assert.areEqual(3, "div".find().descendants().length);
-		Assert.areEqual(3, "#recursive".find().descendants().length);
+		Assert.areEqual(8, "ul".find().descendantElements.length);
+		Assert.areEqual(3, "div".find().descendantElements.length);
+		Assert.areEqual(3, "#recursive".find().descendantElements.length);
 	}
 
 	@Test 
 	public function descendantsElementsOnly()
 	{
-		Assert.areEqual(26, "ul".find().descendants(false).length);
-		Assert.areEqual(10, "#recursive".find().descendants(false).length);
+		Assert.areEqual(26, "ul".find().descendants.length);
+		Assert.areEqual(10, "#recursive".find().descendants.length);
 	}
 
 	@Test 
 	public function descendantsOnNull()
 	{
-		Assert.areEqual(0, nullDOMCollection.descendants().length);
+		Assert.areEqual(0, nullDOMCollection.descendantElements.length);
 	}
 
 	@Test 
 	public function descendantsOnNonElement()
 	{
-		Assert.areEqual(0, "#nonElements".find().children().descendants().length);
+		Assert.areEqual(0, "#nonElements".find().elements.descendants.length);
 	}
 
 	@Test 
 	public function descendantsOnNoDescendants()
 	{
-		Assert.areEqual(0, ".empty".find().descendants().length);
+		Assert.areEqual(0, ".empty".find().descendants.length);
 	}
 
 	@Test 
-	public function next()
+	public function nextElement()
 	{
 		for (li in ".pickme".find())
 		{
-			Assert.areEqual("3", li.toQuery().next().text());
+			Assert.areEqual("3", li.toNodes().nextElement.text);
 		}
 	}
 
 	@Test 
 	public function next_onNull()
 	{
-		Assert.areEqual(0, nullDOMCollection.next().length);
+		Assert.areEqual(0, nullDOMCollection.next.length);
 	}
 
 	@Test 
 	public function next_onEmpty()
 	{
-		Assert.areEqual(0, emptyDOMCollection.next().length);
+		Assert.areEqual(0, emptyDOMCollection.next.length);
 	}
 
 	@Test 
-	public function next_onLast()
+	public function nextElement_onLast()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		q.addCollection('#a4'.find()); // no next()
 		q.addCollection('#b4'.find()); // no next()
 		q.addCollection('#b3'.find()); // next() = '#b4'
-		Assert.areEqual(1, q.next().length);
-		Assert.areEqual("b4", q.next().first().attr('id'));
+		Assert.areEqual(1, q.nextElement.length);
+		Assert.areEqual("b4", q.nextElement.first.attr('id'));
 	}
 
 	@Test 
-	public function next_elementsOnly()
+	public function next()
 	{
-		var children = "#nonElements".find().children(false);
-		var comment = children.eq(1);
+		var children = "#nonElements".find().children;
+		var comment:Nodes = [children[1]];
 
-		Assert.areEqual("Comment", comment.val());
-		Assert.areEqual("After", comment.next(false).val());
-		Assert.areEqual(0, comment.next().length);
+		Assert.areEqual("Comment", comment.val);
+		Assert.areEqual("After", comment.next.val);
+		Assert.areEqual(0, comment.nextElement.length);
 	}
 
 	@Test 
-	public function prev()
+	public function prevElement()
 	{
-		for (li in ".pickme".find())
-		{
-			Assert.areEqual("1", li.toQuery().prev().text());
+		for (li in ".pickme".find()) {
+			Assert.areEqual("1", li.toNodes().prevElement.text);
 		}
 	}
 
 	@Test 
 	public function prev_onNull()
 	{
-		Assert.areEqual(0, nullDOMCollection.prev().length);
+		Assert.areEqual(0, nullDOMCollection.prev.length);
 	}
 
 	@Test 
 	public function prev_onEmpty()
 	{
-		Assert.areEqual(0, emptyDOMCollection.prev().length);
+		Assert.areEqual(0, emptyDOMCollection.prev.length);
 	}
 
 	@Test 
-	public function prev_onFirst()
+	public function prevElement_onFirst()
 	{
-		var q = new DOMCollection();
+		var q:Nodes = [];
 		q.addCollection('#a1'.find()); // no prev()
 		q.addCollection('#b1'.find()); // no prev()
 		q.addCollection('#b2'.find()); // prev() = '#b1'
-		Assert.areEqual(1, q.prev().length);
-		Assert.areEqual("b1", q.prev().first().attr('id'));
+		Assert.areEqual(1, q.prevElement.length);
+		Assert.areEqual("b1", q.prevElement[0].attr('id'));
 	}
 
 	@Test 
 	public function prev_elementsOnly()
 	{
-		var children = "#nonElements".find().children(false);
-		var comment = children.eq(1);
+		var children = "#nonElements".find().children;
+		var comment:Nodes = [children[1]];
 
-		Assert.areEqual("Comment", comment.val());
-		Assert.areEqual("Before", comment.prev(false).val());
-		Assert.areEqual(0, comment.prev().length);
+		Assert.areEqual("Comment", comment.val);
+		Assert.areEqual("Before", comment.prev.val);
+		Assert.areEqual(0, comment.prevElement.length);
 	}
 
 	@Test 

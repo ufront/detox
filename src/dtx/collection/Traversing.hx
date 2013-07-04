@@ -11,15 +11,14 @@
 
 package dtx.collection;
 
-import dtx.DOMNode;
 #if !js using dtx.XMLWrapper; #end
 
 class Traversing
 {
 	/** Return a new collection of all child nodes of the current collection. */
-	static public function children(query:DOMCollection, ?elementsOnly = true)
+	static public function children(query:Nodes, ?elementsOnly = true)
 	{
-		var children = new DOMCollection();
+		var children:Nodes = [];
 		if (query != null)
 		{
 			for (node in query)
@@ -27,59 +26,7 @@ class Traversing
 				if (dtx.single.ElementManipulation.isElement(node))
 				{
 					// Add any child elements
-					#if js
-						children.addNodeList(node.childNodes, elementsOnly);
-					#else 
-						children.addCollection(node, elementsOnly);
-					#end
-				}
-			}
-		}
-		return children;
-	}
-
-	static public function firstChildren(query:DOMCollection, ?elementsOnly = true)
-	{
-		var children = new DOMCollection();
-		if (query != null)
-		{
-			for (node in query)
-			{
-				if (dtx.single.ElementManipulation.isElement(node))
-				{
-					// Add first child node that is an element
-					var e = #if js node.firstChild #else node.firstChild() #end;
-					while (elementsOnly == true && e != null && dtx.single.ElementManipulation.isElement(cast e) == false)
-					{
-						e = #if js e.nextSibling; #else  e = e.nextSibling(); #end
-					}
-					if (e != null) children.add(cast e);
-				}
-			}
-		}
-		return children;
-	}
-
-	static public function lastChildren(query:DOMCollection, ?elementsOnly = true)
-	{
-		var children = new DOMCollection();
-		if (query != null)
-		{
-			for (node in query)
-			{
-				if (dtx.single.ElementManipulation.isElement(node))
-				{
-					// Add first child node that is an element
-					var e = #if js node.lastChild #else node.lastChild() #end;
-					while (elementsOnly == true && e != null && dtx.single.ElementManipulation.isElement(e) == false)
-					{
-						#if js
-							e = e.previousSibling;
-						#else 
-							e = e.previousSibling();
-						#end
-					}
-					if (e != null) children.add(e);
+					children.addCollection(node.children, elementsOnly);
 				}
 			}
 		}
@@ -87,9 +34,9 @@ class Traversing
 	}
 
 	/** Gets the direct parents of each element in the collection. */
-	static public function parent(query:DOMCollection)
+	static public function parent(query:Nodes)
 	{
-		var parents = new DOMCollection();
+		var parents:Nodes = [];
 		if (query != null)
 		{
 			for (node in query)
@@ -107,13 +54,13 @@ class Traversing
 
 	/** This is identical to parents() but it's necessary to use this on non 
 	JS platforms if you want to have null-safety etc. */
-	static inline public function parents(query:DOMCollection)
+	static inline public function parents(query:Nodes)
 	{
 		return parent(query);
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
-	static public function ancestors(query:DOMCollection):DOMCollection
+	static public function ancestors(query:Nodes):Nodes
 	{
 		// start with the direct parents
 		var ancestorList = parent(query);
@@ -130,7 +77,7 @@ class Traversing
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
-	static public function descendants(query:DOMCollection, ?elementsOnly:Bool = true):DOMCollection
+	static public function descendants(query:Nodes, ?elementsOnly:Bool = true):Nodes
 	{
 		var descendantList = new dtx.DOMCollection();
 
@@ -147,9 +94,9 @@ class Traversing
 		return descendantList;
 	}
 
-	static public function next(query:DOMCollection, ?elementsOnly:Bool = true)
+	static public function next(query:Nodes, ?elementsOnly:Bool = true)
 	{
-		var siblings = new DOMCollection();
+		var siblings:Nodes = [];
 		if (query != null)
 		{
 			for (node in query)
@@ -173,9 +120,9 @@ class Traversing
 		return siblings;
 	}
 
-	static public function prev(query:DOMCollection, ?elementsOnly:Bool = true)
+	static public function prev(query:Nodes, ?elementsOnly:Bool = true)
 	{
-		var siblings = new DOMCollection();
+		var siblings:Nodes = [];
 		if (query != null)
 		{
 			for (node in query)
@@ -199,9 +146,9 @@ class Traversing
 		return siblings;
 	}
 
-	static public function find(query:DOMCollection, selector:String)
+	static public function find(query:Nodes, selector:String)
 	{
-		var newDOMCollection = new DOMCollection();
+		var newDOMCollection:Nodes = [];
 		if (query != null && selector != null && selector != "")
 		{
 			for (node in query)
@@ -209,7 +156,7 @@ class Traversing
 				if (dtx.single.ElementManipulation.isElement(node) || dtx.single.ElementManipulation.isDocument(node))
 				{
 					#if js
-						var element:DOMElement = cast node;
+						var element:Element = cast node;
 						if (untyped __js__("document.querySelectorAll"))
 						{
 							var results = element.querySelectorAll(selector);

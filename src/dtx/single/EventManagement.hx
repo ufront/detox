@@ -11,7 +11,7 @@
 
 package dtx.single;
 
-import dtx.DOMNode;
+
 /*
 JQuery has these methods.  I'll try break them down into core functionality and implementations of specific events
 For now I'm only testing in Firefox / W3 conforming browsers.  Almost certainly broken in IE8 and below.
@@ -75,23 +75,8 @@ die(?eventType) - remove all event handlers // deprecated
 
 class EventManagement
 {
-	/*private static var eventTypeMap = {
-		'click':'MouseEvent',
-		'dblclick':'MouseEvent',
-		'mousedown':'MouseEvent',
-		'mouseup':'MouseEvent',
-		'mouseover':'MouseEvent',
-		'mousemove':'MouseEvent',
-		'mouseout':'MouseEvent',
-		'keydown':'KeyboardEvent',
-		'keypress':'KeyboardEvent',
-		'keyup':'KeyboardEvent',
-		'':'HTMLEvents',
-
-	}
-
 	/** Trigger an event, as if it has actually happened */
-	public static inline function trigger(target:DOMNode, eventString:String):DOMNode
+	public static inline function trigger(target:Node, eventString:String):Node
 	{
 		#if js 
 		if (target!=null) Bean.fire(target, eventString);
@@ -102,13 +87,13 @@ class EventManagement
 	}
 
 	// /** Trigger the handler for the event, but don't emulate the event itself */
-	// public static function triggerHandler(target:DOMNode, event:String):DOMNode
+	// public static function triggerHandler(target:Node, event:String):Node
 	// {
 	// 	return target;
 	// }
 
 	/** add an event listener */
-	public static inline function on(target:DOMNode, eventType:String, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function on(target:Node, eventType:String, ?selector:String, ?listener:EventListener):Node
 	{
 		#if js 
 			if (target != null)
@@ -126,7 +111,7 @@ class EventManagement
 		return target;
 	}
 
-	public static function off(target:DOMNode, ?eventType:String = null, ?listener:EventListener=null):DOMNode
+	public static function off(target:Node, ?eventType:String = null, ?listener:EventListener=null):Node
 	{
 		#if js 
 			if (target != null)
@@ -143,7 +128,7 @@ class EventManagement
 	}
 
 	/** Attach an event but only let it run once */
-	public static function one(target:DOMNode, eventType:String, ?selector:String, listener:EventListener):DOMNode
+	public static function one(target:Node, eventType:String, ?selector:String, listener:EventListener):Node
 	{
 		#if js 
 			if (target != null)
@@ -157,57 +142,57 @@ class EventManagement
 		return target;
 	}
 
-	public static inline function mousedown(target:DOMNode, ?selector:String, ?listener:MouseEvent->Void):DOMNode
+	public static inline function mousedown(target:Node, ?selector:String, ?listener:MouseEvent->Void):Node
 	{
 		return on(target, "mousedown", selector, untyped listener);
 	}
 
-	public static inline function mouseenter(target:DOMNode, ?selector:String, ?listener:MouseEvent->Void):DOMNode
+	public static inline function mouseenter(target:Node, ?selector:String, ?listener:MouseEvent->Void):Node
 	{
 		return on(target, "mouseover", selector, untyped listener);
 	}
 
-	public static inline function mouseleave(target:DOMNode, ?selector:String, ?listener:MouseEvent->Void):DOMNode
+	public static inline function mouseleave(target:Node, ?selector:String, ?listener:MouseEvent->Void):Node
 	{
 		return on(target, "mouseout", selector, untyped listener);
 	}
 
-	public static inline function mousemove(target:DOMNode, ?selector:String, ?listener:MouseEvent->Void):DOMNode
+	public static inline function mousemove(target:Node, ?selector:String, ?listener:MouseEvent->Void):Node
 	{
 		return on(target, "mousemove", selector, untyped listener);
 	}
 
-	public static inline function mouseout(target:DOMNode, ?selector:String, ?listener:MouseEvent->Void):DOMNode
+	public static inline function mouseout(target:Node, ?selector:String, ?listener:MouseEvent->Void):Node
 	{
 		return on(target, "mouseout", selector, untyped listener);
 	}
 
-	public static inline function mouseover(target:DOMNode, ?selector:String, ?listener:MouseEvent->Void):DOMNode
+	public static inline function mouseover(target:Node, ?selector:String, ?listener:MouseEvent->Void):Node
 	{
 		return on(target, "mouseover", selector, untyped listener);
 	}
 
-	public static inline function mouseup(target:DOMNode, ?selector:String, ?listener:MouseEvent->Void):DOMNode
+	public static inline function mouseup(target:Node, ?selector:String, ?listener:MouseEvent->Void):Node
 	{
 		return on(target, "mouseup", selector, untyped listener);
 	}
 
-	public static inline function keydown(target:DOMNode, ?selector:String, ?listener:KeyboardEvent->Void):DOMNode
+	public static inline function keydown(target:Node, ?selector:String, ?listener:KeyboardEvent->Void):Node
 	{
 		return on(target, "keydown", selector, untyped listener);
 	}
 
-	public static inline function keypress(target:DOMNode, ?selector:String, ?listener:KeyboardEvent->Void):DOMNode
+	public static inline function keypress(target:Node, ?selector:String, ?listener:KeyboardEvent->Void):Node
 	{
 		return on(target, "keypress", selector, untyped listener);
 	}
 
-	public static inline function keyup(target:DOMNode, ?selector:String, ?listener:KeyboardEvent->Void):DOMNode
+	public static inline function keyup(target:Node, ?selector:String, ?listener:KeyboardEvent->Void):Node
 	{
 		return on(target, "keyup", selector, untyped listener);
 	}
 
-	public static function hover(target:DOMNode, ?selector:String, listener1:MouseEvent->Void, ?listener2:MouseEvent->Void = null):DOMNode
+	public static function hover(target:Node, ?selector:String, listener1:MouseEvent->Void, ?listener2:MouseEvent->Void = null):Node
 	{
 		mouseenter(target, selector, listener1);
 
@@ -224,12 +209,12 @@ class EventManagement
 		return target;
 	}
 
-	public static inline function submit(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function submit(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "submit", selector, listener);
 	}
 
-	public static function toggleClick(target:DOMNode, ?selector:String, listenerFirstClick:MouseEvent->Void, listenerSecondClick:MouseEvent->Void):DOMNode
+	public static function toggleClick(target:Node, ?selector:String, listenerFirstClick:MouseEvent->Void, listenerSecondClick:MouseEvent->Void):Node
 	{
 		// Declare and initialise now so they can reference each other in their function bodies.
 		var fn1:MouseEvent->Void = null;
@@ -257,52 +242,52 @@ class EventManagement
 		return target;
 	}
 
-	public static inline function blur(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function blur(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "blur", selector, listener);
 	}
 
-	public static inline function change(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function change(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "change", selector, listener);
 	}
 
-	public static inline function click(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function click(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "click", selector, listener);
 	}
 
-	public static inline function dblclick(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function dblclick(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "dblclick", selector, listener);
 	}
 
-	public static inline function focus(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function focus(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "focus", selector, listener);
 	}
 
-	public static inline function focusIn(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function focusIn(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "focusIn", selector, listener);
 	}
 
-	public static inline function focusOut(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function focusOut(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "focusOut", selector, listener);
 	}
 
-	public static inline function resize(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function resize(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "resize", selector, listener);
 	}
 
-	public static inline function scroll(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function scroll(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "scroll", selector, listener);
 	}
 
-	public static function wheel(target:DOMNode, ?selector:String, ?listener:js.html.WheelEvent->Void):DOMNode
+	public static function wheel(target:Node, ?selector:String, ?listener:js.html.WheelEvent->Void):Node
 	{
 		// Just use the HTML5 standard for now.  Works in IE9+ and FF17+, probably not webkit/opera yet.
 		target.addEventListener("wheel", untyped listener);
@@ -312,27 +297,27 @@ class EventManagement
 		// https://developer.mozilla.org/en-US/docs/Mozilla_event_reference/wheel?redirectlocale=en-US&redirectslug=DOM%2FDOM_event_reference%2Fwheel
 	}
 
-	public static inline function select(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function select(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "select", selector, listener);
 	}
 
-	public static inline function load(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function load(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "load", selector, listener);
 	}
 
-	public static inline function unload(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function unload(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "unload", selector, listener);
 	}
 
-	public static inline function error(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function error(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "error", selector, listener);
 	}
 
-	public static inline function ready(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function ready(target:Node, ?selector:String, ?listener:EventListener):Node
 	{
 		return on(target, "ready", selector, listener);
 	}

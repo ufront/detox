@@ -11,18 +11,11 @@
 
 package dtx;
 
-import dtx.DOMCollection;
-import dtx.DOMNode;
+import dtx.Nodes;
+import dtx.Node;
 #if js
-	#if (haxe_211 || haxe3)
-		import js.html.EventTarget;
-		typedef Window = js.html.DOMWindow;
-	#else 
-		import js.w3c.level3.Core;
-		import js.w3c.level3.Events;
-		import CommonJS; 
-		import UserAgentContext;
-	#end
+	import js.html.EventTarget;
+	typedef Window = js.html.DOMWindow;
 #end
 
 /** 
@@ -45,30 +38,17 @@ import dtx.DOMNode;
 * There are a few advantages
 *  - better integration into haxe's Object Oriented style
 *  - hopefully a smaller codebase, thanks to Dead Code Elimination
-*  - works with native DOMNode or XMLNode, can work without wrapping
+*  - works with native Node or XMLNode, can work without wrapping
 *  - works on non-js haxe platforms, hopefully
 */
 
 class Tools 
 {
-	public static var document(get_document,null):DocumentOrElement;
+	public static var document(get_document,null):Node;
 	#if js 
-	public static var body(get_body,null):DOMNode;
+	public static var body(get_body,null):Node;
 	public static var window(get_window,null):Window; 
 	#end
-
-	function new()
-	{
-		
-	}
-
-	/**
-	* A helper function to turn a single node into a collection
-	*/
-	public static function toCollection(n:DOMNode)
-	{
-		return new DOMCollection(n);
-	}
 
 	/**
 	* A helper function that lets you do this:
@@ -76,33 +56,33 @@ class Tools
 	*/
 	public static function find(selector:String)
 	{
-		return new DOMCollection(selector);
+		return dtx.single.Traversing.find(Detox.document, selector);
 	} 
 
 	/**
 	* A helper function that lets you do this:
 	* "div".create().setAttr("id","myElm");
 	*/
-	public static function create(name:String)
+	public static function create(name:String):Node
 	{
-		var elm:DOMNode = null;
+		var elm:Node = null;
 		if (name != null)
 		{
 			#if js
-			try {
-				elm = untyped __js__("document").createElement(name);
-			} catch (e:Dynamic)
-			{
-				elm = null;
-			}
+				try {
+					elm = untyped __js__("document").createElement(name);
+				} 
+				catch (e:Dynamic) {
+					elm = null;
+				}
 			#else
-			// Haxe doesn't validate the name, so we should.
-			// I'm going to use a simplified (but not entirely accurate) validation.  See:
-			// http://stackoverflow.com/questions/3158274/what-would-be-a-regex-for-valid-xml-names
-			
-			// If it is valid, create, if it's not, return null
-			var valid = ~/^[a-zA-Z_:]([a-zA-Z0-9_:\.])*$/;
-			elm = (valid.match(name)) ? Xml.createElement(name) : null;
+				// Haxe doesn't validate the name, so we should.
+				// I'm going to use a simplified (but not entirely accurate) validation.  See:
+				// http://stackoverflow.com/questions/3158274/what-would-be-a-regex-for-valid-xml-names
+				
+				// If it is valid, create, if it's not, return null
+				var valid = ~/^[a-zA-Z_:]([a-zA-Z0-9_:\.])*$/;
+				elm = (valid.match(name)) ? Xml.createElement(name) : null;
 			#end
 		}
 		return elm;
@@ -114,12 +94,12 @@ class Tools
 	* A helper function that lets you do this:
 	* "<div>Hello <i>There</i></div>".parse().find('i');
 	*/
-	public static function parse(html:String)
+	public static function parse(html:String):Nodes
 	{
-		var q:DOMCollection;
 		if (html != null && html != "")
 		{
 			#if js 
+				var fragment = js.Browser.document.createDocumentFragment();
 				var parentTag = "div";
 				if (firstTag.match(html))
 				{
@@ -137,75 +117,26 @@ class Tools
 						default: "div";
 					};
 				}
-				var n:DOMNode = create(parentTag);
-			#else 
-				var n:DOMNode = create("div");
-			#end
-
-			//
-			// TODO: report this bug to haxe mailing list.
-			// this is allowed:
-			// n.setInnerHTML("");
-			// But this doesn't get swapped out to it's "using" function
-			// Presumably because this class is a dependency of the Detox?
-			// Either way haxe shouldn't do that...
-			dtx.single.ElementManipulation.setInnerHTML(n, html);
-			q = dtx.single.Traversing.children(n, false);
-
-			#if (neko || cpp)
-			// This is a workaround for a glitch in neko where parse("<!-- Comment -->") generates
-			// a collection with 2 nodes - the comment and an empty text node.  Not sure if it comes
-			// from a child of these or from neko's XML parser...
-			// Note - also happens on CPP.
-			for (child in q)
-			{
-				if (dtx.single.ElementManipulation.isTextNode(child) && child.nodeValue == "")
-				{
-					q.removeFromCollection(child);
+				js.Lib.debug();
+				var nodes = create(parentTag).setInnerHTML(html).children;
+				for (child in nodes) {
+					// Set the parent to a document fragment, so it's behaviour isn't odd for ancestors etc
+					fragment.appendChild(child);
 				}
-			}
+				return nodes;
+			#else 
+				try {
+					var doc = Xml.parse(html);
+					return Lambda.array(doc);
+				} catch (e:Dynamic) {
+					return [];
+				}
 			#end
 		}
-		else 
-		{
-			q = new DOMCollection();
-		}
-		return q;
+		else return [];
 	} 
 
-	#if js
-
-	/**
-	* Let's you turn Haxe Xml into a Detox Collection
-	* 
-	* Xml.parse(...).toDetox()
-	*/
-	public static function toDetox(x:Xml)
-	{
-		return (x != null) ? parse(x.toString()) : new DOMCollection();
-	} 
-	
-	/**
-	* A helper function that lets you do this in an event listener:
-	* e.target.toNode().toggleClass('selected')
-	*/
-	public static function toNode(eventHandler:EventTarget)
-	{
-		var elm:DOMNode;
-		try {
-			elm = cast eventHandler;
-		} catch (e:Dynamic) { elm = null; }
-
-		return elm;
-	} 
-	#end
-
-	/*public static inline function create(str:String):DOMCollection
-	{
-		return new DOMCollection(Detox.createElement(str));
-	}*/
-
-	static function get_document():DocumentOrElement
+	static function get_document():Node
 	{
 		if (document == null) 
 		{
@@ -219,7 +150,7 @@ class Tools
 		return document;
 	}
 
-	public static function setDocument(newDocument:DOMNode)
+	public static function setDocument(newDocument:Node)
 	{
 		// Only change the document if it has the right NodeType
 		if (newDocument != null)
@@ -227,96 +158,84 @@ class Tools
 			if (newDocument.nodeType == dtx.DOMType.DOCUMENT_NODE
 				|| newDocument.nodeType == dtx.DOMType.ELEMENT_NODE)
 			{
-				// Because of the NodeType we can safely use this node as our document
-				document = untyped newDocument;
+				document = newDocument;
 			}
 		}
 	}
 
 	#if js
-	static inline function get_window():Window
-	{
-		return untyped __js__("window");
-	}
-
-	static inline function get_body():DOMNode
-	{
-		return untyped document.body;
-	}
-
-	public static function ready(f:Void->Void)
-	{
-		/*
-		SHIM TO MAKE SURE IT WORKS IN FF3.5 OR UNDER
-		OTHERWISE: document.ready() will fire when the page loads, but if the page has already loaded
-		it will never fire, so your javascript may never run.
-
-		The below line of code is basically a highly minified version of this:
-
-		// verify that document.readyState is undefined
-		// verify that document.addEventListener is there
-		// these two conditions are basically telling us
-		// we are using Firefox < 3.6
-		if(document.readyState == null && document.addEventListener){
-		    // on DOMContentLoaded event, supported since ages
-		    document.addEventListener("DOMContentLoaded", function DOMContentLoaded(){
-		        // remove the listener itself
-		        document.removeEventListener("DOMContentLoaded", DOMContentLoaded, false);
-		        // assign readyState as complete
-		        document.readyState = "complete";
-		    }, false);
-		    // set readyState = loading or interactive
-		    // it does not really matter for this purpose
-		    document.readyState = "loading";
+		static inline function get_window():Window
+		{
+			return untyped __js__("window");
 		}
 
-		Shim taken from:
-		http://webreflection.blogspot.com.au/2009/11/195-chars-to-help-lazy-loading.html
-		*/
-		untyped __js__('(function(h,a,c,k){if(h[a]==null&&h[c]){h[a]="loading";h[c](k,c=function(){h[a]="complete";h.removeEventListener(k,c,!1)},!1)}})(document,"readyState","addEventListener","DOMContentLoaded")');
+		static inline function get_body():Node
+		{
+			return untyped document.body;
+		}
 
-		// checkReady must be in the window's global namespace so we can call it again with setTimeOut
-		Reflect.setField(get_window(), "checkReady", checkReady);
-		checkReady(f);
-	}
+		public static function ready(f:Void->Void)
+		{
+			/*
+			SHIM TO MAKE SURE IT WORKS IN FF3.5 OR UNDER
+			OTHERWISE: document.ready() will fire when the page loads, but if the page has already loaded
+			it will never fire, so your javascript may never run.
 
-	static function checkReady(f:Void->Void)
-	{
-		/*
-		Mini ready() function taken from:
-		http://dustindiaz.com/smallest-domready-ever
-		*/
-		// untyped __js__('/in/.test(document.readyState) ? setTimeout("checkReady("+f+")", 9) : f()');
-		untyped __js__('/in/.test(document.readyState) ? setTimeout(function () { checkReady(f) }, 9) : f()');
-	}
+			The below line of code is basically a highly minified version of this:
 
-	/** Ensure that Sizzle.js is included as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
-	public static function includeSizzle()
-	{
-		#if (haxe_211 || haxe3)
+			// verify that document.readyState is undefined
+			// verify that document.addEventListener is there
+			// these two conditions are basically telling us
+			// we are using Firefox < 3.6
+			if(document.readyState == null && document.addEventListener){
+			    // on DOMContentLoaded event, supported since ages
+			    document.addEventListener("DOMContentLoaded", function DOMContentLoaded(){
+			        // remove the listener itself
+			        document.removeEventListener("DOMContentLoaded", DOMContentLoaded, false);
+			        // assign readyState as complete
+			        document.readyState = "complete";
+			    }, false);
+			    // set readyState = loading or interactive
+			    // it does not really matter for this purpose
+			    document.readyState = "loading";
+			}
+
+			Shim taken from:
+			http://webreflection.blogspot.com.au/2009/11/195-chars-to-help-lazy-loading.html
+			*/
+			untyped __js__('(function(h,a,c,k){if(h[a]==null&&h[c]){h[a]="loading";h[c](k,c=function(){h[a]="complete";h.removeEventListener(k,c,!1)},!1)}})(document,"readyState","addEventListener","DOMContentLoaded")');
+
+			// checkReady must be in the window's global namespace so we can call it again with setTimeOut
+			Reflect.setField(get_window(), "checkReady", checkReady);
+			checkReady(f);
+		}
+
+		static function checkReady(f:Void->Void)
+		{
+			/*
+			Mini ready() function taken from:
+			http://dustindiaz.com/smallest-domready-ever
+			*/
+			// untyped __js__('/in/.test(document.readyState) ? setTimeout("checkReady("+f+")", 9) : f()');
+			untyped __js__('/in/.test(document.readyState) ? setTimeout(function () { checkReady(f) }, 9) : f()');
+		}
+
+		/** Ensure that Sizzle.js is included as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
+		public static function includeSizzle()
+		{
 			#if embed_js
 				untyped haxe.macro.Compiler.includeFile("sizzle.js");
+				throw "May need to expose sizzle here...";
 			#end
-		#else
-			#if !noEmbedJS
-				haxe.macro.Tools.includeFile("sizzle.js");
-			#end
-		#end
-	}
+		}
 
-	/** Ensure that jQuery is included, as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
-	public static function includeJQuery()
-	{
-		#if (haxe_211 || haxe3)
+		/** Ensure that jQuery is included, as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
+		public static function includeJQuery()
+		{
 			#if embed_js
 				untyped haxe.macro.Compiler.includeFile("js/jquery-latest.min.js");
+				throw "May need to expose jquery here...";
 			#end
-		#else
-			#if !noEmbedJS
-				haxe.macro.Tools.includeFile("js/jquery-latest.min.js");
-			#end
-		#end
-	}
-
+		}
 	#end
 }
