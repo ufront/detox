@@ -259,6 +259,39 @@ class CollectionTraversingTest
 	}
 
 	@Test 
+	public function descendants()
+	{
+		Assert.areEqual(8, "ul".find().descendants().length);
+		Assert.areEqual(3, "div".find().descendants().length);
+		Assert.areEqual(3, "#recursive".find().descendants().length);
+	}
+
+	@Test 
+	public function descendantsElementsOnly()
+	{
+		Assert.areEqual(26, "ul".find().descendants(false).length);
+		Assert.areEqual(10, "#recursive".find().descendants(false).length);
+	}
+
+	@Test 
+	public function descendantsOnNull()
+	{
+		Assert.areEqual(0, nullDOMCollection.descendants().length);
+	}
+
+	@Test 
+	public function descendantsOnNonElement()
+	{
+		Assert.areEqual(0, "#nonElements".find().children().descendants().length);
+	}
+
+	@Test 
+	public function descendantsOnNoDescendants()
+	{
+		Assert.areEqual(0, ".empty".find().descendants().length);
+	}
+
+	@Test 
 	public function next()
 	{
 		for (li in ".pickme".find())

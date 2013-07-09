@@ -1,5 +1,5 @@
 /****
-* Copyright (c) 2012 Jason O'Neil
+* Copyright (c) 2013 Jason O'Neil
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 * 
@@ -62,7 +62,7 @@ class ElementManipulation
 		#if js
 			return Lambda.indexOf(dtx.single.Traversing.children(dtx.single.Traversing.parents(n), false), n);
 		#else
-			return Lambda.indexOf(n.parent, n);
+			return (n != null && n.parent != null) ? Lambda.indexOf(n.parent, n) : -1;
 		#end 
 	}
 
@@ -203,6 +203,8 @@ class ElementManipulation
 					"#text";
 				case dtx.DOMType.COMMENT_NODE:
 					"#comment";
+				default:
+					"#other";
 			}
 			
 		}
@@ -220,6 +222,7 @@ class ElementManipulation
 			{
 				case dtx.DOMType.ELEMENT_NODE:
 					#if js
+					// TODO: Make this more intelligent. Handle <select> especiallyg
 					val = Reflect.field(node, 'value');
 					
 					// If the value is null, that means
@@ -251,6 +254,8 @@ class ElementManipulation
 			switch (node.nodeType)
 			{
 				case DOMType.ELEMENT_NODE:
+					// TODO: Make this more intelligent. Handle <select> especially
+
 					// Set value with Javascript
 					#if js
 					Reflect.setField(node, "value", val);
@@ -358,16 +363,54 @@ class ElementManipulation
 	}
 
 	// JS doesn't have a built in html() method
-	public static inline function html(elm:DOMNode):String
+	public static function html(elm:DOMNode):String
 	{
 		#if js
-		var div = Detox.create("div");
-		dtx.single.DOMManipulation.append(div, clone(elm));
-		return innerHTML(div);
+			var div = Detox.create("div");
+			dtx.single.DOMManipulation.append(div, clone(elm));
+			return innerHTML(div);
 		#else 
-		return (elm != null) ? elm.toString() : "";
+			if ( elm == null ) return "";
+			
+			var sb = new StringBuf();
+			printHtml( elm, sb );
+			return sb.toString();
 		#end
 	}
 
+	#if !js
+		static var selfClosingElms = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
+		static function printHtml( n:DOMNode, sb:StringBuf ) {
+			if ( isElement(n) ) {
+				var elmName = tagName(n);
+				sb.add('<$elmName');
+				
+				for ( a in n.attributes() ) {
+					var value = attr(n, a);
+					sb.add(' $a="$value"');
+				}
+				
+				if ( dtx.single.Traversing.children(n, false).length > 0 ) {
+					sb.add(">");
+					for ( child in dtx.single.Traversing.children(n, false) ) {
+						printHtml( child, sb );
+					}
+					sb.add('</$elmName>');
+				}
+				else {
+					sb.add( 
+						if ( Lambda.has(selfClosingElms, tagName(n)) ) " />" 
+						else '></$elmName>' 
+					);
+				}
+			} else if ( isDocument(n) ) {
+				for ( child in dtx.single.Traversing.children(n, false) ) {
+					printHtml( child, sb );
+				}
+			} else {
+				sb.add( n.toString() );
+			}
+		}
+	#end
 }
 

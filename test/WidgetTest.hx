@@ -258,35 +258,300 @@ class WidgetTest
 		Assert.areEqual("The <b>Body!</b>", w.body.innerHTML());
 	}
 
-	// @Test 
-	// public function includeNamedPartial()
-	// {
-	// 	Assert.isTrue(false);
-	// }
+	@Test 
+	public function topLevelNamedElements()
+	{
+		var w = new widgets.WidgetWithNamedElements.TopLevelNamedElements2();
 
-	// @Test 
-	// public function variablesNotSet()
-	// {
-		
-	// }
+		Assert.areEqual("Paragraph", w.paragraph.text());
+		Assert.areEqual("Div", w.div.text());
 
-	// @Test 
-	// public function variablesSet()
-	// {
-		
-	// }
+		w.paragraph.setInnerHTML("1");
+		w.div.setInnerHTML("2");
 
-	// @Test 
-	// public function variableUpdate()
-	// {
-		
-	// }
+		Assert.areEqual("1", w.paragraph.text());
+		Assert.areEqual("2", w.div.text());
+	}
 
-	// @Test 
-	// public function noVariables()
-	// {
-		
-	// }
+	@Test 
+	public function namedElementsClash1()
+	{
+		var div = "div".create();
+		var w1 = new widgets.WidgetWithNamedElements.TopLevelNamedElements1();
+		var w2 = new widgets.WidgetWithNamedElements.TopLevelNamedElements1();
+		div.append(w1).append(w2);
+
+		Assert.areEqual("Paragraph", w1.paragraph.text());
+		Assert.areEqual("Paragraph", w1.paragraph.text());
+
+		w1.paragraph.setInnerHTML("1");
+		w2.paragraph.setInnerHTML("2");
+
+		Assert.areEqual("1", w1.paragraph.text());
+		Assert.areEqual("2", w2.paragraph.text());
+	}
+
+	@Test 
+	public function namedElementsClash2()
+	{
+		var div = "div".create();
+		var w1 = new widgets.WidgetWithNamedElements.TopLevelNamedElements2();
+		var w2 = new widgets.WidgetWithNamedElements.TopLevelNamedElements2();
+		div.append(w1).append(w2);
+
+		Assert.areEqual("Paragraph", w1.paragraph.text());
+		Assert.areEqual("Div", w1.div.text());
+		Assert.areEqual("Paragraph", w2.paragraph.text());
+		Assert.areEqual("Div", w2.div.text());
+
+		w1.paragraph.setInnerHTML("1");
+		w1.div.setInnerHTML("2");
+		w2.paragraph.setInnerHTML("3");
+		w2.div.setInnerHTML("4");
+
+		Assert.areEqual("1", w1.paragraph.text());
+		Assert.areEqual("2", w1.div.text());
+		Assert.areEqual("3", w2.paragraph.text());
+		Assert.areEqual("4", w2.div.text());
+	}
+
+	@Test 
+	public function initTest()
+	{
+		var w = new widgets.Init();
+
+		Assert.areNotEqual(-1, w.html().indexOf("Init Test"));
+		Assert.areNotEqual(-1, w.html().indexOf("My Partial"));
+		Assert.areNotEqual(-1, w.html().indexOf("Some Content"));
+	}
+
+	@Test 
+	public function noTplTest()
+	{
+		var w = new widgets.NoTplWidget();
+		Assert.areEqual("", untyped w.get_template());
+		Assert.areEqual("", w.html());
+		Assert.areEqual(0, w.length);
+	}
+
+	@Test 
+	public function includeNamedPartial()
+	{
+		var w = new widgets.PartialInSameFile4();
+		w.btn1.btnName = "btn1";
+		w.btn2.btnName = "btn2";
+		Assert.areEqual("btn1btn2", w.find("a").text());
+	}
+
+	@Test 
+	public function interpolationNotSetStrings()
+	{
+		var w = new widgets.Interpolation.InterpolationBasic();
+		Assert.areEqual("", w.name);
+		Assert.areEqual("", w.age);
+		Assert.areEqual("", w.belief);
+		Assert.areEqual("My name is , I am  years old and I believe in ", w.text());
+	}
+
+	@Test 
+	public function interpolationNotSetButWithInitialization()
+	{
+		var w = new widgets.Interpolation.InterpolationWithInitialisation();
+		Assert.areEqual("Jason", w.name);
+		Assert.areEqual(26, w.age);
+		Assert.areEqual(true, w.isTall);
+		Assert.areEqual("My name is Jason, I am 26 years old and it is true that I am tall", w.text());
+	}
+
+	@Test 
+	public function interpolationNotSetOtherTypes()
+	{
+		var w = new widgets.Interpolation.InterpolationDifferentTypes();
+		Assert.areEqual("", w.name);
+		Assert.areEqual(0, w.age);
+		Assert.areEqual(null, w.birthday);
+		Assert.areEqual(null, w.pets);
+		Assert.areEqual(0, w.favouriteNumber);
+		Assert.areEqual(false, w.wasTruth);
+	}
+
+	@Test 
+	public function interpolationSetStrings()
+	{
+		var w = new widgets.Interpolation.InterpolationBasic();
+		w.name = "Jason";
+		w.age = "25";
+		w.belief = "gravity";
+		Assert.areEqual("My name is Jason, I am 25 years old and I believe in gravity", w.text());
+	}
+
+	@Test 
+	public function interpolationSetOtherTypes()
+	{
+		var w = new widgets.Interpolation.InterpolationDifferentTypes();
+		w.name = "Jason";
+		w.age = 25;
+		w.birthday = new Date(1987,09,16,0,0,0);
+		w.pets = ["Cuddles","Theodore"];
+		w.favouriteNumber = 3.14;
+		w.wasTruth = true;
+
+		// Slightly different date.toString() output...
+		#if js 
+			Assert.areEqual("My name is Jason, I am 25 years old, my birthday is Fri Oct 16 1987 00:00:00 GMT+0800 (WST) and I have these pets: [Cuddles,Theodore]. My favourite number is 3.14, and the statement I just made was true", w.text());
+		#else 
+			Assert.areEqual("My name is Jason, I am 25 years old, my birthday is 1987-10-16 00:00:00 and I have these pets: [Cuddles,Theodore]. My favourite number is 3.14, and the statement I just made was true", w.text());
+		#end 
+	}
+
+	@Test
+	public function interpolationUpdateVariables()
+	{
+		var w = new widgets.Interpolation.InterpolationBasic();
+		w.name = "Jason";
+		w.age = "25";
+		w.belief = "gravity";
+		w.age = "5";
+		w.belief = "getting younger";
+		Assert.areEqual("My name is Jason, I am 5 years old and I believe in getting younger", w.text());
+	}
+
+	@Test 
+	public function interpolationNonVariableExpression()
+	{
+		var w = new widgets.Interpolation.InterpolationNonVarExpr();
+		Assert.areEqual("The SHA of 8 is fe5dbbcea5ce7e2988b8c69bcfdfde8904aabc1f", w.text());
+	}
+
+	@Test 
+	public function interpolationComplexExpression()
+	{
+		var w = new widgets.Interpolation.InterpolationComplexExpr();
+		w.name = "Detox";
+		Assert.areEqual("The word Detox is 5 letters long and the first letter is D", w.text());
+	}
+
+	@Test
+	public function interpolationMemberFunction()
+	{
+		var w = new widgets.Interpolation.InterpolationMemberFunction();
+		w.a = 10;
+		w.b = 20;
+		Assert.areEqual("Sum = 30", w.text());
+		w.a = 1;
+		w.b = 2;
+		Assert.areEqual("Sum = 3", w.text());
+	}
+
+	@Test 
+	public function interpolationOutsideFunction()
+	{
+		var w = new widgets.Interpolation.InterpolationOutsideFunction();
+		w.a = 10;
+		w.b = 20;
+		Assert.areEqual("Max = 20", w.text());
+		w.a = 1;
+		w.b = 2;
+		Assert.areEqual("Max = 2", w.text());
+	}
+
+	@Test
+	public function interpolationFieldAccess()
+	{
+		var jason = {
+			name: "Jason",
+			age: 25
+		}
+		var w = new widgets.Interpolation.InterpolationFieldAccess();
+		w.person = jason;
+		Assert.areEqual("My name is Jason (and my name has 5 letters!) and I am 25 years old.", w.text());
+	}
+
+	@Test
+	public function interpolationFieldMemberFunction()
+	{
+		var w = new widgets.Interpolation.InterpolationFieldMemberFunction();
+		var jason = new widgets.Interpolation.Person("Jason", "O'Neil");
+		var nicolas = new widgets.Interpolation.Person("Nicolas", "Cannasse");
+		w.person = jason;
+		Assert.areEqual("Greet J. O'Neil: Hello Jason", w.text());
+		w.person = nicolas;
+		Assert.areEqual("Greet N. Cannasse: Hello Nicolas", w.text());
+	}
+
+	@Test
+	public function interpolationFieldAccessAsFunctionArg()
+	{
+		var jason = {
+			name: "Jason",
+			email: "jason.oneil@example.com"
+		}
+		var w = new widgets.Interpolation.InterpolationFieldAccessAsFunctionArg();
+		w.person = jason;
+		Assert.areEqual("Your encoded email address is [jason.oneil%40example.com]", w.text());
+	}
+
+	@Test 
+	public function showHideBoolAttributes()
+	{
+		var w = new widgets.BoolAttributes.ShowHideBasic();
+
+		// Test the constants
+		Assert.isFalse( w.alwaysShow.hasClass("hidden") );
+		Assert.isTrue( w.alwaysHide.hasClass("hidden") );
+		Assert.isTrue( w.neverShow.hasClass("hidden") );
+		Assert.isFalse( w.neverHide.hasClass("hidden") );
+
+		// Test the intial state of the Booleans
+		Assert.isFalse( w.showIfSomeFlag.hasClass("hidden") );
+		Assert.isTrue( w.hideIfSomeFlag.hasClass("hidden") );
+		Assert.isTrue( w.showIfSomeString.hasClass("hidden") );
+		Assert.isFalse( w.hideIfSomeString.hasClass("hidden") );
+
+		// Test the changed state of the Booleans
+		w.someFlag = false;
+		w.someString = "Jason";
+		Assert.isTrue( w.showIfSomeFlag.hasClass("hidden") );
+		Assert.isFalse( w.hideIfSomeFlag.hasClass("hidden") );
+		Assert.isFalse( w.showIfSomeString.hasClass("hidden") );
+		Assert.isTrue( w.hideIfSomeString.hasClass("hidden") );
+	}
+
+	@Test 
+	public function htmlCharacterEncodings()
+	{
+		var w = new widgets.WidgetWithHtmlEncoding();
+		var expected = '<p title="All about apples &amp; bananas">Apples &amp; Bananas, <i title="&laquo;More Info&raquo;">&laquo;&nbsp;Both are fruit&nbsp;&raquo</i></p>';
+		Assert.areEqual(expected, untyped w.get_template());
+	}
+
+	@Test 
+	public function interpolationWithPrintFields()
+	{
+		var w = new widgets.Interpolation.InterpolationWithPrintFields();
+		w.name = "Jason";
+		w.age = 26;
+		w.amITall = true;
+		Assert.areEqual("My name is Jason, I am 26 years old and I am tall", w.text());
+		w.name = "Anna";
+		w.age = 23;
+		w.amITall = false;
+		Assert.areEqual("My name is Anna, I am 23 years old and I am not tall", w.text());
+	}
+
+	@Test 
+	public function interpolationWithPrintFieldsComplex()
+	{
+		var w = new widgets.Interpolation.InterpolationWithPrintFieldsComplex();
+		w.name = "Jason";
+		w.age = 26.5;
+		w.amITall = true;
+		Assert.areEqual('First letter is J, my last birthday was 26<span class=""> and I am definitely tall</span>.', w.innerHTML());
+		w.name = "Anna";
+		w.age = 23.5;
+		w.amITall = false;
+		Assert.areEqual('First letter is A, my last birthday was 23<span class="hidden"> and I am not tall</span>.', w.innerHTML());
+	}
 
 	// @Test
 	// public function disaster()
@@ -303,7 +568,6 @@ class WidgetTest
 	// 	Assert.areEqual("", w.html());
 	// }
 }
-
 
 class SimpleTestWidget extends dtx.widget.Widget
 {

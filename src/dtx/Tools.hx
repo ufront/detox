@@ -1,5 +1,5 @@
 /****
-* Copyright (c) 2012 Jason O'Neil
+* Copyright (c) 2013 Jason O'Neil
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 * 
@@ -11,10 +11,12 @@
 
 package dtx;
 
+import dtx.DOMCollection;
+import dtx.DOMNode;
 #if js
-	#if haxe_211
-		typedef Window = js.html.DOMWindow;
+	#if (haxe_211 || haxe3)
 		import js.html.EventTarget;
+		typedef Window = js.html.DOMWindow;
 	#else 
 		import js.w3c.level3.Core;
 		import js.w3c.level3.Events;
@@ -22,8 +24,6 @@ package dtx;
 		import UserAgentContext;
 	#end
 #end
-import dtx.DOMCollection;
-import dtx.DOMNode;
 
 /** 
 * Designed to be used with "using dtx.Tools;" this gives you access
@@ -129,6 +129,8 @@ class Tools
 						case "tbody": "table";
 						case "tfoot": "table";
 						case "thead": "table";
+						case "colgroup": "table";
+						case "col": "colgroup";
 						case "tr": "tbody";
 						case "th": "tr";
 						case "td": "tr";
@@ -172,11 +174,22 @@ class Tools
 	} 
 
 	#if js
+
+	/**
+	* Let's you turn Haxe Xml into a Detox Collection
+	* 
+	* Xml.parse(...).toDetox()
+	*/
+	public static function toDetox(x:Xml)
+	{
+		return (x != null) ? parse(x.toString()) : new DOMCollection();
+	} 
+	
 	/**
 	* A helper function that lets you do this in an event listener:
 	* e.target.toNode().toggleClass('selected')
 	*/
-	public static function toDOMNode(eventHandler:EventTarget)
+	public static function toNode(eventHandler:EventTarget)
 	{
 		var elm:DOMNode;
 		try {
@@ -280,7 +293,7 @@ class Tools
 	/** Ensure that Sizzle.js is included as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
 	public static function includeSizzle()
 	{
-		#if haxe_211
+		#if (haxe_211 || haxe3)
 			#if embed_js
 				untyped haxe.macro.Compiler.includeFile("sizzle.js");
 			#end
@@ -294,8 +307,15 @@ class Tools
 	/** Ensure that jQuery is included, as a fallback for browsers that don't support querySelectorAll() (IE8 or lower) */
 	public static function includeJQuery()
 	{
-		// Just do this so that JQuery will be included
-		new js.JQuery("body");
+		#if (haxe_211 || haxe3)
+			#if embed_js
+				untyped haxe.macro.Compiler.includeFile("js/jquery-latest.min.js");
+			#end
+		#else
+			#if !noEmbedJS
+				haxe.macro.Tools.includeFile("js/jquery-latest.min.js");
+			#end
+		#end
 	}
 
 	#end

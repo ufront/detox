@@ -1,5 +1,5 @@
 /****
-* Copyright (c) 2012 Jason O'Neil
+* Copyright (c) 2013 Jason O'Neil
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 * 
@@ -10,15 +10,37 @@
 ****/
 
 package dtx.collection;
-
+import dtx.DOMCollection;
 class Style
 {
-	
-	public static function setCSS(collection:DOMCollection, property:String, value:String)
+	/** Return the style object for the first node in the collection */
+	public static function getComputedStyle(c:DOMCollection)
 	{
-		for (node in collection)
+		return dtx.single.Style.getComputedStyle(c.getNode(0));
+	}
+	
+	/** Return the computed style value for the given style property (on the first node in the collection) */
+	public static function css(c:DOMCollection, property:String)
+	{
+		return dtx.single.Style.css(c.getNode(0), property);
+	}
+
+	/** Set a CSS property for every node in the collection */
+	public static function setCSS(c:DOMCollection, prop:String, val:String)
+	{
+		for (node in c)
 		{
-			dtx.single.Style.setCSS(node, property, value);
+			dtx.single.Style.setCSS(node, prop, val);
 		}
+		return c;
+	}
+
+	public static function show(c:DOMCollection) return setCSS(c, "display", "");
+	public static function hide(c:DOMCollection) return setCSS(c, "display", "none");
+
+	/** Return the position info for the first node in the collection */
+	public static function pos(c:DOMCollection)
+	{
+		return dtx.single.Style.pos(c.getNode(0));
 	}
 }

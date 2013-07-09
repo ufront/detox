@@ -1,6 +1,6 @@
 package widgets;
 
-@template("<doc>
+@:template("<doc>
 	<header>
 		<title>Test Partial</title>
 	</header>

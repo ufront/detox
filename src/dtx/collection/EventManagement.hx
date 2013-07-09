@@ -1,5 +1,5 @@
 /****
-* Copyright (c) 2012 Jason O'Neil
+* Copyright (c) 2013 Jason O'Neil
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 * 
@@ -14,8 +14,8 @@ package dtx.collection;
 import dtx.DOMNode;
 import Bean;
 
-#if haxe_211
-	import js.html.EventListener;
+#if (haxe_211 || haxe3)
+	import js.html.*;
 	typedef DtxEvent = js.html.Event;
 #else 
 	typedef EventListener = BnEvent->Void;
@@ -24,173 +24,191 @@ import Bean;
 
 class EventManagement
 {
-	public static function on(targetCollection:DOMCollection, BneventType:String, listener:EventListener):DOMCollection
+	public static function trigger(targetCollection:DOMCollection, eventType:String):DOMCollection
 	{
 		for (target in targetCollection)
 		{
-			dtx.single.EventManagement.on(target, BneventType, listener);
+			dtx.single.EventManagement.trigger(target, eventType);
 		}
 		return targetCollection;
 	}
 
-	public static function off(targetCollection:DOMCollection, BneventType:String, listener:EventListener):DOMCollection
+	public static function on(targetCollection:DOMCollection, eventType:String, ?selector:String, ?listener:EventListener):DOMCollection
 	{
 		for (target in targetCollection)
 		{
-			dtx.single.EventManagement.off(target, BneventType, listener);
+			dtx.single.EventManagement.on(target, eventType, selector, listener);
 		}
 		return targetCollection;
 	}
 
-	public static function one(targetCollection:DOMCollection, BneventType:String, listener:EventListener):DOMCollection
+	public static function off(targetCollection:DOMCollection, ?eventType:String=null, ?listener:EventListener=null):DOMCollection
 	{
 		for (target in targetCollection)
 		{
-			dtx.single.EventManagement.one(target, BneventType, listener);
+			dtx.single.EventManagement.off(target, eventType, listener);
 		}
 		return targetCollection;
 	}
 
-	public static inline function mousedown(target:DOMCollection, listener:EventListener):DOMCollection
+	public static function one(targetCollection:DOMCollection, eventType:String, ?selector:String, listener:EventListener):DOMCollection
 	{
-		return on(target, "mousedown", listener);
+		for (target in targetCollection)
+		{
+			dtx.single.EventManagement.one(target, eventType, selector, listener);
+		}
+		return targetCollection;
 	}
 
-	public static inline function mouseenter(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function mousedown(target:DOMCollection, ?selector:String, ?listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mouseenter", listener);
+		return on(target, "mousedown", selector, untyped listener);
 	}
 
-	public static inline function mouseleave(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function mouseenter(target:DOMCollection, ?selector:String, ?listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mouseleave", listener);
+		return on(target, "mouseenter", selector, untyped listener);
 	}
 
-	public static inline function mousemove(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function mouseleave(target:DOMCollection, ?selector:String, ?listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mousemove", listener);
+		return on(target, "mouseleave", selector, untyped listener);
 	}
 
-	public static inline function mouseout(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function mousemove(target:DOMCollection, ?selector:String, ?listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mouseout", listener);
+		return on(target, "mousemove", selector, untyped listener);
 	}
 
-	public static inline function mouseover(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function mouseout(target:DOMCollection, ?selector:String, ?listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mouseover", listener);
+		return on(target, "mouseout", selector, untyped listener);
 	}
 
-	public static inline function mouseup(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function mouseover(target:DOMCollection, ?selector:String, ?listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "mouseup", listener);
+		return on(target, "mouseover", selector, untyped listener);
 	}
 
-	public static inline function keydown(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function mouseup(target:DOMCollection, ?selector:String, ?listener:MouseEvent->Void):DOMCollection
 	{
-		return on(target, "keydown", listener);
+		return on(target, "mouseup", selector, untyped listener);
 	}
 
-	public static inline function keypress(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function keydown(target:DOMCollection, ?selector:String, ?listener:KeyboardEvent->Void):DOMCollection
 	{
-		return on(target, "keypress", listener);
+		return on(target, "keydown", selector, untyped listener);
 	}
 
-	public static inline function keyup(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function keypress(target:DOMCollection, ?selector:String, ?listener:KeyboardEvent->Void):DOMCollection
 	{
-		return on(target, "keyup", listener);
+		return on(target, "keypress", selector, untyped listener);
 	}
 
-	public static function hover(targetCollection:DOMCollection, listener1:EventListener, ?listener2:EventListener = null):DOMCollection
+	public static inline function keyup(target:DOMCollection, ?selector:String, ?listener:KeyboardEvent->Void):DOMCollection
+	{
+		return on(target, "keyup", selector, untyped listener);
+	}
+
+	public static function hover(targetCollection:DOMCollection, ?selector: String, listener1:MouseEvent->Void, ?listener2:MouseEvent->Void = null):DOMCollection
 	{
 		for (node in targetCollection)
 		{
-			dtx.single.EventManagement.hover(node, listener1, listener2);
+			dtx.single.EventManagement.hover(node, selector, listener1, listener2);
 		}
 		return targetCollection;
 	}
 
-	public static inline function submit(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function submit(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "submit", listener);
+		return on(target, "submit", selector, listener);
 	}
 
-	public static function toggleClick(targetCollection:DOMCollection, listenerFirstClick:EventListener, listenerSecondClick:EventListener):DOMCollection
+	public static function toggleClick(targetCollection:DOMCollection, ?selector: String, listenerFirstClick:MouseEvent->Void, listenerSecondClick:MouseEvent->Void):DOMCollection
 	{
 		for (target in targetCollection)
 		{
-			dtx.single.EventManagement.toggleClick(target, listenerFirstClick, listenerSecondClick);
+			dtx.single.EventManagement.toggleClick(target, selector, listenerFirstClick, listenerSecondClick);
 		}
 		return targetCollection;
 	}
 
-	public static inline function blur(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function blur(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "blur", listener);
+		return on(target, "blur", selector, listener);
 	}
 
-	public static inline function change(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function change(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "change", listener);
+		return on(target, "change", selector, listener);
 	}
 
-	public static inline function click(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function click(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "click", listener);
+		return on(target, "click", selector, listener);
 	}
 
-	public static inline function dblclick(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function dblclick(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "dblclick", listener);
+		return on(target, "dblclick", selector, listener);
 	}
 
-	public static inline function focus(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function focus(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "focus", listener);
+		return on(target, "focus", selector, listener);
 	}
 
-	public static inline function focusIn(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function focusIn(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "focusIn", listener);
+		return on(target, "focusIn", selector, listener);
 	}
 
-	public static inline function focusOut(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function focusOut(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "focusOut", listener);
+		return on(target, "focusOut", selector, listener);
 	}
 
-	public static inline function resize(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function resize(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "resize", listener);
+		return on(target, "resize", selector, listener);
 	}
 
-	public static inline function scroll(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function scroll(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "scroll", listener);
+		return on(target, "scroll", selector, listener);
 	}
 
-	public static inline function select(target:DOMCollection, listener:EventListener):DOMCollection
+	public static function wheel(target:DOMCollection, ?selector:String, ?listener:js.html.WheelEvent->Void):DOMCollection
 	{
-		return on(target, "select", listener);
+		for (n in target)
+		{
+			dtx.single.EventManagement.wheel(n, selector, listener);
+		}
+		return target;
 	}
 
-	public static inline function load(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function select(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "load", listener);
+		return on(target, "select", selector, listener);
 	}
 
-	public static inline function unload(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function load(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "unload", listener);
+		return on(target, "load", selector, listener);
 	}
 
-	public static inline function error(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function unload(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "error", listener);
+		return on(target, "unload", selector, listener);
 	}
 
-	public static inline function ready(target:DOMCollection, listener:EventListener):DOMCollection
+	public static inline function error(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
 	{
-		return on(target, "ready", listener);
+		return on(target, "error", selector, listener);
+	}
+
+	public static inline function ready(target:DOMCollection, ?selector:String, ?listener:EventListener):DOMCollection
+	{
+		return on(target, "ready", selector, listener);
 	}
 }

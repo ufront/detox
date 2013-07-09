@@ -1,5 +1,5 @@
 /****
-* Copyright (c) 2012 Jason O'Neil
+* Copyright (c) 2013 Jason O'Neil
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 * 
@@ -16,7 +16,7 @@ class ElementManipulation
 	/** Find the index of the node relevent to it's siblings.  First child of parent has an index of 0.  When operating on a collection, this returns the index of the first element. */
 	public static function index(q:dtx.DOMCollection):Int 
 	{
-		return dtx.single.ElementManipulation.index(q.getNode());
+		return (q != null) ? dtx.single.ElementManipulation.index(q.getNode()) : -1;
 	}
 
 	/** Assume we're operating on the first element. */
@@ -184,19 +184,15 @@ class ElementManipulation
 
 	public static inline function html(collection:DOMCollection):String
 	{
-		var str = "";
+		var sb = new StringBuf();
 		if (collection != null)
 		{
 			for (node in collection)
 			{
-				#if js
-				str += dtx.single.ElementManipulation.html(node);
-				#else 
-				str += node.toString();
-				#end
+				sb.add( dtx.single.ElementManipulation.html(node) );
 			}
 		}
-		return str;
+		return sb.toString();
 	}
 
 }

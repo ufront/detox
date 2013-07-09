@@ -2,4 +2,4 @@ package widgets;
 
 import dtx.widget.Widget;
 
-class PartialInSameFile3 extends Widget { }
+class PartialInSameFile4 extends Widget { }

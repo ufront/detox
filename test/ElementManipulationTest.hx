@@ -486,6 +486,19 @@ class ElementManipulationTest
 		Assert.areEqual("<i>World</i>", helloworld.find("i").html());
 	}
 
+	@Test
+	public function testHtmlSelfClosing():Void 
+	{
+		var div = "<div id='1'>Test</div>".parse().getNode();
+		var emptyDiv = "<div id='1' />".parse().getNode();
+		var emptyImg = "<img id='1' />".parse().getNode();
+
+		Assert.areEqual('<div id="1">Test</div>', div.html());
+		Assert.areEqual('<div id="1"></div>', emptyDiv.html());
+		Assert.isTrue(emptyImg.html().indexOf(">") > -1);
+		Assert.isTrue(emptyImg.html().indexOf("</img>") == -1);
+	}
+
 	@Test 
 	public function htmlWithDifferentNodeTypes() 
 	{
@@ -566,7 +579,24 @@ class ElementManipulationTest
 		Assert.areEqual(h2.text(), newH2.text());
 	}
 
-	@Test function testChaining():Void 
+	@Test 
+	function testIndexNormal():Void 
+	{
+		Assert.areEqual(1, h1.index());
+		Assert.areEqual(3, h2.index());
+		Assert.areEqual(0, text.index());
+		Assert.areEqual(9, parent.index());
+		Assert.areEqual(0, child.index());
+	}
+
+	@Test 
+	function testIndexNull():Void 
+	{
+		Assert.areEqual(-1, nullnode.index());
+	}
+
+	@Test 
+	function testChaining():Void 
 	{
 		var originalElement:DOMNode = "div".create().setAttr("id", "original");
 		var returnedElement:DOMNode;

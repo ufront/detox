@@ -1,5 +1,5 @@
 /****
-* Copyright (c) 2012 Jason O'Neil
+* Copyright (c) 2013 Jason O'Neil
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 * 
@@ -14,8 +14,10 @@ package dtx.widget;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Format;
+import haxe.macro.Printer;
 import tink.macro.tools.MacroTools;
 using tink.macro.tools.MacroTools;
+using haxe.macro.ExprTools;
 using StringTools;
 using Lambda;
 using Detox;
@@ -28,20 +30,21 @@ class WidgetTools
     * 
     * It's purpose is to get the template for each Widget Class
     * It looks for: 
-    *  - Metadata in the form: @template("<div></div>") class MyWidget ...
-    *  - Metadata in the form: @loadTemplate("MyWidgetTemplate.html") class MyWidget ...
+    *  - Metadata in the form: @:template("<div></div>") class MyWidget ...
+    *  - Metadata in the form: @:loadTemplate("MyWidgetTemplate.html") class MyWidget ...
     *  - Take a guess at a filename... use current filename, but replace ".hx" with ".html"
     * Once it finds it, it overrides the get_template() method, and makes it return
     * the correct template as a String constant.  So each widget gets its own template
     */
-    @:macro public static function buildWidget():Array<Field>
+    macro public static function buildWidget():Array<Field>
     {
         var widgetPos = Context.currentPos();                   // Position where the original Widget class is declared
         var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
         var fields = BuildTools.getFields();
-        
+
         // If get_template() already exists, don't recreate it
-        if (fields.exists(function (f) { return f.name == "get_template"; }) == false)
+        var useParentTemplate = BuildTools.hasClassMetadata(":useParentTemplate");
+        if (!useParentTemplate && fields.exists(function (f) return f.name == "get_template") == false)
         {
             // Load the template
             var template = loadTemplate(localClass);
@@ -51,13 +54,8 @@ class WidgetTools
                 // Process the template looking for partials, variables etc
                 // This function processes the template, and returns any binding statements
                 // that may be needed for bindings / variables etc.
+                
                 var result = processTemplate(template);
-                // var fnBody = new Array<Expr>();
-                // for (expr in result.bindings)
-                // {
-                //     fnBody.push(expr);
-                // }
-                // fields.push(createField_refresh(fnBody, false));
 
                 // Push the extra class properties that came during our processing
                 for (f in result.fields)
@@ -65,71 +63,31 @@ class WidgetTools
                     fields.push(f);
                 }
 
-                // Create and add the get_template() field.  
-                template = result.template;
-                fields.push(createField_get_template(template, widgetPos));
+                // Create and add the get_template() field. 
+                fields.push(createField_get_template(result.template, template, widgetPos));
+
+                // If @:dtxdebug metadata is found, print the class
+                if ( BuildTools.hasClassMetadata(":dtxdebug") )
+                {
+                    // Add a callback for this class
+                    BuildTools.printFields();
+                }
+
+                return fields;
             }
-            return fields;
         }
-        else
-        {
-            // Leave the fields as is
-            return null;
-        }
+
+
+        // Leave the fields as is
+        return null;
     }
-
-    /**
-    * This build macro runs on every subclass of DataWidget.
-    * It trsfd
-    */
-    // @:macro public static function buildDataWidget():Array<Field>
-    // {
-    //     var p = Context.currentPos();                           // Position where the original Widget class is declared
-    //     var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
-    //     var fields = haxe.macro.Context.getBuildFields();
-
-    //     var dataType = localClass.get().superClass.params[0];
-
-    //     // If get_template() already exists, don't recreate it
-    //     if (fields.exists(function (f) { return f.name == "get_template"; }) == false)
-    //     {
-    //         // Load the template
-    //         var template = loadTemplate(localClass);
-    //         var fnBody = new Array<Expr>();
-
-    //         // Collect all the statements we use
-    //         switch (dataType)
-    //         {
-    //             case TInst(t,params):
-    //                 var dataClass = t.get();
-    //                 for (expr in setupBindingVariables(dataClass))
-    //                 {
-    //                     fnBody.push(expr);
-    //                 }
-    //             default:
-    //                 haxe.macro.Context.error("DataWidget can only have a class instance as a type parameter", p);
-
-    //         }
-    //         var result = processTemplate(template);
-    //         for (expr in result.bindings)
-    //         {
-    //             fnBody.push(expr);
-    //         }
-            
-    //         // Create the get_template() field and the refresh() field
-    //         fields.push(createField_refresh(fnBody, true));
-    //         fields.push(createField_get_template(result.template, p));
-    //     }
-
-
-    //     return fields;
-    // }
 
     /**
       * Helper functions
       */
 
     #if macro
+
     static function loadTemplate(localClass:Null<haxe.macro.Type.Ref<haxe.macro.Type.ClassType>>):String
     {
         var p = localClass.get().pos;                           // Position where the original Widget class is declared
@@ -139,11 +97,11 @@ class WidgetTools
         var template:String = "";                               // If the template is directly in metadata, use that.
 
         // Get the template content if declared in metadata
-        var template = BuildTools.getClassMetadata_String("template", true);
+        var template = BuildTools.getClassMetadata_String(":template", true);
         if (template == null)
         {
             // Check if we are loading a partial from in another template
-            var partialInside = BuildTools.getClassMetadata_ArrayOfStrings("partialInside", true);
+            var partialInside = BuildTools.getClassMetadata_ArrayOfStrings(":partialInside", true);
             if (partialInside != null && partialInside.length > 0)
             {
                 if (partialInside.length == 2)
@@ -152,13 +110,13 @@ class WidgetTools
                     var partialName = partialInside[1];
                     template = loadPartialFromInTemplate(templateFile, partialName);
                 }
-                else Context.error('@partialInside() metadata should be 2 strings: @partialInside("MyView.html", "_NameOfPartial")', p);
+                else Context.error('@:partialInside() metadata should be 2 strings: @:partialInside("MyView.html", "_NameOfPartial")', p);
             }
 
             // Check if a template file is declared in metadata
             if (template == null)
             {
-                var templateFile = BuildTools.getClassMetadata_String("loadTemplate", true);
+                var templateFile = BuildTools.getClassMetadata_String(":loadTemplate", true);
                 if (templateFile == null)
                 {
                     // If there is no metadata for the template, look for a file in the same 
@@ -168,9 +126,17 @@ class WidgetTools
 
                 // Attempt to load the file
                 template = BuildTools.loadFileFromLocalContext(templateFile);
-                if (template == null) Context.warning('Could not load the widget template: $templateFile', p);
+                
+                // If still no template, check if @:noTpl() was declared, if not, throw error.
+                if (template == null) 
+                {
+                    var metadata = localClass.get().meta.get();
+                    if (!metadata.exists(function(metaItem) return metaItem.name == ":noTpl"))
+                    {
+                        Context.warning('Could not load the widget template: $templateFile', p);
+                    }
+                }
             }
-            
         }
         return template;
     }
@@ -198,7 +164,7 @@ class WidgetTools
         return partialTemplate;
     }
     
-    static function createField_get_template(template:String, widgetPos:Position):Field
+    static function createField_get_template(template:String, original:String, widgetPos:Position):Field
     {
         // Clear whitespace from the start and end of the widget
         var whitespaceStartOrEnd = ~/^\s+|\s+$/g;
@@ -206,9 +172,9 @@ class WidgetTools
 
         return { 
             name : "get_template", 
-            doc : null, 
+            doc : "__Template__:\n\n```\n" + original + "\n```", 
             meta : [], 
-            access : [AOverride], 
+            access : [APublic,AOverride], 
             kind : FFun({ 
                 args: [], 
                 expr: { 
@@ -235,21 +201,6 @@ class WidgetTools
             pos: widgetPos
         }
     }
-
-    // static function setupBindingVariables(c:ClassType):Array<Expr>
-    // {
-    //     var p = Context.currentPos();
-    //     var bindings = new Array();
-
-    //     for (f in c.fields.get())
-    //     {
-    //         var varValue = ("o." + f.name).resolve();
-    //         var expr = f.name.define(varValue);
-    //         bindings.push(expr);
-    //     }
-
-    //     return bindings;
-    // }
 
     static var topLevelElements:Array<dtx.DOMNode>;
     static function trackTopLevelElements(xml:DOMCollection)
@@ -313,26 +264,29 @@ class WidgetTools
                 {
                     interpolateTextNodes(node);
                 }
+                // Get rid of HTML encoding.  Haxe3 does this automatically, but we want it to remain unencoded.  
+                // (I think?  While it might be nice to have it do the encoding for you, it is not expected, so violates principal of least surprise.  Also, how does '&nbsp;' get entered?)
+                // And it appears to only affect the top level element, not any descendants.  Weird...
+                node.setText(node.text().htmlUnescape());
                 clearWhitespaceFromTextnode(node);
             }
         }
 
-        // All our variable definitions are added to the end of the constructor.
-        // So if the developer wants to work with the partials in the constructor, they find out that
-        // the partials are still null.  (D'OH!)  Call init(), which the developer can then use
-        // instead of putting their code in the constructor.
-        if ("new".fieldExists())
+        // More escaping hoop-jumping.  Basically, xml.html() will encode the text nodes, but not the attributes. Gaarrrh
+        // So if we go through the attributes on each of our top level nodes, and escape them, then we can unescape the whole thing.
+        for (node in xml)
         {
-            var constructor = "new".getField();
-            var lineToAdd = macro init();
-            BuildTools.addLinesToFunction(constructor, lineToAdd);
+            if (node.isElement())
+            {
+                for (att in node.attributes())
+                {
+                    node.setAttr(att, node.attr(att).htmlEscape());
+                }
+            }
         }
+        var html = xml.html().htmlUnescape();
 
-
-        // var bindingExpressions = new Array<Expr>();
-        // var toAddToConstructor = new Array<Expr>();
-
-        return { template: xml.html(), fields: fieldsToAdd };
+        return { template: html, fields: fieldsToAdd };
     }
 
     static function clearWhitespaceFromTextnode(node:dtx.DOMNode)
@@ -391,7 +345,7 @@ class WidgetTools
         var classMeta = [{
             pos: p,
             params: [Context.makeExpr(partialTpl, p)],
-            name: "template"
+            name: ":template"
         }];
 
         // Find out if the type has already been defined
@@ -403,12 +357,12 @@ class WidgetTools
         {
             switch (existingClass)
             {
-                case TInst(t, params):
+                case TInst(t, _):
                     var metaAccess = t.get().meta;
-                    if (metaAccess.has("template") == false && metaAccess.has("loadTemplate") == false)
+                    if (metaAccess.has(":template") == false && metaAccess.has(":loadTemplate") == false)
                     {
                         // No template has been defined, use ours
-                        metaAccess.add("template", [Context.makeExpr(partialTpl, p)], p);
+                        metaAccess.add(":template", [Context.makeExpr(partialTpl, p)], p);
                     }
                 default:
             }
@@ -467,11 +421,18 @@ class WidgetTools
         node.replaceWith("div".create().setAttr("data-dtx-partial", name).setText(' '));
 
         var pack = [];
-        var type = Context.getType(typeName);
+        var type = try {
+            Context.getType(typeName);
+        } catch (e:String) {
+            if ( e=="Type not found '" + typeName + "'" ) 
+                Context.error('Unable to find Widget/Partial "$typeName" in Widget Template $widgetClass', widgetClass.get().pos);
+            else throw e;
+        }
+
         // Alternatively use: type = Context.typeof(macro new $typeName()), see what works
         switch (type)
         {
-            case TInst(t,params):
+            case TInst(t,_):
                 // get the type
                 var classType = t.get();
                 pack = classType.pack;
@@ -499,7 +460,7 @@ class WidgetTools
         }
         BuildTools.addLinesToFunction(prop.setter, linesToAdd, 0);
 
-        // Now that we can set it via the property setter, we do so in our constructor.
+        // Now that we can set it via the property setter, we do so in our init function.
         // With something like:
         // 
         // $name = new $type()
@@ -515,25 +476,12 @@ class WidgetTools
         //   partial_1 = btn;
         // }
 
-        // Get the constructor, instantiate our partial
-        var constructorBody = macro { super(); }
-        var constructor = BuildTools.getOrCreateField({
-            pos: p,
-            name: "new",
-            meta: [],
-            kind: FieldType.FFun({
-                    ret: null,
-                    params: [],
-                    expr: constructorBody,
-                    args: []
-                }),
-            doc: "",
-            access: [APublic]
-        });
+        // Get the init function, instantiate our partial
+        var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
         linesToAdd = macro {
             $variableRef = new $typeName();
         };
-        BuildTools.addLinesToFunction(constructor, linesToAdd);
+        BuildTools.addLinesToFunction(initFn, linesToAdd);
 
         // Set any variables for the partial
         for (attName in node.attributes())
@@ -545,8 +493,26 @@ class WidgetTools
                 linesToAdd = macro {
                     $propertyRef = $valueExpr;
                 };
-                BuildTools.addLinesToFunction(constructor, linesToAdd);
+                BuildTools.addLinesToFunction(initFn, linesToAdd);
             }
+        }
+    }
+
+    static function getInitFnTemplate()
+    {
+        var body = macro {};
+        return {
+            pos: Context.currentPos(),
+            name: "init",
+            meta: [],
+            kind: FieldType.FFun({
+                    ret: null,
+                    params: [],
+                    expr: body,
+                    args: []
+                }),
+            doc: "",
+            access: [APrivate,AOverride]
         }
     }
 
@@ -607,7 +573,7 @@ class WidgetTools
             // Change the setter to null
             switch (prop.property.kind)
             {
-                case FieldType.FProp(get, set, t, e):
+                case FieldType.FProp(get, _, t, e):
                     prop.property.kind = FieldType.FProp(get, "null", t, e);
                 default:
             }
@@ -616,7 +582,7 @@ class WidgetTools
             switch( prop.getter.kind )
             {
                 case FFun(f):
-                    f.expr = macro return $selector;
+                    f.expr = macro return dtx.Tools.toCollection($selector);
                 default: 
             }
         }
@@ -627,34 +593,21 @@ class WidgetTools
     /** Get a unique selector for the node, creating a data attribute if necessary */
     static function getUniqueSelectorForNode(node:dtx.DOMNode):Expr
     {
-        var selector:String;
-
-        if (node.attr("data-dtx-id") != "") 
+        // Get an existing data-dtx-id, or set a new one 
+        var id:Int;
+        var attValue = node.attr("data-dtx-id");
+        if (attValue=="") 
         {
-            // If the element has data-dtx-id, use that
-            selector = "[data-dtx-id=\'" + node.attr("data-dtx-id") + "\']";
-        }
-        else
-        {
-            // If not, create data-dtx-id=ID, use that
-            node.setAttr("data-dtx-id", Std.string(uniqueDtxID));
-            selector = "[data-dtx-id=\'" + node.attr("data-dtx-id") + "\']";
-            uniqueDtxID++;
-        } 
-
-        var selectorTextAsExpr = Context.makeExpr(selector, Context.currentPos());
-        var selectorExpr:Expr;
-        if (isTopLevelElement(node))
-        {
-            var indexInCollection = node.parent.indexOf(node).toExpr();
-            selectorExpr = (node.parent.count() == 1) ? macro this : macro dtx.collection.Traversing.find(dtx.collection.Traversing.parent(this), $selectorTextAsExpr);
+            id = uniqueDtxID++;
+            node.setAttr("data-dtx-id", '$id');
         }
         else 
         {
-            selectorExpr = macro dtx.collection.Traversing.find(this, $selectorTextAsExpr);
+            id = Std.parseInt(attValue);
         }
 
-        return selectorExpr;
+        var idExpr = id.toExpr();
+        return macro _dtxWidgetNodeIndex[$idExpr];
     }
 
     static function interpolateAttributes(node:dtx.DOMNode, attName:String)
@@ -669,7 +622,7 @@ class WidgetTools
 
         // Set up bindingExpr
         //var bindingExpr = macro this.find($selectorAsExpr).setAttr($nameAsExpr, $interpolationExpr);
-        var bindingExpr = macro dtx.collection.ElementManipulation.setAttr($selectorExpr, $nameAsExpr, $interpolationExpr);
+        var bindingExpr = macro dtx.single.ElementManipulation.setAttr($selectorExpr, $nameAsExpr, $interpolationExpr);
         
         // Go through array of all variables again
         addExprToAllSetters(bindingExpr, variablesInside, true);
@@ -688,20 +641,81 @@ class WidgetTools
 
         // Set up bindingExpr
         //var bindingExpr = macro this.children(false).getNode($indexAsExpr).setText($interpolationExpr);
-        var bindingExpr = macro dtx.single.ElementManipulation.setText(dtx.collection.Traversing.children($selectorAsExpr, false).getNode($indexAsExpr), $interpolationExpr);
+        var bindingExpr = macro dtx.single.ElementManipulation.setText(dtx.single.Traversing.children($selectorAsExpr, false).getNode($indexAsExpr), $interpolationExpr);
         
-        // Go through array of all variables again
+        // Add binding expression to all setters.  
         addExprToAllSetters(bindingExpr, variablesInside, true);
+
+        // Initialise variables
+        addExprInitialisationToConstructor(variablesInside);
     }
 
     static function addExprToAllSetters(expr:Expr, variables:Array<String>, ?prepend)
     {
+        if (variables.length == 0)
+        {
+            // Add it to the init() function instead instead
+            var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
+            BuildTools.addLinesToFunction(initFn, expr);
+        }
+
         for (varName in variables)
         {
             // Add bindingExpr to every setter.  Add at position `1`, so after the first line, which should be 'this.field = v;'
-            var prop = BuildTools.getField(varName);
-            var setter = BuildTools.getSetterFromField(prop);
-            BuildTools.addLinesToFunction(setter, expr, 1);
+            if (varName.fieldExists())
+            {
+                var setter = varName.getField().getSetter();
+                BuildTools.addLinesToFunction(setter, expr, 1);
+            }
+            else throw ('Field $varName not found in ${Context.getLocalClass()}');
+        }
+    }
+
+    static function addExprInitialisationToConstructor(variables:Array<String>)
+    {
+        for (varName in variables)
+        {
+            var field = varName.getField();
+            switch (field.kind)
+            {
+                case FProp(get,set,type,e):
+                    var initValueExpr:Expr = null;
+                    var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
+                    if ( e!=null ) 
+                        initValueExpr = e;
+                    else 
+                    {
+                        if ( type == null ) throw 'Unknown type when trying to initialize $varName on class ${Context.getLocalClass()}';
+                        switch (type)
+                        {
+                            case TPath(path):
+                                switch (path.name) {
+                                    case "Bool": 
+                                        initValueExpr = macro false;
+                                    case "String": 
+                                        initValueExpr = macro "";
+                                    case "Int": 
+                                        initValueExpr = macro 0;
+                                    case "Float": 
+                                        initValueExpr = macro 0;
+                                    default: 
+                                        initValueExpr = macro null;
+                                }
+                            default:
+                        }
+                    }
+                    if ( initValueExpr!=null )
+                    {
+                        // Update the init expression, and add to the init function
+                        // We want both, the init function so that setters fire, and the init expression
+                        // so that all values are initialized by the time the first setter fires also...
+                        field.kind = FProp(get,set,type,initValueExpr);
+                        var varRef = varName.resolve();
+                        var setExpr = macro $varRef = $initValueExpr;
+                        BuildTools.addLinesToFunction(initFn, setExpr);
+                    }
+                default:
+            }
         }
     }
 
@@ -711,49 +725,161 @@ class WidgetTools
         var interpolationExpr = Format.format(stringAsExpr);
         
         // Get an array of all the variables in interpolationExpr
-        var variables:Array<String> = BuildTools.extractVariablesUsedInInterpolation(interpolationExpr);
+        var variables:Array<ExtractedVarType> = extractVariablesUsedInInterpolation(interpolationExpr);
+        var variableNames:Array<String> = [];
 
-        for (varName in variables)
+        for (extractedVar in variables)
         {
-            var propType = TPath({
-                sub: null,
-                params: [],
-                pack: [],
-                name: "String"
-            });
-            var prop = BuildTools.getOrCreateProperty(varName, propType, false, true);
-
-            if (BuildTools.fieldExists("print_" + varName))
+            switch (extractedVar)
             {
-                // If yes, in interpolationExpr replace calls to $name with print_$name($name)
-                var fn = BuildTools.getField("print_" + varName);
+                case Ident(varName):
+                    var propType = TPath({
+                        sub: null,
+                        params: [],
+                        pack: [],
+                        name: "String"
+                    });
+                    var prop = BuildTools.getOrCreateProperty(varName, propType, false, true);
 
-                var exprToLookFor = EConst(CIdent(varName));
-                var functionName = "print_" + varName;
-                var functionNameExpr = functionName.resolve();
-                var exprToReplaceWith = macro $functionNameExpr();
-
-                // Use tink_macros' transform() to look for the old expression and replace it
-                interpolationExpr = interpolationExpr.transform(function (oldExpr) {
-                    if (Type.enumEq(oldExpr.expr, exprToLookFor))
+                    var functionName = "print_" + varName;
+                    if (BuildTools.fieldExists(functionName))
                     {
-                        return {
-                            expr: exprToReplaceWith.expr,
-                            pos: oldExpr.pos
-                        };
+                        // If yes, in interpolationExpr replace calls to $name with print_$name($name)
+                        var replacements = {};
+                        Reflect.setField( replacements, varName, macro $i{functionName}() );
+                        interpolationExpr = interpolationExpr.substitute( replacements );
                     }
-                    else 
-                    {
-                        return oldExpr;
-                    }
-                });
+                    variableNames.push(varName);
+                case Call(varName):
+                    variableNames.push(varName);
+                case Field(varName):
+                    interpolationExpr = macro (($i{varName} != null) ? $interpolationExpr : "");
+                    variableNames.push(varName);
             }
         }
 
         return {
             expr: interpolationExpr,
-            variablesInside: variables
+            variablesInside: variableNames
         };
+    }
+
+    /** Takes the output of an expression such as Std.format(), and searches for variables used... 
+    Basic implementation so far, only looks for basic EConst(CIdent(myvar)) */
+    public static function extractVariablesUsedInInterpolation(expr:Expr)  
+    {
+        var variablesInside:Array<ExtractedVarType> = [];
+        switch(expr.expr)
+        {
+            case ECheckType(e,_):
+                switch (e.expr)
+                {
+                    case EBinop(_,_,_):
+                        var parts = BuildTools.getAllPartsOfBinOp(e);
+                        for (part in parts)
+                        {
+                            switch (part.expr)
+                            {
+                                case EConst(CIdent(varName)):
+                                    variablesInside.push( ExtractedVarType.Ident(varName) );
+                                case EField(e, field):
+                                    // Get the left-most field, add it to the array
+                                    var leftMostVarName = getLeftMostVariable(part);
+                                    if (leftMostVarName != null) {
+                                        if ( leftMostVarName.fieldExists() )
+                                            variablesInside.push( ExtractedVarType.Field(leftMostVarName) );
+                                        else {
+                                            var localClass = Context.getLocalClass();
+                                            var printer = new Printer("  ");
+                                            var partString = printer.printExpr(part);
+                                            Context.error('In the Detox template for $localClass, in the expression `$partString`, variable "$leftMostVarName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                        }
+                                    }
+                                case ECall(e, params):
+                                    // Look for variables to add in the paramaters
+                                    for (param in params) {
+                                        var varName = getLeftMostVariable(param);
+                                        if (varName != null) {
+                                            if ( varName.fieldExists() )
+                                                variablesInside.push( ExtractedVarType.Call(varName) );
+                                            else {
+                                                var localClass = Context.getLocalClass();
+                                                var printer = new Printer("  ");
+                                                var callString = printer.printExpr(part);
+                                                Context.error('In the Detox template for $localClass, in function call `$callString`, variable "$varName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                            }
+                                        }
+                                    }
+                                    // See if the function itself is on a variable we need to add
+                                    var leftMostVarName = getLeftMostVariable(e);
+                                    if ( leftMostVarName.fieldExists() ) {
+                                        switch ( leftMostVarName.getField().kind ) {
+                                            case FVar(_,_) | FProp(_,_,_,_):
+                                                variablesInside.push( ExtractedVarType.Field(leftMostVarName) );
+                                            case _:
+                                        }
+                                    }
+                                    // else: don't throw error.  They might be doing "haxe.crypto.Sha1.encode()" or "Math.max(a,b)" etc. If they do something invalid the compiler will catch it, the error message just won't be as obvious
+                                default:
+                                    // do nothing
+                            }
+                        }
+                    default:
+                        haxe.macro.Context.error("extractVariablesUsedInInterpolation() only works when the expression inside ECheckType is EBinOp, as with the output of Format.format()", Context.currentPos());
+                }
+            default:
+                haxe.macro.Context.error("extractVariablesUsedInInterpolation() only works on ECheckType, the output of Format.format()", Context.currentPos());
+        }
+
+        return variablesInside;
+    }
+
+    /** Takes an expression and tries to find the left-most plain variable.  For example "student" in `student.name`, "age" in `person.age`, "name" in `name.length`.
+    
+    It will try to ignore "this", for example it will match "person" in `this.person.age`.
+
+    Note it will also match packages: "haxe" in "haxe.crypto.Sha1.encode"
+    */
+    public static function getLeftMostVariable(expr:Expr):Null<String>
+    {
+        var leftMostVarName = null;
+        var error = false;
+
+        switch (expr.expr)
+        {
+            case EConst(CIdent(varName)):
+                leftMostVarName = varName;
+            case EField(e, field):
+                // Recurse until we find it.
+                var currentExpr = e;
+                var currentName:String;
+                while ( leftMostVarName==null ) {
+                    switch ( currentExpr.expr ) {
+                        case EConst(CIdent(varName)): 
+                            if (varName == "this") 
+                                leftMostVarName = currentName;
+                            else 
+                                leftMostVarName = varName;
+                        case EField(e, field): 
+                            currentName = field;
+                            currentExpr = e;
+                        case _: 
+                            error = true;
+                            break;
+                    }
+                }
+            case EConst(_): // A constant.  Leave it null
+            case _: error = true;
+        }
+        if (error)
+        {
+            var localClass = Context.getLocalClass();
+            var printer = new Printer("  ");
+            var exprString = printer.printExpr( expr );
+            Context.error('In the Detox template for $localClass, the expression `$exprString`, was too complicated for the poor Detox macro to understand.', localClass.get().pos);
+        }
+
+        return leftMostVarName;
     }
 
     static function processDtxBoolAttributes(node:dtx.DOMNode, attName:String)
@@ -770,32 +896,32 @@ class WidgetTools
             {
                 case "dtx-show":
                     var className = "hidden".toExpr();
-                    trueStatement = macro dtx.collection.ElementManipulation.removeClass($selector, $className);
-                    falseStatement = macro dtx.collection.ElementManipulation.addClass($selector, $className);
+                    trueStatement = macro dtx.single.ElementManipulation.removeClass($selector, $className);
+                    falseStatement = macro dtx.single.ElementManipulation.addClass($selector, $className);
                 case "dtx-hide":
                     var className = "hidden".toExpr();
-                    trueStatement = macro dtx.collection.ElementManipulation.addClass($selector, $className);
-                    falseStatement = macro dtx.collection.ElementManipulation.removeClass($selector, $className);
+                    trueStatement = macro dtx.single.ElementManipulation.addClass($selector, $className);
+                    falseStatement = macro dtx.single.ElementManipulation.removeClass($selector, $className);
                 case "dtx-enabled":
-                    trueStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "disabled");
-                    falseStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "disabled", "disabled");
+                    trueStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "disabled");
+                    falseStatement = macro dtx.single.ElementManipulation.setAttr($selector, "disabled", "disabled");
                 case "dtx-disabled":
-                    trueStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "disabled", "disabled");
-                    falseStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "disabled");
+                    trueStatement = macro dtx.single.ElementManipulation.setAttr($selector, "disabled", "disabled");
+                    falseStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "disabled");
                 case "dtx-checked":
-                    trueStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "checked", "checked");
-                    falseStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "checked");
+                    trueStatement = macro dtx.single.ElementManipulation.setAttr($selector, "checked", "checked");
+                    falseStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "checked");
                 case "dtx-unchecked":
-                    trueStatement = macro dtx.collection.ElementManipulation.removeAttr($selector, "checked");
-                    falseStatement = macro dtx.collection.ElementManipulation.setAttr($selector, "checked", "checked");
+                    trueStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "checked");
+                    falseStatement = macro dtx.single.ElementManipulation.setAttr($selector, "checked", "checked");
                 default:
                     if (attName.startsWith('dtx-class-'))
                     {
                         // add a class
                         var className = attName.substring(10);
                         var classNameAsExpr = className.toExpr();
-                        trueStatement = macro dtx.collection.ElementManipulation.addClass($selector, $classNameAsExpr);
-                        falseStatement = macro dtx.collection.ElementManipulation.removeClass($selector, $classNameAsExpr);
+                        trueStatement = macro dtx.single.ElementManipulation.addClass($selector, $classNameAsExpr);
+                        falseStatement = macro dtx.single.ElementManipulation.removeClass($selector, $classNameAsExpr);
                     }
                     else
                     {
@@ -806,24 +932,37 @@ class WidgetTools
 
         if (wasDtxAttr)
         {
-            // Get setter parts, add statements, remove our dtx-* attribute
-            var booleanName = node.attr(attName);
-            var setterParts = getBooleanSetterParts(booleanName);
-            BuildTools.addLinesToBlock(setterParts.trueBlock, trueStatement);
-            BuildTools.addLinesToBlock(setterParts.falseBlock, falseStatement);
+            var className = Context.getLocalClass().toString();
+            var classPos = Context.getLocalClass().get().pos;
+
+            // Turn the attribute into an expression, and check it is a Bool, so we can use it in an if statement
+            var testExprStr = node.attr(attName);
+            var testExpr = 
+                try 
+                    Context.parse( testExprStr, classPos )
+                catch (e:Dynamic) 
+                    Context.error('Error parsing $attName="$testExprStr" in $className template. \nError: $e \nNode: ${node.html()}', classPos);
+
+            // Extract all the variables used, create the `if(test) ... else ...` expr, add to setters, initialize variables
+            var idents =  testExpr.extractIdents();
+            var bindingExpr = macro if ($testExpr) $trueStatement else $falseStatement;
+            addExprToAllSetters(bindingExpr,idents, true);
+            addExprInitialisationToConstructor(idents);
+
+            // Remove the attribute now that we've processed it
             node.removeAttr(attName);
         }
             
         return wasDtxAttr;
     }
 
-    static var booleanSetters:Hash<Hash<{ trueBlock:Array<Expr>, falseBlock:Array<Expr> }>> = null;
+    static var booleanSetters:Map<String,Map<String, { trueBlock:Array<Expr>, falseBlock:Array<Expr> }>> = null;
     static function getBooleanSetterParts(booleanName:String)
     {
         // If a list of boolean setters for this class doesn't exist yet, set one up
         var className = Context.getLocalClass().toString();
-        if (booleanSetters == null) booleanSetters = new Hash();
-        if (booleanSetters.exists(className) ==  false) booleanSetters.set(className, new Hash());
+        if (booleanSetters == null) booleanSetters = new Map();
+        if (booleanSetters.exists(className) ==  false) booleanSetters.set(className, new Map());
 
         // If this boolean setter doesn't exist yet, create it.  
         if (booleanSetters.get(className).exists(booleanName) == false)
@@ -847,7 +986,7 @@ class WidgetTools
             var falseBlock:Array<Expr>;
             switch (ifStatement.expr)
             {
-                case EIf(econd,eif,eelse):
+                case EIf(_,eif,eelse):
                     switch (eif.expr)
                     {
                         case EBlock(b):
@@ -877,23 +1016,6 @@ class WidgetTools
         return booleanSetters.get(className).get(booleanName);
     }
 
-    // static function createField_refresh(fnBody:Array<Expr>, isOverride:Bool):Field
-    // {
-    //     var pos = Context.currentPos();
-    //     return { 
-    //         name : "refresh", 
-    //         doc : null, 
-    //         meta : [], 
-    //         access : (isOverride) ? [AOverride, APublic] : [APublic], 
-    //         kind : FFun({ 
-    //             args: [], 
-    //             expr: fnBody.toBlock(), 
-    //             params: [], 
-    //             ret: null 
-    //         }), 
-    //         pos: pos
-    //     }
-    // }
     #end
 }
 

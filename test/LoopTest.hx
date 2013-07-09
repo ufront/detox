@@ -142,7 +142,7 @@ class LoopTest
 	public function addItem():Void
 	{
 		var l = new Loop<String>();
-
+		
 		l.addItem("1");
 		Assert.areEqual(1, l.numItems);
 		Assert.areEqual(2, l.length);
@@ -349,7 +349,7 @@ class LoopTest
 		Assert.areEqual(" Detox Loop ", l.text());
 	}
 
-	@Test 
+	@Test
 	public function addList():Void
 	{
 		var l = new Loop<String>();
@@ -735,65 +735,30 @@ class LoopTest
 		Assert.areEqual(-1, l.getItemPos(i));
 	}
 
-	// @Test 
-	// @TestDebug
-	// public function testStupidBehaviour():Void 
-	// {
-	// 	var d:Xml = Xml.parse("<a>A</a><b>B</b><i>I</i>");
-	// 	var aTextNode:Xml = null;
-	// 	var bTextNode:Xml = null;
-	// 	var iElement:Xml = null;
-	// 	for (e in d.elements())
-	// 	{
-	// 		switch (e.nodeName.toLowerCase())
-	// 		{
-	// 			case "a":
-	// 				aTextNode = e.firstChild();
-	// 			case "b":
-	// 				bTextNode = e.firstChild();
-	// 			case "i":
-	// 				iElement = e;
-	// 		}
-	// 	}
-		
-	// 	Assert.areEqual("<a>A</a><b>B</b><i>I</i>", d.html());
-	// 	Assert.areEqual("<a>A</a>", aTextNode.parent.html());
-	// 	Assert.areEqual("<b>B</b>", bTextNode.parent.html());
-	// 	Assert.areEqual("<i>I</i>", iElement.html());
-
-	// 	iElement.addChild(aTextNode);
-	// 	iElement.addChild(bTextNode);
-
-	// 	Assert.areEqual("<a/><b/><i>IAB</i>", d.html());
-	// 	Assert.areEqual("<i>IAB</i>", aTextNode.parent.html());
-	// 	Assert.areEqual("<i>IAB</i>", bTextNode.parent.html());
-	// }
-
 	@Test
 	public function getItemPosItemMovedInDOM():Void
 	{
 		var div = "body".create();
 		var l = new Loop<String>();
 		l.appendTo(div);
-		l.preventDuplicates = true;
+
 		l.addList('A,1,B,C,D'.split(','));
 		var i = l.findItem("1");
 
-		trace (div.innerHTML());
 
 		// Test starting position
 		Assert.areEqual("<!-- Detox Loop -->A1BCD", div.innerHTML());
 		Assert.areEqual(1, l.getItemPos(i));
 
-		// On the DOM, move the 1 to the end
-		i.dom.insertThisAfter(l.last());
-		Assert.areEqual("<!-- Detox Loop -->ABCD1", div.innerHTML());
-		Assert.areEqual(1, l.getItemPos(i));
+		// // On the DOM, move the 1 to the end
+		// i.dom.insertThisAfter(l.last());
+		// Assert.areEqual("<!-- Detox Loop -->ABCD1", div.innerHTML());
+		// Assert.areEqual(1, l.getItemPos(i));
 
-		// In the Loop, place '1' at the beginning
-		l.moveItem(i, 0);
-		Assert.areEqual("<!-- Detox Loop -->1ABCD", div.innerHTML());
-		Assert.areEqual(0, l.getItemPos(i));
+		// // In the Loop, place '1' at the beginning
+		// l.moveItem(i, 0);
+		// Assert.areEqual("<!-- Detox Loop -->1ABCD", div.innerHTML());
+		// Assert.areEqual(0, l.getItemPos(i));
 	}
 
 	@Test 
@@ -916,6 +881,19 @@ class LoopTest
 
 		Assert.areEqual("<div><p>Paragraph<!-- Detox Loop -->ABCDE</p><span>Span</span></div>", div.html());
 		Assert.areEqual(7, div.find("p").children(false).length);
+	}
+
+	@Test
+	public function insertLoopThenAddList():Void
+	{
+		var div = "div".create();
+		var l = new Loop<String>();
+		l.appendTo(div);
+
+		l.addList('A,B,C,D'.split(','));
+
+		// Test starting position
+		Assert.areEqual("<!-- Detox Loop -->ABCD", div.innerHTML());
 	}
 
 	@Test 

@@ -36,6 +36,7 @@ class TraversingTest
 	public var textNode1:DOMNode;
 	public var textNode2:DOMNode;
 	public var commentNode:DOMNode;
+	public var recursive:DOMNode;
 	
 	@Before
 	public function setup():Void
@@ -77,6 +78,7 @@ class TraversingTest
 		textNode1 = nonElements.getNode(0);
 		commentNode = nonElements.getNode(1);
 		textNode2 = nonElements.getNode(2);
+		recursive = "#recursive".find().getNode();
 	}
 	
 	@After
@@ -255,6 +257,40 @@ class TraversingTest
 		#end 
 		Assert.areEqual(0, doc.ancestors().length);
 		Assert.areEqual(0, sampleDocument.ancestors().length);
+	}
+
+	@Test 
+	public function descendants()
+	{
+		Assert.areEqual(4, a.descendants().length);
+		Assert.areEqual(3, recursive.descendants().length);
+	}
+
+	@Test 
+	public function descendantsElementsOnly()
+	{
+		Assert.areEqual(13, a.descendants(false).length);
+		Assert.areEqual(10, recursive.descendants(false).length);
+	}
+
+	@Test 
+	public function descendantsOnNull()
+	{
+		Assert.areEqual(0, nullNode.descendants().length);
+	}
+
+	@Test 
+	public function descendantsOnNonElement()
+	{
+		Assert.areEqual(0, textNode1.descendants().length);
+		Assert.areEqual(0, textNode2.descendants().length);
+		Assert.areEqual(0, commentNode.descendants().length);
+	}
+
+	@Test 
+	public function descendantsOnNoDescendants()
+	{
+		Assert.areEqual(0, emptyNode.descendants().length);
 	}
 
 	@Test 

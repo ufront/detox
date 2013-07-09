@@ -1,5 +1,5 @@
 /****
-* Copyright (c) 2012 Jason O'Neil
+* Copyright (c) 2013 Jason O'Neil
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 * 
@@ -11,60 +11,65 @@
 
 package dtx.widget;
 
-import dtx.DOMCollection;
 import dtx.widget.WidgetTools;
+using Detox;
 
 @:keepSub
-@:autoBuild(dtx.widget.WidgetTools.buildWidget()) class Widget extends DOMCollection
+@:autoBuild(dtx.widget.WidgetTools.buildWidget()) 
+class Widget extends DOMCollection
 {
+	var _dtxWidgetNodeIndex:Array<DOMNode>;
+
 	/** Create a new widget by parsing some "template" html, and use that as our collection.
 	When your class extends this, it will automatically work with the dtx API (through using).  
 	Therefore your class can have very tight integration between haxe features and the DOM. */
-	public function new()
-	{
+	public function new() {
 		super();
 
-		// If get_template() hasn't been overridden by a subclass (or a macro) then
-		// this allows us to set the template by passing one in.
-		var q = Detox.parse(get_template());
+		// Parse the template and make it the collection for this widget
+		var q = Detox.parse( get_template() );
 		this.collection = q.collection;
+
+		// Initialize the widget/node index of nodes that need to be referenced
+		_dtxWidgetNodeIndex = [];
+		for ( n in this.collection.concat(this.descendants().collection) ) {
+			var att = n.attr("data-dtx-id");
+			if ( att!="" ) {
+				var id = Std.parseInt(att);
+				_dtxWidgetNodeIndex[id] = n;
+				n.removeAttr("data-dtx-id");
+			}
+		}
+
+		// Run init(), which will create all of our partials etc
+		init();
 	}
 	
 	/** Override this method in your subclass to get template some other way.  Using detox 
 	templating will automatically override this method. */
-	function get_template()
-	{
+	function get_template() {
 		return "";
 	}
 
-	/** When using widgets, this runs immediately after all partials and variables have been initialised.
+	/** When using widgets, the macros will use init() to initialize any variables or partials.
 
-	When using Widget templates, the partials are initialised at the end of the
-	constructor, so you can't do anything with them in the constructor, they're still
-	null at that point.  Override this function to work with your partials immediately
-	after they are initialised. */
-	function init()
-	{
-
-	}
+	This runs at the end of dtx.widget.Widget's constructor, and so after you call "super()" on your
+	widget it will be safe to use any of your partials, named nodes etc.  You can do your own initialisation
+	logic in here if you wish, but be warned the nodes will be present but only half ready.  */
+	function init() {}
 
 	/** You can either map an Input, and we'll try to match each field on the input with a field on the
 	widget.  Or you can do a propMap, like propMap = { templateVarA = myValue, templateVarB = getBValue() }*/
-	public function mapData(?input:Dynamic, ?propMap:Dynamic<Dynamic>)
-	{
-		if (propMap != null)
-		{
-			for (templateVar in Reflect.fields(propMap))
-			{
+	public function mapData(?input:Dynamic, ?propMap:Dynamic<Dynamic>) {
+		if (propMap != null) {
+			for (templateVar in Reflect.fields(propMap)) {
 				var modelValue = Reflect.field(propMap, templateVar);
 				Reflect.setProperty(this, templateVar, modelValue);
 			}
 		}
-		else if (input != null)
-		{
+		else if (input != null) {
 			var fieldNames:Array<String>;
-			switch (Type.typeof(input))
-			{
+			switch (Type.typeof(input)) {
 				case TObject:
 					// Anonymous object, use Reflect.fields()
 					fieldNames = Reflect.fields(input);
@@ -76,8 +81,7 @@ import dtx.widget.WidgetTools;
 					fieldNames = [];
 			}
 
-			for (fieldName in fieldNames)
-			{
+			for (fieldName in fieldNames) {
 				var modelValue = Reflect.getProperty(input, fieldName);
 				Reflect.setProperty(this, fieldName, modelValue);
 			}

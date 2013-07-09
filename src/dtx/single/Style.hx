@@ -1,5 +1,5 @@
 /****
-* Copyright (c) 2012 Jason O'Neil
+* Copyright (c) 2013 Jason O'Neil
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 * 
@@ -11,7 +11,7 @@
 
 package dtx.single;
 
-#if haxe_211
+#if (haxe_211 || haxe3)
 	import js.html.CSSStyleDeclaration;
 #else 
 	import js.w3c.level3.Core;
@@ -41,34 +41,49 @@ class Style
 		var style:CSSStyleDeclaration = null;
 		if (ElementManipulation.isElement(node))
 		{
-			//style = DOMCollection.window.getComputedStyle(cast node).width;
+			style = Detox.window.getComputedStyle(cast node);
 		}
 		return style;
 	}
-
 	
-	public static function css(node:DOMNode, property:String)
+	public static function css(node:DOMNode, prop:String)
 	{
-		getComputedStyle(node).getPropertyValue("property");
+		return getComputedStyle(node).getPropertyValue(prop);
 	}
 
-	public static function setCSS(node:DOMNode, property:String, value:String)
+	public static function setCSS(node:DOMNode, prop:String, val:String)
 	{
 		if (ElementManipulation.isElement(node))
 		{
 			var style:Dynamic = untyped node.style;
-			Reflect.setField(style, property, value);
+			Reflect.setField(style, prop, val);
 		}
+		return node;
 	}
 
-	/** Get the current computed width for the first element in the set of matched elements, including padding but not border. */
-	public static function innerWidth(node:DOMNode):Int
+	public static function show(n:DOMNode) return setCSS(n, "display", "");
+	public static function hide(n:DOMNode) return setCSS(n, "display", "none");
+
+	public static function pos(node:DOMNode)
 	{
-		var style = getComputedStyle(cast node);
-		if (style != null)
+		if (ElementManipulation.isElement(node)) 
 		{
-			
+			var e:js.html.Element = cast node;
+			return {
+				top: e.offsetTop,
+				left: e.offsetLeft,
+				width: e.offsetWidth,
+				height: e.offsetHeight
+			}
+		} 
+		else 
+		{
+			return {
+				top: 0,
+				left: 0,
+				width: 0,
+				height: 0
+			}
 		}
-		return 0;
 	}
 } 

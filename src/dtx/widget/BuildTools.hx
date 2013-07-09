@@ -1,5 +1,5 @@
 /****
-* Copyright (c) 2012 Jason O'Neil
+* Copyright (c) 2013 Jason O'Neil
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 * 
@@ -14,9 +14,10 @@ package dtx.widget;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Format;
+import haxe.macro.Printer;
 import haxe.macro.Type;
-import tink.macro.tools.MacroTools;
 using tink.macro.tools.MacroTools;
+using haxe.macro.ExprTools;
 using StringTools;
 using Lambda;
 using Detox;
@@ -24,7 +25,7 @@ using Detox;
 #if macro 
 class BuildTools 
 {
-	static var fieldsForClass:Hash<Array<Field>> = new Hash();
+	static var fieldsForClass:Map<String, Array<Field>> = new Map();
 
 	/** Allow us to get a list of fields, but will keep a local copy, in case we make changes.  This way 
 	in an autobuild macro you can use BuildTools.getFields() over and over, and modify the array each time,
@@ -48,23 +49,93 @@ class BuildTools
     /** Return a field, assuming it already exists */
     public static function getField(name:String)
     {
-        return getFields().filter(function (f) { return f.name == name; }).first();
+        return getFields().filter(function (f) { return f.name == name; })[0];
     }
 
-    /** Return a field, assuming it already exists */
-    public static function getSetterFromField(field:Field)
+    /** Get the fully qualified name for a type, or null if not found */
+    public static function getFullTypeName(t:haxe.macro.Type):Null<String>
+    {
+        switch (t) {
+            case TMono(ref):
+                return ref.toString();
+            case TEnum(ref,_):
+                return ref.toString();
+            case TInst(ref,_):
+                return ref.toString();
+            case TType(ref,_):
+                return ref.toString();
+            case TAnonymous(ref):
+                return ref.toString();
+            case TAbstract(ref,_):
+                return ref.toString();
+            case _:
+                return null;
+        }
+    }
+
+    /** Print a single specific field */
+    public static function printField( f:Field )
+    {
+        return printFields( [f] );
+    }
+
+    /** Print the source code for the given fields (or for all fields in the current build) */
+    public static function printFields( ?fields:Array<Field> )
+    {
+        var className = getFullTypeName( Context.getLocalType() );
+        if ( fields==null ) fields = getFields();
+
+        Sys.println("----------------------------------");
+        Sys.println('Fields in $className: ');
+
+        for ( f in fields ) {
+            var typeSource = new Printer( "  " ).printField( f );
+            typeSource = typeSource.split("\n").map(function(s) return '  $s').join("\n");
+            Sys.println( '$typeSource' );
+            Sys.println( '' );
+        }
+
+        Sys.println("----------------------------------");
+    }
+
+    /** Return a setter from a field.  
+
+    If it is a FProp, it returns the existing setter, or creates one if it did not have a setter already.
+
+    If it is a FVar, it will transform it into FProp(default,set) to create the setter and return it.
+
+    If it is a FFun
+    */
+    public static function getSetter(field:Field)
     {
         switch (field.kind)
         {
-            case FieldType.FProp(get, set, t, e):
-                return getField(set);
-            case FieldType.FVar(t,e): 
-                throw "Was expecting " + field.name + " to be a property, but it was a var.";
-                return null;
-            case FieldType.FFun(fn): 
-                throw "Was expecting " + field.name + " to be a property, but it was a function.";
+            case FieldType.FProp(_, _, t, _) | FieldType.FVar(t,_): 
+                return getOrCreateProperty(field.name, t, false, true).setter;
+            case FieldType.FFun(_): 
+                throw "Was expecting " + field.name + " to be a var or property, but it was a function.";
                 return null;
         }
+    }
+
+    public static function hasClassMetadata(dataName:String, recursive=false, ?cl:Ref<ClassType>):Bool 
+    {
+        var p = Context.currentPos();                           // Position where the original Widget class is declared
+        var localClass = (cl == null) ? haxe.macro.Context.getLocalClass() : cl;    // Class that is being declared, or class that is passed in
+        var meta = localClass.get().meta;                       // Metadata of the this class
+        
+        if (meta.has(dataName)) 
+            return true;
+        else if (recursive)
+        {
+            // Check if there is a super class, and check recursively for metadata
+            if (localClass.get().superClass != null)
+            {
+                var superClass = localClass.get().superClass.t;
+                if (hasClassMetadata(dataName, true, superClass)) return true;
+            }
+        }
+        return false;
     }
 
     /** Searches the metadata for the current class - expects to find a single string @dataName("my string"), returns null in none found.  Generates an error if one was found but it was the wrong type. Can search recursively up the super-classes if 'recursive' is true */
@@ -140,9 +211,17 @@ class BuildTools
         }
     }
 
-    /** Creates a new property on the class, with the given name and type.  Optionally can set a setter or 
-    a getter.  Returns a simple object containing the fields for the property, the setter and the getter. */
-    public static function getOrCreateProperty(propertyName:String, propertyType:haxe.macro.ComplexType, useGetter:Bool, useSetter:Bool):{ property:Field, getter:Field, setter:Field }
+    /** Gets an existing (or creates a new) property on the class, with the given name and type.  Optionally can set a setter or 
+    a getter.  
+
+    If the property already exists and was explicitly typed, it will not be changed. 
+
+    If the property already exists and is a FVar, it will be transformed into a FProp
+
+    If the property already exists and is a FProp, the existing setter and getter will be used.
+
+    Returns a simple object containing the fields for the property, the setter and the getter.  */
+    public static function getOrCreateProperty(propertyName:String, propertyType:ComplexType, useGetter:Bool, useSetter:Bool):{ property:Field, getter:Field, setter:Field }
     {
         var p = Context.currentPos();                           // Position where the original Widget class is declared
         
@@ -162,7 +241,7 @@ class BuildTools
 
         switch (property.kind)
         {
-            case FieldType.FProp(get, set, t, e):
+            case FieldType.FProp(get, set, t, _):
                 // Read the getter / setter string, in case it already exists and was different
                 getterString = get;
                 setterString = set;
@@ -173,7 +252,7 @@ class BuildTools
                 // If there's demand I might change my mind on this...
                 property.kind = FieldType.FProp(getterString, setterString, type, expr);
                 propertyType = type;
-            case FieldType.FFun(f):
+            case FieldType.FFun(_):
                 var className = Context.getLocalClass().toString();
                 var msg = "Trying to create a property called " + propertyName + " on class " + className + " but a function with the same name already exists.";
                 Context.error(msg, Context.currentPos());
@@ -305,6 +384,26 @@ class BuildTools
         }
     }
 
+    /** Extract all the idents in an expression */
+    public static function extractIdents(expr:Expr):Array<String>
+    {
+        var parts = [];
+        var getIdent:Expr->Void = null;
+        getIdent = function (e) { 
+            switch(e.expr) { 
+                case EConst(CIdent(s)): 
+                    // If first letter is capital, it's a Type. If not, it's an ident. Only add idents
+                    if ( s.charAt(0) != s.charAt(0).toUpperCase() ) 
+                        if ( s!="null" && s!="true" && s!="false" ) 
+                            parts.push(s);
+                case _: 
+                    e.iter(getIdent); 
+            }
+        }
+        getIdent(expr);
+        return parts;
+    }
+
     /** Takes a bunch of Binop functions `x + " the " + y + 10` and returns an array of each part. */
     public static function getAllPartsOfBinOp(binop:Expr):Array<Expr>
     {
@@ -321,7 +420,7 @@ class BuildTools
                 // Add part 1, recursively checking for more Binops
                 switch (data.e1.expr)
                 {
-                    case EBinop(op,e1,e2):
+                    case EBinop(_,_,_):
                         // It's another Binop, get all the parts and add them each...
                         for (p in getAllPartsOfBinOp(data.e1))
                         {
@@ -335,52 +434,8 @@ class BuildTools
             case Failure(failure):
                 throw failure;
         }
-
-
-        
         return parts;
     }
-
-    /** Takes the output of an expression such as Std.format(), and searches for variables used... 
-    Basic implementation so far, only looks for basic EConst(CIdent(myvar)) */
-    public static function extractVariablesUsedInInterpolation(expr:Expr)  
-    {
-        var variablesInside:Array<String> = [];
-        switch(expr.expr)
-        {
-            case ECheckType(e,t):
-                switch (e.expr)
-                {
-                    case EBinop(op,e1,e2):
-                        var parts = getAllPartsOfBinOp(e);
-                        for (p in parts)
-                        {
-                            switch (p.expr)
-                            {
-                                case EConst(c):
-                                    // could be string, ident, int etc.  We want ident.
-                                    switch (c)
-                                    {
-                                        case CIdent(varName):
-                                            variablesInside.push(varName);
-                                        default:
-                                            // do nothing
-                                    }
-                                default:
-                                    // do nothing
-                            }
-                        }
-                    default:
-                        haxe.macro.Context.error("extractVariablesUsedInInterpolation() only works when the expression inside ECheckType is EBinOp, as with the output of Format.format()", Context.currentPos());
-                }
-            default:
-                haxe.macro.Context.error("extractVariablesUsedInInterpolation() only works on ECheckType, the output of Format.format()", Context.currentPos());
-        }
-
-        return variablesInside;
-    }
-
-
 
     /** Reads a file, relative either to the project class paths, or relative to a specific class.  It will try an absolute path 
     first (testing against each of the class paths), and then a relative path, testing against each of the class paths in the directory
@@ -391,7 +446,7 @@ class BuildTools
         var fileContents = null;
         try 
         {
-            fileContents = neko.io.File.getContent(Context.resolvePath(filename));
+            fileContents = sys.io.File.getContent(Context.resolvePath(filename));
         }
         catch (e:Dynamic)
         {
@@ -404,7 +459,7 @@ class BuildTools
                 var path = arr.join("/");           // eg. my/pack
 
                 path = (path.length > 0) ? path + "/" : "./"; // add a trailing slash, unless we're on the current directory
-                fileContents = neko.io.File.getContent(Context.resolvePath(path + filename));
+                fileContents = sys.io.File.getContent(Context.resolvePath(path + filename));
             }
             catch (e : Dynamic)
             {
@@ -422,5 +477,12 @@ class BuildTools
     {
 
     }
+}
+
+enum ExtractedVarType
+{
+    Ident(name:String);
+    Field(name:String);
+    Call(name:String);
 }
 #end

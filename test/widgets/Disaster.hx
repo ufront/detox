@@ -3,7 +3,7 @@ package widgets;
 using DateTools;
 using Detox;
 
-@template(
+@:template(
 "<doc>
 	<h1 id='user_$id' class='$userType'>We've been expecting you, $firstName $lastName</h1>
 	<p title='$firstName has their birthday on $birthday'>Hover over this paragraph to see $firstName's birthday</p>
