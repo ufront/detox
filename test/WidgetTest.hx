@@ -525,6 +525,34 @@ class WidgetTest
 		Assert.areEqual(expected, untyped w.get_template());
 	}
 
+	@Test 
+	public function interpolationWithPrintFields()
+	{
+		var w = new widgets.Interpolation.InterpolationWithPrintFields();
+		w.name = "Jason";
+		w.age = 26;
+		w.amITall = true;
+		Assert.areEqual("My name is Jason, I am 26 years old and I am tall", w.text());
+		w.name = "Anna";
+		w.age = 23;
+		w.amITall = false;
+		Assert.areEqual("My name is Anna, I am 23 years old and I am not tall", w.text());
+	}
+
+	@Test 
+	public function interpolationWithPrintFieldsComplex()
+	{
+		var w = new widgets.Interpolation.InterpolationWithPrintFieldsComplex();
+		w.name = "Jason";
+		w.age = 26.5;
+		w.amITall = true;
+		Assert.areEqual('First letter is J, my last birthday was 26<span class=""> and I am definitely tall</span>.', w.innerHTML());
+		w.name = "Anna";
+		w.age = 23.5;
+		w.amITall = false;
+		Assert.areEqual('First letter is A, my last birthday was 23<span class="hidden"> and I am not tall</span>.', w.innerHTML());
+	}
+
 	// @Test
 	// public function disaster()
 	// {

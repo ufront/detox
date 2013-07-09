@@ -741,30 +741,13 @@ class WidgetTools
                     });
                     var prop = BuildTools.getOrCreateProperty(varName, propType, false, true);
 
-                    if (BuildTools.fieldExists("print_" + varName))
+                    var functionName = "print_" + varName;
+                    if (BuildTools.fieldExists(functionName))
                     {
                         // If yes, in interpolationExpr replace calls to $name with print_$name($name)
-                        var fn = BuildTools.getField("print_" + varName);
-
-                        var exprToLookFor = EConst(CIdent(varName));
-                        var functionName = "print_" + varName;
-                        var functionNameExpr = functionName.resolve();
-                        var exprToReplaceWith = macro $functionNameExpr();
-
-                        // Use tink_macros' transform() to look for the old expression and replace it
-                        interpolationExpr.transform(function (oldExpr) {
-                            if (Type.enumEq(oldExpr.expr, exprToLookFor))
-                            {
-                                return {
-                                    expr: exprToReplaceWith.expr,
-                                    pos: oldExpr.pos
-                                };
-                            }
-                            else 
-                            {
-                                return oldExpr;
-                            }
-                        });
+                        var replacements = {};
+                        Reflect.setField( replacements, varName, macro $i{functionName}() );
+                        interpolationExpr = interpolationExpr.substitute( replacements );
                     }
                     variableNames.push(varName);
                 case Call(varName):
