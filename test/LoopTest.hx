@@ -750,15 +750,15 @@ class LoopTest
 		Assert.areEqual("<!-- Detox Loop -->A1BCD", div.innerHTML());
 		Assert.areEqual(1, l.getItemPos(i));
 
-		// // On the DOM, move the 1 to the end
-		// i.dom.insertThisAfter(l.last());
-		// Assert.areEqual("<!-- Detox Loop -->ABCD1", div.innerHTML());
-		// Assert.areEqual(1, l.getItemPos(i));
+		// On the DOM, move the 1 to the end
+		i.dom.insertThisAfter(l.last());
+		Assert.areEqual("<!-- Detox Loop -->ABCD1", div.innerHTML());
+		Assert.areEqual(1, l.getItemPos(i));
 
-		// // In the Loop, place '1' at the beginning
-		// l.moveItem(i, 0);
-		// Assert.areEqual("<!-- Detox Loop -->1ABCD", div.innerHTML());
-		// Assert.areEqual(0, l.getItemPos(i));
+		// In the Loop, place '1' at the beginning
+		l.moveItem(i, 0);
+		Assert.areEqual("<!-- Detox Loop -->1ABCD", div.innerHTML());
+		Assert.areEqual(0, l.getItemPos(i));
 	}
 
 	@Test 
