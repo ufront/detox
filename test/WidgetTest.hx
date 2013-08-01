@@ -344,6 +344,39 @@ class WidgetTest
 	}
 
 	@Test 
+	public function partialSetParameters()
+	{
+		var w = new widgets.PartialInSameFile5();
+		w.name = "Jason";
+
+		Assert.areEqual("login", w.btn1.text());
+		Assert.areEqual("logout", w.btn2.text());
+		Assert.areEqual("JASON", w.btn3.text());
+		Assert.areEqual(true, w.btn1.hasClass("big"));
+		Assert.areEqual(true, w.btn2.hasClass("big"));
+		Assert.areEqual(false, w.btn3.hasClass("big"));
+
+		w.name = "Anna";
+		Assert.areEqual("ANNA", w.btn3.text());
+
+		Assert.areEqual("Jason", w.profile1.find("h2").text());
+		Assert.areEqual("0", w.profile1.attr("id"));
+		Assert.areEqual("This person is an adult: true", w.profile1.find("p").text());
+
+		w.person = { id:1, name:"David", over18:false }
+		
+		Assert.areEqual("David", w.profile2.find("h2").text());
+		Assert.areEqual("1", w.profile2.attr("id"));
+		Assert.areEqual("This person is an adult: false", w.profile2.find("p").text());
+
+		w.person = { id:2, name:"Michael", over18:true }
+		
+		Assert.areEqual("Michael", w.profile2.find("h2").text());
+		Assert.areEqual("2", w.profile2.attr("id"));
+		Assert.areEqual("This person is an adult: true", w.profile2.find("p").text());
+	}
+
+	@Test 
 	public function interpolationNotSetStrings()
 	{
 		var w = new widgets.Interpolation.InterpolationBasic();
