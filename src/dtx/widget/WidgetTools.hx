@@ -15,6 +15,7 @@ import dtx.DOMNode;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Format;
+import haxe.macro.Type;
 import haxe.macro.Printer;
 import tink.macro.tools.MacroTools;
 using haxe.macro.Context;
@@ -209,6 +210,7 @@ class WidgetTools
     }
 
     static var partialNumber:Int; // Used to create name if none given, eg partial_4:DOMCollection
+    static var loopNumber:Int; // Used to create name if none given, eg loop_4:Loop
     static function processTemplate(template:String):{ template:String, fields:Array<Field> }
     {
         // Get every node (including descendants)
@@ -221,12 +223,13 @@ class WidgetTools
         
         var fieldsToAdd = new Array<Field>();
         partialNumber=0; 
+        loopNumber=0; 
 
         // Process partial declarations on the top level first (and then remove them from the collection/template)
         for ( node in xml ) {
             if (node.isElement() && node.tagName().startsWith('_')) {
                 // This is a partial declaration <_MyPartial>template</_MyPartial>
-                processPartialDeclarations(node);
+                processPartialDeclarations( node.nodeName, node );
                 xml.removeFromCollection( node );
             }
         }
@@ -249,13 +252,15 @@ class WidgetTools
     }
 
     static function processNode( node:DOMNode ) {
-        if (node.isElement() && node.tagName() == "dtx:loop")
+        if (node.tagName() == "dtx:loop")
         {
             // It's a loop element... either: 
             //    <dtx:loop><dt>$name</dt><dd>$age</dd></dtx:loop> OR
             //    <dtx:loop partial="Something" />
+            loopNumber++;
+            processLoop(node, loopNumber);
         }
-        else if (node.isElement() && node.tagName().startsWith('dtx:'))
+        else if (node.tagName().startsWith('dtx:'))
         {
             // This is a partial call.  <dtx:_MyPartial /> or <dtx:SomePartial /> etc
             partialNumber++;
@@ -306,13 +311,12 @@ class WidgetTools
             node.setText(text);
     }
     
-    static function processPartialDeclarations(node:dtx.DOMNode)
+    static function processPartialDeclarations(name:String, node:dtx.DOMNode)
     {
         // Create a class for this partial
 
         var p = Context.currentPos();
         var localClass = haxe.macro.Context.getLocalClass();
-        var name = node.nodeName;
         var pack = localClass.get().pack;
         // Before getting the partial TPL, let's clear out any whitespace
         for (d in node.descendants(false))
@@ -384,7 +388,6 @@ class WidgetTools
         // or autogenerate one (partial_$t, t++)
         var widgetClass = haxe.macro.Context.getLocalClass();
         var nameAttr = node.attr('dtx-name');
-
         var name = (nameAttr != "") ? nameAttr : "partial_" + t;
         var p = Context.currentPos();
 
@@ -488,6 +491,141 @@ class WidgetTools
             
             }
         }
+    }
+
+    static function processLoop(node:dtx.DOMNode, t:Int)
+    {
+        // Generate a name for the partial.  Either take it from the <dtx:MyPartial dtx-name="this" /> attribute,
+        // or autogenerate one (partial_$t, t++)
+        var widgetClass = haxe.macro.Context.getLocalClass();
+        var nameAttr = node.attr('dtx-name');
+        var name = (nameAttr != "") ? nameAttr : "loop_" + t;
+        var p = widgetClass.get().pos;
+
+        // Resolve the type for the partial.  If it begins with dtx:_, then it is local to this file.
+        // Otherwise, just resolve it as a class name.
+        var typeName = node.attr("partial");
+        if ( typeName=="" ) {
+            // Get the inner HTML content to use as a template
+            var partialHtml = node.innerHTML();
+            if ( partialHtml.length==0 )
+                Context.error( 'You must define either a partial="" attribute, or have child elements for the dtx:loop in widget $widgetClass', p );
+            
+            // Process the template as a partial declaration
+            typeName = "_LoopPartial_" + name.charAt(0).toUpperCase() + name.substr(1);
+            processPartialDeclarations( typeName, node );
+        }
+        
+        // Set up the full name for relative partials 
+        if (typeName.startsWith("_"))
+        {
+            typeName = widgetClass.get().name + typeName;
+        }
+        
+        // Replace the call with <div data-dtx-loop="$name"></div>
+        node.replaceWith("div".create().setAttr("data-dtx-loop", name));
+
+        // Get the `for="name in names"` attribute
+        var forAttr = node.attr( "for" );
+        if ( forAttr=="" ) 
+            Context.error( 'Missing for="" attribute on dtx:loop - $node', p );
+        var forCode = 'for ($forAttr) {}';
+        var propName:String = null;
+        var iterableExpr:Expr = null;
+        try {
+            var forExpr = Context.parse( forCode, p );
+            switch (forExpr.expr) {
+                case EFor( { expr: EIn(e1,e2), pos: _ }, _ ): 
+                    switch (e1.expr) {
+                        case EConst(CIdent(n)): 
+                            propName = n;
+                        case _: 
+                            throw 'Was expecting EConst(CIdent(propName)), but got $e1';
+                    }
+                    iterableExpr = e2;
+                case _: 
+                    throw "Was expecting EFor, got something else";
+            }
+        }
+        catch (e:Dynamic)
+            Context.error('Error parsing for="$forAttr" in $typeName loop ($widgetClass template). \nError: $e \nNode: ${node.html()}', p);
+
+        // Extract the ClassType for the chosen type
+        var partialClassType:ClassType;
+        try {
+            switch ( Context.getType(typeName) )
+            {
+                case TInst(t,_):
+                    // get the type
+                    partialClassType = t.get();
+                default: 
+                    throw "Asked for loop partial " + typeName + " but that doesn't appear to be a class";
+            }
+        } catch (e:String) {
+            if ( e=="Type not found '" + typeName + "'" ) 
+                Context.error('Unable to find Loop Widget/Partial "$typeName" in widget template $widgetClass', p);
+            else throw e;
+        }
+
+        var typeAttr = node.attr("type");
+        if ( typeAttr=="" )
+            Context.error( 'No type specified for <dtx:loop for="$forAttr"> in $typeName loop ($widgetClass template). \nNode: ${node.html()}', p );
+
+        // Set up a public field in the widget, public var $loopName(default,set_$name):WidgetLoop<$inputCT,$widgetCT>
+        var widgetTypePath = TPath({
+            sub: null,
+            params: [],
+            pack: partialClassType.pack,
+            name: typeName
+        });
+        var inputTypeParam = TPType( Context.toComplexType(Context.getType(typeAttr)) );
+        var widgetTypeParam = TPType( widgetTypePath );
+        var loopPropType = TPath( {
+            sub: null,
+            params: [ inputTypeParam, widgetTypeParam ],
+            pack: ["dtx","widget"],
+            name: "WidgetLoop"
+        });
+        var prop = BuildTools.getOrCreateProperty(name, loopPropType, false, true);
+        
+        // Add some lines to the setter
+        var variableRef = name.resolve();
+        var partialTypeRef = typeName.resolve();
+        var selector = ("[data-dtx-loop='" + name + "']").toExpr();
+        var linesToAdd = macro {
+            // Either replace the existing partial, or if none set, replace the <div data-dtx-partial='name'/> placeholder
+            var toReplace = ($variableRef != null) ? $variableRef : dtx.collection.Traversing.find(this, $selector);
+            dtx.collection.DOMManipulation.replaceWith(toReplace, v);
+        }
+        BuildTools.addLinesToFunction(prop.setter, linesToAdd, 0);
+
+        // Get the join information
+        var join = node.attr("join");
+        var finalJoin = node.attr("finaljoin");
+        var afterJoin = node.attr("after");
+        var joinExpr = Context.makeExpr( (join!="") ? join : null, p );
+        var finalJoinExpr = Context.makeExpr( (finalJoin!="") ? finalJoin : null, p );
+        var afterJoinExpr = Context.makeExpr( (afterJoin!="") ? afterJoin : null, p );
+
+        // Get the init function, instantiate our loop object
+        var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
+        var propNameExpr = Context.makeExpr( propName, p );
+        linesToAdd = macro {
+            // new WidgetLoop($Partial, $varName, propmap=null, automap=true)
+            $variableRef = new dtx.widget.WidgetLoop($partialTypeRef, $propNameExpr, null, true);
+            $variableRef.setJoins($joinExpr, $finalJoinExpr, $afterJoinExpr);
+        };
+        BuildTools.addLinesToFunction(initFn, linesToAdd);
+
+        // Find any variables mentioned in the iterable / for loop, and add to our setter
+        var idents =  iterableExpr.extractIdents();
+        var setterExpr = macro $variableRef.setList( $iterableExpr );
+        if ( idents.length>0 ) 
+            // If it has variables, set it in all setters
+            addExprToAllSetters(setterExpr,idents, true);
+        else
+            // If it doesn't, set it in init
+            BuildTools.addLinesToFunction(initFn, setterExpr);
     }
 
     static function getInitFnTemplate()

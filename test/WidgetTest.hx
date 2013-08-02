@@ -6,6 +6,7 @@ import dtx.DOMCollection;
 import dtx.DOMNode;
 import dtx.widget.Widget;
 using Detox;
+using StringTools;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -585,6 +586,112 @@ class WidgetTest
 		w.amITall = false;
 		Assert.areEqual('First letter is A, my last birthday was 23<span class="hidden"> and I am not tall</span>.', w.innerHTML());
 	}
+
+	@Test 
+	public function widgetLoopsDefinedPartial()
+	{
+		var w = new widgets.LoopsInWidget.LoopInlineArrayWithImportedPartial();
+		var items = w.find("li");
+		Assert.areEqual(5, items.length);
+		Assert.areEqual("Defined 1", items.eq(0).text());
+		Assert.areEqual("Defined 2", items.eq(1).text());
+		Assert.areEqual("Defined 3", items.eq(2).text());
+		Assert.areEqual("Defined 4", items.eq(3).text());
+		Assert.areEqual("Defined 5", items.eq(4).text());
+	}
+
+	@Test 
+	public function widgetLoopsRelativePartial()
+	{
+		var w = new widgets.LoopsInWidget.LoopInlineArrayWithRelativePartial();
+		var items = w.find("li");
+		Assert.areEqual(5, items.length);
+		Assert.areEqual("Relative 1", items.eq(0).text());
+		Assert.areEqual("Relative 2", items.eq(1).text());
+		Assert.areEqual("Relative 3", items.eq(2).text());
+		Assert.areEqual("Relative 4", items.eq(3).text());
+		Assert.areEqual("Relative 5", items.eq(4).text());
+	}
+
+	@Test 
+	public function widgetLoopsInlinePartial()
+	{
+		var w = new widgets.LoopsInWidget.LoopInlineArrayWithInlinePartial();
+		var items = w.find("li");
+		Assert.areEqual(5, items.length);
+		Assert.areEqual("Inline 1", items.eq(0).text());
+		Assert.areEqual("Inline 2", items.eq(1).text());
+		Assert.areEqual("Inline 3", items.eq(2).text());
+		Assert.areEqual("Inline 4", items.eq(3).text());
+		Assert.areEqual("Inline 5", items.eq(4).text());
+	}
+
+	@Test 
+	public function widgetLoopsInlineNamedPartial()
+	{
+		var w = new widgets.LoopsInWidget.InlineNamedPartial();
+		var items = w.find("li");
+		Assert.areEqual(3, items.length);
+		Assert.areEqual("Inline Named Jason", items.eq(0).text());
+		Assert.areEqual("Inline Named Clare", items.eq(1).text());
+		Assert.areEqual("Inline Named Aaron", items.eq(2).text());
+		
+		w.myLoop.addItem("Michael");
+		var items = w.find("li");
+		Assert.areEqual(4, items.length);
+		Assert.areEqual("Inline Named Michael", items.eq(3).text());
+		
+		w.myLoop.setList(["Haxe","Detox","Ufront"]);
+		var items = w.find("li");
+		Assert.areEqual(3, items.length);
+		Assert.areEqual("Inline Named Haxe", items.eq(0).text());
+		Assert.areEqual("Inline Named Detox", items.eq(1).text());
+		Assert.areEqual("Inline Named Ufront", items.eq(2).text());
+	}
+
+	@Test 
+	public function widgetLoopFromMemberVariable()
+	{
+		var w = new widgets.LoopsInWidget.LoopFromMemberVariable();
+		var items = w.find("li");
+		Assert.areEqual(3, items.length);
+		Assert.areEqual("Member Iter 0", items.eq(0).text());
+		Assert.areEqual("Member Iter 0.1", items.eq(1).text());
+		Assert.areEqual("Member Iter 0.2", items.eq(2).text());
+
+		w.memberArray = [0.3,0.4];
+		var items = w.find("li");
+		Assert.areEqual(2, items.length);
+		Assert.areEqual("Member Iter 0.3", items.eq(0).text());
+		Assert.areEqual("Member Iter 0.4", items.eq(1).text());
+	}
+
+	@Test 
+	public function widgetLoopFromComplexExpr()
+	{
+		var w = new widgets.LoopsInWidget.LoopFromComplexExpr();
+		var items = w.find("li");
+		Assert.areEqual(6, items.length);
+		Assert.areEqual("Complex Iter Expr 0", items.eq(0).text());
+		Assert.areEqual("Complex Iter Expr 1", items.eq(1).text());
+		Assert.areEqual("Complex Iter Expr 2", items.eq(2).text());
+		Assert.areEqual("Complex Iter Expr 4", items.eq(3).text());
+		Assert.areEqual("Complex Iter Expr 5", items.eq(4).text());
+		Assert.areEqual("Complex Iter Expr 6", items.eq(5).text());
+
+		w.memberArray = [7,8];
+		var items = w.find("li");
+		Assert.areEqual(5, items.length);
+		Assert.areEqual("Complex Iter Expr 0", items.eq(0).text());
+		Assert.areEqual("Complex Iter Expr 1", items.eq(1).text());
+		Assert.areEqual("Complex Iter Expr 2", items.eq(2).text());
+		Assert.areEqual("Complex Iter Expr 7", items.eq(3).text());
+		Assert.areEqual("Complex Iter Expr 8", items.eq(4).text());
+	}
+
+	// Test JOINS
+	// Test multiple elements in partial
+	// Test complex objects (eg models) being looped over and parsed to the child
 
 	// @Test
 	// public function disaster()
