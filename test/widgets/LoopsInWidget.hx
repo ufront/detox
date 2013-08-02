@@ -6,7 +6,7 @@ using Detox;
 @:template("
 	<h3>Names:</h3>
 	<ul>
-		<dtx:loop partial='NumberLI' type='Int' for='number in [1,2,3,4,5]'></dtx:loop>
+		<dtx:loop partial='NumberLI' for='number in [1,2,3,4,5]'></dtx:loop>
 	</ul>
 ")
 class LoopInlineArrayWithImportedPartial extends Widget {}
@@ -14,7 +14,7 @@ class LoopInlineArrayWithImportedPartial extends Widget {}
 @:template("
 	<h3>Names:</h3>
 	<ul>
-		<dtx:loop partial='_Item' type='Int' for='number in [1,2,3,4,5]'></dtx:loop>
+		<dtx:loop partial='_Item' for='number in [1,2,3,4,5]'></dtx:loop>
 	</ul>
 	<_Item>
 		<li>Relative $number</li>
@@ -25,7 +25,7 @@ class LoopInlineArrayWithRelativePartial extends Widget {}
 @:template("
 	<h3>Names:</h3>
 	<ul>
-		<dtx:loop type='Int' for='number in [1,2,3,4,5]'>
+		<dtx:loop for='number in [1,2,3,4,5]'>
 			<li>Inline $number</li>
 		</dtx:loop>
 	</ul>
@@ -35,7 +35,38 @@ class LoopInlineArrayWithInlinePartial extends Widget {}
 @:template("
 	<h3>Names:</h3>
 	<ul>
-		<dtx:loop type='Int' for='number in [1,2,3,4,5]'>
+		<dtx:loop for='number in 0...3'>
+			<li>IntIter $number</li>
+		</dtx:loop>
+	</ul>
+")
+class LoopUsingInlineIterator extends Widget {}
+
+@:template("
+	<h3>Names:</h3>
+	<ul>
+		<dtx:loop for='name in people.keys()'>
+			<li class='${name.toLowerCase()}'>Map Key $name</li>
+		</dtx:loop>
+	</ul>
+")
+class LoopUsingMemberIterator extends Widget 
+{
+	public var people:haxe.ds.StringMap<Int>;
+	public function new()
+	{
+		super();
+		people = [
+			"Jason" => 1,
+			"Anna" => 2
+		];
+	}
+}
+
+@:template("
+	<h3>Names:</h3>
+	<ul>
+		<dtx:loop for='number in [1,2,3,4,5]'>
 			<li>Inline $number</li>
 		</dtx:loop>
 	</ul>
@@ -45,7 +76,7 @@ class LoopMemberArray extends Widget {}
 @:template("
 	<h3>Names:</h3>
 	<ul>
-		<dtx:loop type='String' for='name in [\"Jason\", \"Clare\", \"Aaron\"]' dtx-name='myLoop'>
+		<dtx:loop for='name in [\"Jason\", \"Clare\", \"Aaron\"]' dtx-name='myLoop'>
 			<li>Inline Named $name</li>
 		</dtx:loop>
 	</ul>
@@ -57,7 +88,7 @@ class InlineNamedPartial extends Widget {}
 @:template("
 	<h3>Names:</h3>
 	<ul>
-		<dtx:loop type='Float' for='number in memberArray'>
+		<dtx:loop for='number in memberArray'>
 			<li>Member Iter $number</li>
 		</dtx:loop>
 	</ul>
@@ -74,7 +105,7 @@ class LoopFromMemberVariable extends Widget
 @:template("
 	<h3>Names:</h3>
 	<ul>
-		<dtx:loop type='Int' for='number in Lambda.concat([0,1,2], memberArray)'>
+		<dtx:loop for='number in Lambda.concat([0,1,2], memberArray)'>
 			<li>Complex Iter Expr $number</li>
 		</dtx:loop>
 	</ul>

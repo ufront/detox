@@ -112,14 +112,14 @@ class Loop<T> extends DOMCollection
 	}
 	
 	/** Remove all the current items, and replace them with a new group of items. */
-	public function setList(list:Iterable<T>):Array<LoopItem<T>>
+	public function setList(list:Iter<T>):Array<LoopItem<T>>
 	{
 		empty();
 		return addList(list);
 	}
 	
 	/** Add a new group of items to the current set of items */
-	public function addList(list:Iterable<T>):Array<LoopItem<T>>
+	public function addList(list:Iter<T>):Array<LoopItem<T>>
 	{
 		var newItems = [];
 		if (list != null)
@@ -494,4 +494,13 @@ class LoopItem<T>
 		}
 		return this.join = j;
 	}
+}
+
+abstract Iter<T>(Iterator<T>) from Iterator<T> to Iterator<T> 
+{
+	inline function new(it:Iterator<T>) 
+		this = it; 
+	
+	@:from static public inline function fromIterable(it:Iterable<T>)
+		return new Iter(it.iterator());
 }

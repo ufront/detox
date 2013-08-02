@@ -689,9 +689,26 @@ class WidgetTest
 		Assert.areEqual("Complex Iter Expr 8", items.eq(4).text());
 	}
 
+	@Test 
+	public function widgetLoopsUsingIterator()
+	{
+		var w = new widgets.LoopsInWidget.LoopUsingInlineIterator();
+		var items1 = w.find("li");
+		Assert.areEqual(3, items1.length);
+		Assert.areEqual("IntIter 0", items1.eq(0).text());
+		Assert.areEqual("IntIter 1", items1.eq(1).text());
+		Assert.areEqual("IntIter 2", items1.eq(2).text());
+
+		var w2 = new widgets.LoopsInWidget.LoopUsingMemberIterator();
+		Assert.areEqual(2, w2.find("li").length);
+		Assert.areEqual("Map Key Anna", w2.find('li.anna').text());
+		Assert.areEqual("Map Key Jason", w2.find('li.jason').text());
+	}
+
 	// Test JOINS
 	// Test multiple elements in partial
-	// Test complex objects (eg models) being looped over and parsed to the child
+	// Test complex objects (eg models) being looped over and parsed to the child (and defined in the child)
+	// Multiple loops together
 
 	// @Test
 	// public function disaster()
