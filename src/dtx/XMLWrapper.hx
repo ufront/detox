@@ -271,9 +271,41 @@ class XMLWrapper
 		return html;
 	}
 
-	static public function cloneNode(xml:DOMNode, ?deep:Bool = true)
+	static public function cloneNode(xml:DOMNode, ?deep=true)
 	{
-		return Xml.parse(xml.toString()).firstChild();
+		// Just printing and parsing the string can cause some issues with different quotation marks and escaping
+		// For example, <loop for='name in ["Jason","Anna"]'> might output as <loop for="name in ["Jason","Anna"]"
+		// and so you get errors.  Try something else...
+		// return Xml.parse(xml.toString()).firstChild();
+
+		var clone = switch (xml.nodeType) {
+			case Xml.Element:
+				Xml.createElement( xml.nodeName );
+			case Xml.PCData:
+				Xml.createPCData( StringTools.htmlEscape(xml.nodeValue) );
+			case Xml.CData:
+				Xml.createCData( StringTools.htmlEscape(xml.nodeValue) );
+			case Xml.Comment:
+				Xml.createComment( StringTools.htmlEscape(xml.nodeValue) );
+			case Xml.DocType:
+				Xml.createDocType( StringTools.htmlEscape(xml.nodeValue) );
+			case Xml.ProcessingInstruction:
+				Xml.createProcessingInstruction( StringTools.htmlEscape(xml.nodeValue) );
+			case Xml.Document:
+				Xml.createDocument();
+			default: throw null;
+		}
+		if (xml.nodeType==Xml.Element) {
+			for ( attName in xml.attributes() ) {
+				clone.set( attName, xml.get(attName) );
+			}
+		}
+		if ( xml.nodeType==Xml.Element || xml.nodeType==Xml.Document ) {
+			for ( child in xml ) {
+				clone.addChild( cloneNode(child) );
+			}
+		}
+		return clone;
 	}
 }
 #end
