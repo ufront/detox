@@ -936,7 +936,7 @@ class LoopTest
 		Assert.areEqual(7, div.find("p").children(false).length);
 	}
 
-	@Test @TestDebug
+	@Test
 	public function setJoin():Void
 	{
 		// Normal

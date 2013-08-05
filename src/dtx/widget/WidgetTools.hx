@@ -538,7 +538,7 @@ class WidgetTools
                     else throw "$e2 Was not an iterable or an iterator";
 
                     iterableExpr = e2;
-                    
+
                 case _: 
                     throw "Was expecting EFor, got something else";
             }
@@ -848,7 +848,9 @@ class WidgetTools
                         switch (type)
                         {
                             case TPath(path):
-                                switch (path.name) {
+                                var name = path.name;
+                                if ( name=="StdTypes" ) name = path.sub;
+                                switch (name) {
                                     case "Bool": 
                                         initValueExpr = macro false;
                                     case "String": 

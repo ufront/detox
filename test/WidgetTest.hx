@@ -626,7 +626,7 @@ class WidgetTest
 		Assert.areEqual("Inline 5", items.eq(4).text());
 	}
 
-	@Test 
+	@Test
 	public function widgetLoopsInlineNamedPartial()
 	{
 		var w = new widgets.LoopsInWidget.InlineNamedPartial();
