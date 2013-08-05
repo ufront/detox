@@ -83,7 +83,8 @@ class Widget extends DOMCollection
 
 			for (fieldName in fieldNames) {
 				var modelValue = Reflect.getProperty(input, fieldName);
-				Reflect.setProperty(this, fieldName, modelValue);
+				if ( !Reflect.isFunction(modelValue) )
+					Reflect.setProperty(this, fieldName, modelValue);
 			}
 		}
 	}
