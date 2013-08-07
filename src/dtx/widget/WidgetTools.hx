@@ -334,6 +334,8 @@ class WidgetTools
             params: [Context.makeExpr(partialTpl, p)],
             name: ":template"
         }];
+        for ( meta in localClass.get().meta.get() ) 
+            classMeta.push(meta);
 
         // Find out if the type has already been defined
         var existingClass:Null<haxe.macro.Type>;
