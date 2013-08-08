@@ -57,9 +57,14 @@ class WidgetLoop<T, W:dtx.widget.Widget> extends Loop<T>
 		return cast super.addItem(input, pos);
 	}
 
-	public function getWidgetLoopItems():Array<WidgetLoopItem<T, W>>
+	inline public function getWidgetLoopItems():Array<WidgetLoopItem<T, W>>
 	{
 		return cast items;
+	}
+
+	override public function findItem(?input:T, ?node:DOMNode, ?collection:DOMCollection):WidgetLoopItem<T,W>
+	{
+		return cast super.findItem(input, node, collection);
 	}
 }
 
