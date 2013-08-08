@@ -709,6 +709,9 @@ class WidgetTest
 	// Test multiple elements in partial
 	// Test complex objects (eg models) being looped over and parsed to the child (and defined in the child)
 	// Multiple loops together
+	// Test loops with explicit typing
+	// Test loops with explicit typing + propertyName
+	// Test loops with elements like <td>, <tr>, etc that don't embed properly
 
 	// @Test
 	// public function disaster()
