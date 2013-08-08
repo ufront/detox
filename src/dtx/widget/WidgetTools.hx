@@ -17,6 +17,7 @@ import haxe.macro.Context;
 import haxe.macro.Format;
 import haxe.macro.Type;
 import haxe.macro.Printer;
+import haxe.ds.StringMap;
 using haxe.macro.Context;
 using haxe.macro.ExprTools;
 using tink.macro.tools.MacroTools;
@@ -28,6 +29,8 @@ using dtx.widget.BuildTools;
 
 class WidgetTools 
 {
+    static var templates:StringMap<String>;
+
     /**
     * This macro is called on ANY subclass of detox.widget.Widget
     * 
@@ -41,8 +44,10 @@ class WidgetTools
     */
     macro public static function buildWidget():Array<Field>
     {
-        var widgetPos = Context.currentPos();                   // Position where the original Widget class is declared
+        if (templates==null) templates = new StringMap();
+
         var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
+        var widgetPos = localClass.get().pos;                   // Position where the original Widget class is declared
         var fields = BuildTools.getFields();
 
         // If get_template() already exists, don't recreate it
@@ -68,6 +73,9 @@ class WidgetTools
 
                 // Create and add the get_template() field. 
                 fields.push(createField_get_template(result.template, template, widgetPos));
+
+                // Keep track of the template in case we need it later...
+                templates.set( localClass.toString(), result.template );
 
                 // If @:dtxdebug metadata is found, print the class
                 if ( BuildTools.hasClassMetadata(":dtxdebug") )
@@ -405,9 +413,6 @@ class WidgetTools
         // having a '.' in the Xml Element Name.  So replace them with a ":", and we'll substitute them
         // back here.  For now though, I couldn't get it to work so I'll leave this disabled.
         //typeName = (typeName.indexOf(':') > -1) ? typeName.replace(':', '.') : typeName;
-        
-        // Replace the call with <div data-dtx-partial="$name"></div>
-        node.replaceWith("div".create().setAttr("data-dtx-partial", name));
 
         var pack = [];
         var type = try {
@@ -419,15 +424,22 @@ class WidgetTools
         }
 
         // Alternatively use: type = Context.typeof(macro new $typeName()), see what works
+        var classType:Ref<ClassType>;
         switch (type)
         {
             case TInst(t,_):
                 // get the type
-                var classType = t.get();
-                pack = classType.pack;
+                classType = t;
+                pack = classType.get().pack;
             default: 
                 throw "Asked for partial " + typeName + " but that doesn't appear to be a class";
         }
+        
+        // Replace the call with <div data-dtx-partial="$name"></div>
+        var partialDOM = templates.get( classType.toString() ).parse();
+        var partialFirstElement = partialDOM.filter( function (n) return n.isElement() ).getNode(0);
+        var placeholderName = (partialFirstElement!=null) ? partialFirstElement.tagName() : "span";
+        node.replaceWith( placeholderName.create().setAttr("data-dtx-partial", name) );
 
         // Set up a public field in the widget, public var $name(default,set_$name):$type
         var propType = TPath({
@@ -505,48 +517,69 @@ class WidgetTools
         var p = widgetClass.get().pos;
 
         // Get the `for="name in names"` attribute
-        var forAttr = node.attr( "for" );
-        if ( forAttr=="" ) 
-            Context.error( 'Missing for="" attribute on dtx:loop - $node', p );
-        var forCode = 'for ($forAttr) {}';
-        var propName:String = null;
+        var propName:Null<String> = null;
         var loopInputCT:ComplexType;
-        var iterableExpr:Expr = null;
-        try {
-            var forExpr = Context.parse( forCode, p );
-            switch (forExpr.expr) {
-                case EFor( { expr: EIn(e1,e2), pos: _ }, _ ): 
-                    switch (e1.expr) {
-                        case EConst(CIdent(n)): 
-                            propName = n;
-                        case _: 
-                            throw 'Was expecting EConst(CIdent(propName)), but got $e1';
-                    }
-                    // For "typeof" to work, it needs us to mock member variables so it knows what type they are
-                    var variablesInContext = [];
-                    for ( field in BuildTools.getFields() ) {
-                        switch (field.kind) {
-                            case FVar(ct,_), FProp(_,_,ct,_): 
-                                variablesInContext.push({ name: field.name, type: ct, expr: null });
-                            case _:
+        var iterableExpr:Null<Expr> = null;
+        var forAttr = node.attr( "for" );
+        var typeAttr = node.attr( "type" );
+        if ( forAttr!="" ) {
+            var forCode = 'for ($forAttr) {}';
+            try {
+                var forExpr = Context.parse( forCode, p );
+                switch (forExpr.expr) {
+                    case EFor( { expr: EIn(e1,e2), pos: _ }, _ ): 
+                        switch (e1.expr) {
+                            case EConst(CIdent(n)): 
+                                propName = n;
+                            case _: 
+                                throw 'Was expecting EConst(CIdent(propName)), but got $e1';
                         }
-                    }
-                    var itType = e2.typeof(variablesInContext).sure();
+                        // For "typeof" to work, it needs us to mock member variables so it knows what type they are
+                        var variablesInContext = [];
+                        for ( field in BuildTools.getFields() ) {
+                            switch (field.kind) {
+                                case FVar(ct,_), FProp(_,_,ct,_): 
+                                    variablesInContext.push({ name: field.name, type: ct, expr: null });
+                                case _:
+                            }
+                        }
+                        var itType = e2.typeof(variablesInContext).orUse(null);
+                        if ( itType!=null ) {
+                            if ( Context.unify(itType, Context.getType("Iterable")) ) {
+                                var t = (macro $e2.iterator().next()).typeof(variablesInContext).orUse(null);
+                                loopInputCT = (t!=null) ? t.toComplexType() : null;
+                            }
+                            else if ( Context.unify(itType, Context.getType("Iterator")) ) {
+                                var t = (macro $e2.next()).typeof(variablesInContext).orUse(null);
+                                loopInputCT = (t!=null) ? t.toComplexType() : null;
+                            }
+                            else throw "$e2 Was not an iterable or an iterator";
+                        }
 
-                    if ( Context.unify(itType, Context.getType("Iterable")) )
-                        loopInputCT = (macro $e2.iterator().next()).typeof(variablesInContext).sure().toComplexType();
-                    else if ( Context.unify(itType, Context.getType("Iterator")) )
-                        loopInputCT = (macro $e2.next()).typeof(variablesInContext).sure().toComplexType();
-                    else throw "$e2 Was not an iterable or an iterator";
-
-                    iterableExpr = e2;
-
-                case _: 
-                    throw "Was expecting EFor, got something else";
+                        iterableExpr = e2;
+                    case _: 
+                        throw "Was expecting EFor, got something else";
+                }
             }
+            catch (e:Dynamic)
+                Context.error('Error parsing for="$forAttr" in loop ($widgetClass template). \nError: $e \nNode: ${node.html()}', p);
         }
-        catch (e:Dynamic)
-            Context.error('Error parsing for="$forAttr" in loop ($widgetClass template). \nError: $e \nNode: ${node.html()}', p);
+        if ( loopInputCT==null && typeAttr!="" ) {
+            var typeName = "";
+            if ( typeAttr.indexOf(":") > -1 ) {
+                var parts = typeAttr.split(":");
+                propName = parts[0].trim();
+                typeName = parts[1].trim();
+            }
+            else {
+                typeName = typeAttr.trim();
+            }
+            var type = Context.getType( typeName );
+            if (type==null) 
+                Context.error('Error finding type type="$typeAttr" in loop ($widgetClass template). \nType $typeName was not found.  \nNode: ${node.html()}', p);
+            loopInputCT = type.toComplexType();
+        }
+        if ( loopInputCT==null ) Context.error( 'Missing for="" or type="" attribute on dtx:loop - $node', p );
 
         // Check if a partial is specified, if not, use InnerHTML to define a new partial 
         var partialTypeName = node.attr("partial");
@@ -556,17 +589,19 @@ class WidgetTools
                 Context.error( 'You must define either a partial="" attribute, or have child elements for the dtx:loop in widget $widgetClass', p );
             
             // Process the template as a partial declaration
-            partialTypeName = "_LoopPartial_" + name.charAt(0).toUpperCase() + name.substr(1);
+            partialTypeName = "_" + name.charAt(0).toUpperCase() + name.substr(1);
 
-            var propertyToAdd:Field = {
-                pos: p,
-                name: propName,
-                meta: [],
-                kind: FVar(loopInputCT,null),
-                doc: null,
-                access: [APublic]
-            };
-            processPartialDeclarations( partialTypeName, node, [ propertyToAdd ] );
+            if ( propName!=null ) {
+                var propertyToAdd:Field = {
+                    pos: p,
+                    name: propName,
+                    meta: [],
+                    kind: FVar(loopInputCT,null),
+                    doc: null,
+                    access: [APublic]
+                };
+                processPartialDeclarations( partialTypeName, node, [ propertyToAdd ] );
+            }
         }
         
         // Set up the full name for relative partials 
@@ -574,19 +609,16 @@ class WidgetTools
         {
             partialTypeName = widgetClass.get().name + partialTypeName;
         }
-        
-        // Replace the call with <div data-dtx-loop="$name"></div>
-        node.replaceWith("div".create().setAttr("data-dtx-loop", name));
 
 
         // Extract the ClassType for the chosen type
-        var partialClassType:ClassType;
+        var partialClassType:Ref<ClassType>;
         try {
             switch ( Context.getType(partialTypeName) )
             {
                 case TInst(t,_):
                     // get the type
-                    partialClassType = t.get();
+                    partialClassType = t;
                 default: 
                     throw "Asked for loop partial " + partialTypeName + " but that doesn't appear to be a class";
             }
@@ -595,12 +627,18 @@ class WidgetTools
                 Context.error('Unable to find Loop Widget/Partial "$partialTypeName" in widget template $widgetClass', p);
             else throw e;
         }
+        
+        // Replace the call with <div data-dtx-loop="$name"></div>
+        var partialDOM = templates.get( partialClassType.toString() ).parse();
+        var partialFirstElement = partialDOM.filter( function (n) return n.isElement() ).getNode(0);
+        var placeholderName = (partialFirstElement!=null) ? partialFirstElement.tagName() : "span";
+        node.replaceWith( placeholderName.create().setAttr("data-dtx-loop", name) );
 
         // Set up a public field in the widget, public var $loopName(default,set_$name):WidgetLoop<$inputCT,$widgetCT>
         var widgetTypePath = TPath({
             sub: null,
             params: [],
-            pack: partialClassType.pack,
+            pack: partialClassType.get().pack,
             name: partialTypeName
         });
         var inputTypeParam = TPType( loopInputCT );
@@ -643,21 +681,23 @@ class WidgetTools
         BuildTools.addLinesToFunction(initFn, linesToAdd);
 
         // Find any variables mentioned in the iterable / for loop, and add to our setter
-        var idents = iterableExpr.extractIdents();
-        var setterExpr = macro 
-            try 
-                $variableRef.setList( $iterableExpr ) 
-            catch (e:Dynamic) {
-                if ($variableRef!=null)
-                    $variableRef.empty();
-            }
+        if ( iterableExpr!=null ) {
+            var idents = iterableExpr.extractIdents();
+            var setterExpr = macro 
+                try 
+                    $variableRef.setList( $iterableExpr ) 
+                catch (e:Dynamic) {
+                    if ($variableRef!=null)
+                        $variableRef.empty();
+                }
 
-        if ( idents.length>0 ) 
-            // If it has variables, set it in all setters
-            addExprToAllSetters(setterExpr,idents, true);
-        else
-            // If it doesn't, set it in init
-            BuildTools.addLinesToFunction(initFn, setterExpr);
+            if ( idents.length>0 ) 
+                // If it has variables, set it in all setters
+                addExprToAllSetters(setterExpr,idents, true);
+            else
+                // If it doesn't, set it in init
+                BuildTools.addLinesToFunction(initFn, setterExpr);
+        }
     }
 
     static function getInitFnTemplate()
