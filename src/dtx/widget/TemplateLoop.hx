@@ -27,6 +27,6 @@ class TemplateLoop<T> extends Loop<T>
 	override function generateItem(input:T):LoopItem<T>
 	{
 		var html = this.template(input);
-		return new LoopItem(input, html.parse());
+		return new LoopItem(this, input, html.parse());
 	}
 }

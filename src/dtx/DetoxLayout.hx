@@ -9,9 +9,9 @@ class DetoxLayout extends dtx.DOMCollection
 	public var dtd:String;
 	public var head:Node;
 	public var body:Node;
-	public var title(get_title, set_title):String;
-	public var content(default, set_content):Nodes;
-	public var navigation(default, set_navigation):Nodes;
+	public var title(get, set):String;
+	public var content(get, set):Nodes;
+	public var navigation(get, set):Nodes;
 
 	var contentDOM:Node;
 	var titleDOM:Node;
@@ -115,6 +115,11 @@ class DetoxLayout extends dtx.DOMCollection
 		return newTitle;
 	}
 
+	function get_content():dtx.DOMCollection
+	{
+		return contentDOM.children();
+	}
+
 	function set_content(newContent:dtx.DOMCollection)
 	{
 		contentDOM.empty();
@@ -122,10 +127,15 @@ class DetoxLayout extends dtx.DOMCollection
 		return newContent;
 	}
 
+	function get_navigation():dtx.DOMCollection
+	{
+		return navigationDOM.children();
+	}
+
 	function set_navigation(newNavigation:dtx.DOMCollection)
 	{
-		contentDOM.empty();
-		contentDOM.append(newNavigation);
+		navigationDOM.empty();
+		navigationDOM.append(newNavigation);
 		return newNavigation;
 	}
 }

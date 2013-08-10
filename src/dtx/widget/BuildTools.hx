@@ -469,6 +469,19 @@ class BuildTools
         return fileContents;
     }
 
+    /**
+
+    **/
+    public static function getFieldsFromAnonymousCT(ct:ComplexType):Array<Field> {
+        switch (ct) {
+            case TAnonymous(fields): 
+                return fields;
+            case _:
+                throw 'Was Expecting TAnonymous, but got something else: $ct';
+                return null;
+        }
+    }
+
     /** 
     * Generate a function call
     * Only tested with functions that are part of the same class so far... 

@@ -4,8 +4,8 @@
   "tags": ["cross","dom","xml","js","domtools","dtx","detox"],
   "description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
   "contributors": ["jason"],
-  "releasenote": "Many improvements to widgets, see git history. Booleans used in attributes must now be explicitly declared, but you can now do `<div dtx-show='title.length>0'>$title</div>`.  Also changed the way it finds relevant elements, so performance will be improved, it is less error prone (and unit tests to prove it), and there is now no pollution of your HTML with `data-dtx-id` attributes.  See Github commits for more info.",
-  "version": "0.11.0",
+  "releasenote": "Better support for loops and defining loops inline in your templates.  See git commits for more info.  Some bug fixes too. Probably will be the last version before I do a major refactor to use Abstracts instead of 'using' mixins, so compatibility may break after this version.",
+  "version": "0.12.0",
   "url": "https://github.com/jasononeil/detox",
   "classPath": "src/",
   "dependencies": {

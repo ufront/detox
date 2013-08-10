@@ -62,6 +62,30 @@ class InterpolationFieldAccessAsFunctionArg extends Widget {
 	public var person:{ name:String, email:String };
 }
 
+@:template("<p>$name, $age and $amITall</p>")
+class InterpolationWithPrintFields extends Widget 
+{
+	public var name:String;
+	public var age:Int;
+	public var amITall:Bool;
+
+	function print_name() return 'My name is $name';
+	function print_age() return 'I am $age years old';
+	function print_amITall() return amITall ? "I am tall" : "I am not tall";
+}
+
+@:template("<p>First letter is ${name.charAt(0)}, my last birthday was ${Math.floor(age)}<span dtx-show='amITall'> and I am $amITall tall</span>.</p>")
+class InterpolationWithPrintFieldsComplex extends Widget 
+{
+	public var name:String;
+	public var age:Float;
+	public var amITall:Bool;
+
+	function print_name() return 'DoNotPrint';
+	function print_age() return 'DoNotPrint';
+	function print_amITall() return amITall ? "definitely" : "not";
+}
+
 class Person {
 
 	public var firstName:String;
