@@ -60,7 +60,7 @@ abstract Nodes (Array<Node>)
 	}
 
 	/** 
-	Cast from `Array<Xml>` to `dtx.Nodes`. 
+	Cast from `Iterable<Xml>` to `dtx.Nodes`. 
 
 	On Javascript this will create a new object by re-parsing the Xml code.  On 
 	other targets it will use the same underlying object.
@@ -96,18 +96,6 @@ abstract Nodes (Array<Node>)
 			return [ for (x in this) x ];
 		#end
 	}
-	
-	/** 
-	Cast from `dtx.widget.Loop` to `dtx.Nodes` 
-	**/
-	@:from public static inline function fromLoop<T>(l:dtx.widget.Loop<T>)
-		return l.nodes;
-	
-	/** 
-	Cast from `dtx.widget.Widget` to `dtx.Nodes` 
-	**/
-	@:from public static inline function fromWidget(w:dtx.widget.Widget)
-		return w.nodes;
 
 	#if js
 		/** Cast from `js.html.Node` to `dtx.Nodes` **/
@@ -143,7 +131,7 @@ abstract Nodes (Array<Node>)
 		return this.length;
 
 	/** An iterator to loop over all Node items in this collection **/
-	public function iterator():Iterator<Node>
+	inline public function iterator():Iterator<Node>
 		return this.iterator();
 
 	/** 
@@ -209,15 +197,17 @@ abstract Nodes (Array<Node>)
 	**/
 	public function addCollection( collection:Iterable<Node>, ?elementsOnly=false ):Nodes {
 		if ( collection!=null ) for ( n in collection ) {
-			#if (neko || cpp)
-				// This is a workaround for a glitch in neko where parse("<!-- Comment -->") generates
-				// a collection with 2 nodes - the comment and an empty text node.  Not sure if it comes
-				// from a child of these or from neko's XML parser... It sometimes shows up elsewhere too.
-				// I think it's safe to always remove an empty text node...
-				// Note - also happens on CPP.
-				if (n.isTextNode() && n.nodeValue == "") return this;
-			#end
-			add( n, elementsOnly );
+			if (n!=null) {
+				#if (neko || cpp)
+					// This is a workaround for a glitch in neko where parse("<!-- Comment -->") generates
+					// a collection with 2 nodes - the comment and an empty text node.  Not sure if it comes
+					// from a child of these or from neko's XML parser... It sometimes shows up elsewhere too.
+					// I think it's safe to always remove an empty text node...
+					// Note - also happens on CPP.
+					if (n.isTextNode() && n.nodeValue == "") continue;
+				#end
+				add( n, elementsOnly );
+			}
 		}
 		return this;
 	}
@@ -281,6 +271,16 @@ abstract Nodes (Array<Node>)
 	public inline function filter(fn:Node->Bool):Nodes {
 		return (fn!=null) ? this.filter(fn) : this.copy();
 	}
+
+	/**
+	Run a map function over the collection.
+
+	The map takes a Node, and can return any other type.  
+
+	It will return an Array of whatever type your function produces.  If you map to another Array of <Node> objects, you will need to cast it from Array<Node> into Nodes to continue using it as a Nodes collection.
+	**/
+	inline public function map<T>(fn:Node->T):Array<T>
+		return (fn!=null) ? this.map(fn) : cast this.copy();
 
 	/** 
 	Return a new Nodes collection, with each Node from the current collection being cloned into the new one.
@@ -618,8 +618,8 @@ abstract Nodes (Array<Node>)
 
 	Read only.
 	**/
-	public var firstChild(get,never):Nodes;
-	inline function get_firstChild():Nodes {
+	public var firstChildren(get,never):Nodes;
+	inline function get_firstChildren():Nodes {
 		var f:Nodes = [];
 		for ( n in this ) f.add( n.firstChild );
 		return f;
@@ -633,8 +633,8 @@ abstract Nodes (Array<Node>)
 
 	Read only.
 	**/
-	public var firstElement(get,never):Nodes;
-	inline function get_firstElement():Nodes {
+	public var firstElements(get,never):Nodes;
+	inline function get_firstElements():Nodes {
 		var f:Nodes = [];
 		for ( n in this ) f.add( n.firstElement, true );
 		return f;
@@ -648,8 +648,8 @@ abstract Nodes (Array<Node>)
 
 	Read only.
 	**/
-	public var lastChild(get,never):Nodes;
-	inline function get_lastChild():Nodes {
+	public var lastChildren(get,never):Nodes;
+	inline function get_lastChildren():Nodes {
 		var f:Nodes = [];
 		for ( n in this ) f.add( n.lastChild );
 		return f;
@@ -663,8 +663,8 @@ abstract Nodes (Array<Node>)
 
 	Read only.
 	**/
-	public var lastElement(get,never):Nodes;
-	inline function get_lastElement():Nodes {
+	public var lastElements(get,never):Nodes;
+	inline function get_lastElements():Nodes {
 		var f:Nodes = [];
 		for ( n in this ) f.add( n.lastElement, true ); 
 		return f;

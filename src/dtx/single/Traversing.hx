@@ -33,7 +33,7 @@ class Traversing
 	/** Return a collection of all child nodes of the current node. */
 	static public function children(node:Node, ?elementsOnly = true):Nodes
 	{
-		var children:Nodes = null;
+		var children:Nodes = [];
 		if (node != null && node.isElement())
 		{
 			// Add any child elements
@@ -42,7 +42,6 @@ class Traversing
 				children = Nodes.fromNodeList(node.toDom().childNodes);
 			#else 
 				// With Xml, "node" itself is iterable, so we can just pass that
-				children = [];
 				for(c in node.toXml()) {
 					children.add(c, elementsOnly);
 				}
@@ -180,8 +179,7 @@ class Traversing
 				// We should match the querySelectorAll() functionality from JS, which
 				// only searches descendant nodes.  Therefore, remove the current node
 				// if it was returned as a match.
-				results.remove(node);
-				newDOMCollection = results;
+				newDOMCollection = [ for (n in results) if (n!=node && n!=null) n ];
 			#else 
 				throw "Sorry, our selector engine doesn't currently work in macros, so you can't use find()";
 			#end

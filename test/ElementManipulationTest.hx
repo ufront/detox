@@ -578,8 +578,8 @@ class ElementManipulationTest
 		Assert.areEqual(h2.text, newH2.text);
 	}
 
-	@Test 
-	function testIndexNormal():Void 
+	@Test
+	public function testIndexNormal():Void 
 	{
 		Assert.areEqual(1, h1.index);
 		Assert.areEqual(3, h2.index);
@@ -588,14 +588,14 @@ class ElementManipulationTest
 		Assert.areEqual(0, child.index);
 	}
 
-	@Test 
-	function testIndexNull():Void 
+	@Test
+	public function testIndexNull():Void 
 	{
 		Assert.areEqual(-1, nullnode.index);
 	}
 
-	@Test 
-	function testChaining():Void 
+	@Test
+	public function testChaining():Void 
 	{
 		var originalElement:Node = "div".create().setAttr("id", "original");
 		var returnedElement:Node;

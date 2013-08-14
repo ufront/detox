@@ -740,15 +740,15 @@ class WidgetTest
 
 class SimpleTestWidget extends dtx.widget.Widget
 {
-	var _tpl:String;
-	public function new(tpl:String)
-	{
-		_tpl = tpl;
-		super();
-	}
+	// var _tpl:String;
+	// public function new(tpl:String)
+	// {
+	// 	_tpl = tpl;
+	// 	super();
+	// }
 
-	override function get_template()
-	{
-		return _tpl;
-	}
+	// override function get_template()
+	// {
+	// 	return _tpl;
+	// }
 }

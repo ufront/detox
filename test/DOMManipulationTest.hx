@@ -86,11 +86,11 @@ class DOMManipulationTest
 
 		sampleNode = "<i>Element</i>".parse().getNode();
 		sampleListItem = "<li class='sample'>Sample</li>".parse().getNode();
-		sampleDOMCollection = "<p class='1'><i class='target'>i</i></p><p class='2'><i class='target'>i</i></p>".parse();
+		sampleDOMCollection = "<p class='p1'><i class='target'>i</i></p><p class='p2'><i class='target'>i</i></p>".parse();
 		sampleDocument.append(sampleDOMCollection);
 
 		insertSiblingTargetDOMCollection = sampleDOMCollection.find('i.target');
-		insertSiblingTargetNode = sampleDOMCollection.firstElement.find('i.target').getNode();
+		insertSiblingTargetNode = sampleDOMCollection.find('.p1 i.target').getNode();
 		insertSiblingContentDOMCollection = "<b class='content'>1</b><b class='content'>2</b>".parse();
 		insertSiblingContentNode = insertSiblingContentDOMCollection.getNode(0);
 	}
@@ -132,10 +132,7 @@ class DOMManipulationTest
 	@Test 
 	public function appendCollection()
 	{
-		trace (sampleNode);
-		trace (emptyNode);
 		emptyNode.append(sampleNode);
-		trace (emptyNode);
 		Assert.areEqual(1, emptyNode.elements.length);
 		Assert.areEqual(1, emptyNode.find("i").length);
 
@@ -162,13 +159,13 @@ class DOMManipulationTest
 		Assert.areEqual("", emptyNode.innerHTML);
 	}
 
-	@Test 
+	@Test @TestDebug
 	public function prependNode()
 	{
 		// To start with, there is no .sample
 		Assert.areEqual(0, a.find(".sample").length);
 		a.prepend(sampleListItem);
-
+		
 		// Now it should exist, and it should be the first child of it's parent
 		Assert.areEqual(1, a.find(".sample").length);
 		Assert.isTrue(sampleListItem == a.elements.getNode(0));
@@ -430,7 +427,7 @@ class DOMManipulationTest
 		insertSiblingTargetNode.beforeThisInsert(insertSiblingContentDOMCollection);
 
 		// first and second should be content, third should be target
-		Assert.areEqual(3, sampleDOMCollection.firstElement.elements.length);
+		Assert.areEqual(3, sampleDOMCollection.first.elements.length);
 		Assert.isTrue(insertSiblingContentDOMCollection.getNode(0) == sampleDOMCollection[0].elements.getNode(0));
 		Assert.isTrue(insertSiblingContentDOMCollection.getNode(1) == sampleDOMCollection[0].elements.getNode(1));
 		Assert.isTrue(insertSiblingTargetNode == sampleDOMCollection[0].elements.getNode(2));
@@ -464,7 +461,7 @@ class DOMManipulationTest
 	public function afterThisInsert_Collection()
 	{
 		insertSiblingTargetNode.afterThisInsert(insertSiblingContentDOMCollection);
-
+		
 		// first should be target, second and third content
 		Assert.areEqual(3, sampleDOMCollection.first.elements.length);
 		Assert.isTrue(insertSiblingTargetNode == sampleDOMCollection[0].elements.getNode(0));
@@ -604,7 +601,7 @@ class DOMManipulationTest
 
 		// target should be removed, have no parent. Content should be in place, with correct html
 		Assert.isNull(insertSiblingTargetNode.parent);		
-		Assert.areEqual('<p class="1"><b class="content">1</b></p><p class="2"><i class="target">i</i></p>', sampleDOMCollection.html);
+		Assert.areEqual('<p class="p1"><b class="content">1</b></p><p class="p2"><i class="target">i</i></p>', sampleDOMCollection.html);
 	}
 
 	@Test 
@@ -614,7 +611,7 @@ class DOMManipulationTest
 
 		// target should be removed, have no parent. All content should be in place, correct HTML
 		Assert.isNull(insertSiblingTargetNode.parent);		
-		Assert.areEqual('<p class="1"><b class="content">1</b><b class="content">2</b></p><p class="2"><i class="target">i</i></p>', sampleDOMCollection.html);
+		Assert.areEqual('<p class="p1"><b class="content">1</b><b class="content">2</b></p><p class="p2"><i class="target">i</i></p>', sampleDOMCollection.html);
 	}
 
 	@Test 
@@ -634,10 +631,9 @@ class DOMManipulationTest
 		a2.replaceWith(null);
 
 		// a2 should be gone
-		Assert.areEqual(1, a.find("#a1").length);
-		Assert.areEqual(0, a.find("#a2").length);
-		Assert.areEqual(1, a.find("#a3").length);
 		Assert.areEqual(2, a.elements.length);
+		Assert.areEqual("a1", a.elements[0].attr("id"));
+		Assert.areEqual("a3", a.elements[1].attr("id"));
 	}
 
 	@Test 

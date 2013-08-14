@@ -661,18 +661,14 @@ abstract Node ( NodeBase )
 
 	This method returns the Node you started with, so that chaining is enabled.
 	**/
-	public function prepend( ?child:Node, ?children:Nodes ):Node {
+	public function prepend( ?childToAdd:Node, ?childrenToAdd:Nodes ):Node {
 		if ( this!=null ) {
-			if ( child!=null ) {
-				if ( hasChildNodes ) {
-					insertThisBefore( child, children.first );
-				}
-				else {
-					append( this, child );
-				}
+			if ( childToAdd!=null ) {
+				if ( hasChildNodes ) childToAdd.insertThisBefore( children.first );
+				else append( childToAdd );
 			}
-			if (children != null) {
-				children.insertThisBefore(children.first);
+			if (childrenToAdd != null) {
+				childrenToAdd.insertThisBefore(children.first);
 			}
 		}
 		return this;

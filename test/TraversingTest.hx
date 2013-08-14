@@ -87,7 +87,7 @@ class TraversingTest
 		// trace ("Tear Down");
 	}
 
-	@Test 
+	@Test
 	public function children()
 	{
 		Assert.areEqual(4, a.elements.length);
@@ -95,13 +95,13 @@ class TraversingTest
 		Assert.areEqual(7, sampleDocument.elements.length);
 	}
 
-	@Test 
+	@Test
 	public function childrenOnNull()
 	{
 		Assert.areEqual(0, nullNode.elements.length);
 	}
 
-	@Test 
+	@Test
 	public function childrenOnNonElement()
 	{
 		Assert.areEqual(0, textNode1.elements.length);
@@ -109,20 +109,20 @@ class TraversingTest
 		Assert.areEqual(0, commentNode.elements.length);
 	}
 
-	@Test 
+	@Test
 	public function childrenElementsOnly()
 	{
 		Assert.areEqual(0, h1.elements.length);
 		Assert.areEqual(1, h1.children.length);
 	}
 
-	@Test 
+	@Test
 	public function childrenOnEmptyElement()
 	{
 		Assert.areEqual(0, emptyNode.elements.length);
 	}
 
-	@Test 
+	@Test
 	public function firstChildren()
 	{
 		Assert.areEqual("a1", a.firstElement.attr('id'));
@@ -131,19 +131,19 @@ class TraversingTest
 		Assert.areEqual("level3", level2.firstElement.attr('class'));
 	}
 
-	@Test 
+	@Test
 	public function firstChildrenOnNull()
 	{
 		Assert.isNull(nullNode.firstElement);
 	}
 
-	@Test 
+	@Test
 	public function firstChildrenOnEmptyElm()
 	{
 		Assert.isNull(emptyNode.firstElement);
 	}
 
-	@Test 
+	@Test
 	public function firstChildrenOnNonElement()
 	{
 		Assert.isNull(textNode1.firstElement);
@@ -151,14 +151,14 @@ class TraversingTest
 		Assert.isNull(commentNode.firstElement);
 	}
 
-	@Test 
+	@Test
 	public function firstChildrenElementsOnly()
 	{
 		Assert.isNull(h1.firstElement);
 		Assert.areEqual("Title", h1.firstChild.text);
 	}
 
-	@Test 
+	@Test
 	public function lastChildren()
 	{
 		Assert.areEqual("a4", a.lastElement.attr('id'));
@@ -167,19 +167,19 @@ class TraversingTest
 		Assert.areEqual("level3", level2.lastElement.attr('class'));
 	}
 
-	@Test 
+	@Test
 	public function lastChildrenOnNull()
 	{
 		Assert.isNull(nullNode.lastElement);
 	}
 
-	@Test 
+	@Test
 	public function lastChildrenOnEmptyElm()
 	{
 		Assert.isNull(emptyNode.lastElement);
 	}
 
-	@Test 
+	@Test
 	public function lastChildrenOnNonElement()
 	{
 		Assert.isNull(textNode1.lastElement);
@@ -187,14 +187,14 @@ class TraversingTest
 		Assert.isNull(commentNode.lastElement);
 	}
 
-	@Test 
+	@Test
 	public function lastChildrenElementsOnly()
 	{
 		Assert.isNull(h1.elements.first);
 		Assert.areEqual("Title", h1.firstChild.text);
 	}
 
-	@Test 
+	@Test
 	public function parent()
 	{
 		Assert.isTrue(a == "#a1".find().getNode().parent);
@@ -204,7 +204,7 @@ class TraversingTest
 		Assert.areEqual("nonElements", commentNode.parent.attr('id'));
 	}
 
-	@Test 
+	@Test
 	public function parentOnNull()
 	{
 		// When we use XML, parent is already a method of the object,
@@ -214,7 +214,7 @@ class TraversingTest
 		Assert.isNull(nullNode.parent);
 	}
 
-	@Test 
+	@Test
 	public function parentOnParentNull()
 	{
 		#if js
@@ -223,10 +223,10 @@ class TraversingTest
 		var doc = Xml.createDocument();
 		#end
 		Assert.isNull(doc.parent);
-		Assert.isNull(sampleDocument.parent);
+		Assert.isNotNull(sampleDocument.parent); // it has a parent: the document it was attached to
 	}
 
-	@Test 
+	@Test
 	public function ancestors()
 	{
 		var level4 = ".level4".find().getNode();
@@ -234,20 +234,22 @@ class TraversingTest
 		var level2 = ".level2".find().getNode();
 		var level1 = ".level1".find().getNode();
 		var textNode = h1.children.getNode();
-		Assert.areEqual(4, level4.ancestors.length);
-		Assert.areEqual(3, level3.ancestors.length);
-		Assert.areEqual(2, level2.ancestors.length);
-		Assert.areEqual(1, level1.ancestors.length);
-		Assert.areEqual(2, textNode.ancestors.length);
+		
+		Assert.areEqual(5, level4.ancestors.length);
+		Assert.areEqual(4, level3.ancestors.length);
+		Assert.areEqual(3, level2.ancestors.length);
+		Assert.areEqual(2, level1.ancestors.length);
+		Assert.areEqual(1, sampleDocument.ancestors.length);
+		Assert.areEqual(3, textNode.ancestors.length);
 	}
 
-	@Test 
+	@Test
 	public function ancestorsOnNull()
 	{
 		Assert.areEqual(0, nullNode.ancestors.length);
 	}
 
-	@Test 
+	@Test
 	public function ancestorsOnParentNull()
 	{
 		#if js 
@@ -256,30 +258,30 @@ class TraversingTest
 		var doc:Node = Xml.createDocument(); 
 		#end 
 		Assert.areEqual(0, doc.ancestors.length);
-		Assert.areEqual(0, sampleDocument.ancestors.length);
+		Assert.areEqual(1, sampleDocument.ancestors.length);
 	}
 
-	@Test 
+	@Test
 	public function descendants()
 	{
 		Assert.areEqual(4, a.descendantElements.length);
 		Assert.areEqual(3, recursive.descendantElements.length);
 	}
 
-	@Test 
+	@Test
 	public function descendantsElementsOnly()
 	{
 		Assert.areEqual(13, a.descendants.length);
 		Assert.areEqual(10, recursive.descendants.length);
 	}
 
-	@Test 
+	@Test
 	public function descendantsOnNull()
 	{
 		Assert.areEqual(0, nullNode.descendantElements.length);
 	}
 
-	@Test 
+	@Test
 	public function descendantsOnNonElement()
 	{
 		Assert.areEqual(0, textNode1.descendantElements.length);
@@ -287,13 +289,13 @@ class TraversingTest
 		Assert.areEqual(0, commentNode.descendantElements.length);
 	}
 
-	@Test 
+	@Test
 	public function descendantsOnNoDescendants()
 	{
 		Assert.areEqual(0, emptyNode.descendantElements.length);
 	}
 
-	@Test 
+	@Test
 	public function next()
 	{
 		var node1 = a.find('.pickme').getNode();
@@ -310,20 +312,20 @@ class TraversingTest
 		Assert.areEqual(textNode2.val, commentNode.next.val);
 	}
 
-	@Test 
+	@Test
 	public function nextOnNull()
 	{
 		Assert.isNull(nullNode.nextElement);
 	}
 
-	@Test 
+	@Test
 	public function nextWhenThereIsNoNext()
 	{
 		var lastLi = a.elements.getNode(3);
 		Assert.isNull(lastLi.nextElement);
 	}
 
-	@Test 
+	@Test
 	public function prev()
 	{
 		var node1 = a.find('.pickme').getNode();
@@ -332,7 +334,7 @@ class TraversingTest
 		Assert.areEqual('b1', node2.prevElement.attr('id'));
 	}
 
-	@Test 
+	@Test
 	public function prevElementOnly()
 	{
 		Assert.isNull(commentNode.prevElement);
@@ -340,13 +342,13 @@ class TraversingTest
 		Assert.areEqual(textNode1.val, commentNode.prev.val);
 	}
 
-	@Test 
+	@Test
 	public function prevOnNull()
 	{
 		Assert.isNull(nullNode.prev);
 	}
 
-	@Test 
+	@Test
 	public function prevWhenThereIsNoPrev()
 	{
 		var lastLi = a.elements.getNode(0);
@@ -367,7 +369,7 @@ class TraversingTest
 		Assert.areEqual(3, recursive.find('div').length);
 	}
 
-	@Test 
+	@Test
 	public function findTwice() 
 	{
 		var length1 = "#recursive".find().length;
@@ -375,25 +377,28 @@ class TraversingTest
 		Assert.areEqual(length1, length2);
 	}
 
-	@Test 
+	@Test
 	public function findOnNull()
 	{
 		Assert.areEqual(0, nullNode.find('*').length);
 	}
 
-	@Test 
+	@Test
 	public function findNoResults()
 	{
 		Assert.areEqual(0, sampleDocument.find('video').length);
+		Assert.areEqual(0, sampleDocument.find('.notfound').length);
+		Assert.areEqual(0, sampleDocument.find('[notfound]').length);
+		Assert.areEqual(0, sampleDocument.find('#notfound').length);
 	}
 
-	@Test 
+	@Test
 	public function findOnWrongNodeType()
 	{
 		Assert.areEqual(0, commentNode.find('ul').length);
 	}
 
-	@Test 
+	@Test
 	public function chaining()
 	{
 	Assert.areEqual('b', a.firstElement.lastChild.parent.parent.nextElement.attr('id'));

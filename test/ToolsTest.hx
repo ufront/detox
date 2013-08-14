@@ -58,7 +58,7 @@ class ToolsTest
 		Assert.areEqual(2, "p".find().length);
 	}
 
-	@Test @TestDebug
+	@Test
 	public function create_via_using()
 	{
 		Assert.areEqual(#if js "DIV" #else "div" #end, "div".create().tagName);
@@ -139,7 +139,7 @@ class ToolsTest
 		Assert.areEqual(1, q3.length);
 	}
 
-	@Test 
+	@Test
 	public function parseComment() 
 	{
 		var q1 = Detox.parse("<!-- Just 1 comment -->");

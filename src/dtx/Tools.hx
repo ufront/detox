@@ -117,7 +117,6 @@ class Tools
 						default: "div";
 					};
 				}
-				js.Lib.debug();
 				var nodes = create(parentTag).setInnerHTML(html).children;
 				for (child in nodes) {
 					// Set the parent to a document fragment, so it's behaviour isn't odd for ancestors etc
@@ -127,7 +126,18 @@ class Tools
 			#else 
 				try {
 					var doc = Xml.parse(html);
-					return Lambda.array(doc);
+					function removeEmptyTextNodes(n:Xml) {
+						if (n.nodeType==Xml.PCData && n.nodeValue=="") {
+							n.parent.removeChild(n);
+						}
+						else if (n.nodeType==Xml.Document || n.nodeType==Xml.Element) {
+							for (child in n) {
+								removeEmptyTextNodes(child);
+							}
+						}
+					}
+					removeEmptyTextNodes(doc);
+					return [ for (node in doc) node ];
 				} catch (e:Dynamic) {
 					return [];
 				}

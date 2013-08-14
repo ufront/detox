@@ -89,7 +89,7 @@ class CollectionElementManipulationTest
 		// trace ("Tear Down");
 	}
 
-	@Test 
+	@Test
 	public function attr()
 	{
 		Assert.areEqual("first", a.attr('title'));
@@ -97,33 +97,33 @@ class CollectionElementManipulationTest
 		Assert.areEqual("pickme", b2.attr('class'));
 	}
 
-	@Test 
+	@Test
 	public function attrOnNull()
 	{
 		Assert.areEqual("", nullDOMCollection.attr('id'));
 	}
 
-	@Test 
+	@Test
 	public function attrOnEmpty()
 	{
 		Assert.areEqual("", emptyCollection.attr('id'));
 	}
 
-	@Test 
+	@Test
 	public function attrDoesNotExist()
 	{
 		Assert.areEqual("", a.attr('doesnotexist'));
 		Assert.areEqual("", a.attr('bad attribute name'));
 	}
 
-	@Test 
+	@Test
 	public function attrOnMultiple()
 	{
 		Assert.areEqual("first", lists.attr('title'));
 		Assert.areEqual("a2", pickme.attr('id'));
 	}
 
-	@Test 
+	@Test
 	public function setAttr()
 	{
 		a.setAttr('title', '1st');
@@ -133,7 +133,7 @@ class CollectionElementManipulationTest
 		Assert.areEqual("dontpickme", b2.attr('class'));
 	}
 
-	@Test 
+	@Test
 	public function setAttrMultiple()
 	{
 		lists.setAttr('title', 'thesame');
@@ -141,21 +141,21 @@ class CollectionElementManipulationTest
 		Assert.areEqual('thesame', b.attr('title'));
 	}
 
-	@Test 
+	@Test
 	public function setAttrOnNull()
 	{
 		nullDOMCollection.setAttr('id', 'myID');
 		Assert.areEqual("", nullDOMCollection.attr('id'));
 	}
 
-	@Test 
+	@Test
 	public function setAttrOnEmpty()
 	{
 		emptyCollection.setAttr('id', 'myID');
 		Assert.areEqual("", emptyCollection.attr('id'));
 	}
 
-	@Test 
+	@Test
 	public function removeAttr()
 	{
 		lists.removeAttr('title');
@@ -163,21 +163,21 @@ class CollectionElementManipulationTest
 		Assert.areEqual('', b.attr('title'));
 	}
 
-	@Test 
+	@Test
 	public function removeAttrOnNull()
 	{
 		nullDOMCollection.removeAttr('id');
 		Assert.areEqual("", nullDOMCollection.attr('id'));
 	}
 
-	@Test 
+	@Test
 	public function removeAttrOnEmpty()
 	{
 		emptyCollection.removeAttr('id');
 		Assert.areEqual("", emptyCollection.attr('id'));
 	}
 
-	@Test 
+	@Test
 	public function removeAttrThatDoesNotExist()
 	{
 		lists.removeAttr('attrdoesnotexist');
@@ -188,26 +188,26 @@ class CollectionElementManipulationTest
 		Assert.areEqual('', b.attr('attr bad input'));
 	}
 
-	@Test 
+	@Test
 	public function hasClass()
 	{
 		Assert.isFalse("#a1".find().hasClass('pickme'));
 		Assert.isTrue("#a2".find().hasClass('pickme'));
 	}
 
-	@Test 
+	@Test
 	public function hasClassOnNull()
 	{
 		Assert.isFalse(nullDOMCollection.hasClass('myclass'));
 	}
 
-	@Test 
+	@Test
 	public function hasClassOnEmpty()
 	{
 		Assert.isFalse(emptyCollection.hasClass('myclass'));
 	}
 
-	@Test 
+	@Test
 	public function hasClassMultiple()
 	{
 		Assert.isFalse(lists.hasClass('pickme'));
@@ -221,7 +221,7 @@ class CollectionElementManipulationTest
 		Assert.isFalse(q.hasClass('pickme'));
 	}
 
-	@Test public function hasClassMultipleClassNames()
+	@Testpublic function hasClassMultipleClassNames()
 	{
 		var q = "<p>My Paragraph</p>".parse();
 
@@ -249,7 +249,7 @@ class CollectionElementManipulationTest
 		Assert.isFalse(q.hasClass('third fourth'));
 	}
 
-	@Test 
+	@Test
 	public function addClass()
 	{
 		Assert.isFalse(h1.hasClass("first"));
@@ -263,7 +263,7 @@ class CollectionElementManipulationTest
 		Assert.areEqual("first second", h1.attr('class'));
 	}
 
-	@Test 
+	@Test
 	public function addClassMultipleClasses()
 	{
 		Assert.isFalse(h1.hasClass("first"));
@@ -275,7 +275,7 @@ class CollectionElementManipulationTest
 		Assert.areEqual("first second", h1.attr('class'));
 	}
 
-	@Test 
+	@Test
 	public function addClassThatAlreadyExists()
 	{
 		Assert.isFalse(h1.hasClass("test"));
@@ -287,21 +287,21 @@ class CollectionElementManipulationTest
 		Assert.areEqual("test", h1.attr('class'));
 	}
 
-	@Test 
+	@Test
 	public function addClassOnNull()
 	{
 		nullDOMCollection.addClass('myclass');
 		Assert.isFalse(nullDOMCollection.hasClass('myclass'));
 	}
 
-	@Test 
+	@Test
 	public function addClassOnEmpty()
 	{
 		emptyCollection.addClass('myclass');
 		Assert.isFalse(emptyCollection.hasClass('myclass'));
 	}
 
-	@Test 
+	@Test
 	public function removeClass()
 	{
 		Assert.isFalse(h1.hasClass("first"));
@@ -313,7 +313,7 @@ class CollectionElementManipulationTest
 		Assert.areEqual("first second", h1.attr('class'));
 	}
 
-	@Test public function removeClassMultipleClassNames()
+	@Testpublic function removeClassMultipleClassNames()
 	{
 		h1.addClass('first');
 		h1.addClass('second');
@@ -329,7 +329,7 @@ class CollectionElementManipulationTest
 		Assert.areEqual("second", h1.attr('class'));
 	}
 
-	@Test 
+	@Test
 	public function removeClassWhereSomeDoNotExist()
 	{
 		Assert.isFalse(h1.hasClass("third"));
@@ -351,21 +351,21 @@ class CollectionElementManipulationTest
 		Assert.areEqual("second", h1.attr('class'));
 	}
 
-	@Test 
+	@Test
 	public function removeClassOnNull()
 	{
 		nullDOMCollection.removeClass('myclass');
 		Assert.isFalse(nullDOMCollection.hasClass('myclass'));
 	}
 
-	@Test 
+	@Test
 	public function removeClassOnEmpty()
 	{
 		emptyCollection.removeClass('myclass');
 		Assert.isFalse(emptyCollection.hasClass('myclass'));
 	}
 
-	@Test 
+	@Test
 	public function toggleClass()
 	{
 		// It doesn't exist, toggle it on
@@ -381,7 +381,7 @@ class CollectionElementManipulationTest
 		Assert.areEqual("", h1.attr('class'));
 	}
 
-	@Test public function toggleClassMultipleClassNames()
+	@Testpublic function toggleClassMultipleClassNames()
 	{
 		h1.toggleClass('first second fourth fifth');
 		Assert.isTrue(h1.hasClass('first second fourth fifth'));
@@ -394,7 +394,7 @@ class CollectionElementManipulationTest
 		Assert.areEqual('first fifth third', h1.attr('class'));
 	}
 
-	@Test 
+	@Test
 	public function toggleClassOnNull()
 	{
 		nullDOMCollection.toggleClass('myclass');
@@ -405,7 +405,7 @@ class CollectionElementManipulationTest
 		Assert.isFalse(nullDOMCollection.hasClass('myclass'));
 	}
 
-	@Test 
+	@Test
 	public function toggleClassOnEmpty()
 	{
 		emptyCollection.toggleClass('myclass');
@@ -416,7 +416,7 @@ class CollectionElementManipulationTest
 		Assert.isFalse(emptyCollection.hasClass('myclass'));
 	}
 
-	@Test 
+	@Test
 	public function tagName()
 	{
 		Assert.areEqual("h1", h1.tagName);
@@ -424,19 +424,19 @@ class CollectionElementManipulationTest
 		Assert.areEqual("div", emptyNode.tagName);
 	}
 
-	@Test 
+	@Test
 	public function tagNameOnNull()
 	{
 		Assert.areEqual("", nullDOMCollection.tagName);
 	}
 
-	@Test 
+	@Test
 	public function tagNameOnEmpty()
 	{
 		Assert.areEqual("", emptyCollection.tagName);
 	}
 
-	@Test 
+	@Test
 	public function tagNameOnMultiple()
 	{
 		var q:Nodes = [];
@@ -446,7 +446,7 @@ class CollectionElementManipulationTest
 		Assert.areEqual("ul", q.tagName);
 	}
 
-	@Test 
+	@Test
 	public function val()
 	{
 		// The actual reading of "val" is done in single.ElementManipulation
@@ -469,19 +469,19 @@ class CollectionElementManipulationTest
 		Assert.areEqual("value1", q.val);
 	}
 
-	@Test 
+	@Test
 	public function valOnEmpty()
 	{
 		Assert.areEqual("", emptyCollection.val);
 	}
 
-	@Test 
+	@Test
 	public function valOnNull()
 	{
 		Assert.areEqual("", nullDOMCollection.val);
 	}
 
-	@Test 
+	@Test
 	public function setVal()
 	{
 		// The actual setting of "val" is done in single.ElementManipulation
@@ -510,14 +510,14 @@ class CollectionElementManipulationTest
 		Assert.areEqual("newValue", q.getNode(1).val);
 	}
 
-	@Test 
+	@Test
 	public function setValOnNull()
 	{
 		nullDOMCollection.setVal("newvalue");
 		Assert.areEqual("", nullDOMCollection.val);
 	}
 
-	@Test 
+	@Test
 	public function setValOnEmpty()
 	{
 		emptyCollection.setVal("newvalue");
@@ -531,7 +531,7 @@ class CollectionElementManipulationTest
 		Assert.areEqual("StartEnd", ".nonelements".find().text);
 	}
 
-	@Test 
+	@Test
 	public function textOnMultiple()
 	{
 		Assert.areEqual("22", pickme.text);
@@ -541,19 +541,19 @@ class CollectionElementManipulationTest
 		Assert.areEqual("StartComment1EndComment2", ".nonelements".find().children.text);
 	}
 
-	@Test 
+	@Test
 	public function textOnNull()
 	{
 		Assert.areEqual("", nullDOMCollection.text);
 	}
 
-	@Test 
+	@Test
 	public function textOnEmpty()
 	{
 		Assert.areEqual("", emptyCollection.text);
 	}
 
-	@Test 
+	@Test
 	public function setText()
 	{
 		Assert.areEqual("123123", listItems.text);
@@ -561,21 +561,21 @@ class CollectionElementManipulationTest
 		Assert.areEqual("aaaaaa", listItems.text);
 	}
 
-	@Test 
+	@Test
 	public function setTextOnNull()
 	{
 		nullDOMCollection.setText("My New Text");
 		Assert.areEqual("", nullDOMCollection.text);
 	}
 
-	@Test 
+	@Test
 	public function setTextOnEmpty()
 	{
 		emptyCollection.setText("My New Text");
 		Assert.areEqual("", emptyCollection.text);
 	}
 
-	@Test 
+	@Test
 	public function innerHTML() 
 	{
 		Assert.areEqual("123123", listItems.innerHTML);
@@ -586,19 +586,19 @@ class CollectionElementManipulationTest
 		Assert.isTrue(a.innerHTML.indexOf('</li>') > -1);
 	}
 
-	@Test 
+	@Test
 	public function innerHTMLOnNull()
 	{
 		Assert.areEqual("", nullDOMCollection.innerHTML);
 	}
 
-	@Test 
+	@Test
 	public function innerHTMLOnEmpty()
 	{
 		Assert.areEqual("", emptyCollection.innerHTML);
 	}
 
-	@Test 
+	@Test
 	public function setInnerHTML()
 	{
 		Assert.areEqual("123123", listItems.innerHTML);
@@ -610,21 +610,21 @@ class CollectionElementManipulationTest
 		Assert.areEqual(listItems.length, listItems.find("a").length);
 	}
 
-	@Test 
+	@Test
 	public function setInnerHTMLOnNull()
 	{
 		nullDOMCollection.setInnerHTML("My Inner HTML");
 		Assert.areEqual("", nullDOMCollection.innerHTML);
 	}
 
-	@Test 
+	@Test
 	public function setInnerHTMLOnEmpty()
 	{
 		emptyCollection.setInnerHTML("My Inner HTML");
 		Assert.areEqual("", emptyCollection.innerHTML);
 	}
 
-	@Test 
+	@Test
 	public function html() 
 	{
 		// slight differences in toString() rendering between JS and Xml platforms
@@ -637,7 +637,7 @@ class CollectionElementManipulationTest
 		Assert.isTrue(a.html.indexOf('</li>') > -1);
 	}
 
-	@Test 
+	@Test
 	public function htmlWithDifferentNodeTypes() 
 	{
 		// slight differences in toString() rendering between JS and Xml platforms
@@ -649,49 +649,56 @@ class CollectionElementManipulationTest
 		Assert.areEqual(expected, result);
 	}
 
-	@Test 
+	@Test
 	public function htmlOnNull()
 	{
 		Assert.areEqual("", nullDOMCollection.html);
 	}
 
-	@Test 
+	@Test
 	public function htmlOnEmpty()
 	{
 		Assert.areEqual("", emptyCollection.html);
 	}
 
-	@Test 
+	@Test
 	function testIndexNormal():Void 
 	{
 		// As long as it checks the index of the first node, we're good.
 		Assert.areEqual(3, lists.index);
 	}
 
-	@Test 
+	@Test
 	function testIndexNull():Void 
 	{
 		Assert.areEqual(-1, nullDOMCollection.index);
 	}
 
-	@Test 
+	@Test
 	function testIndexEmpty():Void 
 	{
 		Assert.areEqual(-1, emptyCollection.index);
 	}
 
-	@Test 
+	@Test
 	public function chaining()
 	{
 		// Run every possible chaining command
-		var returnValue = lists.setAttr("title", "hey").removeAttr("title")
-			.addClass("mylist").removeClass("mylist").toggleClass("mylist")
-			.setVal("value").setText("text").setInnerHTML("html");
-		trace (returnValue);
+		var returnValue = lists
+			.setAttr("title", "hey")
+			.removeAttr("title")
+			.addClass("mylist")
+			.removeClass("mylist")
+			.toggleClass("mylist")
+			// .setVal("value") // slow 0.3sec
+			// .setText("text") // slow 0.3sec
+				// combined 2.4 sec!!!
+			// .setInnerHTML("html") // mildly slow
+			;
 			
 		// Check that we're still looking at the same thing
-		// Assert.areEqual(2, returnValue.length);
-		// Assert.areEqual("a", returnValue[0].toNodes().attr('id'));
-		// Assert.areEqual("b", returnValue[1].toNodes().attr('id'));
+		Assert.areEqual(2, returnValue.length);
+		Assert.areEqual("a", returnValue[0].toNodes().attr('id'));
+		Assert.areEqual("b", returnValue[1].toNodes().attr('id'));
 	}
 }
