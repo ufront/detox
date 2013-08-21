@@ -750,15 +750,15 @@ class LoopTest
 		Assert.areEqual("<!-- Detox Loop -->A1BCD", div.innerHTML());
 		Assert.areEqual(1, l.getItemPos(i));
 
-		// // On the DOM, move the 1 to the end
-		// i.dom.insertThisAfter(l.last());
-		// Assert.areEqual("<!-- Detox Loop -->ABCD1", div.innerHTML());
-		// Assert.areEqual(1, l.getItemPos(i));
+		// On the DOM, move the 1 to the end
+		i.dom.insertThisAfter(l.last());
+		Assert.areEqual("<!-- Detox Loop -->ABCD1", div.innerHTML());
+		Assert.areEqual(1, l.getItemPos(i));
 
-		// // In the Loop, place '1' at the beginning
-		// l.moveItem(i, 0);
-		// Assert.areEqual("<!-- Detox Loop -->1ABCD", div.innerHTML());
-		// Assert.areEqual(0, l.getItemPos(i));
+		// In the Loop, place '1' at the beginning
+		l.moveItem(i, 0);
+		Assert.areEqual("<!-- Detox Loop -->1ABCD", div.innerHTML());
+		Assert.areEqual(0, l.getItemPos(i));
 	}
 
 	@Test 
@@ -934,5 +934,130 @@ class LoopTest
 
 		Assert.areEqual("<div><p>Paragraph<!-- Detox Loop -->ABCDE</p><span>Span</span></div>", div.html());
 		Assert.areEqual(7, div.find("p").children(false).length);
+	}
+
+	@Test
+	public function setJoin():Void
+	{
+		// Normal
+		var l1 = new Loop<String>();
+		l1.setJoins(", ", " and ", ". ");
+		l1.addList('A,B,C,D'.split(','));
+		Assert.areEqual(" Detox Loop A, B, C and D. ", l1.text());
+
+		// Add afterwards
+		var l2 = new Loop<String>();
+		l2.addList('A,B,C,D'.split(','));
+		Assert.areEqual(" Detox Loop ABCD", l2.text());
+		l2.setJoins(", ", " and ", ". ");
+		Assert.areEqual(" Detox Loop A, B, C and D. ", l2.text());
+
+		// Add after attached
+		var div = "div".create();
+		var l3 = new Loop<String>();
+		div.append( l3 );
+		l3.addList('A,B,C,D'.split(','));
+		Assert.areEqual("ABCD", div.text());
+		l3.setJoins(", ", " and ", ". ");
+		Assert.areEqual("A, B, C and D. ", div.text());
+
+		// Add before attached
+		var div2 = "div".create();
+		var l4 = new Loop<String>();
+		l4.addList('A,B,C,D'.split(','));
+		l4.setJoins(", ", " and ", ". ");
+		div2.append( l4 );
+		Assert.areEqual("A, B, C and D. ", div2.text());
+
+		// Change joins
+		var l5 = new Loop<String>();
+		var div3 = "div".create().append( l5 );
+		l5.addList('A,B,C,D'.split(','));
+		l5.setJoins(", ", " and ", ". ");
+		Assert.areEqual("A, B, C and D. ", div3.text());
+		l5.setJoins(" and then ", " and finally ", "!!");
+		Assert.areEqual("A and then B and then C and finally D!!", div3.text());
+
+		// null values
+		l5.setJoins(",");
+		Assert.areEqual("A,B,C,D", div3.text());
+		l5.setJoins(",",null,".");
+		Assert.areEqual("A,B,C,D.", div3.text());
+		l5.setJoins(null," and ",null);
+		Assert.areEqual("ABC and D", div3.text());
+		l5.setJoins(null,null,".");
+		Assert.areEqual("ABCD.", div3.text());
+
+		// Empty
+		l5.empty();
+		Assert.areEqual("", div3.text());
+
+		// HTML joins
+		var l6 = new Loop<String>();
+		var div4 = "div".create().append( l6 );
+		l6.addList('A,B,C,D'.split(','));
+		l6.setJoins("<hr />","<hr class='final' />","<footer />");
+		Assert.areEqual(9, div4.children(false).length);
+		Assert.areEqual(3, div4.find("hr").length);
+		Assert.areEqual(1, div4.find("hr.final").length);
+		Assert.areEqual(1, div4.find("footer").length);
+
+		// InsertItem
+
+		var l6 = new Loop<String>();
+		var div4 = "div".create().append( l6 );
+		l6.addList('A,B,C,D'.split(','));
+		l6.setJoins(", ", " and ", ". ");
+		Assert.areEqual("A, B, C and D. ", div4.text());
+		// last changes
+			l6.addItem("E");
+			Assert.areEqual("A, B, C, D and E. ", div4.text());
+		// second last changes
+			l6.addItem("F",4);
+			Assert.areEqual("A, B, C, D, F and E. ", div4.text());
+		// does not affect last or second last
+			l6.addItem("G",1);
+			Assert.areEqual("A, G, B, C, D, F and E. ", div4.text());
+
+
+		// RemoveItem
+
+		var l7 = new Loop<String>();
+		var div5 = "div".create().append( l7 );
+		l7.addList('A,B,C,D,E,F,G'.split(','));
+
+		l7.setJoins(", ", " and ", ". ");
+		Assert.areEqual("A, B, C, D, E, F and G. ", div5.text());
+		// last changes
+			l7.removeItem("G");
+			Assert.areEqual("A, B, C, D, E and F. ", div5.text());
+		// second last changes
+			l7.removeItem("E");
+			Assert.areEqual("A, B, C, D and F. ", div5.text());
+		// does not affect last or second last
+			l7.removeItem("B");
+			Assert.areEqual("A, C, D and F. ", div5.text());
+
+		// MoveItem
+
+		var l8 = new Loop<String>();
+		var div6 = "div".create().append( l8 );
+		l8.addList('A,B,C,D,E,F,G'.split(','));
+
+		var b = l8.findItem( "B" );
+		var e = l8.findItem( "E" );
+		var g = l8.findItem( "G" );
+
+		l8.setJoins(", ", " and ", ". ");
+		Assert.areEqual("A, B, C, D, E, F and G. ", div6.text());
+		// last changes
+			l8.moveItem(g, 1);
+			Assert.areEqual("A, G, B, C, D, E and F. ", div6.text());
+		// second last changes
+			l8.moveItem(e, 1);
+			Assert.areEqual("A, E, G, B, C, D and F. ", div6.text());
+		// does not affect last or second last
+			l8.moveItem(b, 1);
+			Assert.areEqual("A, B, E, G, C, D and F. ", div6.text());
 	}
 }

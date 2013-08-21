@@ -11,6 +11,8 @@
 
 package dtx.widget;
 
+import dtx.DOMCollection;
+
 using Detox;
 using Lambda;
 
@@ -87,6 +89,7 @@ class Loop<T> extends DOMCollection
 		{
 			// Remove current duplicates
 			var filteredInputs = [];
+			var removedAny = false;
 
 			// Because this loop modifies the items array, copy the array and iterate over the copy
 			for (item in items.copy())
@@ -99,30 +102,33 @@ class Loop<T> extends DOMCollection
 				else 
 				{
 					// it's a duplicate, remove it
-					removeItem(item);
+					do_removeItem(item);
+					removedAny = true;
 				}
 			}
+			if (removedAny) this.updateJoins();
 		}
 		return v;
 	}
 	
 	/** Remove all the current items, and replace them with a new group of items. */
-	public function setList(list:Iterable<T>):Array<LoopItem<T>>
+	public function setList(list:Iter<T>):Array<LoopItem<T>>
 	{
 		empty();
 		return addList(list);
 	}
 	
 	/** Add a new group of items to the current set of items */
-	public function addList(list:Iterable<T>):Array<LoopItem<T>>
+	public function addList(list:Iter<T>):Array<LoopItem<T>>
 	{
 		var newItems = [];
 		if (list != null)
 		{
 			for (item in list)
 			{
-				newItems.push(addItem(item));
+				newItems.push(do_addItem(item));
 			}
+			this.updateJoins();
 		}
 		return newItems;
 	}
@@ -132,6 +138,13 @@ class Loop<T> extends DOMCollection
 	It will check for duplicates if `preventDuplicates` is true.  You can also set the position the item is to be inserted at.  Values for `pos` are the same as insertItem() */
 	public function addItem(input:T, ?pos:Int = -1):LoopItem<T>
 	{
+		var item = do_addItem(input, pos);
+		this.updateJoins();
+		return item;
+	}
+
+	function do_addItem(input:T, ?pos:Int = -1):LoopItem<T>
+	{
 		var item:LoopItem<T> = null;
 
 		// If this is not null AND not a duplicate (or we don't care)
@@ -139,7 +152,7 @@ class Loop<T> extends DOMCollection
 		{
 			// Keep reference to both the original input and the generated item/collection
 			item = generateItem(input);
-			insertItem(item, pos);
+			do_insertItem(item, pos);
 		}
 
 		return item;
@@ -149,13 +162,20 @@ class Loop<T> extends DOMCollection
 	public function generateItem(input:T):LoopItem<T>
 	{
 		// Override this in sub classes...
-		var item = new LoopItem(input);
+		var item = new LoopItem(this, input);
 		item.dom = Std.string(input).parse();
 		return item;
 	}
 
 	/** Insert an already defined item into a specific place in the loop.  Values for pos are 0-based, so 0 will be before the first item, 1 will be after the first item, 3 will be after the 3rd etc.  By default, or if the position given is out of range, the item will be added to the end of the loop. */
 	public function insertItem(item:LoopItem<T>, ?pos:Int = -1)
+	{
+		do_insertItem(item, pos);
+		updateJoins();
+		return this;
+	}
+
+	function do_insertItem(item:LoopItem<T>, ?pos:Int = -1)
 	{
 		if (pos < 0 || pos > items.length) pos = items.length;
 		items.insert(pos,item);
@@ -206,6 +226,13 @@ class Loop<T> extends DOMCollection
 	You can either pass a specific item, or a value.  If you pass a value, the first item that matches that value will be removed. */
 	public function removeItem(?item:LoopItem<T>, ?itemValue:T)
 	{
+		do_removeItem(item, itemValue);
+		updateJoins();
+		return this;
+	}
+
+	function do_removeItem(?item:LoopItem<T>, ?itemValue:T)
+	{
 		if (item == null) item = findItem(itemValue);
 
 		if (items.has(item))
@@ -229,18 +256,20 @@ class Loop<T> extends DOMCollection
 	public function changeItem(item:LoopItem<T>, newInput:T)
 	{
 		var pos = getItemPos(item);
-		removeItem(item);
 
-		// Only add if the item exists
+		// Only change if the item exists
 		if (pos != -1)
 		{
+			do_removeItem(item);
 			// If this is not a duplicate, or we don't care, and input isn't null
 			if (newInput != null && (preventDuplicates == false || findItem(newInput) == null))
 			{
 				var newItem = generateItem(newInput);
-				insertItem(newItem, pos);
+				newItem.join = item.join;
+				do_insertItem(newItem, pos);
 			}
 		}
+		return this;
 	}
 	
 	/** Move a current item to a new position in the list. 
@@ -276,11 +305,14 @@ class Loop<T> extends DOMCollection
 			newPos = (oldPos > -1 && newPos > oldPos) ? newPos - 1 : newPos;
 
 			// remove the item from it's current location
-			removeItem(item);
+			do_removeItem(item);
 
 			// insert the item into it's new location
-			insertItem(item, newPos);
+			do_insertItem(item, newPos);
+
+			updateJoins();
 		}
+		return this;
 	}
 	
 	/** Returns the position of an item relative to other items. 
@@ -288,7 +320,7 @@ class Loop<T> extends DOMCollection
 	The position if 0-based, so the first item will have a position of 0.  This method is useful if you want to insert an item before or after an item elsewhere in the list. 
 
 	Returns -1 if the item is not found. */
-	public function getItemPos(item:LoopItem<T>):Int
+	inline public function getItemPos(item:LoopItem<T>):Int
 	{
 		return items.indexOf(item);
 	}
@@ -302,31 +334,20 @@ class Loop<T> extends DOMCollection
 	that both match - it will search for a match on either criteria. */
 	public function findItem(?input:T, ?node:DOMNode, ?collection:DOMCollection):LoopItem<T>
 	{
-		if (input != null)
-		{
+		if (input != null) {
 			var results = items.filter(function (item) { return item.input == input; });
-			if (results.length > 0)
-			{
+			if (results.length > 0) 
 				return results[0];
-			}
 		}
-		if (node != null)
-		{
+		if (node != null) {
 			var results = items.filter(function (item) { return item.dom.has(node); });
 			if (results.length > 0) return results[0];
 		}
-		if (collection != null)
-		{
-			for (n in collection)
-			{
-				for (item in items)
-				{
-					for (itemNode in item.dom)
-					{
-						if (n == itemNode)
-						{
-							return item;
-						}
+		if (collection != null) {
+			for (n in collection) {
+				for (item in items) {
+					for (itemNode in item.dom) {
+						if (n == itemNode) return item;
 					}
 				}
 			}
@@ -337,15 +358,14 @@ class Loop<T> extends DOMCollection
 	/** Empties all items from the current loop, and removes them from the DOM too. */
 	public function empty()
 	{
-		for (item in items.copy())
-		{
+		for (item in items.copy()) {
 			items.remove(item);
-			for (node in item.dom)
-			{
+			for (node in item.dom) {
 				this.collection.remove(node);
 				node.removeFromDOM();
 			}
 		}
+		return this;
 	}
 
 	/** Returns the array of the LoopItems, so each one holds a reference to the input and to the resulting DOM.  Useful for gaining access to the individual nodes/widgets and their respective inputs. 
@@ -355,9 +375,79 @@ class Loop<T> extends DOMCollection
 		return items;
 	}
 
+	/**
+		Change the joins.  Takes a String which will be parsed as Xml.  Leave null for no joins.
+
+		@param join The join HTML to be placed between each item.  Null means no joins will be inserted.
+		@param finalJoin A different piece of HTML to join the final two items.  If null, `join` will be used.
+		@param afterJoin A piece of HTML to use after the final item.  Null means nothing will be inserted after the final item.
+
+
+		
+		If the list is already populated, this will update any existing joins.
+
+		Returns the same `Loop`, so chaining is enabled
+	**/
+	public function setJoins(?join:String, ?finalJoin:String, ?afterJoin:String)
+	{
+		this.join = (join!=null) ? join.parse() : null;
+		this.finalJoin = 
+			if (finalJoin!=null) finalJoin.parse()
+			else if (join!=null) join.parse();
+			else null;
+		this.afterJoin = (afterJoin!=null) ? afterJoin.parse() : null;
+
+		updateJoins();
+
+		return this;
+	}
+
 	inline function get_numItems():Int
 	{
 		return items.length;
+	}
+
+	var join:DOMCollection;
+	var finalJoin:DOMCollection;
+	var afterJoin:DOMCollection;
+
+	function updateJoins() 
+	{
+		var totalItems = items.length;
+		var lastItem = totalItems-1;
+		var secondLastItem = totalItems-2;
+		var currentItem = 0;
+
+		var joinsHaveChanged:Null<Bool> = null;
+
+		for (item in items) {
+			if (currentItem==secondLastItem) {
+				if (finalJoin==null && item.join!=null) 
+					item.join = null;
+				else if (item.join!=finalJoin) {
+					// We need to remove "afterJoin" from the final item before we add it to this one, 
+					// otherwise `item.join = afterJoin` below will remove this item from the dom
+					items[currentItem+1].join = null;
+					item.join = finalJoin;
+				}
+			}
+			else if (currentItem==lastItem) {
+				if (afterJoin==null && item.join!=null) 
+					item.join = null;
+				else if (item.join!=afterJoin)
+					item.join = afterJoin;
+			}
+			else {
+				if ( joinsHaveChanged==null ) 
+					joinsHaveChanged = ( item.join.html()!=join.html() );
+
+				if (join==null && item.join!=null) 
+					item.join = null;
+				else if ( join!=null && (joinsHaveChanged || item.join==null || item.join==finalJoin || item.join==afterJoin) ) 
+					item.join = join.clone();
+			}
+			currentItem++;
+		}
 	}
 }
 
@@ -366,12 +456,51 @@ class Loop<T> extends DOMCollection
 It contains the original input, and the DOMCollection (which may be a widget, or just a collection of DOMNodes).  */
 class LoopItem<T>
 {
-	public function new(?input, ?dom)
+	public function new(loop, ?input, ?dom)
 	{
 		this.input = input;
 		this.dom = dom;
+		this.loop = loop;
+		this.join = null;
 	}
 
+	public var loop(default,null):Loop<T>;
 	public var input:T;
-	public var dom:dtx.DOMCollection;
+	public var dom:DOMCollection;
+	public var join(default,set):DOMCollection;
+
+	function set_join(j:DOMCollection) {
+		// Remove the old join
+		if (this.join!=null) {
+			this.join.removeFromDOM();
+			this.loop.removeFromCollection( join );
+			this.dom.removeFromCollection( join );
+		}
+
+		// Add the new join
+		if (j!=null) {
+			this.dom.afterThisInsert( j );
+
+			// Insert into the right position in the loop collection, accounting for the change
+			// in position as we add more elements to the collection.
+			var pos = this.loop.collection.indexOf(this.dom.last().getNode(0)) + 1;
+			for (node in j)
+			{
+				this.loop.collection.insert(pos, node);
+				pos++;
+			}
+
+			this.dom.addCollection( j );
+		}
+		return this.join = j;
+	}
+}
+
+abstract Iter<T>(Iterator<T>) from Iterator<T> to Iterator<T> 
+{
+	inline function new(it:Iterator<T>) 
+		this = it; 
+	
+	@:from static public inline function fromIterable(it:Iterable<T>)
+		return new Iter(it.iterator());
 }

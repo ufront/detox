@@ -74,7 +74,6 @@ class InterpolationWithPrintFields extends Widget
 	function print_amITall() return amITall ? "I am tall" : "I am not tall";
 }
 
-@:dtxdebug
 @:template("<p>First letter is ${name.charAt(0)}, my last birthday was ${Math.floor(age)}<span dtx-show='amITall'> and I am $amITall tall</span>.</p>")
 class InterpolationWithPrintFieldsComplex extends Widget 
 {

@@ -1,0 +1,25 @@
+<doc>
+	<header>
+		<title>Test Partial</title>
+	</header>
+	<section>
+		<h1>Header</h1>
+		<dtx:_Button dtx-name="btn1" btnName="'login'" big="true" />
+		<dtx:_Button dtx-name="btn2" btnName="'logout'" big="true" />
+		<dtx:_Button dtx-name="btn3" btnName="name.toUpperCase()" big="false" />
+
+		<dtx:_Profile dtx-name="profile1" profile="{ id:0, name:'Jason', over18:true }" />
+		<dtx:_Profile dtx-name="profile2" profile="person" />
+	</section>
+</doc>
+
+<_Button>
+	<a href="#" class="btn" dtx-class-big="big">$btnName</a>
+</_Button>
+
+<_Profile>
+	<div class="profile" id='${profile.id}'>
+		<h2>${profile.name}</h2>
+		<p>This person is an adult: ${profile.over18}</p>
+	</div>
+</_Profile>

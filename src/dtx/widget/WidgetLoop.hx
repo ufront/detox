@@ -49,7 +49,7 @@ class WidgetLoop<T, W:dtx.widget.Widget> extends Loop<T>
 		{
 			w.mapData(input);
 		}
-		return new WidgetLoopItem(input, w);
+		return new WidgetLoopItem(this, input, w);
 	}
 
 	override public function addItem(input:T, ?pos:Int):WidgetLoopItem<T, W>
@@ -57,9 +57,14 @@ class WidgetLoop<T, W:dtx.widget.Widget> extends Loop<T>
 		return cast super.addItem(input, pos);
 	}
 
-	public function getWidgetLoopItems():Array<WidgetLoopItem<T, W>>
+	inline public function getWidgetLoopItems():Array<WidgetLoopItem<T, W>>
 	{
 		return cast items;
+	}
+
+	override public function findItem(?input:T, ?node:DOMNode, ?collection:DOMCollection):WidgetLoopItem<T,W>
+	{
+		return cast super.findItem(input, node, collection);
 	}
 }
 
@@ -67,9 +72,9 @@ class WidgetLoopItem<T, W:dtx.widget.Widget> extends LoopItem<T>
 {
 	public var widget(get,null):W;
 
-	public function new(?input:T, ?dom:W)
+	public function new(loop:Loop<T>, ?input:T, ?dom:W)
 	{
-		super(input, dom);
+		super(loop, input, dom);
 	}
 
 	public function get_widget()

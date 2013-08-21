@@ -6,6 +6,7 @@ import dtx.DOMCollection;
 import dtx.DOMNode;
 import dtx.widget.Widget;
 using Detox;
+using StringTools;
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -344,6 +345,39 @@ class WidgetTest
 	}
 
 	@Test 
+	public function partialSetParameters()
+	{
+		var w = new widgets.PartialInSameFile5();
+		w.name = "Jason";
+
+		Assert.areEqual("login", w.btn1.text());
+		Assert.areEqual("logout", w.btn2.text());
+		Assert.areEqual("JASON", w.btn3.text());
+		Assert.areEqual(true, w.btn1.hasClass("big"));
+		Assert.areEqual(true, w.btn2.hasClass("big"));
+		Assert.areEqual(false, w.btn3.hasClass("big"));
+
+		w.name = "Anna";
+		Assert.areEqual("ANNA", w.btn3.text());
+
+		Assert.areEqual("Jason", w.profile1.find("h2").text());
+		Assert.areEqual("0", w.profile1.attr("id"));
+		Assert.areEqual("This person is an adult: true", w.profile1.find("p").text());
+
+		w.person = { id:1, name:"David", over18:false }
+		
+		Assert.areEqual("David", w.profile2.find("h2").text());
+		Assert.areEqual("1", w.profile2.attr("id"));
+		Assert.areEqual("This person is an adult: false", w.profile2.find("p").text());
+
+		w.person = { id:2, name:"Michael", over18:true }
+		
+		Assert.areEqual("Michael", w.profile2.find("h2").text());
+		Assert.areEqual("2", w.profile2.attr("id"));
+		Assert.areEqual("This person is an adult: true", w.profile2.find("p").text());
+	}
+
+	@Test 
 	public function interpolationNotSetStrings()
 	{
 		var w = new widgets.Interpolation.InterpolationBasic();
@@ -552,6 +586,132 @@ class WidgetTest
 		w.amITall = false;
 		Assert.areEqual('First letter is A, my last birthday was 23<span class="hidden"> and I am not tall</span>.', w.innerHTML());
 	}
+
+	@Test 
+	public function widgetLoopsDefinedPartial()
+	{
+		var w = new widgets.LoopsInWidget.LoopInlineArrayWithImportedPartial();
+		var items = w.find("li");
+		Assert.areEqual(5, items.length);
+		Assert.areEqual("Defined 1", items.eq(0).text());
+		Assert.areEqual("Defined 2", items.eq(1).text());
+		Assert.areEqual("Defined 3", items.eq(2).text());
+		Assert.areEqual("Defined 4", items.eq(3).text());
+		Assert.areEqual("Defined 5", items.eq(4).text());
+	}
+
+	@Test 
+	public function widgetLoopsRelativePartial()
+	{
+		var w = new widgets.LoopsInWidget.LoopInlineArrayWithRelativePartial();
+		var items = w.find("li");
+		Assert.areEqual(5, items.length);
+		Assert.areEqual("Relative 1", items.eq(0).text());
+		Assert.areEqual("Relative 2", items.eq(1).text());
+		Assert.areEqual("Relative 3", items.eq(2).text());
+		Assert.areEqual("Relative 4", items.eq(3).text());
+		Assert.areEqual("Relative 5", items.eq(4).text());
+	}
+
+	@Test 
+	public function widgetLoopsInlinePartial()
+	{
+		var w = new widgets.LoopsInWidget.LoopInlineArrayWithInlinePartial();
+		var items = w.find("li");
+		Assert.areEqual(5, items.length);
+		Assert.areEqual("Inline 1", items.eq(0).text());
+		Assert.areEqual("Inline 2", items.eq(1).text());
+		Assert.areEqual("Inline 3", items.eq(2).text());
+		Assert.areEqual("Inline 4", items.eq(3).text());
+		Assert.areEqual("Inline 5", items.eq(4).text());
+	}
+
+	@Test
+	public function widgetLoopsInlineNamedPartial()
+	{
+		var w = new widgets.LoopsInWidget.InlineNamedPartial();
+		var items = w.find("li");
+		Assert.areEqual(3, items.length);
+		Assert.areEqual("Inline Named Jason", items.eq(0).text());
+		Assert.areEqual("Inline Named Clare", items.eq(1).text());
+		Assert.areEqual("Inline Named Aaron", items.eq(2).text());
+		
+		w.myLoop.addItem("Michael");
+		var items = w.find("li");
+		Assert.areEqual(4, items.length);
+		Assert.areEqual("Inline Named Michael", items.eq(3).text());
+		
+		w.myLoop.setList(["Haxe","Detox","Ufront"]);
+		var items = w.find("li");
+		Assert.areEqual(3, items.length);
+		Assert.areEqual("Inline Named Haxe", items.eq(0).text());
+		Assert.areEqual("Inline Named Detox", items.eq(1).text());
+		Assert.areEqual("Inline Named Ufront", items.eq(2).text());
+	}
+
+	@Test 
+	public function widgetLoopFromMemberVariable()
+	{
+		var w = new widgets.LoopsInWidget.LoopFromMemberVariable();
+		var items = w.find("li");
+		Assert.areEqual(3, items.length);
+		Assert.areEqual("Member Iter 0", items.eq(0).text());
+		Assert.areEqual("Member Iter 0.1", items.eq(1).text());
+		Assert.areEqual("Member Iter 0.2", items.eq(2).text());
+
+		w.memberArray = [0.3,0.4];
+		var items = w.find("li");
+		Assert.areEqual(2, items.length);
+		Assert.areEqual("Member Iter 0.3", items.eq(0).text());
+		Assert.areEqual("Member Iter 0.4", items.eq(1).text());
+	}
+
+	@Test 
+	public function widgetLoopFromComplexExpr()
+	{
+		var w = new widgets.LoopsInWidget.LoopFromComplexExpr();
+		var items = w.find("li");
+		Assert.areEqual(6, items.length);
+		Assert.areEqual("Complex Iter Expr 0", items.eq(0).text());
+		Assert.areEqual("Complex Iter Expr 1", items.eq(1).text());
+		Assert.areEqual("Complex Iter Expr 2", items.eq(2).text());
+		Assert.areEqual("Complex Iter Expr 4", items.eq(3).text());
+		Assert.areEqual("Complex Iter Expr 5", items.eq(4).text());
+		Assert.areEqual("Complex Iter Expr 6", items.eq(5).text());
+
+		w.memberArray = [7,8];
+		var items = w.find("li");
+		Assert.areEqual(5, items.length);
+		Assert.areEqual("Complex Iter Expr 0", items.eq(0).text());
+		Assert.areEqual("Complex Iter Expr 1", items.eq(1).text());
+		Assert.areEqual("Complex Iter Expr 2", items.eq(2).text());
+		Assert.areEqual("Complex Iter Expr 7", items.eq(3).text());
+		Assert.areEqual("Complex Iter Expr 8", items.eq(4).text());
+	}
+
+	@Test 
+	public function widgetLoopsUsingIterator()
+	{
+		var w = new widgets.LoopsInWidget.LoopUsingInlineIterator();
+		var items1 = w.find("li");
+		Assert.areEqual(3, items1.length);
+		Assert.areEqual("IntIter 0", items1.eq(0).text());
+		Assert.areEqual("IntIter 1", items1.eq(1).text());
+		Assert.areEqual("IntIter 2", items1.eq(2).text());
+
+		var w2 = new widgets.LoopsInWidget.LoopUsingMemberIterator();
+		Assert.areEqual(2, w2.find("li").length);
+		Assert.areEqual("Map Key Anna", w2.find('li.anna').text());
+		Assert.areEqual("Map Key Jason", w2.find('li.jason').text());
+	}
+
+	// Test JOINS
+	// Test multiple elements in partial
+	// Test complex objects (eg models) being looped over and parsed to the child (and defined in the child)
+	// Multiple loops together
+	// Test loops with explicit typing
+	// Test loops with explicit typing + propertyName
+	// Test loops with elements like <td>, <tr>, etc that don't embed properly
 
 	// @Test
 	// public function disaster()
