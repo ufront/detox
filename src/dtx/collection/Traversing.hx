@@ -225,7 +225,7 @@ class Traversing
 							var results = engine(selector, node);
 							newDOMCollection.addCollection(results);
 						}
-					#elseif !macro
+					#else
 						// This next line is a workaround to a bug in selecthxml
 						// See http://code.google.com/p/selecthxml/issues/detail?id=2
 						// And http://code.google.com/p/selecthxml/issues/detail?id=3
@@ -238,8 +238,6 @@ class Traversing
 						results.remove(node);
 						
 						newDOMCollection.addCollection(results);
-					#else 
-						throw "Sorry, our selector engine doesn't currently work in macros, so you can't use find()";
 					#end
 				}
 			}

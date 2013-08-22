@@ -207,7 +207,7 @@ class Traversing
 					var results = engine(selector, node);
 					newDOMCollection.addCollection(results);
 				}
-			#elseif !macro
+			#else
 				var results = selecthxml.SelectDom.runtimeSelect(node, selector);
 				// SelectHxml also includes our original node in the search.
 				// We should match the querySelectorAll() functionality from JS, which
@@ -216,8 +216,6 @@ class Traversing
 				results.remove(node);
 				
 				newDOMCollection.addCollection(results);
-			#else 
-				throw "Sorry, our selector engine doesn't currently work in macros, so you can't use find()";
 			#end
 		}
 		return newDOMCollection;
