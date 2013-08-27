@@ -12,6 +12,7 @@
 package dtx.collection;
 
 import dtx.DOMNode;
+import Bean;
 
 #if (haxe_211 || haxe3)
 	import js.html.*;
