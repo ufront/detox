@@ -6,6 +6,9 @@ import Detox;
 using Detox;
 import dtx.DOMCollection;
 import dtx.DOMNode;
+#if macro 
+	import haxe.macro.Expr;
+#end
 
 /**
 * Auto generated ExampleTest for MassiveUnit. 
@@ -417,5 +420,17 @@ class CollectionTraversingTest
 	{
 		var q = "ul".find();
 		Assert.areEqual(0, q.find('video').length);
+	}
+
+	@Test
+	public function testFindInMacros()
+	{
+		Assert.areEqual("Two", macroFind());
+	}
+
+	static macro function macroFind():ExprOf<String> {
+		var doc = "<doc><ul><li>One</li><li class='special'>Two</li></ul></doc>".parse();
+		var text = doc.find("li.special").text();
+		return macro $v{text};
 	}
 }

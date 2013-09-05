@@ -8,6 +8,9 @@ import Detox;
 using Detox;
 import dtx.DOMCollection;
 import dtx.DOMNode;
+#if macro 
+	import haxe.macro.Expr;
+#end
 
 class TraversingTest 
 {
@@ -391,6 +394,18 @@ class TraversingTest
 	public function findOnWrongNodeType()
 	{
 		Assert.areEqual(0, commentNode.find('ul').length);
+	}
+
+	@Test
+	public function testFindInMacros()
+	{
+		Assert.areEqual("Two", macroFind());
+	}
+
+	static macro function macroFind():ExprOf<String> {
+		var doc = "<doc><ul><li>One</li><li class='special'>Two</li></ul></doc>".parse().getNode();
+		var text = doc.find("li.special").text();
+		return macro $v{text};
 	}
 
 	@Test 
