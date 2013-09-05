@@ -4,8 +4,8 @@
   "tags": ["cross","dom","xml","js","domtools","dtx","detox"],
   "description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
   "contributors": ["jason"],
-  "releasenote": "Add support for find() inside macros... most features should now work well in the macro context",
-  "version": "0.13.0",
+  "releasenote": "Add IDetoxLayout and a default implementation",
+  "version": "0.14.0",
   "url": "https://github.com/jasononeil/detox",
   "classPath": "src/",
   "dependencies": {
