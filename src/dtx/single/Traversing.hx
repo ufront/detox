@@ -190,7 +190,7 @@ class Traversing
 		var newDOMCollection = new DOMCollection();
 		if (node != null && ElementManipulation.isElement(node) || dtx.single.ElementManipulation.isDocument(node))
 		{
-			#if js
+			#if (js && !macro)
 				var element:DOMElement = cast node;
 				if (untyped __js__("document.querySelectorAll"))
 				{
