@@ -30,6 +30,7 @@
 -lib beanhx
 -lib tink_macro
 -lib tink_core
+-lib selecthxml
 -cp test
 -js build/js_test.js
 -D embed_js
