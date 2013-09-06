@@ -1,4 +1,4 @@
-package dtx;
+package dtx.layout;
 
 import haxe.ds.StringMap;
 using Detox;

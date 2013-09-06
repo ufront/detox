@@ -15,7 +15,7 @@ import dtx.widget.WidgetTools;
 using Detox;
 
 @:keepSub
-@:autoBuild(dtx.widget.WidgetTools.buildWidget()) 
+#if !macro @:autoBuild(dtx.widget.WidgetTools.buildWidget()) #end
 class Widget extends DOMCollection
 {
 	var _dtxWidgetNodeIndex:Array<DOMNode>;

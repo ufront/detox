@@ -50,6 +50,9 @@ typedef DOMCollection = dtx.DOMCollection;
 //    "#title".find();
 typedef Detox = dtx.Tools;
 
+// Helpers for DetoxLayout
+typedef DetoxLayoutTools = dtx.layout.DetoxLayoutTools;
+
 // 
 // Client JS only classes
 // 
