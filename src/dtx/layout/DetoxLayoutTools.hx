@@ -1,7 +1,5 @@
 package dtx.layout;
 
-import dtx.Tools;
-
 class DetoxLayoutTools 
 {
 	public static function addScript(layout:IDetoxLayout, url:String)
