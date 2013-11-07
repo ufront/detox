@@ -11,7 +11,6 @@
 
 package dtx.widget;
 
-import dtx.widget.WidgetTools;
 using Detox;
 
 @:keepSub
