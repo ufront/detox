@@ -12,85 +12,10 @@
 package dtx.single;
 
 import dtx.DOMNode;
-import Bean;
-/*
-JQuery has these methods.  I'll try break them down into core functionality and implementations of specific events
-For now I'm only testing in Firefox / W3 conforming browsers.  Almost certainly broken in IE8 and below.
-
-Core functionality
-==================
-trigger()
-triggerHandler()
-WORKING on() - addEventListener, basically
-WORKING off() - removeEventListener, basically
-WORKING one() - like on(), but runs once and removes itself
-
-
-Specific Events
-===============
-mousedown
-mouseenter
-mouseleave
-mousemove
-mouseout
-mouseover
-mouseup
-keydown
-keypress
-keyup
-hover() - 
-submit()
-toggleClick(callBackFirstClick, callBackSecondClick)
-blur() - 
-change() - 
-click() - 
-dblclick() - 
-focus()
-focusIn()
-focusOut()
-resize - event
-scroll - event
-select - event
-load()
-unload (events)
-error() - 
-ready()
-
-
-noBubble // not sure what this is... haxe specific by the looks of it
-
-
-bind() - addEventListener() basically - Replaced by on()
-unbind (events) - replaced by off
-live // deprecated
-die(?eventType) - remove all event handlers // deprecated
-*/ 
-
-#if (haxe_211 || haxe3)
-	import js.html.*;
-	typedef DtxEvent = js.html.Event;
-#else 
-	typedef EventListener = BnEvent->Void;
-	typedef DtxEvent = BnEvent;
-#end
+import js.html.*;
 
 class EventManagement
 {
-	/*private static var eventTypeMap = {
-		'click':'MouseEvent',
-		'dblclick':'MouseEvent',
-		'mousedown':'MouseEvent',
-		'mouseup':'MouseEvent',
-		'mouseover':'MouseEvent',
-		'mousemove':'MouseEvent',
-		'mouseout':'MouseEvent',
-		'keydown':'KeyboardEvent',
-		'keypress':'KeyboardEvent',
-		'keyup':'KeyboardEvent',
-		'':'HTMLEvents',
-
-	}
-
 	/** Trigger an event, as if it has actually happened */
 	public static inline function trigger(target:DOMNode, eventString:String):DOMNode
 	{
@@ -101,12 +26,6 @@ class EventManagement
 		#end
 		return target;
 	}
-
-	// /** Trigger the handler for the event, but don't emulate the event itself */
-	// public static function triggerHandler(target:DOMNode, event:String):DOMNode
-	// {
-	// 	return target;
-	// }
 
 	/** add an event listener */
 	public static inline function on(target:DOMNode, eventType:String, ?selector:String, ?listener:EventListener):DOMNode
