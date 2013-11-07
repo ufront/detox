@@ -79,10 +79,22 @@ class DOMCollection
 		if (pos < 0 || pos > collection.length) pos = collection.length;
 		if (node != null)   
 		{
-			if (Lambda.has(collection, node) == false)
-			{
-				collection.insert(pos,node);
-			}
+			#if !php
+				if (Lambda.has(collection, node) == false)
+				{
+					collection.insert(pos,node);
+				}
+			#else
+				// PHP chokes because Lambda.has doesn't use physical equality... 
+				var hasAlready = false;
+				for (n in collection) {
+					if (untyped __physeq__(n,node)) {
+						hasAlready = true;
+						break;
+					}
+				}
+				if (!hasAlready) collection.insert(pos,node);
+			#end
 		}
 		return this;
 	}
