@@ -13,7 +13,6 @@ package dtx.widget;
 
 using Detox;
 
-@:keepSub
 #if !macro @:autoBuild(dtx.widget.WidgetTools.buildWidget()) #end
 class Widget extends DOMCollection
 {
