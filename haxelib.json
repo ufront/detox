@@ -9,7 +9,7 @@
   "url": "https://github.com/jasononeil/detox",
   "classPath": "src/",
   "dependencies": {
-    "selecthxml": "0.4.0",
+    "selecthxml": "",
     "tink_macro": "",
     "beanhx": "0.11.1"
   }
