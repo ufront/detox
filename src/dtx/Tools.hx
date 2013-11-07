@@ -200,11 +200,6 @@ class Tools
 	} 
 	#end
 
-	/*public static inline function create(str:String):DOMCollection
-	{
-		return new DOMCollection(Detox.createElement(str));
-	}*/
-
 	static function get_document():DocumentOrElement
 	{
 		if (document == null) 
