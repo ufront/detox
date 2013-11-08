@@ -49,8 +49,8 @@ class WidgetTools
         var fields = BuildTools.getFields();
 
         // If get_template() already exists, don't recreate it
-        var useParentTemplate = BuildTools.hasClassMetadata(":useParentTemplate");
-        if (!useParentTemplate && fields.exists(function (f) return f.name == "get_template") == false)
+        var skipTemplating = BuildTools.hasClassMetadata(":skipTemplating");
+        if (!skipTemplating && fields.exists(function (f) return f.name == "get_template") == false)
         {
             // Load the template
             var template = loadTemplate(localClass);
@@ -76,7 +76,7 @@ class WidgetTools
                 templates.set( localClass.toString(), result.template );
 
                 // If @:dtxdebug metadata is found, print the class
-                if ( BuildTools.hasClassMetadata(":dtxdebug") )
+                if ( BuildTools.hasClassMetadata(":dtxDebug") )
                 {
                     // Add a callback for this class
                     BuildTools.printFields();
