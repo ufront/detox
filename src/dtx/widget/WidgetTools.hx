@@ -519,7 +519,7 @@ class WidgetTools
         // Get the `for="name in names"` attribute
         var propName:Null<String> = null;
         var loopInputCT:ComplexType;
-        var typingFailureMsg:String = null;
+        var typingFailure:Error = null;
         var iterableExpr:Null<Expr> = null;
         var forAttr = node.attr( "for" );
         var typeAttr = node.attr( "type" );
@@ -544,23 +544,22 @@ class WidgetTools
                                 case _:
                             }
                         }
-                        var itType = e2.typeof(variablesInContext).orUse(null);
-                        if ( itType!=null ) {
-                            var result;
-                            if ( Context.unify(itType, Context.getType("Iterable")) ) {
-                                result = (macro $e2.iterator().next()).typeof(variablesInContext);
-                            }
-                            else if ( Context.unify(itType, Context.getType("Iterator")) ) {
-                                result = (macro $e2.next()).typeof(variablesInContext);
-                            }
-                            else throw "$e2 Was not an iterable or an iterator";
+                        switch e2.typeof(variablesInContext) {
+                            case Success(itType): 
+                                var result;
+                                if ( Context.unify(itType, Context.getType("Iterable")) ) {
+                                    result = (macro $e2.iterator().next()).typeof(variablesInContext);
+                                }
+                                else if ( Context.unify(itType, Context.getType("Iterator")) ) {
+                                    result = (macro $e2.next()).typeof(variablesInContext);
+                                }
+                                else throw "$e2 Was not an iterable or an iterator";
 
-                            switch (result) {
-                                case Success(t): loopInputCT = t.toComplexType();
-                                case Failure(msg): 
-                                    throw msg;
-                                    typingFailureMsg = '$msg';
-                            }
+                                switch (result) {
+                                    case Success(t): loopInputCT = t.toComplexType();
+                                    case Failure(err): typingFailure = err;
+                                }
+                            case Failure(err): typingFailure = err;
                         }
 
                         iterableExpr = e2;
@@ -587,10 +586,9 @@ class WidgetTools
             loopInputCT = type.toComplexType();
         }
         if ( loopInputCT==null ) {
-            var error = 'Unable to type dtx:loop';
-            if (typingFailureMsg!=null) error += '\n$typingFailureMsg';
-            error += '\n$node';
-            Context.warning( error, p );
+            Context.warning( 'Unable to type dtx:loop:\n$node', p );
+            if (typingFailure!=null) typingFailure.throwSelf();
+            Context.fatalError( "Exiting", p );
         }
         else {
             // Check if a partial is specified, if not, use InnerHTML to define a new partial 
