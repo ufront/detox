@@ -318,13 +318,13 @@ class WidgetTools
             node.setText(text);
     }
     
-    static function processPartialDeclarations(name:String, node:dtx.DOMNode, ?fields:Array<Field>)
+    static function processPartialDeclarations(name:String, node:dtx.DOMNode, ?fields:Array<Field>, ?useKeepWidget=false)
     {
-        // Create a class for this partial
-
         var p = Context.currentPos();
         var localClass = haxe.macro.Context.getLocalClass();
         var pack = localClass.get().pack;
+        if ( node.attr('keep')=="true" ) useKeepWidget = true;
+        
         // Before getting the partial TPL, let's clear out any whitespace
         for (d in node.descendants(false))
         {
@@ -355,7 +355,8 @@ class WidgetTools
             switch (existingClass)
             {
                 case TInst(t, _):
-                    var metaAccess = t.get().meta;
+                    var classType = t.get();
+                    var metaAccess = classType.meta;
                     if (metaAccess.has(":template") == false && metaAccess.has(":loadTemplate") == false)
                     {
                         // No template has been defined, use ours
@@ -370,7 +371,7 @@ class WidgetTools
                 sub: null,
                 params: [],
                 pack: ['dtx','widget'],
-                name: "Widget"
+                name: (useKeepWidget) ? "KeepWidget" : "Widget"
             });
             if (fields==null) fields = [];
 
@@ -384,7 +385,6 @@ class WidgetTools
                 isExtern: false,
                 fields: fields
             };
-
             haxe.macro.Context.defineType(partialDefinition);
         }
     }
@@ -610,7 +610,7 @@ class WidgetTools
                         doc: null,
                         access: [APublic]
                     };
-                    processPartialDeclarations( partialTypeName, node, [ propertyToAdd ] );
+                    processPartialDeclarations( partialTypeName, node, [ propertyToAdd ], true );
                 }
             }
             
