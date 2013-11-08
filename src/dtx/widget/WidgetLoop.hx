@@ -15,7 +15,7 @@ import dtx.widget.Loop;
 import ufcommon.view.dbadmin.*;
 using Detox;
 
-class WidgetLoop<T, W:dtx.widget.Widget> extends Loop<T>
+class WidgetLoop<T, W:KeepWidget> extends Loop<T>
 {
 	var widgetClass:Class<W>;
 	var propName:String;
@@ -68,7 +68,7 @@ class WidgetLoop<T, W:dtx.widget.Widget> extends Loop<T>
 	}
 }
 
-class WidgetLoopItem<T, W:dtx.widget.Widget> extends LoopItem<T>
+class WidgetLoopItem<T, W:KeepWidget> extends LoopItem<T>
 {
 	public var widget(get,null):W;
 
