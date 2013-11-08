@@ -18,6 +18,7 @@ import haxe.macro.Format;
 import haxe.macro.Type;
 import haxe.macro.Printer;
 import haxe.ds.StringMap;
+import tink.core.Error;
 using haxe.macro.Context;
 using tink.MacroApi;
 using StringTools;
@@ -119,7 +120,7 @@ class WidgetTools
                     var partialName = partialInside[1];
                     template = loadPartialFromInTemplate(templateFile, partialName);
                 }
-                else Context.error('@:partialInside() metadata should be 2 strings: @:partialInside("MyView.html", "_NameOfPartial")', p);
+                else Context.fatalError('@:partialInside() metadata should be 2 strings: @:partialInside("MyView.html", "_NameOfPartial")', p);
             }
 
             // Check if a template file is declared in metadata
@@ -142,7 +143,7 @@ class WidgetTools
                     var metadata = localClass.get().meta.get();
                     if (!metadata.exists(function(metaItem) return metaItem.name == ":noTpl"))
                     {
-                        Context.warning('Could not load the widget template: $templateFile', p);
+                        Context.fatalError('Could not load the widget template: $templateFile', p);
                     }
                 }
             }
@@ -160,7 +161,7 @@ class WidgetTools
         {
             var tpl:DOMCollection = fullTemplate.parse();
             if ( tpl.length==0 )
-                Context.warning( 'Failed to parse Xml for template file: $templateFile $partialName', p );
+                Context.fatalError( 'Failed to parse Xml for template file: $templateFile $partialName', p );
             
             var allNodes = Lambda.concat(tpl, tpl.descendants());
             var partialMatches = allNodes.filter(function (n) { return n.nodeType == Xml.Element && n.nodeName == partialName; });
@@ -168,11 +169,11 @@ class WidgetTools
             if (partialMatches.length == 1) 
                 partialTemplate = partialMatches.first().innerHTML();
             else if (partialMatches.length > 1) 
-                Context.warning('The partial $partialName was found more than once in the template $templateFile... confusing!', p);
+                Context.fatalError('The partial $partialName was found more than once in the template $templateFile... confusing!', p);
             else 
-                Context.warning('The partial $partialName was not found in the template $templateFile', p);
+                Context.fatalError('The partial $partialName was not found in the template $templateFile', p);
         }
-        else Context.warning('Could not load the file $templateFile that $partialName is supposedly in.', p);
+        else Context.fatalError('Could not load the file $templateFile that $partialName is supposedly in.', p);
 
         return partialTemplate;
     }
@@ -225,7 +226,7 @@ class WidgetTools
 
         var xml = template.parse();
         if ( xml.length==0 ) 
-            Context.error( 'Failed to parse template for widget $localClass', Context.getLocalClass().get().pos );
+            Context.fatalError( 'Failed to parse template for widget $localClass', Context.getLocalClass().get().pos );
         
         var fieldsToAdd = new Array<Field>();
         partialNumber=0; 
@@ -332,6 +333,7 @@ class WidgetTools
                 clearWhitespaceFromTextnode(d);
             }
         }
+
         var partialTpl = node.innerHTML();
 
         var className = localClass.get().name + name;
@@ -417,7 +419,7 @@ class WidgetTools
             Context.getType(typeName);
         } catch (e:String) {
             if ( e=="Type not found '" + typeName + "'" ) 
-                Context.error('Unable to find Widget/Partial "$typeName" in widget template $widgetClass', widgetClass.get().pos);
+                Context.fatalError('Unable to find Widget/Partial "$typeName" in widget template $widgetClass', widgetClass.get().pos);
             else throw e;
         }
 
@@ -490,7 +492,7 @@ class WidgetTools
                     try 
                         Context.parse( valueExprStr, p )
                     catch (e:Dynamic) 
-                        Context.error('Error parsing $attName="$valueExprStr" in $typeName partial call ($widgetClass template). \nError: $e \nNode: ${node.html()}', p);
+                        Context.fatalError('Error parsing $attName="$valueExprStr" in $typeName partial call ($widgetClass template). \nError: $e \nNode: ${node.html()}', p);
                 
                 var idents =  valueExpr.extractIdents();
                 var setterExpr = macro $propertyRef = $valueExpr;
@@ -567,7 +569,7 @@ class WidgetTools
                 }
             }
             catch (e:Dynamic)
-                Context.error('Error parsing for="$forAttr" in loop ($widgetClass template). \nError: $e \nNode: ${node.html()}', p);
+                Context.fatalError('Error parsing for="$forAttr" in loop ($widgetClass template). \nError: $e \nNode: ${node.html()}', p);
         }
         if ( loopInputCT==null && typeAttr!="" ) {
             var typeName = "";
@@ -581,7 +583,7 @@ class WidgetTools
             }
             var type = Context.getType( typeName );
             if (type==null) 
-                Context.error('Error finding type type="$typeAttr" in loop ($widgetClass template). \nType $typeName was not found.  \nNode: ${node.html()}', p);
+                Context.fatalError('Error finding type type="$typeAttr" in loop ($widgetClass template). \nType $typeName was not found.  \nNode: ${node.html()}', p);
             loopInputCT = type.toComplexType();
         }
         if ( loopInputCT==null ) {
@@ -596,7 +598,7 @@ class WidgetTools
             if ( partialTypeName=="" ) {
                 var partialHtml = node.innerHTML();
                 if ( partialHtml.length==0 )
-                    Context.error( 'You must define either a partial="" attribute, or have child elements for the dtx:loop in widget $widgetClass', p );
+                    Context.fatalError( 'You must define either a partial="" attribute, or have child elements for the dtx:loop in widget $widgetClass', p );
                 
                 // Process the template as a partial declaration
                 partialTypeName = "_" + name.charAt(0).toUpperCase() + name.substr(1);
@@ -634,7 +636,7 @@ class WidgetTools
                 }
             } catch (e:String) {
                 if ( e=="Type not found '" + partialTypeName + "'" ) 
-                    Context.error('Unable to find Loop Widget/Partial "$partialTypeName" in widget template $widgetClass', p);
+                    Context.fatalError('Unable to find Loop Widget/Partial "$partialTypeName" in widget template $widgetClass', p);
                 else throw e;
             }
             
@@ -1007,7 +1009,7 @@ class WidgetTools
                                             var localClass = Context.getLocalClass();
                                             var printer = new Printer("  ");
                                             var partString = printer.printExpr(part);
-                                            Context.error('In the Detox template for $localClass, in the expression `$partString`, variable "$leftMostVarName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                            Context.fatalError('In the Detox template for $localClass, in the expression `$partString`, variable "$leftMostVarName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
                                         }
                                     }
                                 case ECall(e, params):
@@ -1021,7 +1023,7 @@ class WidgetTools
                                                 var localClass = Context.getLocalClass();
                                                 var printer = new Printer("  ");
                                                 var callString = printer.printExpr(part);
-                                                Context.error('In the Detox template for $localClass, in function call `$callString`, variable "$varName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                                Context.fatalError('In the Detox template for $localClass, in function call `$callString`, variable "$varName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
                                             }
                                         }
                                     }
@@ -1040,10 +1042,10 @@ class WidgetTools
                             }
                         }
                     default:
-                        haxe.macro.Context.error("extractVariablesUsedInInterpolation() only works when the expression inside ECheckType is EBinOp, as with the output of Format.format()", Context.currentPos());
+                        haxe.macro.Context.fatalError("extractVariablesUsedInInterpolation() only works when the expression inside ECheckType is EBinOp, as with the output of Format.format()", Context.currentPos());
                 }
             default:
-                haxe.macro.Context.error("extractVariablesUsedInInterpolation() only works on ECheckType, the output of Format.format()", Context.currentPos());
+                haxe.macro.Context.fatalError("extractVariablesUsedInInterpolation() only works on ECheckType, the output of Format.format()", Context.currentPos());
         }
 
         return variablesInside;
@@ -1091,7 +1093,7 @@ class WidgetTools
             var localClass = Context.getLocalClass();
             var printer = new Printer("  ");
             var exprString = printer.printExpr( expr );
-            Context.error('In the Detox template for $localClass, the expression `$exprString`, was too complicated for the poor Detox macro to understand.', localClass.get().pos);
+            Context.fatalError('In the Detox template for $localClass, the expression `$exprString`, was too complicated for the poor Detox macro to understand.', localClass.get().pos);
         }
 
         return leftMostVarName;
@@ -1156,7 +1158,7 @@ class WidgetTools
                 try 
                     Context.parse( testExprStr, classPos )
                 catch (e:Dynamic) 
-                    Context.error('Error parsing $attName="$testExprStr" in $className template. \nError: $e \nNode: ${node.html()}', classPos);
+                    Context.fatalError('Error parsing $attName="$testExprStr" in $className template. \nError: $e \nNode: ${node.html()}', classPos);
 
             // Extract all the variables used, create the `if(test) ... else ...` expr, add to setters, initialize variables
             var idents =  testExpr.extractIdents();
