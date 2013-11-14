@@ -273,11 +273,6 @@ class XMLWrapper
 
 	static public function cloneNode(xml:DOMNode, ?deep=true)
 	{
-		// Just printing and parsing the string can cause some issues with different quotation marks and escaping
-		// For example, <loop for='name in ["Jason","Anna"]'> might output as <loop for="name in ["Jason","Anna"]"
-		// and so you get errors.  Try something else...
-		// return Xml.parse(xml.toString()).firstChild();
-
 		var clone = switch (xml.nodeType) {
 			case Xml.Element:
 				Xml.createElement( xml.nodeName );
