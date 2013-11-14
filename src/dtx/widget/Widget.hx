@@ -16,6 +16,14 @@ using Detox;
 #if !macro @:autoBuild(dtx.widget.WidgetTools.buildWidget()) #end
 class Widget extends DOMCollection
 {
+	/**
+		When creating widgets, we can cache the created widget when we parse it, and then clone it for each new widget.  
+
+		This should be significantly faster than parsing it each time.  You can disable this if your use case involves many widgets only used a single time, in which case this may not be worth the performance.
+	**/
+	public static var useCache = true;
+	static var cache:Map<String,Array<DOMNode>> = new Map();
+
 	var _dtxWidgetNodeIndex:Array<DOMNode>;
 
 	/** Create a new widget by parsing some "template" html, and use that as our collection.
@@ -24,18 +32,27 @@ class Widget extends DOMCollection
 	public function new() {
 		super();
 
-		// Parse the template and make it the collection for this widget
-		var q = Detox.parse( get_template() );
-		this.collection = q.collection;
+		// Parse the template (or clone a cached copy)
+		var name = Type.getClassName( Type.getClass(this) );
+		if ( useCache && cache.exists(name) ) {
+			for ( n in cache[name] ) this.collection.push( n.clone() );
+		}
+		else {
+			var c = Detox.parse( get_template() );
+			this.collection = c.collection;
+			if ( useCache ) cache[name] = [ for (n in c.collection) n.clone() ];
+		}
+
 
 		// Initialize the widget/node index of nodes that need to be referenced
 		_dtxWidgetNodeIndex = [];
 		for ( n in this.collection.concat(this.descendants().collection) ) {
-			var att = n.attr("data-dtx-id");
-			if ( att!="" ) {
-				var id = Std.parseInt(att);
-				_dtxWidgetNodeIndex[id] = n;
-				n.removeAttr("data-dtx-id");
+			if ( n.isElement() ) {
+				var att = n.attr("data-dtx-id");
+				if ( att!="" ) {
+					_dtxWidgetNodeIndex[Std.parseInt(att)] = n;
+					n.removeAttr("data-dtx-id");
+				}
 			}
 		}
 
