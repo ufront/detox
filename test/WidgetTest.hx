@@ -50,6 +50,43 @@ class WidgetTest
 		// trace ("Tear Down");
 	}
 
+	@Test @TestDebug
+	public function testWidgetTimes() 
+	{
+		var html = "<p><b>Some Stufff</b> and <em>More stuff</em><!-- and even more --></p>";
+		var iterations = 10000;
+
+		trace ("Without cache");
+		Widget.useCache = false;
+		haxe.Timer.measure( function() {
+			for (i in 0...iterations) {
+				var w = new widgets.Interpolation.InterpolationDifferentTypes();
+				w.name = "Jason";
+			}
+			return null;
+		});
+
+		trace ("With cache");
+		Widget.useCache = true;
+		haxe.Timer.measure( function() {
+			for (i in 0...iterations) {
+				var w = new widgets.Interpolation.InterpolationDifferentTypes();
+				w.name = "Jason";
+			}
+			return null;
+		});
+
+		trace ("Rewrite");
+		Widget.useCache = true;
+		haxe.Timer.measure( function() {
+			var w = new widgets.Interpolation.InterpolationDifferentTypes();
+			for (i in 0...iterations) {
+				w.name = "Jason";
+			}
+			return null;
+		});
+	}
+
 	@Test 
 	public function createWidgetNonElement()
 	{
