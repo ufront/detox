@@ -1,5 +1,6 @@
 package widgets;
 
+import dtx.widget.KeepWidget;
 import dtx.widget.Widget;
 using Detox;
 
@@ -16,7 +17,7 @@ class LoopInlineArrayWithImportedPartial extends Widget {}
 	<ul>
 		<dtx:loop partial='_Item' for='number in [1,2,3,4,5]'></dtx:loop>
 	</ul>
-	<_Item>
+	<_Item keep='true'>
 		<li>Relative $number</li>
 	</_Item>
 ")
@@ -120,7 +121,7 @@ class LoopFromComplexExpr extends Widget
 }
 
 @:template("<li>Defined $number</li>")
-class NumberLI extends Widget {}
+class NumberLI extends KeepWidget {}
 
 @:template("<p>My name is $name, I am $age years old and it is $isTall that I am tall</p>")
 class LoopsInWidget extends Widget 
