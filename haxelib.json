@@ -4,8 +4,8 @@
   "tags": ["cross","dom","xml","js","domtools","dtx","detox"],
   "description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
   "contributors": ["jason"],
-  "releasenote": "Add IDetoxLayout and a default implementation.  Move to dtx.layout package, add some helper tools",
-  "version": "0.14.0",
+  "releasenote": "Updates for new tink_core, other simple fixes / speedups",
+  "version": "0.15.0",
   "url": "https://github.com/jasononeil/detox",
   "classPath": "src/",
   "dependencies": {
