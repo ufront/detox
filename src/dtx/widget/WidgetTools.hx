@@ -694,10 +694,10 @@ class WidgetTools
             if ( iterableExpr!=null ) {
                 var idents = iterableExpr.extractIdents();
                 var setterExpr = macro 
-                    try 
-                        $variableRef.setList( $iterableExpr ) 
-                    catch (e:Dynamic) {
-                        if ($variableRef!=null)
+                    if ($variableRef!=null) {
+                        try 
+                            $variableRef.setList( $iterableExpr )
+                        catch (e:Dynamic) 
                             $variableRef.empty();
                     }
 
