@@ -479,7 +479,7 @@ class WidgetTools
         linesToAdd = macro {
             $variableRef = new $typeName();
         };
-        BuildTools.addLinesToFunction(initFn, linesToAdd);
+        BuildTools.addLinesToFunction(initFn, linesToAdd, 0);
 
         // Any attributes on the partial are variables to be passed.  Every time a setter on the parent widget is called, it should trigger the relevent setter on the child widget
         for (attName in node.attributes())
