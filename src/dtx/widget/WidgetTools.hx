@@ -25,6 +25,7 @@ using StringTools;
 using Lambda;
 using Detox;
 using dtx.widget.BuildTools;
+import tink.core.Ref in TinkRef;
 
 class WidgetTools 
 {
@@ -216,8 +217,6 @@ class WidgetTools
         }
     }
 
-    static var partialNumber:Int; // Used to create name if none given, eg partial_4:DOMCollection
-    static var loopNumber:Int; // Used to create name if none given, eg loop_4:Loop
     static function processTemplate(template:String):{ template:String, fields:Array<Field> }
     {
         // Get every node (including descendants)
@@ -229,8 +228,6 @@ class WidgetTools
             Context.fatalError( 'Failed to parse template for widget $localClass', Context.getLocalClass().get().pos );
         
         var fieldsToAdd = new Array<Field>();
-        partialNumber=0; 
-        loopNumber=0; 
 
         // Process partial declarations on the top level first (and then remove them from the collection/template)
         for ( node in xml ) {
@@ -241,9 +238,12 @@ class WidgetTools
             }
         }
 
+        var partialNumber:TinkRef<Int> = 0; // Used to create name if none given, eg partial_4:DOMCollection
+        var loopNumber:TinkRef<Int> = 0; // Used to create name if none given, eg loop_4:Loop
+
         // Process the remaining template nodes
         for ( node in xml ) {
-            processNode( node );
+            processNode( node, partialNumber, loopNumber );
         }
 
         // More escaping hoop-jumping.  Basically, xml.html() will encode the text nodes, but not the attributes. Gaarrrh
@@ -258,20 +258,20 @@ class WidgetTools
         return { template: html, fields: fieldsToAdd };
     }
 
-    static function processNode( node:DOMNode ) {
+    static function processNode( node:DOMNode, partialNumber:TinkRef<Int>, loopNumber:TinkRef<Int> ) {
         if (node.tagName() == "dtx:loop")
         {
             // It's a loop element... either: 
             //    <dtx:loop><dt>$name</dt><dd>$age</dd></dtx:loop> OR
             //    <dtx:loop partial="Something" />
-            loopNumber++;
+            loopNumber.value = loopNumber.value+1;
             processLoop(node, loopNumber);
         }
         else if (node.tagName().startsWith('dtx:'))
         {
             // This is a partial call.  <dtx:_MyPartial /> or <dtx:SomePartial /> etc
-            partialNumber++;
-            processPartialCalls(node, partialNumber);
+            partialNumber.value = partialNumber.value+1;
+            processPartialCalls(node, partialNumber.value);
         }
         else if ( node.isElement() || node.isDocument() )
         {
@@ -279,7 +279,7 @@ class WidgetTools
             if ( node.isElement() ) processAttributes(node);
 
             // recurse documents and elements
-            for ( child in node.children(false) ) processNode( child );
+            for ( child in node.children(false) ) processNode( child, partialNumber, loopNumber );
         }
         else if (node.isTextNode())
         {
