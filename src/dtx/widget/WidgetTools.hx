@@ -502,7 +502,8 @@ class WidgetTools
                 else
                     // If it doesn't, set it in init
                     BuildTools.addLinesToFunction(initFn, setterExpr);
-            
+                    
+                addExprInitialisationToConstructor(idents);
             }
         }
     }
