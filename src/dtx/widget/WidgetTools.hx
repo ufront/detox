@@ -495,14 +495,25 @@ class WidgetTools
                         Context.fatalError('Error parsing $attName="$valueExprStr" in $typeName partial call ($widgetClass template). \nError: $e \nNode: ${node.html()}', p);
                 
                 var idents =  valueExpr.extractIdents();
-                var setterExpr = macro $propertyRef = $valueExpr;
-                if ( idents.length>0 ) 
+                if ( idents.length>0 ) {
+
+                    var nullChecks = [ for (name in idents) macro $i{name}!=null ];
+                    var nothingNull = nullChecks.shift();
+                    while ( nullChecks.length>0 ) {
+                        var nextCheck = nullChecks.shift();
+                        nothingNull = macro $nothingNull && $nextCheck;
+                    }
+
+                    var setterExpr = macro if ($nothingNull) $propertyRef = $valueExpr;
                     // If it has variables, set it in all setters
                     addExprToAllSetters(setterExpr,idents, true);
-                else
+                }
+                else {
                     // If it doesn't, set it in init
+                    var setterExpr = macro $propertyRef = $valueExpr;
                     BuildTools.addLinesToFunction(initFn, setterExpr);
-                    
+                }
+
                 addExprInitialisationToConstructor(idents);
             }
         }
