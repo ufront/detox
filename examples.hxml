@@ -1,12 +1,11 @@
 
 # JavaScript
 -main DataWidgetExample
--lib xirsys_stdjs
 -lib tink_macro
 -lib selecthxml
 -lib random
--cp src
+-lib detox
 -cp example/datawidget
---js-modern
---dead-code-elimination
+-D embed_js
+-dce full
 -js example/datawidget/build/datawidgetexample.js

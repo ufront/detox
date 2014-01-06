@@ -1,49 +1,55 @@
-import dtx.widget.DataWidget;
-import dtx.widget.WidgetTools;
-
+import dtx.widget.Widget;
+import haxe.crypto.Md5;
 using Detox;
 using DateTools;
 
 class DataWidgetExample 
 {
-	static var pw:PersonWidget;
+	static var widget:PersonWidget;
 
 	static public function main()
 	{
-		js.Lib.window.onload = function (e) {
+		Detox.ready( function() {
 			var person = generateRandomPerson();
-			pw = new PersonWidget(person);
-			var doc = CommonJS.getHtmlDocument();
-			doc.body.append(pw);
-			changePerson();
-		};
+			widget = new PersonWidget();
+			widget.p = person;
+
+			var doc = js.Browser.document;
+			widget.appendTo( ".container".find() );
+
+			".btn".find().click(function(e) {
+				changePerson();
+			});
+		});
 	}
 
 	static public function changePerson()
 	{
 		var person = generateRandomPerson();
-		pw.bind(person);
+		widget.p = person;
 	}
 
 	static function generateRandomPerson()
 	{
-		// Some data to choose from
-		var firstNames = ["Jason", "Barrack", "Julia", "Nelson"];
-		var lastNames = ["O'Neil", "Obama", "Gillard", "Mandela"];
-		var domains = ["gmail.com", "whitehouse.gov", "primeminister.gov.au", "thepresidency.gov.za"];
-		var dates = [
-			new Date(1987,9,16,0,0,0),
-			new Date(1961,7,4,0,0,0),
-			new Date(1961,8,29,0,0,0),
-			new Date(1918,6,18,0,0,0)
-		];
-
-		// Pick some random details and create a new person
 		var p = new Person();
-		p.name = Random.fromArray(firstNames) + " " + Random.fromArray(lastNames);
-		p.email = ~/[^a-z0-9]/g.replace(p.name.toLowerCase(), "") + "@" + Random.fromArray(domains);
-		p.dob = Random.fromArray(dates);
-
+		switch Random.int( 1, 4 ) {
+			case 1:
+				p.name = "Jason O'Neil";
+				p.email = "jason.oneil@gmail.com";
+				p.dob = new Date(1987,9,16,0,0,0);
+			case 2:
+				p.name = "Barrack Obama";
+				p.email = "barrack.obama@whitehouse.gov";
+				p.dob = new Date(1961,7,4,0,0,0);
+			case 3:
+				p.name = "Julia Gillard";
+				p.email = "julia.gillard@primeminister.gov.au";
+				p.dob = new Date(1961,8,29,0,0,0);
+			default:
+				p.name = "Jacob Zuma";
+				p.email = "jacob.zuma@thepresidency.gov.za";
+				p.dob = new Date(1942,3,12,0,0,0);
+		}
 		return p;
 	}
 }
@@ -56,20 +62,14 @@ class Person
 
 	public function new() {}
 
-	public function getGravatar():String {
-		return "https://en.gravatar.com/userimage/1620077/b344f5051e6f18d521f2e7c58a2f42fa.jpeg";
-	}
 	public function getAge():Int {
 		var ageInSeconds = Date.now().getTime() - dob.getTime();
-		return Math.floor(ageInSeconds / 86400 / 365.25 / 1000);
+		return Math.floor(ageInSeconds / 86400 / 365.25 / 1000); // Close enough for a demo ;)
 	}
 
 }
 
-class PersonWidget extends DataWidget<Person> 
+class PersonWidget extends Widget
 {
-	public static function new(data:Person)
-	{
-		super(data);
-	}
+	public var p:Person;
 }

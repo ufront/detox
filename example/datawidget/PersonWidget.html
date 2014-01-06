@@ -1,16 +1,21 @@
-<div>
-<h1>$name</h1>
+<div class="well">
+	<h1>${p.name}</h1>
 
-<img src="${getGravatar()}" alt="$name's Gravatar $name" class="pull-left" />
+	<div class="row">
+		<div class="col-sm-3">
+			<img src="http://www.gravatar.com/avatar/${Md5.encode(p.email)}" alt="${p.name}'s Avatar" />
+		</div>
+		<div class="col-sm-9">
+			<dl>
+				<dt>Name: </dt>
+				<dd>${p.name}</dd>
+				<dt>Email: </dt>
+				<dd><a href="mailto:${p.email}">${p.email}</a></dd>
+				<dt>Date of Birth</dt>
+				<dd>${p.dob.format("%Y-%m-%d")}</dd>
+			</dl>
 
-<dl>
-	<dt>Name: </dt>
-	<dd>$name</dd>
-	<dt>Email: </dt>
-	<dd><a href="mailto:$email">$email</a></dd>
-	<dt>Date of Birth</dt>
-	<dd>$dob</dd>
-</dl>
-
-<p>$name is ${getAge()} years old.</p>
+			<p>${p.name} is ${p.getAge()} years old.</p>
+		</div>
+	</div>
 </div>
