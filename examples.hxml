@@ -1,0 +1,11 @@
+
+# JavaScript
+-main DataWidgetExample
+-lib tink_macro
+-lib selecthxml
+-lib random
+-lib detox
+-cp example/datawidget
+-D embed_js
+-dce full
+-js example/datawidget/build/datawidgetexample.js
