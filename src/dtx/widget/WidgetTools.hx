@@ -985,10 +985,13 @@ class WidgetTools
                         Reflect.setField( replacements, varName, macro $i{functionName}() );
                         interpolationExpr = interpolationExpr.substitute( replacements );
                     }
+                    else 
+                    {
+                        // Otherwise, hide if null
+                        interpolationExpr = macro (($i{varName} != null) ? $interpolationExpr : "");
+                    }
                     variableNames.push(varName);
-                case Call(varName):
-                    variableNames.push(varName);
-                case Field(varName):
+                case Call(varName), Field(varName):
                     interpolationExpr = macro (($i{varName} != null) ? $interpolationExpr : "");
                     variableNames.push(varName);
             }
