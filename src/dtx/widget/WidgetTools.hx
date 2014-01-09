@@ -229,12 +229,12 @@ class WidgetTools
     static function processTemplate(template:String):{ template:String, fields:Array<Field> }
     {
         // Get every node (including descendants)
-        var p = Context.currentPos();
         var localClass = Context.getLocalClass();
+        var p = Context.getLocalClass().get().pos;
 
         var xml = template.parse();
         if ( xml.length==0 ) 
-            error( 'Failed to parse template for widget $localClass', Context.getLocalClass().get().pos );
+            error( 'Failed to parse template for widget $localClass', p );
         
         var fieldsToAdd = new Array<Field>();
 
@@ -329,8 +329,8 @@ class WidgetTools
     
     static function processPartialDeclarations(name:String, node:dtx.DOMNode, ?fields:Array<Field>, ?useKeepWidget=false)
     {
-        var p = Context.currentPos();
         var localClass = haxe.macro.Context.getLocalClass();
+        var p = localClass.get().pos;
         var pack = localClass.get().pack;
         if ( node.attr('keep')=="true" ) useKeepWidget = true;
         
@@ -405,10 +405,10 @@ class WidgetTools
 
         // Generate a name for the partial.  Either take it from the <dtx:MyPartial dtx-name="this" /> attribute,
         // or autogenerate one (partial_$t, t++)
-        var widgetClass = haxe.macro.Context.getLocalClass();
+        var widgetClass = Context.getLocalClass();
         var nameAttr = node.attr('dtx-name');
         var name = (nameAttr != "") ? nameAttr : "partial_" + t;
-        var p = Context.currentPos();
+        var p = widgetClass.get().pos;
 
         // Resolve the type for the partial.  If it begins with dtx:_, then it is local to this file.
         // Otherwise, just resolve it as a class name.
@@ -737,7 +737,7 @@ class WidgetTools
     {
         var body = macro {};
         return {
-            pos: Context.currentPos(),
+            pos: BuildTools.currentPos(),
             name: "init",
             meta: [],
             kind: FieldType.FFun({
@@ -849,7 +849,7 @@ class WidgetTools
     {
         var selectorExpr = getUniqueSelectorForNode(node);
 
-        var nameAsExpr = Context.makeExpr(attName, Context.currentPos());
+        var nameAsExpr = Context.makeExpr(attName, BuildTools.currentPos());
 
         var result = processVariableInterpolation(node.attr(attName));
         var interpolationExpr = result.expr;
@@ -957,7 +957,7 @@ class WidgetTools
 
     static function processVariableInterpolation(string:String):{ expr:Expr, variablesInside:Array<String> }
     {
-        var stringAsExpr = Context.makeExpr(string, Context.currentPos());
+        var stringAsExpr = Context.makeExpr(string, BuildTools.currentPos());
         var interpolationExpr = Format.format(stringAsExpr);
         
         // Get an array of all the variables in interpolationExpr
@@ -1064,10 +1064,10 @@ class WidgetTools
                             }
                         }
                     default:
-                        error("extractVariablesUsedInInterpolation() only works when the expression inside ECheckType is EBinOp, as with the output of Format.format()", Context.currentPos());
+                        error("extractVariablesUsedInInterpolation() only works when the expression inside ECheckType is EBinOp, as with the output of Format.format()", BuildTools.currentPos());
                 }
             default:
-                error("extractVariablesUsedInInterpolation() only works on ECheckType, the output of Format.format()", Context.currentPos());
+                error("extractVariablesUsedInInterpolation() only works on ECheckType, the output of Format.format()", BuildTools.currentPos());
         }
 
         return variablesInside;

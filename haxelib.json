@@ -4,8 +4,8 @@
   "tags": ["cross","dom","xml","js","domtools","dtx","detox"],
   "description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
   "contributors": ["jason"],
-  "releasenote": "Fix support for Haxe 3.0.1 (Use Context.error as fallback when Context.fatalError not available).  Fixed numerous widget bugs, mostly to do with initialization order, null-checking and parsing variables to partials.",
-  "version": "0.16.0",
+  "releasenote": "Use build class position rather than Context.currentPos() to make error messages a little more helpful.",
+  "version": "0.17.0",
   "url": "https://github.com/jasononeil/detox",
   "classPath": "src/",
   "dependencies": {
