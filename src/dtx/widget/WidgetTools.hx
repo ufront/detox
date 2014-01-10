@@ -856,6 +856,9 @@ class WidgetTools
         
         // Go through array of all variables again
         addExprToAllSetters(bindingExpr, variablesInside, true);
+
+        // Initialise variables
+        addExprInitialisationToConstructor(variablesInside);
     }
 
     static function interpolateTextNodes(node:dtx.DOMNode)
@@ -888,15 +891,14 @@ class WidgetTools
             var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
             BuildTools.addLinesToFunction(initFn, expr);
         }
-
-        for (varName in variables)
+        else for (varName in variables)
         {
             // Add bindingExpr to every setter.  Add at position `1`, so after the first line, which should be 'this.field = v;'
             if (varName.fieldExists())
             {
                 varName.getField().getSetter().addLinesToFunction(expr, 1);
             }
-            else throw ('Field $varName not found in ${Context.getLocalClass()}');
+            else Context.error('Field $varName not found in ${Context.getLocalClass()}', BuildTools.currentPos() );
         }
     }
 
