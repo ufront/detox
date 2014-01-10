@@ -506,12 +506,7 @@ class WidgetTools
                 var idents =  valueExpr.extractIdents();
                 if ( idents.length>0 ) {
 
-                    var nullChecks = [ for (name in idents) macro $i{name}!=null ];
-                    var nothingNull = nullChecks.shift();
-                    while ( nullChecks.length>0 ) {
-                        var nextCheck = nullChecks.shift();
-                        nothingNull = macro $nothingNull && $nextCheck;
-                    }
+                    var nothingNull = idents.generateNullCheckForIdents();
 
                     var setterExpr = macro if ($nothingNull) $propertyRef = $valueExpr;
                     // If it has variables, set it in all setters
@@ -1184,7 +1179,8 @@ class WidgetTools
 
             // Extract all the variables used, create the `if(test) ... else ...` expr, add to setters, initialize variables
             var idents =  testExpr.extractIdents();
-            var bindingExpr = macro if ($testExpr) $trueStatement else $falseStatement;
+            var nothingNull = idents.generateNullCheckForIdents();
+            var bindingExpr = macro if ($nothingNull && $testExpr) $trueStatement else $falseStatement;
             addExprToAllSetters(bindingExpr,idents, true);
             addExprInitialisationToConstructor(idents);
 

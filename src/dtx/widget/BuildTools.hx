@@ -406,6 +406,23 @@ class BuildTools
         return parts;
     }
 
+    /** 
+        Given a list of idents, generate a `(ident1!=null && ident2!=null)` type expression.  
+        If there are no idents, it will return `true` as an expression so you can still safely use it.
+    **/
+    public static function generateNullCheckForIdents( idents:Array<String> ) {
+        if ( idents.length>0 ) {
+            var nullChecks = [ for (name in idents) macro $i{name}!=null ];
+            var nothingNull = nullChecks.shift();
+            while ( nullChecks.length>0 ) {
+                var nextCheck = nullChecks.shift();
+                nothingNull = macro $nothingNull && $nextCheck;
+            }
+            return nothingNull;
+        }
+        else return macro true;
+    }
+
     /** Takes a bunch of Binop functions `x + " the " + y + 10` and returns an array of each part. */
     public static function getAllPartsOfBinOp(binop:Expr):Array<Expr>
     {
