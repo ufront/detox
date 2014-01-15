@@ -739,17 +739,12 @@ class WidgetTools
         {
             if (attName.startsWith('dtx-on-'))
             {
-                var eventName = attName.substr(7);
-                var eventBody = node.attr(attName);
-                addEventTriggerForElement(eventName,eventBody);
-                node.removeAttr(attName);
+                addEventTriggerForElement(node,attName);
             }
-            else if (attName == 'dtx-bind-value')
-            {
-                addValueBindForElement(node);
+            else if (attName=='dtx-bind-value' || attName=='dtx-bind-int-value' || attName=='dtx-bind-float-value') {
+                addValueBindForElement(node, attName);
             }
-            else if (attName == 'dtx-content')
-            {
+            else if (attName == 'dtx-content') {
                 addContentSetForElement(node);
             }
             else if (attName == 'dtx-name')
@@ -807,9 +802,14 @@ class WidgetTools
         }
     }
 
-    static function addEventTriggerForElement(eventName,eventBody) 
+    static function addEventTriggerForElement(node:dtx.DOMNode, attName:String) 
     {
-        #if js
+        var eventName = attName.substr(7);
+        var eventBody = node.attr( attName );
+        node.removeAttr(attName);
+
+        if ( Context.defined("js") ) 
+        {
             if ( eventName!="" && eventBody!="" )
             {
                 var className = Context.getLocalClass().toString();
@@ -826,7 +826,7 @@ class WidgetTools
                 var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
                 BuildTools.addLinesToFunction(initFn, lineToAdd);
             }
-        #end
+        }
     }
 
     /**
@@ -859,13 +859,13 @@ class WidgetTools
         If you set "this.student.name" without updating "this.student", the input will not be updated.
         A workaround can be to call `s.name = 'new name'; myWidget.student = s;`, so that the setter will run again after the property has changed.
     **/
-    static function addValueBindForElement(node:DOMNode)
+    static function addValueBindForElement(node:DOMNode, attName:String)
     {
-        var attName = 'dtx-bind-value';
         var bindTo = node.attr( attName );
         node.removeAttr( attName );
 
-        if ( bindTo!="" ) {
+        if ( bindTo!="" ) 
+        {
             var className = Context.getLocalClass().toString();
             var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
             var selector = getUniqueSelectorForNode(node); 
@@ -877,14 +877,21 @@ class WidgetTools
                     error('Error parsing $attName="$bindTo" in $className template. \nError: $e \nNode: ${node.html()}', BuildTools.currentPos());
 
             var fieldName = getLeftMostVariable( bindToExpr );
-            var setValLine = macro $selector.setVal( bindToExpr );
+            var setValLine = macro dtx.single.ElementManipulation.setVal( $selector, ''+$bindToExpr );
             addExprToAllSetters( setValLine, [fieldName] );
             
-            #if js
+            if ( Context.defined("js") ) 
+            {
                 // Add a "change" event listener to the init function.  On each change, set the "bindTo" property.
-                var onChangeLine = macro $selector.change( function (e:js.html.Event) { $bindToExpr = $selector.val(); } );
+                var getVal = macro dtx.single.ElementManipulation.val($selector);
+                var parseVal = switch attName {
+                    case "dtx-bind-int-value": macro Std.parseInt( $getVal );
+                    case "dtx-bind-float-value": macro Std.parseFloat( $getVal );
+                    default: getVal;
+                }
+                var onChangeLine = macro dtx.single.EventManagement.change( $selector, function (e:js.html.Event) { $bindToExpr = $parseVal; } );
                 BuildTools.addLinesToFunction(initFn, onChangeLine);
-            #end
+            }
         }
     }
 
