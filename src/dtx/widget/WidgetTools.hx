@@ -735,16 +735,14 @@ class WidgetTools
 
     static function processAttributes(node:dtx.DOMNode)
     {
-        // A regular element
         for (attName in node.attributes())
         {
             if (attName.startsWith('dtx-on-'))
             {
-                // this is not a boolean, does it need to be processed separately?
-            }
-            else if (attName == 'dtx-loop')
-            {
-                // loop this element...
+                var eventName = attName.substr(7);
+                var eventBody = node.attr(attName);
+                addEventTriggerForElement(eventName,eventBody);
+                node.removeAttr(attName);
             }
             else if (attName == 'dtx-value')
             {
@@ -803,6 +801,27 @@ class WidgetTools
                 default: 
             }
         }
+    }
+
+    static function addEventTriggerForElement(eventName,eventBody) 
+    {
+        #if js
+            if ( eventName!="" && eventBody!="" )
+            {
+                var eventBodyExpr = 
+                    try 
+                        Context.parse( eventBody, BuildTools.currentPos() )
+                    catch (e:Dynamic) 
+                        error('Error parsing $attName="$eventBody" in $className template. \nError: $e \nNode: ${node.html()}', BuildTools.currentPos());
+                eventBodyExpr.substitute({ "_": macro e.currentTarget });
+
+                var selector = getUniqueSelectorForNode(node); // Returns for example: dtx.collection.Traversing.find(this, $selectorTextAsExpr)
+                var lineToAdd = macro $selector.on( $v{eventName}, function (e:js.html.EventListener) { $eventBodyExpr; } );
+                
+                var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
+                BuildTools.addLinesToFunction(initFn, lineToAdd);
+            }
+        #end
     }
 
     static var uniqueDtxID:Int = 0;
