@@ -638,9 +638,13 @@ class WidgetTools
             }
             
             // Replace the call with <div data-dtx-loop="$name"></div>
-            var partialDOM = templates.get( partialClassType.toString() ).parse();
-            var partialFirstElement = partialDOM.filter( function (n) return n.isElement() ).getNode(0);
-            var placeholderName = (partialFirstElement!=null) ? partialFirstElement.tagName() : "span";
+            var partialFirstElement = node.firstChildren( true );
+            var placeholderName = switch( node.parent.tagName() ) {
+                case "tbody", "table", "thead", "tfoot": "tr";
+                case "colgroup": "col";
+                case "tr": "td";
+                default: "span";
+            };
             node.replaceWith( placeholderName.create().setAttr("data-dtx-loop", name) );
 
             // Set up a public field in the widget, public var $loopName(default,set_$name):WidgetLoop<$inputCT,$widgetCT>
