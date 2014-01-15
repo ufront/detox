@@ -744,9 +744,13 @@ class WidgetTools
                 addEventTriggerForElement(eventName,eventBody);
                 node.removeAttr(attName);
             }
-            else if (attName == 'dtx-value')
+            else if (attName == 'dtx-bind-value')
             {
-                // Every time the value changes, change this.
+                addValueBindForElement(node);
+            }
+            else if (attName == 'dtx-content')
+            {
+                addContentSetForElement(node);
             }
             else if (attName == 'dtx-name')
             {
@@ -808,6 +812,7 @@ class WidgetTools
         #if js
             if ( eventName!="" && eventBody!="" )
             {
+                var className = Context.getLocalClass().toString();
                 var eventBodyExpr = 
                     try 
                         Context.parse( eventBody, BuildTools.currentPos() )
@@ -816,12 +821,125 @@ class WidgetTools
                 eventBodyExpr.substitute({ "_": macro e.currentTarget });
 
                 var selector = getUniqueSelectorForNode(node); // Returns for example: dtx.collection.Traversing.find(this, $selectorTextAsExpr)
-                var lineToAdd = macro $selector.on( $v{eventName}, function (e:js.html.EventListener) { $eventBodyExpr; } );
+                var lineToAdd = macro $selector.on( $v{eventName}, function (e:js.html.Event) { $eventBodyExpr; } );
                 
                 var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
                 BuildTools.addLinesToFunction(initFn, lineToAdd);
             }
         #end
+    }
+
+    /**
+        Will bind a node's to a property.
+
+        Every time a "change" event is fired on the node, the given "bindTo" property will be set.
+        Please note that only JS supports events, so other targets will not have 2 way binding.
+
+        Example:
+
+        ```
+        <form>
+            <input type="text" dtx-name="nameInput" dtx-bind-value="student.name" />
+        </form>
+        ```
+
+        Will generate something like the following code:
+
+        ```
+        function init() {
+            this.nameInput.change( function(e:Event) { student.name = this.nameInput.val(); } );
+        }
+        function set_student(s:Student) {
+            this.nameInput.setVal( student.name );
+            return this.student = s;
+        }
+        ```
+
+        As you can see, the bind is tied to the setter of the left-most property: when "this.student" is set, the input will update.  
+        If you set "this.student.name" without updating "this.student", the input will not be updated.
+        A workaround can be to call `s.name = 'new name'; myWidget.student = s;`, so that the setter will run again after the property has changed.
+    **/
+    static function addValueBindForElement(node:DOMNode)
+    {
+        var attName = 'dtx-bind-value';
+        var bindTo = node.attr( attName );
+        node.removeAttr( attName );
+
+        if ( bindTo!="" ) {
+            var className = Context.getLocalClass().toString();
+            var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
+            var selector = getUniqueSelectorForNode(node); 
+
+            var bindToExpr = 
+                try 
+                    Context.parse( bindTo, BuildTools.currentPos() )
+                catch (e:Dynamic) 
+                    error('Error parsing $attName="$bindTo" in $className template. \nError: $e \nNode: ${node.html()}', BuildTools.currentPos());
+
+            var fieldName = getLeftMostVariable( bindToExpr );
+            var setValLine = macro $selector.setVal( bindToExpr );
+            addExprToAllSetters( setValLine, [fieldName] );
+            
+            #if js
+                // Add a "change" event listener to the init function.  On each change, set the "bindTo" property.
+                var onChangeLine = macro $selector.change( function (e:js.html.Event) { $bindToExpr = $selector.val(); } );
+                BuildTools.addLinesToFunction(initFn, onChangeLine);
+            #end
+        }
+    }
+
+    /**
+        Bind the content (innerHTML) of this element to a variable / property.
+
+        What is the difference between `<div>$pageContent</div>` as opposed to `<div dtx-content="pageContent" />`?
+        Good question!  The regular text interpolation uses `setText()` and this escapes HTML, so it is innappropriate for adding HTML code into your widget.
+        The `dtx-content` attribute calls `setInnerHTML()` on the node, so that you can insert HTML content into your widget.
+
+        Example usage:
+
+        ```
+        Main.hx:
+        class Main {
+            static function main() {
+                var layout = new MyLayout();
+                layout.content = "<h1>Hello</h1><p>Welcome to my site</p>";
+            }
+        }
+
+        MyLayout.hx:
+
+        @:template("<div class='container' dtx-content='pageContent' />")
+        class MyLayout extends Widget { }
+        ```
+
+        Note:
+
+        Currently only basic properties and variables are supported, not method calls etc.
+        The property must already exist, it will not be created.
+    **/
+    static function addContentSetForElement(node:DOMNode)
+    {
+        var attName = 'dtx-content';
+        var content = node.attr( attName );
+        node.removeAttr( attName );
+
+        if ( content!="" ) {
+            var className = Context.getLocalClass().toString();
+            var selector = getUniqueSelectorForNode(node); 
+
+            var contentExpr = 
+                try 
+                    Context.parse( content, BuildTools.currentPos() )
+                catch (e:Dynamic) 
+                    error('Error parsing $attName="$content" in $className template. \nError: $e \nNode: ${node.html()}', BuildTools.currentPos());
+
+            // TODO: check if we need to be more thorough in which variables we put setters on. 
+            // With text interpolation, we check for arguments in function calls also.
+            // Here we just check for the left-most, which should suffice MOST of the time...
+            var fieldName = getLeftMostVariable( contentExpr );
+            var setInnerHtmlLine = macro $selector.setInnerHTML( ''+$contentExpr );
+            addExprToAllSetters( setInnerHtmlLine, [fieldName] );
+        }
     }
 
     static var uniqueDtxID:Int = 0;
