@@ -222,26 +222,33 @@ class ElementManipulation
 			{
 				case dtx.DOMType.ELEMENT_NODE:
 					#if js
-					// TODO: Make this more intelligent. Handle <select> especially
-					if ( node.nodeName.toLowerCase()=="input" && attr(node,"type")=="checkbox" ) {
-						val = Reflect.field(node, 'checked') ? "true" : "false";
-					}
-					else {
-						val = Reflect.field(node, 'value');
-						
-						// If the value is null, that means
-						// the element did not have a field
-						// "value".  See if it has an attr
-						// instead.  This will return "" if
-						// it doesn't, which is a sane default
-						// also.
-						if (val == null)
-						{
-							val = attr(node, "value");
+						// TODO: Make this more intelligent. Handle <select> especially
+						// What does jQuery do here?
+						if ( node.nodeName.toLowerCase()=="input" && attr(node,"type")=="checkbox" ) {
+							if ( Reflect.field(node,'checked') ) {
+								val = attr( node, "value" );
+								if ( val=="" ) val = "checked";
+							} 
+							else {
+								"";
+							}
 						}
-					}
+						else {
+							val = Reflect.field(node, 'value');
+							
+							// If the value is null, that means
+							// the element did not have a field
+							// "value".  See if it has an attr
+							// instead.  This will return "" if
+							// it doesn't, which is a sane default
+							// also.
+							if (val == null)
+							{
+								val = attr(node, "value");
+							}
+						}
 					#else 
-					val = attr(node, "value");
+						val = attr(node, "value");
 					#end
 				default:
 					val = node.nodeValue;
