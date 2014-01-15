@@ -201,24 +201,7 @@ class WidgetTools
             access : [APublic,AOverride], 
             kind : FFun({ 
                 args: [], 
-                expr: { 
-                    expr: EBlock(
-                        [
-                        { 
-                            expr: EReturn(
-                                { 
-                                    expr: EConst(
-                                        CString(template)
-                                    ), 
-                                    pos: widgetPos
-                                }
-                            ), 
-                            pos: widgetPos
-                        }
-                        ]
-                    ), 
-                    pos: widgetPos
-                }, 
+                expr: macro { return $v{template}; },
                 params: [], 
                 ret: null 
             }), 
