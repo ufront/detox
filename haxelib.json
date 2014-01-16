@@ -12,7 +12,7 @@
   Add support for `dtx-bind-value`, `dtx-bind-(int|float)-value`, `dtx-on-*` and `dtx-content` widget helpers.
   Fix use of member functions on the widget (not a member function of a property of a widget) in interpolation.
   Change Loop.addItem() to return the already existing item if `preventDuplicates` is true and the item already exists.",
-  "version": "1.0.0-rc-1",
+  "version": "1.0.0-rc.1",
   "url": "https://github.com/jasononeil/detox",
   "classPath": "src/",
   "dependencies": {
