@@ -812,10 +812,13 @@ class WidgetTools
         {
             if ( eventName!="" && eventBody!="" )
             {
+                eventBody = eventBody.trim();
+                if ( eventBody.endsWith(";")==false ) eventBody = eventBody+";";
+
                 var className = Context.getLocalClass().toString();
                 var eventBodyExpr = 
                     try 
-                        Context.parse( eventBody, BuildTools.currentPos() )
+                        Context.parse( '{$eventBody}', BuildTools.currentPos() )
                     catch (e:Dynamic) 
                         error('Error parsing $attName="$eventBody" in $className template. \nError: $e \nNode: ${node.html()}', BuildTools.currentPos());
                 eventBodyExpr.substitute({ "_": macro e.currentTarget });
