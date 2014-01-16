@@ -133,9 +133,15 @@ class Loop<T> extends DOMCollection
 		return newItems;
 	}
 	
-	/** Takes an input, generates a LoopItem, and includes it in the loop. 
+	/**
+		Takes an input, generates a LoopItem, and includes it in the loop. 
 
-	It will check for duplicates if `preventDuplicates` is true.  You can also set the position the item is to be inserted at.  Values for `pos` are the same as insertItem() */
+		It will check for duplicates if `preventDuplicates` is true.  
+		If a duplicate does exist, the existing loop item will be returned, and the position will not be affected.
+
+		You can also set the position the item is to be inserted at.  
+		Values for `pos` are the same as insertItem() 
+	**/
 	public function addItem(input:T, ?pos:Int = -1):LoopItem<T>
 	{
 		var item = do_addItem(input, pos);
@@ -147,12 +153,16 @@ class Loop<T> extends DOMCollection
 	{
 		var item:LoopItem<T> = null;
 
-		// If this is not null AND not a duplicate (or we don't care)
-		if (input != null && (preventDuplicates == false || findItem(input) == null))
+		if (input !=null)
 		{
-			// Keep reference to both the original input and the generated item/collection
-			item = generateItem(input);
-			do_insertItem(item, pos);
+			if (preventDuplicates) item = findItem(input);
+
+			if (item==null)
+			{
+				// Keep reference to both the original input and the generated item/collection
+				item = generateItem(input);
+				do_insertItem(item, pos);
+			}
 		}
 
 		return item;
