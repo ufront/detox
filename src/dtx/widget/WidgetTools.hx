@@ -1175,8 +1175,13 @@ class WidgetTools
                                     for (param in params) {
                                         var varName = getLeftMostVariable(param);
                                         if (varName != null) {
-                                            if ( varName.fieldExists() )
-                                                variablesInside.push( ExtractedVarType.Call(varName) );
+                                            if ( varName.fieldExists() ) {
+                                                switch varName.getField().kind {
+                                                    case FVar(_,_), FProp(_,_,_,_): 
+                                                        variablesInside.push( ExtractedVarType.Call(varName) );
+                                                    case FFun(_):
+                                                }
+                                            }
                                             else {
                                                 var localClass = Context.getLocalClass();
                                                 var printer = new Printer("  ");
@@ -1205,16 +1210,16 @@ class WidgetTools
             default:
                 error("extractVariablesUsedInInterpolation() only works on ECheckType, the output of Format.format()", BuildTools.currentPos());
         }
-
         return variablesInside;
     }
 
-    /** Takes an expression and tries to find the left-most plain variable.  For example "student" in `student.name`, "age" in `person.age`, "name" in `name.length`.
-    
-    It will try to ignore "this", for example it will match "person" in `this.person.age`.
+    /**
+        Takes an expression and tries to find the left-most plain variable.  For example "student" in `student.name`, "age" in `person.age`, "name" in `name.length`.
+        
+        It will try to ignore "this", for example it will match "person" in `this.person.age`.
 
-    Note it will also match packages: "haxe" in "haxe.crypto.Sha1.encode"
-    */
+        Note it will also match packages: "haxe" in "haxe.crypto.Sha1.encode"
+    **/
     public static function getLeftMostVariable(expr:Expr):Null<String>
     {
         var leftMostVarName = null;
@@ -1243,6 +1248,14 @@ class WidgetTools
                             break;
                     }
                 }
+            case ECall(e,params):
+                // TODO: Here we only return the left-most variable of the function being called, which is useful
+                // if we are calling a method on a variable.  For example, `student.name.substr(1)` will return `student`
+                // so we can listen to set_student for changes.  But what if we have have `StringTools.replace(text, student.firstName, "")`?
+                // In that case we might want this to return `[text, student]`, as we will want setters on both of those
+                return getLeftMostVariable(e);
+            case EMeta(_,e): 
+                return getLeftMostVariable(e);
             case EConst(_): // A constant.  Leave it null
             case _: err = true;
         }
