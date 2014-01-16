@@ -880,7 +880,12 @@ class WidgetTools
                     error('Error parsing $attName="$bindTo" in $className template. \nError: $e \nNode: ${node.html()}', BuildTools.currentPos());
 
             var fieldName = getLeftMostVariable( bindToExpr );
-            var setValLine = macro dtx.single.ElementManipulation.setVal( $selector, ''+$bindToExpr );
+            var setValueExpr = switch attName {
+                case "dtx-bind-int-value": macro (''+$bindToExpr!="null") ? ''+$bindToExpr : '';
+                case "dtx-bind-float-value": macro (''+$bindToExpr!="NaN"&&''+$bindToExpr!="null") ? ''+$bindToExpr : '';
+                default: macro ($bindToExpr!=null) ? ''+$bindToExpr : '';
+            }
+            var setValLine = macro dtx.single.ElementManipulation.setVal( $selector, $setValueExpr );
             addExprToAllSetters( setValLine, [fieldName] );
             
             if ( Context.defined("js") ) 
