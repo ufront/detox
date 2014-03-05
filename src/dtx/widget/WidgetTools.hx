@@ -780,7 +780,7 @@ class WidgetTools
                 sub: null,
                 params: [],
                 pack: ['dtx'],
-                name: "DOMCollection"
+                name: "DOMNode"
             });
             var prop = BuildTools.getOrCreateProperty(name, propType, true, false);
             
@@ -796,7 +796,8 @@ class WidgetTools
             switch( prop.getter.kind )
             {
                 case FFun(f):
-                    f.expr = macro return dtx.Tools.toCollection($selector);
+                    f.expr = macro return $selector;
+                    prop.getter.access.push( AInline );
                 default: 
             }
         }
