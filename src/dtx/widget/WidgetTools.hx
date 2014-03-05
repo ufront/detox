@@ -434,12 +434,13 @@ class WidgetTools
         node.replaceWith( placeholderName.create().setAttr("data-dtx-partial", name) );
 
         // Set up a public field in the widget, public var $name(default,set_$name):$type
-        var propType = TPath({
+        var typePath = {
             sub: null,
             params: [],
             pack: pack,
             name: typeName
-        });
+        };
+        var propType = TPath( typePath );
         var prop = BuildTools.getOrCreateProperty(name, propType, false, true);
         var variableRef = name.resolve();
         var typeRef = typeName.resolve();
@@ -469,7 +470,7 @@ class WidgetTools
         // Get the init function, instantiate our partial
         var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
         linesToAdd = macro {
-            $variableRef = new $typeName();
+            $variableRef = new $typePath();
         };
         BuildTools.addLinesToFunction(initFn, linesToAdd, 0);
 
