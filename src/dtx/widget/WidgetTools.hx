@@ -101,7 +101,7 @@ class WidgetTools
 
     static function error(msg:String, p:Position):Dynamic
     {
-        #if haxe-ver>3
+        #if (haxe_ver >= 3.100)
             return Context.fatalError( msg, p );
         #else
             return Context.error( msg, p );
@@ -1037,7 +1037,7 @@ class WidgetTools
             {
                 varName.getField().getSetter().addLinesToFunction(expr, 1);
             }
-            else Context.error('Field $varName not found in ${Context.getLocalClass()}', BuildTools.currentPos() );
+            else error('Field $varName not found in ${Context.getLocalClass()}', BuildTools.currentPos() );
         }
     }
 
