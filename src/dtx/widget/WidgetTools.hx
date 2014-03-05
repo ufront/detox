@@ -117,11 +117,11 @@ class WidgetTools
         var template:String = "";                               // If the template is directly in metadata, use that.
 
         // Get the template content if declared in metadata
-        var template = BuildTools.getClassMetadata_String(":template", true);
+        var template = BuildTools.getClassMetadata_String(":template", false);
         if (template == null)
         {
             // Check if we are loading a partial from in another template
-            var partialInside = BuildTools.getClassMetadata_ArrayOfStrings(":partialInside", true);
+            var partialInside = BuildTools.getClassMetadata_ArrayOfStrings(":partialInside", false);
             if (partialInside != null && partialInside.length > 0)
             {
                 if (partialInside.length == 2)
@@ -147,11 +147,14 @@ class WidgetTools
                 // Attempt to load the file
                 template = BuildTools.loadFileFromLocalContext(templateFile);
                 
-                // If still no template, check if @:noTpl() was declared, if not, throw error.
+                // If still no template, check if @:noTemplate() was declared, if not, throw error.
                 if (template == null) 
                 {
-                    var metadata = localClass.get().meta.get();
-                    if (!metadata.exists(function(metaItem) return metaItem.name == ":noTpl"))
+                    var noTemplate = BuildTools.hasClassMetadata(":noTemplate",false);
+                    var parentHasTemplate = BuildTools.hasClassMetadata(":template",true);
+                    var parentHasTemplateFile = BuildTools.hasClassMetadata(":templateFile",true);
+                    var parentHasTemplatePartial = BuildTools.hasClassMetadata(":partialInside",true);
+                    if ( false==(noTemplate||parentHasTemplate||parentHasTemplateFile||parentHasTemplatePartial) )
                     {
                         error('Could not load the widget template: $templateFile', p);
                     }
