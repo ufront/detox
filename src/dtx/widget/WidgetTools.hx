@@ -13,7 +13,6 @@ package dtx.widget;
 
 import dtx.DOMNode;
 import haxe.macro.Expr;
-import haxe.macro.Context;
 import haxe.macro.Format;
 import haxe.macro.Type;
 import haxe.macro.Printer;
@@ -46,7 +45,7 @@ class WidgetTools
     {
         if (templates==null) templates = new StringMap();
 
-        var localClass = haxe.macro.Context.getLocalClass();    // Class that is being declared
+        var localClass = Context.getLocalClass();    // Class that is being declared
         var widgetPos = localClass.get().pos;                   // Position where the original Widget class is declared
         var fields = BuildTools.getFields();
 
@@ -315,7 +314,7 @@ class WidgetTools
     
     static function processPartialDeclarations(name:String, node:dtx.DOMNode, ?fields:Array<Field>, ?useKeepWidget=false)
     {
-        var localClass = haxe.macro.Context.getLocalClass();
+        var localClass = Context.getLocalClass();
         var p = localClass.get().pos;
         var pack = localClass.get().pack;
         if ( node.attr('keep')=="true" ) useKeepWidget = true;
@@ -380,7 +379,7 @@ class WidgetTools
                 isExtern: false,
                 fields: fields
             };
-            haxe.macro.Context.defineType(partialDefinition);
+            Context.defineType(partialDefinition);
         }
     }
 
@@ -514,7 +513,7 @@ class WidgetTools
     {
         // Generate a name for the partial.  Either take it from the <dtx:MyPartial dtx-name="this" /> attribute,
         // or autogenerate one (partial_$t, t++)
-        var widgetClass = haxe.macro.Context.getLocalClass();
+        var widgetClass = Context.getLocalClass();
         var nameAttr = node.attr('dtx-name');
         var name = (nameAttr != "") ? nameAttr : "loop_" + t;
         var p = widgetClass.get().pos;
