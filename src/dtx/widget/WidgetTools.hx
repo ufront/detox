@@ -1128,12 +1128,13 @@ class WidgetTools
                     }
                     else 
                     {
-                        // Otherwise, hide if null
-                        interpolationExpr = macro (($i{varName} != null) ? $interpolationExpr : "");
+                        var nullCheck = BuildTools.generateNullCheckForIdents([ varName ]);
+                        interpolationExpr = macro ($nullCheck ? $interpolationExpr : "");
                     }
                     variableNames.push(varName);
                 case Call(varName), Field(varName):
-                    interpolationExpr = macro (($i{varName} != null) ? $interpolationExpr : "");
+                    var nullCheck = BuildTools.generateNullCheckForIdents([ varName ]);
+                    interpolationExpr = macro ($nullCheck ? $interpolationExpr : "");
                     variableNames.push(varName);
             }
         }

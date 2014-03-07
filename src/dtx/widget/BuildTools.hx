@@ -412,7 +412,17 @@ class BuildTools
     **/
     public static function generateNullCheckForIdents( idents:Array<String> ) {
         if ( idents.length>0 ) {
-            var nullChecks = [ for (name in idents) macro $i{name}!=null ];
+            var nullChecks = [];
+            for (name in idents) {
+                // For static platforms, we don't know if the ident is nullable.
+                // So cast use an ECheckType to cast to Null<Dynamic>, so we can test.
+                if ( Context.defined("cpp") || Context.defined("flash") || Context.defined("java") ) {
+                    nullChecks.push( macro (($i{name}:Null<Dynamic>) != null) );
+                }
+                else {
+                    nullChecks.push( macro ($i{name} != null) );
+                }
+            }
             var nothingNull = nullChecks.shift();
             while ( nullChecks.length>0 ) {
                 var nextCheck = nullChecks.shift();
