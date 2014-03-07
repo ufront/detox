@@ -1,6 +1,6 @@
 package widgets;
 
-@:noTpl
+@:noTemplate
 class NoTplWidget extends dtx.widget.Widget
 {
 
