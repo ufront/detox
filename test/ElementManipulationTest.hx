@@ -528,6 +528,71 @@ class ElementManipulationTest
 	}
 
 	@Test
+	public function testHtmlEntityEscaping() {
+		var div = 'div'.create();
+
+		// Test basic escaping from `setText`
+
+		div.setText( 'Please no <b>Bold</b>' );
+		Assert.areEqual( "Please no <b>Bold</b>", div.text() );
+		Assert.areEqual( "<div>Please no &lt;b&gt;Bold&lt;/b&gt;</div>", div.html() );
+		var newDiv = div.html().parse();
+		Assert.areEqual( 0, newDiv.find("b").length );
+
+		div.setText( 'This & That' );
+		var newDiv = div.html().parse();
+		Assert.areEqual( "<div>This &amp; That</div>", div.html() );
+
+		// Test escapting quotes in `setAttr` to prevent maliciousness
+		
+		var link = '<a href="">Link</a>'.parse();
+
+		var attemptEscapeAttr = 'fakelink" onclick="HAHA!';
+		link.setAttr( "href", attemptEscapeAttr );
+		Assert.areEqual( attemptEscapeAttr, link.attr('href') );
+		Assert.areEqual( '', link.attr('onclick') );
+		Assert.isTrue( link.html().indexOf(StringTools.htmlEscape(attemptEscapeAttr,true))>-1 );
+
+		var newLink = link.html().parse();
+		Assert.areEqual( attemptEscapeAttr, newLink.attr('href') );
+		Assert.areEqual( '', newLink.attr('onclick') );
+		
+		// Test escaping from `setAttr`
+
+		var div = "div".create();
+		var content = "Hello <\'Friends\' & \"Family\">";
+		var encodedContent = StringTools.htmlEscape( content, true );
+		
+		div.setAttr("title",content);
+
+		Assert.areEqual('<div title="$encodedContent"></div>', div.html());
+		var newDiv = div.html().parse();
+		Assert.isTrue( div.html().indexOf(encodedContent)>-1 );
+		Assert.areEqual(content, newDiv.attr('title'));
+
+		// Test escaping from innerHTML
+
+		var content = "<p>Here is some code: <code>var arr:Array&lt;String&gt;</code> - nice hey!</p>";
+		var div = "div".create();
+		div.setInnerHTML( content );
+		Assert.areEqual( '$content', div.innerHTML() );
+		Assert.areEqual( '<div>$content</div>', div.html() );
+
+		// Test escaping of non-standard entities
+		var content = "<div>&laquo;Haxe&raquo;</div>";
+		var div = content.parse();
+		#if js
+			var text = div.text();
+			Assert.areEqual( "«".code, StringTools.fastCodeAt( text, 0 ) );
+			Assert.areEqual( "»".code, StringTools.fastCodeAt( text, 5 ) );
+			Assert.areEqual( "<div>&#171;Haxe&#187;</div>", div.html() );
+		#else 
+			Assert.areEqual( "&laquo;Haxe&raquo;", div.text() );
+			Assert.areEqual( "<div>&laquo;Haxe&raquo;</div>", div.html() );
+		#end
+	}
+
+	@Test
 	public function testCloneTextNode():Void 
 	{
 		var newText = text.clone();

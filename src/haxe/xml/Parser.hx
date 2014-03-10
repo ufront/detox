@@ -238,7 +238,7 @@ class Parser
 				case S.ATTRIB_VAL:
 					if (c == str.fastCodeAt(start))
 					{
-						var val = str.substr(start+1,p-start-1);
+						var val = StringTools.htmlUnescape( str.substr(start+1,p-start-1) );
 						xml.set(aname, val);
 						state = S.IGNORE_SPACES;
 						next = S.BODY;

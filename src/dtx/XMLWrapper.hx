@@ -198,7 +198,7 @@ class XMLWrapper
 				var s = new StringBuf();
 				for (textNode in textDescendants)
 				{
-					s.add(textNode.toString());
+					s.add(textNode.nodeValue);
 				}
 				
 				ret = s.toString();
@@ -243,9 +243,13 @@ class XMLWrapper
 		var xmlDocNode:Xml = null;
 		try {
 			#if macro 
-			xmlDocNode = Xml.parse("<doc>" + html + "</doc>").firstChild();
+				xmlDocNode = haxe.xml.Parser.parse("<doc>" + html + "</doc>").firstChild();
+			#elseif (neko || cpp)
+				// Neko's native parser has issues with over-encoding HTML entities.
+				// The Haxe based parser is a little better, it at least gets <, &, and > correct.
+				xmlDocNode = (html.indexOf("&")>-1) ? haxe.xml.Parser.parse(html) : Xml.parse(html);
 			#else 
-			xmlDocNode = Xml.parse(html);
+				xmlDocNode = Xml.parse(html);
 			#end
 		} catch (e:Dynamic)
 		{
@@ -259,14 +263,9 @@ class XMLWrapper
 		// Basically, If there are 2 children, the loop only runs once.  I think the way the
 		// iterator works must break when you change the number of children half way through 
 		// a loop.  As a workaround, add all children to a List, then move them
-		var list = new List();
-		for (child in xmlDocNode)
+		for (child in Lambda.list(xmlDocNode))
 		{
-			list.add(child);
-		}
-		for (child in list)
-		{
-		 	xml.addChild(cloneNode(child));
+		 	xml.addChild(child);
 		}
 		return html;
 	}
@@ -277,15 +276,15 @@ class XMLWrapper
 			case Xml.Element:
 				Xml.createElement( xml.nodeName );
 			case Xml.PCData:
-				Xml.createPCData( StringTools.htmlEscape(xml.nodeValue) );
+				Xml.createPCData( xml.nodeValue );
 			case Xml.CData:
-				Xml.createCData( StringTools.htmlEscape(xml.nodeValue) );
+				Xml.createCData( xml.nodeValue );
 			case Xml.Comment:
-				Xml.createComment( StringTools.htmlEscape(xml.nodeValue) );
+				Xml.createComment( xml.nodeValue );
 			case Xml.DocType:
-				Xml.createDocType( StringTools.htmlEscape(xml.nodeValue) );
+				Xml.createDocType( xml.nodeValue );
 			case Xml.ProcessingInstruction:
-				Xml.createProcessingInstruction( StringTools.htmlEscape(xml.nodeValue) );
+				Xml.createProcessingInstruction( xml.nodeValue );
 			case Xml.Document:
 				Xml.createDocument();
 			default: throw null;

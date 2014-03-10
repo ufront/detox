@@ -240,16 +240,7 @@ class WidgetTools
             processNode( node, partialNumber, loopNumber );
         }
 
-        // More escaping hoop-jumping.  Basically, xml.html() will encode the text nodes, but not the attributes. Gaarrrh
-        // So if we go through the attributes on each of our top level nodes, and escape them, then we can unescape the whole thing.
-        for (node in xml)
-            if (node.isElement())
-                for (att in node.attributes())
-                    node.setAttr(att, node.attr(att).htmlEscape());
-
-        var html = xml.html().htmlUnescape();
-
-        return { template: html, fields: fieldsToAdd };
+        return { template: xml.html(), fields: fieldsToAdd };
     }
 
     static function processNode( node:DOMNode, partialNumber:TinkRef<Int>, loopNumber:TinkRef<Int> ) {

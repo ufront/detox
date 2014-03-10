@@ -260,8 +260,20 @@ class WidgetTest
 	{
 		var w = new widgets.PartialInSameFile3();
 
+		Assert.areEqual( "doc", w.getNode(0).tagName() );
+		Assert.areEqual( 4, w.find("section").children().length );
+		
 		// Check that it has come through twice
-		Assert.areEqual('<doc><header><title>Test Partial</title></header><section><h1>Header</h1><p>Paragraph</p><a href="#" class="btn">Button</a><a href="#" class="btn">Button</a></section></doc>', w.html());
+		var btn1 = w.find("section").children().getNode(2);
+		var btn2 = w.find("section").children().getNode(3);
+		Assert.areEqual( "a", btn1.tagName() );
+		Assert.areEqual( "a", btn2.tagName() );
+		Assert.areEqual( "btn", btn1.attr("class") );
+		Assert.areEqual( "btn", btn2.attr("class") );
+		Assert.areEqual( "#", btn1.attr("href") );
+		Assert.areEqual( "#", btn2.attr("href") );
+		Assert.areEqual( "Button", btn1.innerHTML() );
+		Assert.areEqual( "Button", btn2.innerHTML() );
 	}
 
 	@Test 
@@ -270,7 +282,10 @@ class WidgetTest
 		var w = new widgets.PartialInSameFile3_Button();
 
 		// See if it matches _Button from that class...
-		Assert.areEqual('<a href="#" class="btn">Button</a>', w.html());
+		Assert.areEqual( "a", w.tagName() );
+		Assert.areEqual( "#", w.attr("href") );
+		Assert.areEqual( "btn", w.attr("class") );
+		Assert.areEqual( "Button", w.innerHTML() );
 	}
 
 	@Test 
@@ -458,6 +473,7 @@ class WidgetTest
 		w.age = "25";
 		w.belief = "gravity";
 		Assert.areEqual("My name is Jason, I am 25 years old and I believe in gravity", w.text());
+		Assert.areEqual("This is about Jason", w.attr('title'));
 	}
 
 	@Test 
@@ -593,11 +609,12 @@ class WidgetTest
 	}
 
 	@Test 
+	@:access( widgets.WidgetWithHtmlEncoding )
 	public function htmlCharacterEncodings()
 	{
 		var w = new widgets.WidgetWithHtmlEncoding();
-		var expected = '<p title="All about apples &amp; bananas">Apples &amp; Bananas, <i title="&laquo;More Info&raquo;">&laquo;&nbsp;Both are fruit&nbsp;&raquo</i></p>';
-		Assert.areEqual(expected, untyped w.get_template());
+		var expected = '<p title="All about apples &amp; bananas">Apples &amp; Bananas, <i>&lt;&nbsp;\'Both\' are \"fruit\"&nbsp;&gt;</i></p>';
+		Assert.areEqual(expected, w.get_template());
 	}
 
 	@Test 

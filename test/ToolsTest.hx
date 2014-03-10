@@ -219,6 +219,17 @@ class ToolsTest
 		Assert.areEqual("thead", q7.tagName());
 	}
 
+	@Test
+	public function testParseXmlEntities()
+	{
+		var content = "<p title='This &amp; That'>Allow &lt;Entities&gt;</p>";
+		var xml = content.parse();
+		Assert.areEqual( "This & That", xml.attr('title') );
+		Assert.areEqual( "Allow &lt;Entities&gt;", xml.innerHTML() );
+		Assert.areEqual( "Allow <Entities>", xml.firstChildren(false).getNode().nodeValue );
+		Assert.isTrue( xml.html().indexOf("This &amp; That")>-1 );
+	}
+
 	@Test 
 	public function setDocument()
 	{

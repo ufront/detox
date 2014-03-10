@@ -11,9 +11,11 @@
 
 package dtx.single;
 
+import dtx.DOMCollection;
 import dtx.DOMNode;
 import dtx.DOMType;
 #if !js using dtx.XMLWrapper; #end
+using Lambda;
 
 /*
 JQuery has these classes, let's copy:
@@ -60,9 +62,9 @@ class ElementManipulation
 	public static function index(n:DOMNode):Int 
 	{
 		#if js
-			return Lambda.indexOf(dtx.single.Traversing.children(dtx.single.Traversing.parents(n), false), n);
+			return dtx.single.Traversing.children(dtx.single.Traversing.parents(n), false).indexOf(n);
 		#else
-			return (n != null && n.parent != null) ? Lambda.indexOf(n.parent, n) : -1;
+			return (n != null && n.parent != null) ? n.parent.indexOf(n) : -1;
 		#end 
 	}
 
@@ -323,22 +325,23 @@ class ElementManipulation
 		return elm;
 	}
 
+	@:access(dtx.single.Traversing)
 	public static function innerHTML(elm:DOMNode):String
 	{
-		var ret = "";
+		var ret="";
 		if (elm != null)
 		{
 			switch (elm.nodeType)
 			{
 				case dtx.DOMType.ELEMENT_NODE:
-					var element:DOMElement = cast elm;
-					#if js
-					ret = element.innerHTML;
-					#else 
-					ret = element.innerHTML();
-					#end
+					var sb = new StringBuf();
+					for ( child in dtx.single.Traversing.unsafeGetChildren(elm,false) ) 
+					{
+						printHtml( child, sb );
+					}
+					ret = sb.toString();
 				default:
-					ret = #if js elm.textContent #else elm.textContent() #end; 
+					ret = elm.textContent #if !js () #end; 
 
 			}
 		}
@@ -377,52 +380,103 @@ class ElementManipulation
 	// JS doesn't have a built in html() method
 	public static function html(elm:DOMNode):String
 	{
-		#if js
-			var div = Detox.create("div");
-			dtx.single.DOMManipulation.append(div, clone(elm));
-			return innerHTML(div);
-		#else 
-			if ( elm == null ) return "";
-			
-			var sb = new StringBuf();
-			printHtml( elm, sb );
-			return sb.toString();
-		#end
+		if ( elm == null ) return "";
+		
+		var sb = new StringBuf();
+		printHtml( elm, sb );
+		return sb.toString();
 	}
 
-	#if !js
-		static var selfClosingElms = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
-		static function printHtml( n:DOMNode, sb:StringBuf ) {
-			if ( isElement(n) ) {
-				var elmName = tagName(n);
-				sb.add('<$elmName');
-				
+	static var selfClosingElms = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
+	
+	@:access(dtx.single.Traversing)
+	static function printHtml( n:DOMNode, sb:StringBuf ) {
+		if ( isElement(n) ) {
+			var elmName = tagName(n);
+			sb.add('<$elmName');
+			
+			#if js
+				for ( i in 0...n.attributes.length ) {
+					var attNode = n.attributes[i];
+					sb.add(' ${attNode.nodeName}="');
+					addHtmlEscapedString( attNode.nodeValue, sb, true );
+					sb.add('"');
+				}
+			#else
 				for ( a in n.attributes() ) {
-					var value = attr(n, a);
-					sb.add(' $a="$value"');
+					sb.add(' $a="');
+					addHtmlEscapedString( attr(n,a), sb, true );
+					sb.add('"');
 				}
-				
-				if ( dtx.single.Traversing.children(n, false).length > 0 ) {
-					sb.add(">");
-					for ( child in dtx.single.Traversing.children(n, false) ) {
-						printHtml( child, sb );
-					}
-					sb.add('</$elmName>');
-				}
-				else {
-					sb.add( 
-						if ( Lambda.has(selfClosingElms, tagName(n)) ) " />" 
-						else '></$elmName>' 
-					);
-				}
-			} else if ( isDocument(n) ) {
-				for ( child in dtx.single.Traversing.children(n, false) ) {
+			#end
+			
+			var children = dtx.single.Traversing.unsafeGetChildren(n,false);
+			if ( children.length > 0 ) {
+				sb.add(">");
+				for ( child in children ) {
 					printHtml( child, sb );
 				}
-			} else {
-				sb.add( n.toString() );
+				sb.add('</$elmName>');
 			}
+			else {
+				if ( selfClosingElms.has(tagName(n)) ) sb.add(" />");
+				else sb.add('></$elmName>');
+			}
+		} 
+		else if ( isDocument(n) ) {
+			for ( child in dtx.single.Traversing.children(n, false) ) {
+				printHtml( child, sb );
+			}
+		} 
+		else if ( isTextNode(n) ) {
+			addHtmlEscapedString( n.nodeValue, sb, false );
+		} 
+		else if ( isComment(n) ) {
+			sb.add( '<!--' );
+			sb.add( n.nodeValue );
+			sb.add( '-->' );
 		}
-	#end
+	}
+
+	static function addHtmlEscapedString( str:String, sb:StringBuf, encodeQuotes:Bool )
+	{
+		for ( i in 0...str.length ) {
+			var charCode = StringTools.fastCodeAt( str, i );
+
+			if ( charCode=='&'.code ) {
+				// Peek ahead and see if we're in a HTML entity code
+				// If we are, insert the entity as is, if not, and it's just an ampersand, insert as `&amp;`
+				var peekIndex = i+1;
+				var isEntity:Bool = false;
+				while (peekIndex<str.length) {
+					var c = StringTools.fastCodeAt( str, peekIndex );
+					if ( c == ';'.code ) {
+						// This is the end of an entity.  Providing it's not empty (we peeked at least one character before 
+						// the semicolon), then "isEntity" is true.
+						isEntity = peekIndex > i+1;
+						break;
+					}
+					if ( (c >= 'a'.code && c <= 'z'.code) || (c >= 'A'.code && c <= 'Z'.code) || (c >= '0'.code && c <= '9'.code) || c == '#'.code) {
+						// This could well be part of an entity, keep peeking ahead...
+						peekIndex++;
+						continue;
+					}
+					else {
+						// There was a character that is not a valid entity, so break
+						break;
+					}
+
+				}
+				sb.add( isEntity ? "&" : "&amp;" );
+			}
+			else if ( charCode=='<'.code ) sb.add( "&lt;" );
+			else if ( charCode=='>'.code ) sb.add( "&gt;" );
+			else if ( charCode==160 ) sb.add( "&nbsp;" );
+			else if ( encodeQuotes && charCode=="'".code ) sb.add( "&#039;" );
+			else if ( encodeQuotes && charCode=='"'.code ) sb.add( "&quot;" );
+			else if ( charCode<161 ) sb.addChar( charCode );
+			else sb.add( '&#$charCode;' );
+		}
+	}
 }
 

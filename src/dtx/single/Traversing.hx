@@ -29,22 +29,24 @@ import dtx.DOMNode;
 /** When returning a Null<Node>, it might be worth creating a static NullNode that won't generate errors (so we can chain easily and carelessly) but also not affect the DOM.   For now I'll leave it null.  */
 class Traversing
 {
+	static inline function unsafeGetChildren( elm:DOMNode, elementsOnly = true )
+	{
+		#if js
+			return new DOMCollection().addNodeList(elm.childNodes, elementsOnly);
+		#else 
+			// With Xml, "node" itself is iterable, so we can just pass that
+			return new DOMCollection().addCollection(elm, elementsOnly);
+		#end
+	}
+
 	/** Return a collection of all child nodes of the current node. */
 	static public function children(node:DOMNode, ?elementsOnly = true)
 	{
-		var children = new DOMCollection();
 		if (node != null && ElementManipulation.isElement(node))
 		{
-			// Add any child elements
-			#if js
-			children.addNodeList(node.childNodes, elementsOnly);
-			#else 
-			// With Xml, "node" itself is iterable, so we can just pass that
-			children.addCollection(node, elementsOnly);
-			#end
-
+			return unsafeGetChildren( node, elementsOnly );
 		}
-		return children;
+		else return new DOMCollection();
 	}
 
 	static public function firstChildren(node:DOMNode, ?elementsOnly = true)

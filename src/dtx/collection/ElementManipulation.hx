@@ -159,15 +159,15 @@ class ElementManipulation
 
 	public static function innerHTML(query:DOMCollection):String
 	{
-		var ret = "";
+		var sb = new StringBuf();
 		if (query != null)
 		{
 			for (node in query)
 			{
-				ret += dtx.single.ElementManipulation.innerHTML(node);
+				sb.add( dtx.single.ElementManipulation.innerHTML(node) );
 			}
 		}
-		return ret;
+		return sb.toString();
 	}
 
 	public static function setInnerHTML(query:DOMCollection, html:String):DOMCollection

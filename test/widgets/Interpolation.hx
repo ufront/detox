@@ -2,7 +2,7 @@ package widgets;
 
 import dtx.widget.Widget;
 
-@:template("<p>My name is $name, I am $age years old and I believe in $belief</p>")
+@:template("<p title='This is about $name'>My name is $name, I am $age years old and I believe in $belief</p>")
 class InterpolationBasic extends Widget {}
 
 @:template("<p>My name is $name, I am $age years old and it is $isTall that I am tall</p>")
