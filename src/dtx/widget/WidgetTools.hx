@@ -495,15 +495,27 @@ class WidgetTools
         // Any attributes on the partial are variables to be passed.  Every time a setter on the parent widget is called, it should trigger the relevent setter on the child widget
         for (attName in node.attributes())
         {
-            if (attName != "dtx-name")
+            if (attName.startsWith("dtx")==false)
             {
                 var propertyRef = '$name.$attName'.resolve();
                 var valueExprStr = node.attr(attName);
-                var valueExpr = 
-                    try 
-                        Context.parse( valueExprStr, p )
-                    catch (e:Dynamic) 
-                        error('Error parsing $attName="$valueExprStr" in $typeName partial call ($widgetClass template). \nError: $e \nNode: ${node.html()}', p);
+                var valueExpr:Expr;
+
+                // We use a similar syntax to text interpolation, but we unwrap the resulting expression so that it is not cast to a string.
+                // Still, this allows for attr="constantVal" attr="$variable" and attr="${'_'+someVar}", so it is fairly powerful.
+                var formattedExpr = Format.format( macro $v{valueExprStr} );
+                switch formattedExpr.expr {
+                    case ECheckType( { expr:EConst(CString(constantString)), pos:pos }, type):
+                        valueExpr = formattedExpr;
+                    case ECheckType( { expr:EBinop(OpAdd,macro "",expr2), pos:pos }, type):
+                        // `""+someValue`: the "" is to cast to a String, we are interested in the value only.
+                        valueExpr = expr2;
+                    case ECheckType( { expr:EBinop(OpAdd,_,_), pos:pos }, type):
+                        // adding some expression, going to assume string?
+                        valueExpr = formattedExpr;
+                    case other:
+                        Context.error( 'Failed to extract understand expression from from <${node.tagName()} $attName="$valueExprStr">, please use a simpler attribute or file a feature request.', p );
+                }
                 
                 var idents =  valueExpr.extractIdents();
                 if ( idents.length>0 ) {
