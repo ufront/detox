@@ -186,7 +186,7 @@ class ElementManipulation
 		return elm;
 	}
 
-	public static inline function tagName(elm:DOMNode):String
+	public static #if js inline #end function tagName(elm:DOMNode):String
 	{
 		#if js
 		return (elm == null) ? "" : elm.nodeName.toLowerCase();
@@ -337,7 +337,7 @@ class ElementManipulation
 					var sb = new StringBuf();
 					for ( child in dtx.single.Traversing.unsafeGetChildren(elm,false) ) 
 					{
-						printHtml( child, sb );
+						printHtml( child, sb, false );
 					}
 					ret = sb.toString();
 				default:
@@ -383,16 +383,16 @@ class ElementManipulation
 		if ( elm == null ) return "";
 		
 		var sb = new StringBuf();
-		printHtml( elm, sb );
+		printHtml( elm, sb, false );
 		return sb.toString();
 	}
 
 	static var selfClosingElms = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
 	
 	@:access(dtx.single.Traversing)
-	static function printHtml( n:DOMNode, sb:StringBuf ) {
+	static function printHtml( n:DOMNode, sb:StringBuf, preserveTagNameCase:Bool ) {
 		if ( isElement(n) ) {
-			var elmName = tagName(n);
+			var elmName = preserveTagNameCase ? n.nodeName : n.nodeName.toLowerCase();
 			sb.add('<$elmName');
 			
 			#if js
@@ -414,18 +414,18 @@ class ElementManipulation
 			if ( children.length > 0 ) {
 				sb.add(">");
 				for ( child in children ) {
-					printHtml( child, sb );
+					printHtml( child, sb, preserveTagNameCase );
 				}
 				sb.add('</$elmName>');
 			}
 			else {
-				if ( selfClosingElms.has(tagName(n)) ) sb.add(" />");
+				if ( selfClosingElms.has(elmName) ) sb.add(" />");
 				else sb.add('></$elmName>');
 			}
 		} 
 		else if ( isDocument(n) ) {
 			for ( child in dtx.single.Traversing.children(n, false) ) {
-				printHtml( child, sb );
+				printHtml( child, sb, preserveTagNameCase );
 			}
 		} 
 		else if ( isTextNode(n) ) {

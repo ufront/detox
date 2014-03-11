@@ -311,6 +311,14 @@ class ElementManipulationTest
 	}
 
 	@Test
+	public function testUpperCaseTagName():Void 
+	{
+		var elm = "MyElement".create();
+		Assert.areEqual( "myelement", elm.tagName() );
+		Assert.areEqual( "<myelement></myelement>", elm.html() );
+	}
+
+	@Test
 	public function testValInput():Void 
 	{
 		var input = "<input type='text' value='attr' />".parse().getNode();

@@ -157,6 +157,7 @@ class WidgetTools
                     {
                         error('Could not load the widget template: $templateFile', p);
                     }
+
                 }
             }
         }
@@ -179,7 +180,7 @@ class WidgetTools
             var partialMatches = allNodes.filter(function (n) { return n.nodeType == Xml.Element && n.nodeName == partialName; });
             
             if (partialMatches.length == 1) 
-                partialTemplate = partialMatches.first().innerHTML();
+                partialTemplate = getInnerHtmlPreservingTagNameCase( partialMatches.first() );
             else if (partialMatches.length > 1) 
                 error('The partial $partialName was found more than once in the template $templateFile... confusing!', p);
             else 
@@ -319,7 +320,7 @@ class WidgetTools
             }
         }
 
-        var partialTpl = node.innerHTML();
+        var partialTpl = getInnerHtmlPreservingTagNameCase( node );
 
         var className = localClass.get().name + name;
         var classMeta = [{
@@ -372,6 +373,30 @@ class WidgetTools
             };
             Context.defineType(partialDefinition);
         }
+    }
+
+    @:access(dtx.single.Traversing)
+    @:access(dtx.single.ElementManipulation)
+    static function getInnerHtmlPreservingTagNameCase(elm:DOMNode):String
+    {
+        var ret="";
+        if (elm != null)
+        {
+            switch (elm.nodeType)
+            {
+                case dtx.DOMType.ELEMENT_NODE:
+                    var sb = new StringBuf();
+                    for ( child in dtx.single.Traversing.unsafeGetChildren(elm,false) ) 
+                    {
+                        dtx.single.ElementManipulation.printHtml( child, sb, true );
+                    }
+                    ret = sb.toString();
+                default:
+                    ret = dtx.XMLWrapper.textContent( elm ); 
+
+            }
+        }
+        return ret;
     }
 
     static function processPartialCalls(node:dtx.DOMNode, t:Int)

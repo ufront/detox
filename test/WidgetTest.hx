@@ -433,6 +433,16 @@ class WidgetTest
 		Assert.areEqual("This person is an adult: true", w.profile2.find("p").text());
 	}
 
+	@Test
+	public function testPartialCasePreserves()
+	{
+		// When we read a partial, we call "innerHTML" on the partial declaration.  
+		// Printing the HTML for this section would usually force all tag names to lower case, which can break our partial names.
+		// This tests a widget where this issue would arise.
+		var w = new widgets.PartialInSameFile6();
+		Assert.areEqual('<doc><form><a href="#">Click!</a><a href="#">Click!</a></form></doc>', w.html());
+	}
+
 	@Test 
 	public function interpolationNotSetStrings()
 	{
