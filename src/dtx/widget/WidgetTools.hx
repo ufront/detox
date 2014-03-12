@@ -913,9 +913,16 @@ class WidgetTools
 
             var fieldName = getLeftMostVariable( bindToExpr );
             var setValueExpr = switch attName {
-                case "dtx-bind-int-value": macro (''+$bindToExpr!="null") ? ''+$bindToExpr : '';
-                case "dtx-bind-float-value": macro (''+$bindToExpr!="NaN"&&''+$bindToExpr!="null") ? ''+$bindToExpr : '';
-                default: macro ($bindToExpr!=null) ? ''+$bindToExpr : '';
+                case "dtx-bind-int-value":
+                    var nullCheck = bindToExpr.generateNullCheckForExpression();
+                    macro ($nullCheck) ? ''+$bindToExpr : '';
+                case "dtx-bind-float-value":
+                    var nanCheck = macro Math.isNaN($bindToExpr)==false;
+                    var nullCheck = bindToExpr.generateNullCheckForExpression( nanCheck );
+                    macro ($nullCheck) ? ''+$bindToExpr : "";
+                default:
+                    var nullCheck = bindToExpr.generateNullCheckForExpression();
+                    macro ($nullCheck) ? ''+$bindToExpr : '';
             }
             var setValLine = macro dtx.single.ElementManipulation.setVal( $selector, $setValueExpr );
             addExprToAllSetters( setValLine, [fieldName] );
@@ -1146,24 +1153,20 @@ class WidgetTools
                     var prop = BuildTools.getOrCreateProperty(varName, propType, false, true);
 
                     var functionName = "print_" + varName;
-                    if (BuildTools.fieldExists(functionName))
-                    {
-                        // If yes, in interpolationExpr replace calls to $name with print_$name($name)
+                    if (BuildTools.fieldExists(functionName)) {
+                        // If "print_*" exists, in our interpolationExpr replace calls to $name with print_$name($name)
                         var replacements = {};
                         Reflect.setField( replacements, varName, macro $i{functionName}() );
                         interpolationExpr = interpolationExpr.substitute( replacements );
                     }
-                    else 
-                    {
-                        var nullCheck = BuildTools.generateNullCheckForIdents([ varName ]);
-                        interpolationExpr = macro ($nullCheck ? $interpolationExpr : "");
-                    }
                     variableNames.push(varName);
                 case Call(varName), Field(varName):
-                    var nullCheck = BuildTools.generateNullCheckForIdents([ varName ]);
-                    interpolationExpr = macro ($nullCheck ? $interpolationExpr : "");
                     variableNames.push(varName);
             }
+        }
+        if ( variableNames.length>0 ) {
+            var nullCheck = BuildTools.generateNullCheckForIdents( variableNames );
+            interpolationExpr = macro ($nullCheck ? $interpolationExpr : "");
         }
 
         return {

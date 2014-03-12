@@ -433,6 +433,27 @@ class BuildTools
         else return macro true;
     }
 
+    /** 
+        Given an expression, null check all idents / field access.
+
+        For example, the expression `result.name.first` will generate `result!=null && result.name!=null && result.name.first!=null`
+    **/
+    public static function generateNullCheckForExpression( expr:Expr, ?existingCheck:ExprOf<Bool> ):ExprOf<Bool> {
+        var check:Expr;
+        switch expr.expr {
+            case EConst(CIdent(name)):
+                check = macro $expr!=null;
+            case EField(e,field):
+                check = macro $expr!=null;
+                check = generateNullCheckForExpression( e, check );
+            case _:
+                throw 'Unable to generate null check for ${expr.toString()}, only EConst(CIdent) and EField are supported';
+        }
+        return 
+            if ( existingCheck!=null ) macro $check && $existingCheck;
+            else check;
+    }
+
     /** Takes a bunch of Binop functions `x + " the " + y + 10` and returns an array of each part. */
     public static function getAllPartsOfBinOp(binop:Expr):Array<Expr>
     {
