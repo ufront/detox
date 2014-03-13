@@ -100,35 +100,12 @@ class CollectionTest
 	}
 
 	@Test 
-	public function createQueryFromSelector()
-	{
-		var q1 = new DOMCollection("div");
-		var q2 = new DOMCollection("li");
-		var q3 = new DOMCollection("table > *");
-		Assert.areEqual(1, q1.length);
-		Assert.areEqual(6, q2.length);
-		Assert.areEqual(2, q3.length);
-	}
-
-	@Test 
-	public function createQueryFromNode()
-	{
-		var q1 = new DOMCollection(h1.getNode());
-		var q2 = new DOMCollection(list1.getNode());
-		Assert.areEqual(1, q1.length);
-		Assert.areEqual(1, q2.length);
-	}
-
-	@Test 
-	public function createQueryFromIterable()
+	public function createQueryFromArray()
 	{
 		var arr = ["#a1".find().getNode(), "#b2".find().getNode(), "#a3".find().getNode()];
-		var query = lists;
 
 		var q1 = new DOMCollection(arr);
-		var q2 = new DOMCollection(query);
 		Assert.areEqual(3, q1.length);
-		Assert.areEqual(2, q2.length);
 	}
 
 	@Test 
@@ -204,7 +181,6 @@ class CollectionTest
 	@Test 
 	public function first()
 	{
-		Assert.areEqual(1, listItems.first().length);
 		Assert.areEqual("a1", listItems.first().attr("id"));
 	}
 
@@ -212,14 +188,13 @@ class CollectionTest
 	public function firstOnEmpty()
 	{
 		var q = new DOMCollection();
-		Assert.areEqual(0, q.first().length);
+		Assert.areEqual(null, q.first());
 		Assert.areEqual("", q.first().attr("id"));
 	}
 
 	@Test 
 	public function last()
 	{
-		Assert.areEqual(1, listItems.last().length);
 		Assert.areEqual("b3", listItems.last().attr("id"));
 	}
 
@@ -227,7 +202,7 @@ class CollectionTest
 	public function lastOnEmpty()
 	{
 		var q = new DOMCollection();
-		Assert.areEqual(0, q.last().length);
+		Assert.areEqual(null, q.last());
 		Assert.areEqual("", q.last().attr("id"));
 	}
 
@@ -350,9 +325,17 @@ class CollectionTest
 		q2.addNodeList(nodeList, true);
 		q3.addNodeList(nodeList, false);
 
-		Assert.areEqual(2, q1.length);
+		Assert.areEqual(5, q1.length);
 		Assert.areEqual(2, q2.length);
 		Assert.areEqual(5, q3.length);
+	}
+
+	@Test
+	public function addNodeListNull()
+	{
+		var q1 = new DOMCollection();
+		q1.addNodeList(null);
+		Assert.areEqual(0, q1.length);
 	}
 
 	@Test 

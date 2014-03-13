@@ -54,11 +54,6 @@ class ElementManipulation
 		return node != null && node.nodeType == dtx.DOMType.DOCUMENT_NODE;
 	}
 
-	public static function toQuery(n:DOMNode):DOMCollection
-	{
-		return new DOMCollection(n);
-	}
-
 	public static function index(n:DOMNode):Int 
 	{
 		#if js

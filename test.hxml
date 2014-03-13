@@ -10,6 +10,8 @@
 -cp test
 -swf-version 9
 -swf build/as3_test.swf
+-xml doc/flash.xml
+
 --next
 #Flash 8
 #-main TestMain
@@ -21,6 +23,8 @@
 #-cp test
 #-swf-version 8
 #-swf build/as2_test.swf
+#-xml doc/flash8.xml
+
 #--next
 # JavaScript
 -main TestMain
@@ -34,6 +38,7 @@
 -cp test
 -js build/js_test.js
 -D embed_js
+-xml doc/js.xml
 
 --next
 
@@ -48,6 +53,7 @@
 
 -cp test
 -neko build/neko_test.n
+-xml doc/neko.xml
 
 --next
 
@@ -62,4 +68,5 @@
 
 -cp test
 -cpp build/cpp/
+-xml doc/cpp.xml
 -D HXCPP_M64

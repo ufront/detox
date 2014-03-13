@@ -205,7 +205,7 @@ class Loop<T> extends DOMCollection
 		{
 			// is the last item, Find the item before this one and insert our item after
 			var prevItem = items[pos - 1];
-			prevItem.dom.last().getNode().afterThisInsert(item.dom);
+			prevItem.dom.last().afterThisInsert(item.dom);
 
 			// add to the end of the collection
 			for (node in item.dom)
@@ -493,7 +493,7 @@ class LoopItem<T>
 
 			// Insert into the right position in the loop collection, accounting for the change
 			// in position as we add more elements to the collection.
-			var pos = this.loop.collection.indexOf(this.dom.last().getNode(0)) + 1;
+			var pos = this.loop.collection.indexOf(this.dom.last()) + 1;
 			for (node in j)
 			{
 				this.loop.collection.insert(pos, node);

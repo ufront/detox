@@ -11,69 +11,133 @@
 
 package dtx;
 
-/**
-* 
-* All the rest provided through "using"
-*
-* Static methods:
-* - create()
-* - parse()
-**/
-#if !js
-using dtx.XMLWrapper; 
-#end
 import dtx.DOMNode;
 import Detox;
+#if js
+	import js.html.NodeList;
+#else
+	using dtx.XMLWrapper; 
+#end
 using Detox;
 
+/**
+	A `DOMCollection` is a collection of DOM / Xml nodes.
+
+	Working with collections of nodes is essential when interacting with the DOM.  
+
+	Examples of places where DOMCollection could be used:
+
+	- Getting the children of a node
+	- Getting all the descendants of a node
+	- Getting all the nodes in a document that match a certain CSS selector
+	- A collection of nodes that you wish to interact with as one (append, remove, addClass etc)
+	- A set of nodes that you create programattically, for example, looping rows in a table, with the intention of inserting them.
+
+	The nodes can be of any node type, not just elements.
+
+	Detox is set up to interact with individual nodes (`dtx.DOMNode`) or multiple (`dtx.DOMCollection`) seamlessly.
+
+	Classes for interacting with DOMCollections include:
+
+	- `dtx.collection.ElementManipulation`
+	- `dtx.collection.DOMManipulation`
+	- `dtx.collection.Traversing`
+	- `dtx.collection.EventManagement`
+	- `dtx.collection.Style`
+**/
 class DOMCollection
 {
+	/**
+		The array of `dtx.DOMNode` nodes we are interacting with.
+
+		This array is created during the constructor. 
+		While you cannot set a new array, you can interact with the contents of the given array.
+	**/
 	public var collection(default,null):Array<DOMNode>;
+
+	/**
+		The number of nodes in the current collection.
+	**/
 	public var length(get_length,null):Int;
 
-	public function new(?selector:String = "", ?node:DOMNode = null, ?collection:Iterable<DOMNode>)
+	/**
+		Create a new DOMCollection.
+	
+		Initializes with a new array, and will add any nodes.
+	**/
+	public function new( ?nodes:Iterable<DOMNode> )
 	{
-		this.collection = new Array();
-
-		if (node != null)
-		{
-			add(node);
-		}
-		if (collection != null)
-		{
-			addCollection(collection);
-		}
-		if (selector != "")
-		{
-			addCollection(dtx.single.Traversing.find(Detox.document, selector));
-		}
+		this.collection = [];
+		if ( nodes!=null ) for ( n in nodes ) if ( n!=null ) this.collection.push( n );
 	}
 
+	/**
+		An iterator for all nodes in this collecction.
+
+		Usage: `for ( n in myCollection ) trace( n.nodeName )`
+	**/
 	public inline function iterator()
 	{
 		return collection.iterator();
 	}
 
+	/**
+		Get a specific node from the collection (specified by it's index in the collection).
+
+		By default will fetch the first node.
+
+		If no node is found at the given index, null is returned.
+
+		@param i The index of the node to retrieve.  Default is `0` (first node).
+		@return The given node, or null.
+	**/
 	public function getNode(?i:Int = 0)
 	{
 		return if (collection.length > i && i >= 0) collection[i] else null;
 	}
 
+	/**
+		Return a new collection containing only the node at the given index.
+
+		The node remains in the old collection also.  
+
+		If no node is found at the given index, an empty collection is returned.
+		
+		@param i The index of the node to retrieve.  Default is `0` (first node).
+		@return A new collection containing the specified node.  
+	**/
 	public function eq(?i:Int = 0)
 	{
-		return new DOMCollection(getNode(i));
+		return new DOMCollection().add( getNode(i) );
 	}
 
-	public function first()
+	/**
+		Return the first node in the connection.
+
+		This inline function is a shortcut for `getNode(0)`.
+	**/
+	public inline function first()
 	{
-		return eq(0);
+		return getNode(0);
 	}
 
+	/**
+		Return the last node in the connection.
+
+		This inline function is a shortcut for `getNode(this.length - 1)`.
+	**/
 	public function last()
 	{
-		return eq(this.length - 1);
+		return getNode(this.length - 1);
 	}
 
+	/**
+		Add a node to the collection, at a specified position.
+
+		@param node The node to add to our collection.  If the node is already in the collection, it will be ignored.  If the node is null, it will be ignored.
+		@param pos The position to insert the node (zero based).  If the position is less than zero or greater than the current length of the collection, the node will be inserted at the end of the collection.
+		@return The same DOMCollection, to provide a fluid interface.
+	**/
 	public function add(node:DOMNode, ?pos = -1):DOMCollection
 	{
 		if (pos < 0 || pos > collection.length) pos = collection.length;
@@ -99,6 +163,15 @@ class DOMCollection
 		return this;
 	}
 
+	/**
+		Add several nodes to the collection.
+
+		All nodes will be added to the end of the collection.
+
+		@param collection An iterable of DOMNodes to add.  If null or empty, it will be ignored.
+		@param elementsOnly If true, only element nodes will be added to the collection.  Default: `false`.
+		@return The same DOMCollection, to provide a fluid interface.
+	**/
 	public function addCollection(collection:Iterable<DOMNode>, ?elementsOnly = false):DOMCollection
 	{
 		if (collection != null)
@@ -113,29 +186,50 @@ class DOMCollection
 		return this;
 	}
 
+	/**
+		Add a NodeList to the collection.
+
+		On javascript platforms, this takes a `js.html.NodeList`, which is returned by several native methods and properties such as `node.querySelectorAll()` and `node.children`.
+
+		On other platforms, this is an inline function mirroring `addCollection`.
+
+		This method will add all nodes to the end of the current collection.
+
+		@param nodeList The node list to add to our collection.  On JS, this is a `js.html.NodeList`, on other platforms, it is an `Iterable<DOMNode>`. If the node list is null or empty, it is ignored.
+		@param elementsOnly If true, only element nodes will be added to the collection.  Default: `false`.
+		@return The same DOMCollection, to provide a fluid interface.
+	**/
 	#if js
-	public function addNodeList(nodeList:NodeList, ?elementsOnly = true):DOMCollection
-	{
-		for (i in 0...nodeList.length)
+		public function addNodeList(nodeList:NodeList, ?elementsOnly = false):DOMCollection
 		{
-			var node = nodeList.item(i);
-			// Only add if we are allowing elements only or if it is in fact an element
-			if (elementsOnly == false || dtx.single.ElementManipulation.isElement(node))
+			if (nodeList!=null) for (i in 0...nodeList.length)
 			{
-				add(node);
+				var node = nodeList.item(i);
+				// Only add if we are allowing elements only or if it is in fact an element
+				if (elementsOnly == false || dtx.single.ElementManipulation.isElement(node))
+				{
+					add(node);
+				}
 			}
+			return this;
 		}
-		return this;
-	}
 	#else 
-	public function addNodeList(nodeList:Iterable<DOMNode>, ?elementsOnly = true):DOMCollection
-	{
-		addCollection(nodeList, elementsOnly);
-		return this;
-	}
+		public inline function addNodeList(nodeList:Iterable<DOMNode>, ?elementsOnly = false):DOMCollection
+		{
+			return addCollection(nodeList, elementsOnly);
+		}
 	#end
 
-	public function removeFromCollection(?node:DOMNode, ?nodeCollection:DOMCollection):DOMCollection
+	/**
+		Remove a node (or collection of nodes) from this collection.
+
+		Please note this removes the node from this collection, but it has no effect on the nodes place in the DOM.
+
+		@param node An individual node to be removed.  If null, it will be ignored.
+		@param nodeCollection A group of nodes to be removed.  If null or empty, it will be ignored.
+		@return The same DOMCollection, to provide a fluid interface.
+	**/
+	public function removeFromCollection(?node:DOMNode, ?nodeCollection:Iterable<DOMNode>):DOMCollection
 	{
 		if (node != null)
 		{
@@ -152,7 +246,7 @@ class DOMCollection
 	}
 
 	function removeNode(n)
-	{
+	{	
 		#if flash 
 		// Fix bug with Flash where the usual array.remove() didn't work.
 		// It seems that 
@@ -175,20 +269,31 @@ class DOMCollection
 		#end 
 	}
 
+	/**
+		Perform a function on each node in the collection.
+
+		@param f A function to operate on each individual node.  If null, it will be ignored.
+		@return The same DOMCollection, to provide a fluid interface.
+	**/
 	public function each(f : DOMNode -> Void):DOMCollection
 	{
-		if (f != null) { Lambda.iter(collection, f); }
+		if (f != null) for( n in collection ) { f(n); }
 		return this; 
 	}
 
-	/** Use a function to return a filtered list. In future might allow a selector as well. */
-	public function filter(fn:DOMNode->Bool)
+	/**
+		Use a function to return a filtered list.
+
+		@param f A function to filter out individual nodes.  If null, no nodes will be filtered - the new collection will contain all the same nodes.
+		@return A new DOMCollection, with only the nodes that passed the filter.
+	**/
+	public function filter(f:DOMNode->Bool)
 	{
 		var newCollection:DOMCollection;
 
-		if (fn != null)
+		if (f != null)
 		{
-			var filtered = Lambda.filter(collection, fn);
+			var filtered = collection.filter(f);
 			newCollection = new DOMCollection(filtered);
 		}
 		else 
@@ -199,6 +304,14 @@ class DOMCollection
 		return newCollection;
 	}
 
+	/**
+		Clone the current collection and all of it's nodes.
+
+		This not only clones the collection, but each node inside it.
+
+		@param deep Do we do a deep clone for each node (clone all child nodes also) or a shallow clone (move child nodes to cloned parent node)?  Default is `true`, do a deep clone.
+		@return A new DOMCollection with the cloned nodes.
+	**/
 	public function clone(?deep:Bool = true):DOMCollection
 	{
 		var q = new DOMCollection();

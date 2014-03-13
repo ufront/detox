@@ -14,292 +14,299 @@ import dtx.DOMNode;
 import dtx.DOMCollection;
 
 #if !js
-class XMLWrapper
-{
-	static public inline function parentNode(xml:Xml)
-	{
-		return xml.parent;
-	}
+	/**
+		XMLWrapper provides a bunch of static methods to be used to get Haxe `Xml` to have similar capabilities to `js.html.Node`.
 
-	static public function hasChildNodes(xml:Xml):Bool 
-	{
-		return xml.iterator().hasNext();
-	}
+		This class will likely be deprecated in future in favour of using an abstract to unify Xml and Node.
 
-	static public function lastChild(xml:Xml)
+		As such, no further documentation is provided, and is only unit tested indirectly.
+	**/
+	class XMLWrapper
 	{
-		var lastChild:Xml = null;
-		
-		if (xml != null) 
-			for (child in xml)
-				lastChild = child;
-		return lastChild;
-	}
+		static public inline function parentNode(xml:Xml)
+		{
+			return xml.parent;
+		}
 
-	static public function appendChild(xml:Xml, child:Xml)
-	{
-		if (xml != null && child != null)
+		static public function hasChildNodes(xml:Xml):Bool 
+		{
+			return xml.iterator().hasNext();
+		}
+
+		static public function lastChild(xml:Xml)
+		{
+			var lastChild:Xml = null;
+			
+			if (xml != null) 
+				for (child in xml)
+					lastChild = child;
+			return lastChild;
+		}
+
+		static public function appendChild(xml:Xml, child:Xml)
+		{
+			if (xml != null && child != null)
+			{
+				#if flash 
+					var flashXML:flash.xml.XML = untyped xml._node;
+					if( xml.nodeType != Xml.Element && xml.nodeType != Xml.Document )
+						throw "bad nodeType";		
+					flashXML.appendChild(untyped child._node);
+				#else 
+					xml.addChild(child);
+				#end
+			}
+		}
+
+		static public function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
+		{
+			if (xml != null && content != null && target != null)
+			{
+				#if flash
+					if (content.parent != null) content.parent.removeChild(content);
+					if( xml.nodeType != Xml.Element && xml.nodeType != Xml.Document )
+						throw "bad nodeType";
+					untyped xml._node.insertChildBefore(target._node, content._node);
+				#else 
+					var targetIndex = 0;
+					var iter = xml.iterator();
+					while (iter.hasNext() && iter.next() != target)
+					{
+						targetIndex++;
+					}
+					xml.insertChild(content, targetIndex);
+				#end
+			}
+		}
+
+		static public function nextSibling(xml:Xml)
 		{
 			#if flash 
-				var flashXML:flash.xml.XML = untyped xml._node;
-				if( xml.nodeType != Xml.Element && xml.nodeType != Xml.Document )
-					throw "bad nodeType";		
-				flashXML.appendChild(untyped child._node);
+				var sibling:Xml = null;
+				if (xml != null)
+				{
+					// get the flash node
+					var flashXML:flash.xml.XML = untyped xml._node;
+					// get the index
+					var i = flashXML.childIndex();
+					// get the siblings
+					var parent = flashXML.parent();
+					if (parent != null)
+					{
+						var children:flash.xml.XMLList = parent.children();
+						// get the previous item
+						var index = i + 1;
+						if (index >= 0 && index < children.length())
+						{
+							sibling = untyped Xml.wrap( children[index] );
+						}
+					}
+				}
+				return sibling;
 			#else 
-				xml.addChild(child);
+				var sibling:Xml = null;
+
+				if (xml != null)
+				{
+					var itsTheNextOne = false;
+					var p = xml.parent;
+					if (p != null)
+					{
+						for (child in p)
+						{
+							if (itsTheNextOne)
+							{
+								sibling = child;
+								break;
+							}
+							if (child == xml) itsTheNextOne = true;
+						}
+					}
+				}
+				return sibling;
 			#end
 		}
-	}
 
-	static public function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
-	{
-		if (xml != null && content != null && target != null)
+		static public function previousSibling(xml:Xml)
 		{
 			#if flash
-				if (content.parent != null) content.parent.removeChild(content);
-				if( xml.nodeType != Xml.Element && xml.nodeType != Xml.Document )
-					throw "bad nodeType";
-				untyped xml._node.insertChildBefore(target._node, content._node);
-			#else 
-				var targetIndex = 0;
-				var iter = xml.iterator();
-				while (iter.hasNext() && iter.next() != target)
+				var sibling:Xml = null;
+				if (xml != null)
 				{
-					targetIndex++;
-				}
-				xml.insertChild(content, targetIndex);
-			#end
-		}
-	}
-
-	static public function nextSibling(xml:Xml)
-	{
-		#if flash 
-			var sibling:Xml = null;
-			if (xml != null)
-			{
-				// get the flash node
-				var flashXML:flash.xml.XML = untyped xml._node;
-				// get the index
-				var i = flashXML.childIndex();
-				// get the siblings
-				var parent = flashXML.parent();
-				if (parent != null)
-				{
-					var children:flash.xml.XMLList = parent.children();
+					// get the flash node
+					var flashXML:flash.xml.XML = untyped xml._node;
+					// get the index
+					var i = flashXML.childIndex();
+					// get the siblings
+					var children:flash.xml.XMLList = flashXML.parent().children();
 					// get the previous item
-					var index = i + 1;
+					var index = i - 1;
 					if (index >= 0 && index < children.length())
 					{
 						sibling = untyped Xml.wrap( children[index] );
 					}
 				}
-			}
-			return sibling;
-		#else 
-			var sibling:Xml = null;
-
-			if (xml != null)
-			{
-				var itsTheNextOne = false;
-				var p = xml.parent;
-				if (p != null)
+				return sibling;
+			#else 
+				var sibling:Xml = null;
+				if (xml != null)
 				{
-					for (child in p)
+					var p = xml.parent;
+					if (p != null)
 					{
-						if (itsTheNextOne)
+						for (child in p)
 						{
-							sibling = child;
-							break;
-						}
-						if (child == xml) itsTheNextOne = true;
-					}
-				}
-			}
-			return sibling;
-		#end
-	}
-
-	static public function previousSibling(xml:Xml)
-	{
-		#if flash
-			var sibling:Xml = null;
-			if (xml != null)
-			{
-				// get the flash node
-				var flashXML:flash.xml.XML = untyped xml._node;
-				// get the index
-				var i = flashXML.childIndex();
-				// get the siblings
-				var children:flash.xml.XMLList = flashXML.parent().children();
-				// get the previous item
-				var index = i - 1;
-				if (index >= 0 && index < children.length())
-				{
-					sibling = untyped Xml.wrap( children[index] );
-				}
-			}
-			return sibling;
-		#else 
-			var sibling:Xml = null;
-			if (xml != null)
-			{
-				var p = xml.parent;
-				if (p != null)
-				{
-					for (child in p)
-					{
-						if (child != xml)
-						{
-							sibling = child;
-						}
-						else
-						{
-							// If it's equal, leave "sibling" set to the previous value,
-							// and exit the loop...
-							break;
+							if (child != xml)
+							{
+								sibling = child;
+							}
+							else
+							{
+								// If it's equal, leave "sibling" set to the previous value,
+								// and exit the loop...
+								break;
+							}
 						}
 					}
 				}
-			}
-			return sibling;
-		#end 
-	}
+				return sibling;
+			#end 
+		}
 
-	static public function empty(xml:Xml)
-	{
-		if (xml != null)
+		static public function empty(xml:Xml)
 		{
-			while (xml.firstChild() != null)
+			if (xml != null)
 			{
-				xml.removeChild(xml.firstChild());
+				while (xml.firstChild() != null)
+				{
+					xml.removeChild(xml.firstChild());
+				}
 			}
 		}
-	}
 
-	static public function textContent(xml:Xml)
-	{
-		var ret = "";
-		if (xml != null)
+		static public function textContent(xml:Xml)
 		{
+			var ret = "";
+			if (xml != null)
+			{
+				if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
+				{
+					var allDescendants:DOMCollection;
+					var textDescendants:DOMCollection;
+					
+					allDescendants = dtx.single.Traversing.descendants(xml, false);
+					
+					textDescendants = allDescendants.filter(function(x:Xml)
+					{
+						return x.nodeType == dtx.DOMType.TEXT_NODE;
+					});
+					
+					
+					var s = new StringBuf();
+					for (textNode in textDescendants)
+					{
+						s.add(textNode.nodeValue);
+					}
+					
+					ret = s.toString();
+				}
+				else 
+				{
+					ret = xml.nodeValue;
+				}
+			}
+			return ret;
+		}
+
+		static public function setTextContent(xml:DOMNode, text:String)
+		{
+			// if element or document
 			if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
 			{
-				var allDescendants:DOMCollection;
-				var textDescendants:DOMCollection;
-				
-				allDescendants = dtx.single.Traversing.descendants(xml, false);
-				
-				textDescendants = allDescendants.filter(function(x:Xml)
-				{
-					return x.nodeType == dtx.DOMType.TEXT_NODE;
-				});
-				
-				
-				var s = new StringBuf();
-				for (textNode in textDescendants)
-				{
-					s.add(textNode.nodeValue);
-				}
-				
-				ret = s.toString();
+				empty(xml);
+				var textNode = Xml.createPCData(text);
+				xml.addChild(textNode);
 			}
 			else 
 			{
-				ret = xml.nodeValue;
+				xml.nodeValue = text;
 			}
+			
+			return text;
 		}
-		return ret;
-	}
 
-	static public function setTextContent(xml:DOMNode, text:String)
-	{
-		// if element or document
-		if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
+		static public function innerHTML(xml:DOMNode)
 		{
+			var html = "";
+			for (child in xml)
+			{
+				html += child.toString();
+			}
+			return html;
+		}
+
+		static public function setInnerHTML(xml:DOMNode, html:String)
+		{
+			var xmlDocNode:Xml = null;
+			try {
+				#if macro 
+					xmlDocNode = haxe.xml.Parser.parse("<doc>" + html + "</doc>").firstChild();
+				#elseif (neko || cpp)
+					// Neko's native parser has issues with over-encoding HTML entities.
+					// The Haxe based parser is a little better, it at least gets <, &, and > correct.
+					xmlDocNode = (html.indexOf("&")>-1) ? haxe.xml.Parser.parse(html) : Xml.parse(html);
+				#else 
+					xmlDocNode = Xml.parse(html);
+				#end
+			} catch (e:Dynamic)
+			{
+				xmlDocNode = Xml.createDocument();
+			}
+			
+
 			empty(xml);
-			var textNode = Xml.createPCData(text);
-			xml.addChild(textNode);
-		}
-		else 
-		{
-			xml.nodeValue = text;
-		}
-		
-		return text;
-	}
 
-	static public function innerHTML(xml:DOMNode)
-	{
-		var html = "";
-		for (child in xml)
-		{
-			html += child.toString();
-		}
-		return html;
-	}
-
-	static public function setInnerHTML(xml:DOMNode, html:String)
-	{
-		var xmlDocNode:Xml = null;
-		try {
-			#if macro 
-				xmlDocNode = haxe.xml.Parser.parse("<doc>" + html + "</doc>").firstChild();
-			#elseif (neko || cpp)
-				// Neko's native parser has issues with over-encoding HTML entities.
-				// The Haxe based parser is a little better, it at least gets <, &, and > correct.
-				xmlDocNode = (html.indexOf("&")>-1) ? haxe.xml.Parser.parse(html) : Xml.parse(html);
-			#else 
-				xmlDocNode = Xml.parse(html);
-			#end
-		} catch (e:Dynamic)
-		{
-			xmlDocNode = Xml.createDocument();
-		}
-		
-
-		empty(xml);
-
-		// Just doing `for (child in xmlDocNode) xml.addChild(child)` seems to break things
-		// Basically, If there are 2 children, the loop only runs once.  I think the way the
-		// iterator works must break when you change the number of children half way through 
-		// a loop.  As a workaround, add all children to a List, then move them
-		for (child in Lambda.list(xmlDocNode))
-		{
-		 	xml.addChild(child);
-		}
-		return html;
-	}
-
-	static public function cloneNode(xml:DOMNode, ?deep=true)
-	{
-		var clone = switch (xml.nodeType) {
-			case Xml.Element:
-				Xml.createElement( xml.nodeName );
-			case Xml.PCData:
-				Xml.createPCData( xml.nodeValue );
-			case Xml.CData:
-				Xml.createCData( xml.nodeValue );
-			case Xml.Comment:
-				Xml.createComment( xml.nodeValue );
-			case Xml.DocType:
-				Xml.createDocType( xml.nodeValue );
-			case Xml.ProcessingInstruction:
-				Xml.createProcessingInstruction( xml.nodeValue );
-			case Xml.Document:
-				Xml.createDocument();
-			default: throw null;
-		}
-		if (xml.nodeType==Xml.Element) {
-			for ( attName in xml.attributes() ) {
-				clone.set( attName, xml.get(attName) );
+			// Just doing `for (child in xmlDocNode) xml.addChild(child)` seems to break things
+			// Basically, If there are 2 children, the loop only runs once.  I think the way the
+			// iterator works must break when you change the number of children half way through 
+			// a loop.  As a workaround, add all children to a List, then move them
+			for (child in Lambda.list(xmlDocNode))
+			{
+			 	xml.addChild(child);
 			}
+			return html;
 		}
-		if ( xml.nodeType==Xml.Element || xml.nodeType==Xml.Document ) {
-			for ( child in xml ) {
-				clone.addChild( cloneNode(child) );
+
+		static public function cloneNode(xml:DOMNode, ?deep=true)
+		{
+			var clone = switch (xml.nodeType) {
+				case Xml.Element:
+					Xml.createElement( xml.nodeName );
+				case Xml.PCData:
+					Xml.createPCData( xml.nodeValue );
+				case Xml.CData:
+					Xml.createCData( xml.nodeValue );
+				case Xml.Comment:
+					Xml.createComment( xml.nodeValue );
+				case Xml.DocType:
+					Xml.createDocType( xml.nodeValue );
+				case Xml.ProcessingInstruction:
+					Xml.createProcessingInstruction( xml.nodeValue );
+				case Xml.Document:
+					Xml.createDocument();
+				default: throw null;
 			}
+			if (xml.nodeType==Xml.Element) {
+				for ( attName in xml.attributes() ) {
+					clone.set( attName, xml.get(attName) );
+				}
+			}
+			if ( xml.nodeType==Xml.Element || xml.nodeType==Xml.Document ) {
+				for ( child in xml ) {
+					clone.addChild( cloneNode(child) );
+				}
+			}
+			return clone;
 		}
-		return clone;
 	}
-}
 #end

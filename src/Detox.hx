@@ -29,29 +29,29 @@
 // 
 
 // Include ElementManipulation
-typedef SingleElementManipulation = dtx.single.ElementManipulation;
-typedef CollectionElementManipulation = dtx.collection.ElementManipulation;
+@:noDoc typedef SingleElementManipulation = dtx.single.ElementManipulation;
+@:noDoc typedef CollectionElementManipulation = dtx.collection.ElementManipulation;
 
 // Include DOMManipulation
-typedef SingleDOMManipulation = dtx.single.DOMManipulation;
-typedef CollectionDOMManipulation = dtx.collection.DOMManipulation;
+@:noDoc typedef SingleDOMManipulation = dtx.single.DOMManipulation;
+@:noDoc typedef CollectionDOMManipulation = dtx.collection.DOMManipulation;
 
 // Include Traversing
-typedef SingleTraversing = dtx.single.Traversing;
-typedef CollectionTraversing = dtx.collection.Traversing;
+@:noDoc typedef SingleTraversing = dtx.single.Traversing;
+@:noDoc typedef CollectionTraversing = dtx.collection.Traversing;
 
-typedef DOMNode = dtx.DOMNode;
-typedef DOMCollection = dtx.DOMCollection;
+@:noDoc typedef DOMNode = dtx.DOMNode;
+@:noDoc typedef DOMCollection = dtx.DOMCollection;
 
 // dtx.Tools provides 3 handy functions:
 // 
 //    "div".create();
 //    "<b>Some Text</b>".parse();
 //    "#title".find();
-typedef Detox = dtx.Tools;
+@:noDoc typedef Detox = dtx.Tools;
 
 // Helpers for DetoxLayout
-typedef DetoxLayoutTools = dtx.layout.DetoxLayoutTools;
+@:noDoc typedef DetoxLayoutTools = dtx.layout.DetoxLayoutTools;
 
 // 
 // Client JS only classes
@@ -60,16 +60,16 @@ typedef DetoxLayoutTools = dtx.layout.DetoxLayoutTools;
 #if (js && !nodejs)
 
 // Include Style
-typedef SingleStyle = dtx.single.Style;
-typedef CollectionStyle = dtx.collection.Style;
+@:noDoc typedef SingleStyle = dtx.single.Style;
+@:noDoc typedef CollectionStyle = dtx.collection.Style;
 
 // Include Animation
-//typedef SingleAnimation = dtx.single.Animation;
-//typedef CollectionAnimation = dtx.collection.Animation;
+//@:noDoc typedef SingleAnimation = dtx.single.Animation;
+//@:noDoc typedef CollectionAnimation = dtx.collection.Animation;
 
 // Include EventManagement
-typedef SingleEventManagement = dtx.single.EventManagement;
-typedef CollectionEventManagement = dtx.collection.EventManagement;
+@:noDoc typedef SingleEventManagement = dtx.single.EventManagement;
+@:noDoc typedef CollectionEventManagement = dtx.collection.EventManagement;
 
 #end
 

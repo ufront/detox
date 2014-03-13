@@ -11,28 +11,17 @@
 
 package dtx;
 
-class DOMType
-{
+/**
+	A collection of static variables used to identify node type.
 
-	#if js
-		static public var DOCUMENT_NODE(get,null):Int;
-		static public var ELEMENT_NODE(get,null):Int;
-		static public var TEXT_NODE(get,null):Int;
-		static public var COMMENT_NODE(get,null):Int;
+	Because these are different underlying types on different platforms, and because they are not constant, we cannot use an enum or a fake "abstract enum".
 
-		static inline function get_DOCUMENT_NODE() return dtx.DOMNode.DOCUMENT_NODE;
-		static inline function get_ELEMENT_NODE() return dtx.DOMNode.ELEMENT_NODE;
-		static inline function get_TEXT_NODE() return dtx.DOMNode.TEXT_NODE;
-		static inline function get_COMMENT_NODE() return dtx.DOMNode.COMMENT_NODE;
-	#else 
-		static public var DOCUMENT_NODE(get,null):Xml.XmlType;
-		static public var ELEMENT_NODE(get,null):Xml.XmlType;
-		static public var TEXT_NODE(get,null):Xml.XmlType;
-		static public var COMMENT_NODE(get,null):Xml.XmlType;
-
-		static inline function get_DOCUMENT_NODE() return Xml.Document;
-		static inline function get_ELEMENT_NODE() return Xml.Element;
-		static inline function get_TEXT_NODE() return Xml.PCData;
-		static inline function get_COMMENT_NODE() return Xml.Comment;
-	#end 
+	Instead you can compare a `nodeType` from a `dtx.DOMNode` with one of these values.
+	This will work with both `js.html.Node` and `Xml`.
+**/
+class DOMType {
+	static public var DOCUMENT_NODE = #if js dtx.DOMNode.DOCUMENT_NODE #else Xml.Document #end;
+	static public var ELEMENT_NODE = #if js dtx.DOMNode.ELEMENT_NODE #else Xml.Element #end;
+	static public var TEXT_NODE = #if js dtx.DOMNode.TEXT_NODE #else Xml.PCData #end;
+	static public var COMMENT_NODE = #if js dtx.DOMNode.COMMENT_NODE #else Xml.Comment #end;
 }

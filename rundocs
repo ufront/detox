@@ -1,0 +1,10 @@
+#!/bin/sh
+
+haxe test.hxml
+
+mkdir -p doc/api/
+
+cd doc
+rm -Rf api/*
+haxelib run dox -i . -o api/ --title "Detox" -in ^dtx -in ^Detox$ -in ^js -ex Test$
+nekotools server -rewrite -p 2001

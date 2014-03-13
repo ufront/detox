@@ -11,27 +11,49 @@
 
 package dtx;
 
-#if js
-	#if haxe3
-		typedef NodeList = js.html.NodeList;
-		typedef DOMNode = js.html.Node;
-		typedef DOMElement = js.html.Element;
-		typedef Event = js.html.Event;
+/**
+	A generic DOM Node that references the underlying node type for each platform.
+
+	On Javascript, this is a typedef alias for `js.html.Node`.
+
+	On other targets, this is a typedef alias for `Xml`.
+
+	Even though these two types (`Xml` and `js.html.Node`) differ considerably, this typedef can be used with most Detox classes for a unified approach to interacting with DOM / Xml content.
+
+	Classes for interacting with DOMNode include:
+
+	- `dtx.single.ElementManipulation`
+	- `dtx.single.DOMManipulation`
+	- `dtx.single.Traversing`
+	- `dtx.single.EventManagement`
+	- `dtx.single.Style`
+**/
+typedef DOMNode = #if js js.html.Node #else Xml #end;
+
+/**
+	A generic DOM Element.
+
+	Similar to `dtx.DOMNode` this changes depending on the platform.
+	`DOMElement` is a typedef alias for `js.html.Element` on Javascript, and `Xml` on other platforms.
+**/
+typedef DOMElement = #if js js.html.Element #else DOMNode #end;
+
+/**
+	An element that can contain other elements.
+
+	On JS this is a typedef capable of using `querySelector` and `querySelectorAll`, so usually an Element or a Document.
+	On other platforms this is simple an alias for `Xml`.
+**/
+typedef DocumentOrElement = 
+	#if js
+		{
+			> DOMNode,
+			var querySelector:String->Dynamic->DOMElement;
+			var querySelectorAll:String->Dynamic->js.html.NodeList;
+		}
 	#else
-		import js.w3c.level3.Core;
-		typedef NodeList = js.w3c.level3.Core.NodeList;
-		typedef DOMNode = js.w3c.level3.Core.Node;
-		typedef DOMElement = js.w3c.level3.Core.Element;
-		typedef Event = js.w3c.level3.Events.Event;
-	#end 
-	typedef DocumentOrElement = {> DOMNode,
-		var querySelector:String->Dynamic->DOMElement;
-		var querySelectorAll:String->Dynamic->NodeList;
-	}
-#else 
-	typedef DOMNode = Xml;
-	typedef DOMElement = DOMNode;
-	typedef DocumentOrElement = DOMNode;
-#end
+		DOMNode
+	#end
+;
 
 

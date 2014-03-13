@@ -219,7 +219,7 @@ class CollectionTraversingTest
 		#else 
 		var doc = Xml.createDocument();
 		#end
-		var q = new DOMCollection(doc);
+		var q = new DOMCollection([doc]);
 		Assert.areEqual(0, q.parent().length);
 	}
 
@@ -256,7 +256,7 @@ class CollectionTraversingTest
 		#else 
 		var doc = Xml.createDocument();
 		#end
-		var q = new DOMCollection(doc);
+		var q = new DOMCollection([doc]);
 		var a = q.ancestors();
 		Assert.areEqual(0, a.length);
 	}
@@ -299,7 +299,7 @@ class CollectionTraversingTest
 	{
 		for (li in ".pickme".find())
 		{
-			Assert.areEqual("3", li.toQuery().next().text());
+			Assert.areEqual("3", li.toCollection().next().text());
 		}
 	}
 
@@ -342,7 +342,7 @@ class CollectionTraversingTest
 	{
 		for (li in ".pickme".find())
 		{
-			Assert.areEqual("1", li.toQuery().prev().text());
+			Assert.areEqual("1", li.toCollection().prev().text());
 		}
 	}
 
