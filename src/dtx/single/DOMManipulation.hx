@@ -14,17 +14,6 @@ package dtx.single;
 import dtx.DOMNode;
 #if !js using dtx.XMLWrapper; #end
 
-/*
-wrap()
-unwrap
-wrapAll()
-wrapInner()
-detach() - removes element, but keeps data
-replaceAll(selector) - replace each element matching selector with our collection
-replaceWith(newContent) - replace collection with new content
-*/ 
-
-
 /** This class could do with some more DRY - Don't Repeat Yourself.  I feel like between 
 append() and insertBefore() there should be no need for any other functions */
 
