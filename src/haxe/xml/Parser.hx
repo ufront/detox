@@ -46,6 +46,9 @@ extern private class S {
 	public static inline var ESCAPE			= 18;
 }
 
+/**
+	This is a patched version of the standard library's `haxe.xml.Parser` with better support for dealing with HTML entity encodings.
+**/
 class Parser
 {
 	static var escapes = {
