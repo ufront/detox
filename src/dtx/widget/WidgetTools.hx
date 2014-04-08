@@ -1075,8 +1075,14 @@ class WidgetTools
         }
     }
 
+    static var initialisationExpressions:Map<String,Array<String>> = new Map();
+
     static function addExprInitialisationToConstructor(variables:Array<String>)
     {
+        var clsName = Context.getLocalClass().toString();
+        if (initialisationExpressions[clsName]==null) initialisationExpressions[clsName] = [];
+        var varsAlreadyInitialized = initialisationExpressions[clsName];
+
         for (varName in variables)
         {
             var field = varName.getField();
@@ -1112,13 +1118,16 @@ class WidgetTools
                     }
                     if ( initValueExpr!=null )
                     {
-                        // Update the init expression, and add to the init function
-                        // We want both, the init function so that setters fire, and the init expression
-                        // so that all values are initialized by the time the first setter fires also...
-                        field.kind = FProp(get,set,type,initValueExpr);
-                        var varRef = varName.resolve();
-                        var setExpr = macro $varRef = $initValueExpr;
-                        BuildTools.addLinesToFunction(initFn, setExpr);
+                        if ( varsAlreadyInitialized.has(varName)==false ) {
+                            // Update the init expression, and add to the init function
+                            // We want both, the init function so that setters fire, and the init expression
+                            // so that all values are initialized by the time the first setter fires also...
+                            field.kind = FProp(get,set,type,initValueExpr);
+                            var varRef = varName.resolve();
+                            var setExpr = macro $varRef = $initValueExpr;
+                            BuildTools.addLinesToFunction(initFn, setExpr);
+                            varsAlreadyInitialized.push( varName );
+                        }
                     }
                 default:
             }
