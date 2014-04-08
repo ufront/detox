@@ -4,14 +4,20 @@
   "tags": ["cross","dom","xml","js","domtools","dtx","detox"],
   "description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
   "contributors": ["jason"],
-  "releasenote": "A tonne of bug fixes.  Moving towards a 1.0 release, even though I think 2.0 is already planned ;)
-  Don't fail dtx-show, dtx-hide and other attributes when there is a null expression.  
-  Don't DCE variables created when running string interpolation on an element attribute in your template.  
-  Better handling of val() on a checkbox: Before it returned 'true' or 'false' as a string.  Now it returns the value of the 'value= attribute if it exists and is checked, the string 'checked' if no 'value=' attribute exists and is checked, or '' (an empty string) if it is not checked.  
-  More fixes for partials in JS, where due to browser HTML strictness things a span placeholder would never be placed into a tr container, etc, so when the partial tried to replace the placeholder, the placeholder did not exist, and so the partial is never created. 
-  Add support for `dtx-bind-value`, `dtx-bind-(int|float)-value`, `dtx-on-*` and `dtx-content` widget helpers.
-  Fix use of member functions on the widget (not a member function of a property of a widget) in interpolation.
-  Change Loop.addItem() to return the already existing item if `preventDuplicates` is true and the item already exists.",
+  "releasenote": "A tonne of bug fixes.  Moving towards a 1.0 release, even if plans for a 2.0 are already brewing ;)
+    Much better handling of XML entities, and passable support for HTML entities.
+    Don't fail dtx-show, dtx-hide and other attributes when there is a null expression.  
+    Don't DCE variables created when running string interpolation on an element attribute in your template.  
+    Better handling of val() on a checkbox: Before it returned 'true' or 'false' as a string.  Now it returns the value of the 'value=' attribute if it exists and is checked, the string 'checked' if no 'value=' attribute exists and is checked, or '' (an empty string) if it is not checked.  
+    More fixes for partials in JS, where due to browser HTML strictness a span placeholder would never be placed into a tr container, etc, so when the partial tried to replace the placeholder, the placeholder did not exist, and so the partial is never created. 
+    Add support for `dtx-bind-value`, `dtx-bind-(int|float)-value`, `dtx-on-*` and `dtx-content` widget helpers.
+    Fix use of member functions on the widget in interpolation.  (Still do not support a member function of a property of a widget.)
+    Change Loop.addItem() to return the already existing item if `preventDuplicates` is true and the item already exists.
+    When calling a partial, reserve all 'dtx-*' attributes for internal use.  Allow all other attributes to be parsed and passed to the partial widget.  Support similar syntax to string interpolation: direct use for strings, or $val / ${val()} for variables.
+    Cleanup to some low level methods and types.  For example, `DOMCollection.first` now returns a node, not a collection.
+    Code cleanup and standardize docs, so we can use dox to generate API documentation.
+    Prevent setter expressions from being initialized more than once, this sometimes happened many times and caused significant slowdown.
+  ",
   "version": "1.0.0-rc.1",
   "url": "https://github.com/jasononeil/detox",
   "classPath": "src/",
