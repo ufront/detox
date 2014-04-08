@@ -517,18 +517,15 @@ class WidgetTools
                         Context.error( 'Failed to extract understand expression from from <${node.tagName()} $attName="$valueExprStr">, please use a simpler attribute or file a feature request.', p );
                 }
                 
+                var nothingNull = valueExpr.generateNullCheckForExpression();
+                var setterExpr = macro if ($nothingNull) $propertyRef = $valueExpr;
                 var idents =  valueExpr.extractIdents();
                 if ( idents.length>0 ) {
-
-                    var nothingNull = idents.generateNullCheckForIdents();
-
-                    var setterExpr = macro if ($nothingNull) $propertyRef = $valueExpr;
                     // If it has variables, set it in all setters
                     addExprToAllSetters(setterExpr,idents, true);
                 }
                 else {
                     // If it doesn't, set it in init
-                    var setterExpr = macro $propertyRef = $valueExpr;
                     BuildTools.addLinesToFunction(initFn, setterExpr);
                 }
 
@@ -727,20 +724,18 @@ class WidgetTools
             // Find any variables mentioned in the iterable / for loop, and add to our setter
             if ( iterableExpr!=null ) {
                 var idents = iterableExpr.extractIdents();
-                var setterExpr = macro 
-                    if ($variableRef!=null) {
-                        try 
-                            $variableRef.setList( $iterableExpr )
-                        catch (e:Dynamic) 
-                            $variableRef.empty();
+                var nullCheck = BuildTools.generateNullCheckForExpression( iterableExpr, macro $variableRef!=null );
+                var setListLine = macro 
+                    if ($nullCheck) {
+                        try $variableRef.setList( $iterableExpr ) catch (e:Dynamic) $variableRef.empty();
                     }
 
                 if ( idents.length>0 ) 
                     // If it has variables, set it in all setters
-                    addExprToAllSetters(setterExpr,idents, true);
+                    addExprToAllSetters(setListLine,idents, true);
                 else
                     // If it doesn't, set it in init
-                    BuildTools.addLinesToFunction(initFn, setterExpr);
+                    BuildTools.addLinesToFunction(initFn, setListLine);
             }
         }
 
@@ -1165,7 +1160,7 @@ class WidgetTools
             }
         }
         if ( variableNames.length>0 ) {
-            var nullCheck = BuildTools.generateNullCheckForIdents( variableNames );
+            var nullCheck = BuildTools.generateNullCheckForExpression( interpolationExpr );
             interpolationExpr = macro ($nullCheck ? $interpolationExpr : "");
         }
 
@@ -1369,7 +1364,7 @@ class WidgetTools
 
             // Extract all the variables used, create the `if(test) ... else ...` expr, add to setters, initialize variables
             var idents =  testExpr.extractIdents();
-            var nothingNull = idents.generateNullCheckForIdents();
+            var nothingNull = testExpr.generateNullCheckForExpression();
             var bindingExpr = macro if ($nothingNull && $testExpr) $trueStatement else $falseStatement;
             addExprToAllSetters(bindingExpr,idents, true);
             addExprInitialisationToConstructor(idents);

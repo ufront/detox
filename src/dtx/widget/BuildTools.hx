@@ -440,14 +440,40 @@ class BuildTools
     **/
     public static function generateNullCheckForExpression( expr:Expr, ?existingCheck:ExprOf<Bool> ):ExprOf<Bool> {
         var check:Expr;
+
+        function checksMultipleExpressions( exprs:Array<Expr>, ?existingCheck:Expr ) {
+            var checkAll:Expr = existingCheck;
+            for ( e in exprs ) {
+                var thisCheck = generateNullCheckForExpression(e);
+                if ( checkAll==null ) checkAll = thisCheck;
+                else checkAll = macro $thisCheck && $checkAll;
+            }
+            return checkAll;
+        }
+
         switch expr.expr {
             case EConst(CIdent(name)):
                 check = macro $expr!=null;
+            case EConst(_):
+                check = macro true;
             case EField(e,field):
                 check = macro $expr!=null;
                 check = generateNullCheckForExpression( e, check );
-            case _:
-                throw 'Unable to generate null check for ${expr.toString()}, only EConst(CIdent) and EField are supported';
+            case ECheckType(e,type):
+                check = generateNullCheckForExpression( e );
+            case EBinop(_,expr1,expr2):
+                check = checksMultipleExpressions( [expr1, expr2] );
+            case EUnop(_,_,expr):
+                check = generateNullCheckForExpression( expr );
+            case ECall({ expr: EField(objExpr,fnName), pos: _ },params):
+                var objCheck = generateNullCheckForExpression( objExpr );
+                check = checksMultipleExpressions( params, objCheck );
+            case ECall({ expr: EConst(CIdent(name)), pos: _ }, params):
+                var fnCheck = macro $i{name}!=null;
+                check = checksMultipleExpressions( params, fnCheck );
+            case unsupportedType:
+                var typeName = std.Type.enumConstructor( unsupportedType );
+                throw 'Unable to generate null check for `${expr.toString()}`, field access from "$typeName" is currently not supported.';
         }
         return 
             if ( existingCheck!=null ) macro $check && $existingCheck;
