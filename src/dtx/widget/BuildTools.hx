@@ -471,9 +471,11 @@ class BuildTools
             case ECall({ expr: EConst(CIdent(name)), pos: _ }, params):
                 var fnCheck = macro $i{name}!=null;
                 check = checksMultipleExpressions( params, fnCheck );
+            case EArrayDecl( exprs ):
+                check = checksMultipleExpressions( exprs );
             case unsupportedType:
                 var typeName = std.Type.enumConstructor( unsupportedType );
-                throw 'Unable to generate null check for `${expr.toString()}`, field access from "$typeName" is currently not supported.';
+                Context.fatalError( 'Unable to generate null check for `${expr.toString()}`, field access from "$typeName" is currently not supported.', Context.getLocalClass().get().pos );
         }
         return 
             if ( existingCheck!=null ) macro $check && $existingCheck;
