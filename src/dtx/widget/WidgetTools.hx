@@ -724,9 +724,9 @@ class WidgetTools
             // Find any variables mentioned in the iterable / for loop, and add to our setter
             if ( iterableExpr!=null ) {
                 var idents = iterableExpr.extractIdents();
-                var nullCheck = BuildTools.generateNullCheckForExpression( iterableExpr, macro $variableRef!=null );
+                var iterableNullCheck = BuildTools.generateNullCheckForExpression( iterableExpr );
                 var setListLine = macro 
-                    if ($nullCheck) {
+                    if ( $variableRef!=null && $iterableNullCheck ) {
                         try $variableRef.setList( $iterableExpr ) catch (e:Dynamic) $variableRef.empty();
                     }
 
@@ -851,7 +851,7 @@ class WidgetTools
                 eventBodyExpr.substitute({ "_": macro e.currentTarget });
 
                 var selector = getUniqueSelectorForNode(node); // Returns for example: dtx.collection.Traversing.find(this, $selectorTextAsExpr)
-                var lineToAdd = macro $selector.on( $v{eventName}, function (e:js.html.Event) { $eventBodyExpr; } );
+                var lineToAdd = macro dtx.single.EventManagement.on( $selector, $v{eventName}, function (e:js.html.Event) { $eventBodyExpr; } );
                 
                 var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
                 BuildTools.addLinesToFunction(initFn, lineToAdd);
@@ -913,7 +913,8 @@ class WidgetTools
                     macro ($nullCheck) ? ''+$bindToExpr : '';
                 case "dtx-bind-float-value":
                     var nanCheck = macro Math.isNaN($bindToExpr)==false;
-                    var nullCheck = bindToExpr.generateNullCheckForExpression( nanCheck );
+                    var nullCheck = bindToExpr.generateNullCheckForExpression();
+                    nullCheck = macro $nullCheck && $nanCheck;
                     macro ($nullCheck) ? ''+$bindToExpr : "";
                 default:
                     var nullCheck = bindToExpr.generateNullCheckForExpression();
@@ -1163,9 +1164,11 @@ class WidgetTools
                         Reflect.setField( replacements, varName, macro $i{functionName}() );
                         interpolationExpr = interpolationExpr.substitute( replacements );
                     }
-                    variableNames.push(varName);
+                    if ( variableNames.indexOf(varName)==-1 )
+                        variableNames.push(varName);
                 case Call(varName), Field(varName):
-                    variableNames.push(varName);
+                    if ( variableNames.indexOf(varName)==-1 )
+                        variableNames.push(varName);
             }
         }
         if ( variableNames.length>0 ) {
