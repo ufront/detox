@@ -16,6 +16,7 @@ import haxe.macro.Context;
 import haxe.macro.Format;
 import haxe.macro.Printer;
 import haxe.macro.Type;
+using haxe.macro.ExprTools;
 using tink.MacroApi;
 using StringTools;
 using Lambda;
@@ -24,23 +25,23 @@ using Detox;
 #if macro 
 class BuildTools 
 {
-	static var fieldsForClass:Map<String, Array<Field>> = new Map();
+    static var fieldsForClass:Map<String, Array<Field>> = new Map();
 
     /** Return the pos of the class that this build macro is operating on **/
     public static function currentPos():Position return Context.getLocalClass().get().pos;
 
-	/** Allow us to get a list of fields, but will keep a local copy, in case we make changes.  This way 
-	in an autobuild macro you can use BuildTools.getFields() over and over, and modify the array each time,
-	and finally use it as the return value of the build macro.  */
-	public static function getFields():Array<Field>
-	{
+    /** Allow us to get a list of fields, but will keep a local copy, in case we make changes.  This way
+    in an autobuild macro you can use BuildTools.getFields() over and over, and modify the array each time,
+    and finally use it as the return value of the build macro.  */
+    public static function getFields():Array<Field>
+    {
         var className = haxe.macro.Context.getLocalClass().toString();
         if (fieldsForClass.exists(className) == false)
         {
-        	fieldsForClass.set(className, Context.getBuildFields());
+            fieldsForClass.set(className, Context.getBuildFields());
         }
         return fieldsForClass.get(className);
-	}
+    }
 
     /** See if a field with the given name exists */
     public static function fieldExists(name:String)
@@ -192,8 +193,7 @@ class BuildTools
         return result;
     }
 
-	/** Takes a field declaration, and if it doesn't exist, adds it.  If it does exist, it returns the 
-	existing one. */
+    /** Takes a field declaration, and if it doesn't exist, adds it.  If it does exist, it returns the existing one. */
     public static function getOrCreateField(fieldToAdd:Field)
     {
         var p = currentPos();                           // Position where the original Widget class is declared
@@ -327,10 +327,10 @@ class BuildTools
     Sample usage:
     var myFn = BuildTools.getOrCreateField(...);
     var linesToAdd = macro {
-		for (i in 0...10)
-		{
-			trace (i);
-		}
+        for (i in 0...10)
+        {
+            trace (i);
+        }
     };
     BuildTools.addLinesToFunction(myFn, linesToAdd);
     */
@@ -379,10 +379,10 @@ class BuildTools
 
         // Add the lines, put them at the end by default
         if (whereToAdd == -1) whereToAdd = block.length;
-    	linesArray.reverse();
+        linesArray.reverse();
         for (line in linesArray)
         {
-        	block.insert(whereToAdd, line);
+            block.insert(whereToAdd, line);
         }
     }
 
@@ -438,53 +438,94 @@ class BuildTools
 
         For example, the expression `result.name.first` will generate `result!=null && result.name!=null && result.name.first!=null`
     **/
-    public static function generateNullCheckForExpression( expr:Expr, ?existingCheck:ExprOf<Bool> ):ExprOf<Bool> {
-        var check:Expr;
+    public static function generateNullCheckForExpression( expr:Expr ):ExprOf<Bool> {
 
-        function checksMultipleExpressions( exprs:Array<Expr>, ?existingCheck:Expr ) {
-            var checkAll:Expr = existingCheck;
-            for ( e in exprs ) {
-                var thisCheck = generateNullCheckForExpression(e);
-                if ( checkAll==null ) checkAll = thisCheck;
-                else checkAll = macro $thisCheck && $checkAll;
-            }
-            return checkAll;
+
+        var checks:Array<ExprOf<Bool>> = [];
+        addNullCheckForExpr( expr, checks );
+
+        // We have to be careful with the order, when checking "some.field.access", we want to generate `some!=null && some.field!=null && some.field.access!=null )`.
+        // This will prevent invalid field access if "some.field" is null but we accidentally checked "some.field.access" first.
+        // When we add field accesses, we added them in deepest->shallowest order, so here, we should reverse that order before combining them.
+        checks.reverse();
+
+        return
+            if ( checks.length==0 ) macro true;
+            else combineExpressionsWithANDBinop( checks );
+    }
+
+    /**
+        For an array of expressions, create null checks for each part of each expression.
+    **/
+    static function addNullCheckForMultipleExprs( exprs:Array<Expr>, allChecks:Array<Expr> ):Void {
+        for ( e in exprs ) {
+            addNullCheckForExpr( e, allChecks );
         }
+    }
 
+    /**
+        For an expression, create null checks for each part of the expression recursively.
+    **/
+    static function addNullCheckForExpr( expr:Expr, allChecks:Array<Expr> ):Void {
         switch expr.expr {
             case EConst(CIdent(name)):
-                check = macro $expr!=null;
+                allChecks.push( macro $expr!=null );
             case EConst(_):
-                check = macro true;
+                // Don't need to add any checks.
             case EField(e,field):
-                check = macro $expr!=null;
-                check = generateNullCheckForExpression( e, check );
+                allChecks.push( macro $expr!=null );
+                addNullCheckForExpr( e, allChecks );
             case ECheckType(e,type):
-                check = generateNullCheckForExpression( e );
+                addNullCheckForExpr( e, allChecks );
             case EBinop(_,expr1,expr2):
-                check = checksMultipleExpressions( [expr1, expr2] );
-            case EUnop(_,_,expr):
-                check = generateNullCheckForExpression( expr );
+                addNullCheckForExpr( expr1, allChecks );
+                addNullCheckForExpr( expr2, allChecks );
+            case EUnop(_,_,e):
+                addNullCheckForExpr( e, allChecks );
             case ECall({ expr: EField(objExpr,fnName), pos: _ },params):
-                var objCheck = generateNullCheckForExpression( objExpr );
-                check = checksMultipleExpressions( params, objCheck );
+                addNullCheckForExpr( objExpr, allChecks );
+                addNullCheckForMultipleExprs( params, allChecks );
             case ECall({ expr: EConst(CIdent(name)), pos: _ }, params):
-                var fnCheck = macro $i{name}!=null;
-                check = checksMultipleExpressions( params, fnCheck );
+                allChecks.push( macro $i{name}!=null );
+                addNullCheckForMultipleExprs( params, allChecks );
             case EArrayDecl( exprs ):
-                check = checksMultipleExpressions( exprs );
+                addNullCheckForMultipleExprs( exprs, allChecks );
             case EObjectDecl( fields ):
-                var exprs = [];
-                for ( f in fields ) 
-                    exprs.push( f.expr );
-                check = checksMultipleExpressions( exprs );
+                var exprs = [ for (f in fields) f.expr ];
+                addNullCheckForMultipleExprs( exprs, allChecks );
             case unsupportedType:
                 var typeName = std.Type.enumConstructor( unsupportedType );
                 Context.fatalError( 'Unable to generate null check for `${expr.toString()}`, field access from "$typeName" is currently not supported.', Context.getLocalClass().get().pos );
         }
-        return 
-            if ( existingCheck!=null ) macro $check && $existingCheck;
-            else check;
+    }
+
+    /**
+        Combine many expressions with the `&&` binop.
+
+        Example: [expr1,expr2,expr3] becomes `expr1 && expr2 && expr3`.
+
+        This will filter any duplicate expressions so they are only included once.
+    **/
+    static function combineExpressionsWithANDBinop( exprs:Array<Expr> ):ExprOf<Bool> {
+        var completeCheck:ExprOf<Bool> = null;
+
+        var filteredExprs:Array<ExprOf<Bool>> = [];
+        var filteredExprStrings:Array<String> = [];
+
+        for ( e1 in exprs ) {
+            var e1Str = e1.toString();
+            var alreadyExisted = false;
+            if ( filteredExprStrings.indexOf(e1Str)==-1 ) {
+                filteredExprs.push( e1 );
+                filteredExprStrings.push( e1Str );
+            }
+        }
+
+        while ( filteredExprs.length>0 ) {
+            var check = filteredExprs.shift();
+            completeCheck = (completeCheck==null) ? check : macro $completeCheck && $check;
+        }
+        return completeCheck;
     }
 
     /** Takes a bunch of Binop functions `x + " the " + y + 10` and returns an array of each part. */
