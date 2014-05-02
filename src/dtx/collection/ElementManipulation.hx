@@ -25,7 +25,7 @@ class ElementManipulation
 		return (collection != null && collection.length > 0) ? dtx.single.ElementManipulation.attr(collection.getNode(), attName) : "";
 	}
 
-	public static function setAttr(collection:DOMCollection, attName:String, attValue:String):DOMCollection
+	public static function setAttr<T:DOMCollection>(collection:T, attName:String, attValue:String):T
 	{
 		if (collection != null)
 		{
@@ -37,7 +37,7 @@ class ElementManipulation
 		return collection;
 	}
 
-	public static function removeAttr(collection:DOMCollection, attName:String):DOMCollection
+	public static function removeAttr<T:DOMCollection>(collection:T, attName:String):T
 	{
 		if (collection != null)
 		{
@@ -73,7 +73,7 @@ class ElementManipulation
 		return result;
 	}
 
-	public static function addClass(collection:DOMCollection, className:String):DOMCollection
+	public static function addClass<T:DOMCollection>(collection:T, className:String):T
 	{
 		if (collection != null)
 		{
@@ -85,7 +85,7 @@ class ElementManipulation
 		return collection;
 	}
 
-	public static function removeClass(collection:DOMCollection, className:String):DOMCollection
+	public static function removeClass<T:DOMCollection>(collection:T, className:String):T
 	{
 		if (collection != null)
 		{
@@ -97,7 +97,7 @@ class ElementManipulation
 		return collection;
 	}
 
-	public static function toggleClass(collection:DOMCollection, className:String):DOMCollection
+	public static function toggleClass<T:DOMCollection>(collection:T, className:String):T
 	{
 		if (collection != null)
 		{
@@ -119,7 +119,7 @@ class ElementManipulation
 		return (collection != null && collection.length > 0) ? dtx.single.ElementManipulation.val(collection.getNode()) : "";
 	}
 
-	public static function setVal(collection:DOMCollection, val:Dynamic):DOMCollection
+	public static function setVal<T:DOMCollection>(collection:T, val:Dynamic):T
 	{
 		var value = Std.string(val);
 		if (collection != null)
@@ -145,7 +145,7 @@ class ElementManipulation
 		return text;
 	}
 	
-	public static function setText(collection:DOMCollection, text:String):DOMCollection
+	public static function setText<T:DOMCollection>(collection:T, text:String):T
 	{
 		if (collection != null)
 		{
@@ -170,7 +170,7 @@ class ElementManipulation
 		return sb.toString();
 	}
 
-	public static function setInnerHTML(collection:DOMCollection, html:String):DOMCollection
+	public static function setInnerHTML<T:DOMCollection>(collection:T, html:String):T
 	{
 		if (collection != null)
 		{

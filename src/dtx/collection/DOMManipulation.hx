@@ -17,7 +17,7 @@ import dtx.DOMNode;
 class DOMManipulation
 {
 	/** Append the specified child to all nodes in this collection, cloning when necessary */
-	static public function append(parentCollection:DOMCollection, ?childNode:DOMNode, ?childCollection:DOMCollection):DOMCollection
+	static public function append<T:DOMCollection>(parentCollection:T, ?childNode:DOMNode, ?childCollection:DOMCollection):T
 	{
 		var firstChildUsed = false;
 		if (parentCollection != null)
@@ -37,7 +37,7 @@ class DOMManipulation
 	}
 
 	/** Prepend the specified child to this node */
-	static public function prepend(parentCollection:DOMCollection, ?childNode:DOMNode, ?childCollection:DOMCollection):DOMCollection
+	static public function prepend<T:DOMCollection>(parentCollection:T, ?childNode:DOMNode, ?childCollection:DOMCollection):T
 	{
 		var firstChildUsed = false;
 		if (parentCollection != null)
@@ -64,7 +64,7 @@ class DOMManipulation
 	}
 
 	/** Append this node to the specified parent */
-	static public function appendTo(children:DOMCollection, ?parentNode:DOMNode, ?parentCollection:DOMCollection):DOMCollection
+	static public function appendTo<T:DOMCollection>(children:T, ?parentNode:DOMNode, ?parentCollection:DOMCollection):T
 	{
 		if (parentNode != null)
 		{
@@ -81,7 +81,7 @@ class DOMManipulation
 	}
 
 	/** Prepend this node to the specified parent */
-	static public function prependTo(children:DOMCollection, ?parentNode:DOMNode, ?parentCollection:DOMCollection):DOMCollection
+	static public function prependTo<T:DOMCollection>(children:T, ?parentNode:DOMNode, ?parentCollection:DOMCollection):T
 	{
 		if (children != null)
 		{
@@ -94,7 +94,7 @@ class DOMManipulation
 		return children;
 	}
 
-	static public function insertThisBefore(content:DOMCollection, ?targetNode:DOMNode, ?targetCollection:DOMCollection):DOMCollection
+	static public function insertThisBefore<T:DOMCollection>(content:T, ?targetNode:DOMNode, ?targetCollection:DOMCollection):T
 	{
 		if (content != null)
 		{
@@ -111,7 +111,7 @@ class DOMManipulation
 			{
 				// insert this collection of content just before this collection of targets
 				var firstChildUsed = false;
-				var childCollection = content;
+				var childCollection:DOMCollection = content;
 				for (target in targetCollection)
 				{
 					// if the first childCollection has been used, then clone it
@@ -128,7 +128,7 @@ class DOMManipulation
 		return content;
 	}
 
-	static public function insertThisAfter(content:DOMCollection, ?targetNode:DOMNode, ?targetCollection:DOMCollection):DOMCollection
+	static public function insertThisAfter<T:DOMCollection>(content:T, ?targetNode:DOMNode, ?targetCollection:DOMCollection):T
 	{
 		if (content != null)
 		{
@@ -150,7 +150,7 @@ class DOMManipulation
 			{
 				// insert this collection of content just before this collection of targets
 				var firstChildUsed = false;
-				var childCollection = content;
+				var childCollection:DOMCollection = content;
 				for (target in targetCollection)
 				{
 					// if the first childCollection has been used, then clone it
@@ -168,7 +168,7 @@ class DOMManipulation
 		return content;
 	}
 
-	static public function beforeThisInsert(target:DOMCollection, ?contentNode:DOMNode, ?contentCollection:DOMCollection):DOMCollection
+	static public function beforeThisInsert<T:DOMCollection>(target:T, ?contentNode:DOMNode, ?contentCollection:DOMCollection):T
 	{
 		if (contentNode != null)
 		{
@@ -184,7 +184,7 @@ class DOMManipulation
 		return target;
 	}
 
-	static public function afterThisInsert(target:DOMCollection, ?contentNode:DOMNode, ?contentCollection:DOMCollection):DOMCollection
+	static public function afterThisInsert<T:DOMCollection>(target:T, ?contentNode:DOMNode, ?contentCollection:DOMCollection):T
 	{
 		if (contentNode != null)
 		{
@@ -201,7 +201,7 @@ class DOMManipulation
 	}
 
 	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
-	static public function remove(nodesToRemove:DOMCollection):DOMCollection
+	static public function remove<T:DOMCollection>(nodesToRemove:T):T
 	{
 		if (nodesToRemove != null)
 		{
@@ -213,13 +213,13 @@ class DOMManipulation
 		return nodesToRemove;
 	}
 
-	static public inline function removeFromDOM(nodesToRemove:DOMCollection):DOMCollection
+	static public inline function removeFromDOM<T:DOMCollection>(nodesToRemove:T):T
 	{
 		return remove(nodesToRemove);
 	}
 
 	/** Remove a child element from the DOM.  Return the parent */
-	static public function removeChildren(parents:DOMCollection, ?childToRemove:DOMNode, ?childrenToRemove:DOMCollection):DOMCollection
+	static public function removeChildren<T:DOMCollection>(parents:T, ?childToRemove:DOMNode, ?childrenToRemove:DOMCollection):T
 	{
 		if (parents != null)
 		{
@@ -233,7 +233,7 @@ class DOMManipulation
 	}
 
 	/** Replace each element in this collection with another node or collection.  Each element in this collection should then be removed from the DOM.  Returns the collection that was removed. */
-	static public function replaceWith(target:DOMCollection, ?contentNode:DOMNode, ?contentCollection:DOMCollection):DOMCollection
+	static public function replaceWith<T:DOMCollection>(target:T, ?contentNode:DOMNode, ?contentCollection:DOMCollection):T
 	{
 		afterThisInsert(target, contentNode, contentCollection);
 		remove(target);
@@ -241,7 +241,7 @@ class DOMManipulation
 	}
 
 	/** Empty the current element of all children. */
-	static public function empty(containers:DOMCollection):DOMCollection
+	static public function empty<T:DOMCollection>(containers:T):T
 	{
 		if (containers != null)
 		{

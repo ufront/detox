@@ -28,7 +28,7 @@ class Style
 	}
 
 	/** Set a CSS property for every node in the collection */
-	public static function setCSS(c:DOMCollection, prop:String, val:String):DOMCollection
+	public static function setCSS<T:DOMCollection>(c:T, prop:String, val:String):T
 	{
 		for (node in c)
 		{
@@ -37,8 +37,8 @@ class Style
 		return c;
 	}
 
-	public static function show(c:DOMCollection):DOMCollection return setCSS(c, "display", "");
-	public static function hide(c:DOMCollection):DOMCollection return setCSS(c, "display", "none");
+	public static function show<T:DOMCollection>(c:T):T return setCSS(c, "display", "");
+	public static function hide<T:DOMCollection>(c:T):T return setCSS(c, "display", "none");
 
 	/** Return the position info for the first node in the collection */
 	public static function pos(c:DOMCollection):{ top:Int, left:Int, width:Int, height:Int }
