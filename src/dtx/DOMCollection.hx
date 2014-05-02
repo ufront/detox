@@ -91,7 +91,7 @@ class DOMCollection
 		@param i The index of the node to retrieve.  Default is `0` (first node).
 		@return The given node, or null.
 	**/
-	public function getNode(?i:Int = 0):DOMNode
+	public function getNode(?i:Int = 0):Null<DOMNode>
 	{
 		return if (collection.length > i && i >= 0) collection[i] else null;
 	}
@@ -116,7 +116,7 @@ class DOMCollection
 
 		This inline function is a shortcut for `getNode(0)`.
 	**/
-	public inline function first():DOMNode
+	public inline function first():Null<DOMNode>
 	{
 		return getNode(0);
 	}
@@ -126,7 +126,7 @@ class DOMCollection
 
 		This inline function is a shortcut for `getNode(this.length - 1)`.
 	**/
-	public function last():DOMNode
+	public function last():Null<DOMNode>
 	{
 		return getNode(this.length - 1);
 	}
@@ -143,22 +143,10 @@ class DOMCollection
 		if (pos < 0 || pos > collection.length) pos = collection.length;
 		if (node != null)   
 		{
-			#if !php
-				if (Lambda.has(collection, node) == false)
-				{
-					collection.insert(pos,node);
-				}
-			#else
-				// PHP chokes because Lambda.has doesn't use physical equality... 
-				var hasAlready = false;
-				for (n in collection) {
-					if (untyped __physeq__(n,node)) {
-						hasAlready = true;
-						break;
-					}
-				}
-				if (!hasAlready) collection.insert(pos,node);
-			#end
+			if (collection.indexOf(node) == -1)
+			{
+				collection.insert(pos,node);
+			}
 		}
 		return this;
 	}
@@ -245,7 +233,7 @@ class DOMCollection
 		return this;
 	}
 
-	function removeNode(n):Void
+	function removeNode(n:DOMNode):Void
 	{	
 		#if flash 
 		// Fix bug with Flash where the usual array.remove() didn't work.
