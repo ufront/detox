@@ -42,7 +42,7 @@ class EventManagement
 		return targetCollection;
 	}
 
-	public static function off(targetCollection:DOMCollection, ?eventType:String=null, ?listener:EventListener=null):DOMCollection
+	public static function off(targetCollection:DOMCollection, ?eventType:String, ?listener:EventListener):DOMCollection
 	{
 		for (target in targetCollection)
 		{
@@ -110,7 +110,7 @@ class EventManagement
 		return on(target, "keyup", selector, untyped listener);
 	}
 
-	public static function hover(targetCollection:DOMCollection, ?selector: String, listener1:MouseEvent->Void, ?listener2:MouseEvent->Void = null):DOMCollection
+	public static function hover(targetCollection:DOMCollection, ?selector: String, listener1:MouseEvent->Void, ?listener2:MouseEvent->Void):DOMCollection
 	{
 		for (node in targetCollection)
 		{
@@ -178,7 +178,7 @@ class EventManagement
 		return on(target, "scroll", selector, listener);
 	}
 
-	public static function wheel(target:DOMCollection, ?selector:String, ?listener:js.html.WheelEvent->Void):DOMCollection
+	public static function wheel(target:DOMCollection, ?selector:String, ?listener:WheelEvent->Void):DOMCollection
 	{
 		for (n in target)
 		{

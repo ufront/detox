@@ -11,22 +11,24 @@
 
 package dtx.collection;
 import dtx.DOMCollection;
+import js.html.*;
+
 class Style
 {
 	/** Return the style object for the first node in the collection */
-	public static function getComputedStyle(c:DOMCollection)
+	public static function getComputedStyle(c:DOMCollection):CSSStyleDeclaration
 	{
 		return dtx.single.Style.getComputedStyle(c.getNode(0));
 	}
 	
 	/** Return the computed style value for the given style property (on the first node in the collection) */
-	public static function css(c:DOMCollection, property:String)
+	public static function css(c:DOMCollection, property:String):String
 	{
 		return dtx.single.Style.css(c.getNode(0), property);
 	}
 
 	/** Set a CSS property for every node in the collection */
-	public static function setCSS(c:DOMCollection, prop:String, val:String)
+	public static function setCSS(c:DOMCollection, prop:String, val:String):DOMCollection
 	{
 		for (node in c)
 		{
@@ -35,11 +37,11 @@ class Style
 		return c;
 	}
 
-	public static function show(c:DOMCollection) return setCSS(c, "display", "");
-	public static function hide(c:DOMCollection) return setCSS(c, "display", "none");
+	public static function show(c:DOMCollection):DOMCollection return setCSS(c, "display", "");
+	public static function hide(c:DOMCollection):DOMCollection return setCSS(c, "display", "none");
 
 	/** Return the position info for the first node in the collection */
-	public static function pos(c:DOMCollection)
+	public static function pos(c:DOMCollection):{ top:Int, left:Int, width:Int, height:Int }
 	{
 		return dtx.single.Style.pos(c.getNode(0));
 	}

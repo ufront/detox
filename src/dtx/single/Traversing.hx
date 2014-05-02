@@ -29,7 +29,7 @@ import dtx.DOMNode;
 /** When returning a Null<Node>, it might be worth creating a static NullNode that won't generate errors (so we can chain easily and carelessly) but also not affect the DOM.   For now I'll leave it null.  */
 class Traversing
 {
-	static inline function unsafeGetChildren( elm:DOMNode, elementsOnly = true )
+	static inline function unsafeGetChildren( elm:DOMNode, elementsOnly:Bool = true):DOMCollection
 	{
 		#if js
 			return new DOMCollection().addNodeList(elm.childNodes, elementsOnly);
@@ -40,7 +40,7 @@ class Traversing
 	}
 
 	/** Return a collection of all child nodes of the current node. */
-	static public function children(node:DOMNode, ?elementsOnly = true)
+	static public function children(node:DOMNode, ?elementsOnly:Bool = true):DOMCollection
 	{
 		if (node != null && ElementManipulation.isElement(node))
 		{
@@ -49,7 +49,7 @@ class Traversing
 		else return new DOMCollection();
 	}
 
-	static public function firstChildren(node:DOMNode, ?elementsOnly = true)
+	static public function firstChildren(node:DOMNode, ?elementsOnly:Bool = true):Null<DOMNode>
 	{
 		var firstChild:DOMNode = null;
 		if (node != null && ElementManipulation.isElement(node))
@@ -65,7 +65,7 @@ class Traversing
 		return firstChild;
 	}
 
-	static public function lastChildren(node:DOMNode, ?elementsOnly = true):DOMNode
+	static public function lastChildren(node:DOMNode, ?elementsOnly:Bool = true):Null<DOMNode>
 	{
 		var lastChild:DOMNode = null;
 		if (node != null && ElementManipulation.isElement(node))
@@ -82,23 +82,19 @@ class Traversing
 	}
 
 	/** Gets the direct parents of each element in the collection. */
-	static public function parent(node:DOMNode)
+	static public function parent(node:DOMNode):Null<DOMNode>
 	{
 		var p:DOMNode = null;
-		if (node != null && node.parentNode != null && node != Detox.document)
+		if (node != null && node != Detox.document)
 		{
-			#if js
-			p = node.parentNode;
-			#else 
-			p = node.parentNode();
-			#end
+			p = node.parentNode #if !js () #end;
 		}
 		return p;
 	}
 
 	/** This is identical to parent() but it's necessary to use this on non 
 	JS platforms if you want to have null-safety etc. */
-	static inline public function parents(node:DOMNode)
+	static inline public function parents(node:DOMNode):Null<DOMNode>
 	{
 		return parent(node);
 	}
@@ -124,7 +120,7 @@ class Traversing
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
 	static public function descendants(node:DOMNode, ?elementsOnly:Bool = true):DOMCollection
 	{
-		var descendantList = new dtx.DOMCollection();
+		var descendantList = new DOMCollection();
 
 		for (child in children(node, elementsOnly))
 		{
@@ -139,7 +135,7 @@ class Traversing
 		return descendantList;
 	}
 
-	static public function next(node:DOMNode, ?elementsOnly:Bool = true):DOMNode
+	static public function next(node:DOMNode, ?elementsOnly:Bool = true):Null<DOMNode>
 	{
 		// Get the next sibling if we're not null already
 		var sibling = (node != null) 
@@ -161,7 +157,7 @@ class Traversing
 		return sibling;
 	}
 
-	static public function prev(node:DOMNode, ?elementsOnly:Bool = true):DOMNode
+	static public function prev(node:DOMNode, ?elementsOnly:Bool = true):Null<DOMNode>
 	{
 		// Get the previous sibling if it's not already null
 		var sibling = (node != null) 
@@ -187,7 +183,7 @@ class Traversing
 		return cast sibling;
 	}
 
-	static public function find(node:DOMNode, selector:String)
+	static public function find(node:DOMNode, selector:String):DOMCollection
 	{
 		var newDOMCollection = new DOMCollection();
 		if (node != null && ElementManipulation.isElement(node) || dtx.single.ElementManipulation.isDocument(node))

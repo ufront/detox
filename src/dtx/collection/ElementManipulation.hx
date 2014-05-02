@@ -20,47 +20,47 @@ class ElementManipulation
 	}
 
 	/** Assume we're operating on the first element. */
-	public static function attr(query:DOMCollection, attName:String):String
+	public static function attr(collection:DOMCollection, attName:String):String
 	{
-		return (query != null && query.length > 0) ? dtx.single.ElementManipulation.attr(query.getNode(), attName) : "";
+		return (collection != null && collection.length > 0) ? dtx.single.ElementManipulation.attr(collection.getNode(), attName) : "";
 	}
 
-	public static function setAttr(query:DOMCollection, attName:String, attValue:String):DOMCollection
+	public static function setAttr(collection:DOMCollection, attName:String, attValue:String):DOMCollection
 	{
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				dtx.single.ElementManipulation.setAttr(node, attName, attValue);
 			}
 		}
-		return query;
+		return collection;
 	}
 
-	public static function removeAttr(query:DOMCollection, attName:String):DOMCollection
+	public static function removeAttr(collection:DOMCollection, attName:String):DOMCollection
 	{
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				dtx.single.ElementManipulation.removeAttr(node,attName);
 			}
 		}
-		return query;
+		return collection;
 	}
 
 	/** Checks if every element in the collection has the given class */
-	public static function hasClass(query:DOMCollection, className:String):Bool
+	public static function hasClass(collection:DOMCollection, className:String):Bool
 	{
 		var result = false;
 
-		if (query != null && query.length > 0)
+		if (collection != null && collection.length > 0)
 		{
 			// If there's at least one result, we'll begin with "true"
 			// and loop around and see if it gets switched to "false"
 			result = true;
 
-			for (node in query)
+			for (node in collection)
 			{
 				if (dtx.single.ElementManipulation.hasClass(node, className) == false)
 				{
@@ -73,71 +73,71 @@ class ElementManipulation
 		return result;
 	}
 
-	public static function addClass(query:DOMCollection, className:String):DOMCollection
+	public static function addClass(collection:DOMCollection, className:String):DOMCollection
 	{
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				dtx.single.ElementManipulation.addClass(node,className);
 			}
 		}
-		return query;
+		return collection;
 	}
 
-	public static function removeClass(query:DOMCollection, className:String):DOMCollection
+	public static function removeClass(collection:DOMCollection, className:String):DOMCollection
 	{
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				dtx.single.ElementManipulation.removeClass(node,className);
 			}
 		}
-		return query;
+		return collection;
 	}
 
-	public static function toggleClass(query:DOMCollection, className:String):DOMCollection
+	public static function toggleClass(collection:DOMCollection, className:String):DOMCollection
 	{
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				dtx.single.ElementManipulation.toggleClass(node,className);
 			}
 		}
-		return query;
+		return collection;
 	}
 
-	public static inline function tagName(query:DOMCollection):String
+	public static inline function tagName(collection:DOMCollection):String
 	{
-		return (query != null && query.length > 0) ? dtx.single.ElementManipulation.tagName(query.getNode()) : "";
+		return (collection != null && collection.length > 0) ? dtx.single.ElementManipulation.tagName(collection.getNode()) : "";
 	}
 
-	public static function val(query:DOMCollection):String
+	public static function val(collection:DOMCollection):String
 	{
-		return (query != null && query.length > 0) ? dtx.single.ElementManipulation.val(query.getNode()) : "";
+		return (collection != null && collection.length > 0) ? dtx.single.ElementManipulation.val(collection.getNode()) : "";
 	}
 
-	public static function setVal(query:DOMCollection, val:Dynamic)
+	public static function setVal(collection:DOMCollection, val:Dynamic):DOMCollection
 	{
 		var value = Std.string(val);
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				dtx.single.ElementManipulation.setVal(node, value);
 			}
 		}
-		return query;
+		return collection;
 	}
 	
-	public static function text(query:DOMCollection):String
+	public static function text(collection:DOMCollection):String
 	{
 		var text = "";
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				text = text + dtx.single.ElementManipulation.text(node);
 			}
@@ -145,24 +145,24 @@ class ElementManipulation
 		return text;
 	}
 	
-	public static function setText(query:DOMCollection, text:String):DOMCollection
+	public static function setText(collection:DOMCollection, text:String):DOMCollection
 	{
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				dtx.single.ElementManipulation.setText(node,text);
 			}
 		}
-		return query;
+		return collection;
 	}
 
-	public static function innerHTML(query:DOMCollection):String
+	public static function innerHTML(collection:DOMCollection):String
 	{
 		var sb = new StringBuf();
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				sb.add( dtx.single.ElementManipulation.innerHTML(node) );
 			}
@@ -170,16 +170,16 @@ class ElementManipulation
 		return sb.toString();
 	}
 
-	public static function setInnerHTML(query:DOMCollection, html:String):DOMCollection
+	public static function setInnerHTML(collection:DOMCollection, html:String):DOMCollection
 	{
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				dtx.single.ElementManipulation.setInnerHTML(node,html);
 			}
 		}
-		return query;
+		return collection;
 	}
 
 	public static inline function html(collection:DOMCollection):String

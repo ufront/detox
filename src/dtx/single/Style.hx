@@ -36,7 +36,7 @@ Functionality to implement:
 
 class Style
 {
-	public static function getComputedStyle(node:DOMNode)
+	public static function getComputedStyle(node:DOMNode):CSSStyleDeclaration
 	{
 		var style:CSSStyleDeclaration = null;
 		if (ElementManipulation.isElement(node))
@@ -46,12 +46,12 @@ class Style
 		return style;
 	}
 	
-	public static function css(node:DOMNode, prop:String)
+	public static function css(node:DOMNode, prop:String):String
 	{
 		return getComputedStyle(node).getPropertyValue(prop);
 	}
 
-	public static function setCSS(node:DOMNode, prop:String, val:String)
+	public static function setCSS(node:DOMNode, prop:String, val:String):DOMNode
 	{
 		if (ElementManipulation.isElement(node))
 		{
@@ -61,10 +61,10 @@ class Style
 		return node;
 	}
 
-	public static function show(n:DOMNode) return setCSS(n, "display", "");
-	public static function hide(n:DOMNode) return setCSS(n, "display", "none");
+	public static function show(n:DOMNode):DOMNode return setCSS(n, "display", "");
+	public static function hide(n:DOMNode):DOMNode return setCSS(n, "display", "none");
 
-	public static function pos(node:DOMNode)
+	public static function pos(node:DOMNode):{ top:Int, left:Int, width:Int, height:Int }
 	{
 		if (ElementManipulation.isElement(node)) 
 		{
@@ -86,4 +86,4 @@ class Style
 			}
 		}
 	}
-} 
+}

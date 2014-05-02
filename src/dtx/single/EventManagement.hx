@@ -28,7 +28,7 @@ class EventManagement
 	}
 
 	/** add an event listener */
-	public static inline function on(target:DOMNode, eventType:String, ?selector:String, ?listener:EventListener):DOMNode
+	public static function on(target:DOMNode, eventType:String, ?selector:String, ?listener:EventListener):DOMNode
 	{
 		#if js 
 			if (target != null)
@@ -46,7 +46,7 @@ class EventManagement
 		return target;
 	}
 
-	public static function off(target:DOMNode, ?eventType:String = null, ?listener:EventListener=null):DOMNode
+	public static function off(target:DOMNode, ?eventType:String, ?listener:EventListener):DOMNode
 	{
 		#if js 
 			if (target != null)
@@ -127,7 +127,7 @@ class EventManagement
 		return on(target, "keyup", selector, untyped listener);
 	}
 
-	public static function hover(target:DOMNode, ?selector:String, listener1:MouseEvent->Void, ?listener2:MouseEvent->Void = null):DOMNode
+	public static function hover(target:DOMNode, ?selector:String, listener1:MouseEvent->Void, ?listener2:MouseEvent->Void):DOMNode
 	{
 		mouseenter(target, selector, listener1);
 

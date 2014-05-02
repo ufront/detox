@@ -23,7 +23,7 @@ import dtx.DOMCollection;
 	**/
 	class XMLWrapper
 	{
-		static public inline function parentNode(xml:Xml)
+		static public inline function parentNode(xml:Xml):Xml
 		{
 			return xml.parent;
 		}
@@ -33,7 +33,7 @@ import dtx.DOMCollection;
 			return xml.iterator().hasNext();
 		}
 
-		static public function lastChild(xml:Xml)
+		static public function lastChild(xml:Xml):Xml
 		{
 			var lastChild:Xml = null;
 			
@@ -43,7 +43,7 @@ import dtx.DOMCollection;
 			return lastChild;
 		}
 
-		static public function appendChild(xml:Xml, child:Xml)
+		static public function appendChild(xml:Xml, child:Xml):Void
 		{
 			if (xml != null && child != null)
 			{
@@ -58,7 +58,7 @@ import dtx.DOMCollection;
 			}
 		}
 
-		static public function insertBefore(xml:Xml, content:DOMNode, target:DOMNode)
+		static public function insertBefore(xml:Xml, content:DOMNode, target:DOMNode):Void
 		{
 			if (xml != null && content != null && target != null)
 			{
@@ -79,7 +79,7 @@ import dtx.DOMCollection;
 			}
 		}
 
-		static public function nextSibling(xml:Xml)
+		static public function nextSibling(xml:Xml):Xml
 		{
 			#if flash 
 				var sibling:Xml = null;
@@ -127,7 +127,7 @@ import dtx.DOMCollection;
 			#end
 		}
 
-		static public function previousSibling(xml:Xml)
+		static public function previousSibling(xml:Xml):Xml
 		{
 			#if flash
 				var sibling:Xml = null;
@@ -173,7 +173,7 @@ import dtx.DOMCollection;
 			#end 
 		}
 
-		static public function empty(xml:Xml)
+		static public function empty(xml:Xml):Void
 		{
 			if (xml != null)
 			{
@@ -184,7 +184,7 @@ import dtx.DOMCollection;
 			}
 		}
 
-		static public function textContent(xml:Xml)
+		static public function textContent(xml:Xml):String
 		{
 			var ret = "";
 			if (xml != null)
@@ -218,7 +218,7 @@ import dtx.DOMCollection;
 			return ret;
 		}
 
-		static public function setTextContent(xml:DOMNode, text:String)
+		static public function setTextContent(xml:DOMNode, text:String):String
 		{
 			// if element or document
 			if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
@@ -235,7 +235,7 @@ import dtx.DOMCollection;
 			return text;
 		}
 
-		static public function innerHTML(xml:DOMNode)
+		static public function innerHTML(xml:DOMNode):String
 		{
 			var html = "";
 			for (child in xml)
@@ -245,7 +245,7 @@ import dtx.DOMCollection;
 			return html;
 		}
 
-		static public function setInnerHTML(xml:DOMNode, html:String)
+		static public function setInnerHTML(xml:DOMNode, html:String):String
 		{
 			var xmlDocNode:Xml = null;
 			try {
@@ -277,7 +277,7 @@ import dtx.DOMCollection;
 			return html;
 		}
 
-		static public function cloneNode(xml:DOMNode, ?deep=true)
+		static public function cloneNode(xml:DOMNode, ?deep:Bool=true):DOMNode
 		{
 			var clone = switch (xml.nodeType) {
 				case Xml.Element:

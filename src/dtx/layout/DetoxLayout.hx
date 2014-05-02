@@ -21,7 +21,7 @@ class DetoxLayout extends dtx.DOMCollection
 	public var scripts:StringMap<DOMCollection>;
 	public var stylesheets:StringMap<DOMCollection>;
 
-	public function new(?template:String, ?layout:DOMNode, dtd:String = "<!DOCTYPE html>", contentSelector = "#main-content", navSelector = "#main-nav")
+	public function new(?template:String, ?layout:DOMNode, dtd:String = "<!DOCTYPE html>", contentSelector:String = "#main-content", navSelector:String = "#main-nav")
 	{
 		super();
 
@@ -59,21 +59,21 @@ class DetoxLayout extends dtx.DOMCollection
 		}
 	}
 
-	public function addScript(url:String)
+	public function addScript(url:String):Void
 	{
 		var scriptTag = '<script type="text/javascript" src="$url"></script>'.parse();
 		scripts.set(url, scriptTag);
 		scriptTag.appendTo(body);
 	}
 
-	public function addInlineScript(script:String)
+	public function addInlineScript(script:String):Void
 	{
 		var scriptTag = script.parse();
 		scripts.set(script, scriptTag);
 		scriptTag.appendTo(body);
 	}
 
-	public function removeScript(script:String)
+	public function removeScript(script:String):Void
 	{
 		if (scripts.exists(script))
 		{
@@ -83,14 +83,14 @@ class DetoxLayout extends dtx.DOMCollection
 		}
 	}
 
-	public function addStylesheet(url:String, ?media:String = "all")
+	public function addStylesheet(url:String, ?media:String = "all"):Void
 	{
 		var stylesheetTag = '<link rel="stylesheet" type="text/css" href="$url" media="$media" />'.parse();
 		stylesheets.set(url, stylesheetTag);
 		stylesheetTag.appendTo(head);
 	}
 
-	public function removeStylesheet(url:String)
+	public function removeStylesheet(url:String):Void
 	{
 		if (stylesheets.exists(url))
 		{
@@ -100,40 +100,40 @@ class DetoxLayout extends dtx.DOMCollection
 		}
 	}
 
-	public function html()
+	public function html():String
 	{
 		return this.dtd + "\n" + dtx.collection.ElementManipulation.html(this);
 	}
 
-	function get_title()
+	function get_title():String
 	{
 		return titleDOM.text();
 	}
 
-	function set_title(newTitle:String)
+	function set_title(newTitle:String):String
 	{
 		titleDOM.setText(newTitle);
 		return newTitle;
 	}
 
-	function get_content():dtx.DOMCollection
+	function get_content():DOMCollection
 	{
 		return contentDOM.children();
 	}
 
-	function set_content(newContent:dtx.DOMCollection)
+	function set_content(newContent:DOMCollection):DOMCollection
 	{
 		contentDOM.empty();
 		contentDOM.append(newContent);
 		return newContent;
 	}
 
-	function get_navigation():dtx.DOMCollection
+	function get_navigation():DOMCollection
 	{
 		return navigationDOM.children();
 	}
 
-	function set_navigation(newNavigation:dtx.DOMCollection)
+	function set_navigation(newNavigation:DOMCollection):DOMCollection
 	{
 		navigationDOM.empty();
 		navigationDOM.append(newNavigation);

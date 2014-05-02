@@ -71,7 +71,7 @@ class Tools
 
 		Usage: `someNode.toCollection()`
 	**/
-	public static function toCollection(n:DOMNode)
+	public static function toCollection(n:DOMNode):DOMCollection
 	{
 		return new DOMCollection([n]);
 	}
@@ -99,7 +99,7 @@ class Tools
 		@param tagName The name of the element to be created.  Must begin with [a-zA-z_:] and then have only [a-zA-Z0-9_:.].  If the tagName is null, the function will return null.
 		@return The new element as a DOMNode, or `null` if an error occured.
 	**/
-	public static function create(tagName:String)
+	public static function create(tagName:String):DOMNode
 	{
 		var elm:DOMNode = null;
 		if (tagName != null)
@@ -119,7 +119,7 @@ class Tools
 		return elm;
 	}
 
-	static var firstTag = ~/<([a-z]+)[ \/>]/;
+	static var firstTag:EReg = ~/<([a-z]+)[ \/>]/;
 	
 	/**
 		Parse a given Xml string and return a DOMCollection.
@@ -140,7 +140,7 @@ class Tools
 		@param xml The XML or HTML string to parse.  On Javascript the browser is fairly tolerant of both Xml and Html, and invalid code also.  On other platforms it must be valid Xml.
 		@return A DOMCollection containing the parsed nodes.  It will be empty if the string is null, empty (""), or was unable to be parsed correctly.
 	**/
-	public static function parse(xml:String)
+	public static function parse(xml:String):DOMCollection
 	{
 		var q:DOMCollection;
 		if (xml != null && xml != "")
@@ -204,7 +204,7 @@ class Tools
 
 		If `newDocument` is null, or a type other than DOCUMENT_NODE or ELEMENT_NODE, then `document` will remain unchanged.
 	**/
-	public static function setDocument(newDocument:DOMNode)
+	public static function setDocument(newDocument:DOMNode):Void
 	{
 		// Only change the document if it has the right NodeType
 		if (newDocument != null)
@@ -230,7 +230,7 @@ class Tools
 
 		Available on Javascript only.
 	**/
-	public static function toDetox(x:Xml)
+	public static function toDetox(x:Xml):DOMCollection
 	{
 		return ( x!=null ) ? parse( x.toString() ) : new DOMCollection();
 	} 
@@ -264,7 +264,7 @@ class Tools
 		
 		@param f function to call when DOM is ready.  If null, it will be ignored.
 	**/
-	public static function ready(f:Void->Void)
+	public static function ready(f:Void->Void):Void
 	{
 		/*
 		SHIM TO MAKE SURE IT WORKS IN FF3.5 OR UNDER
@@ -301,7 +301,7 @@ class Tools
 		if ( f!=null ) checkReady(f);
 	}
 
-	static function checkReady(f:Void->Void)
+	static function checkReady(f:Void->Void):Void
 	{
 		/*
 		Mini ready() function taken from:
@@ -319,7 +319,7 @@ class Tools
 
 		@todo This currently imports sizzle, but the Traversing.find() functions are not falling back to use it correctly.
 	**/
-	public static function includeSizzle()
+	public static function includeSizzle():Void
 	{
 		#if (haxe_211 || haxe3)
 			#if embed_js
@@ -341,7 +341,7 @@ class Tools
 
 		@todo This currently imports jQuery, but the Traversing.find() functions are not falling back to use it correctly.
 	**/
-	public static function includeJQuery()
+	public static function includeJQuery():Void
 	{
 		#if (haxe_211 || haxe3)
 			#if embed_js

@@ -20,7 +20,7 @@ append() and insertBefore() there should be no need for any other functions */
 class DOMManipulation
 {
 	/** Append the specified child to this node */
-	static public function append(parent:DOMNode, ?childNode:DOMNode = null, ?childCollection:DOMCollection = null)
+	static public function append(parent:DOMNode, ?childNode:DOMNode, ?childCollection:DOMCollection):DOMNode
 	{
 		if (parent != null)
 		{
@@ -41,7 +41,7 @@ class DOMManipulation
 	}
 
 	/** Prepend the specified child to this node */
-	static public function prepend(parent:DOMNode, ?newChildNode:DOMNode = null, ?newChildCollection:DOMCollection = null)
+	static public function prepend(parent:DOMNode, ?newChildNode:DOMNode, ?newChildCollection:DOMCollection):DOMNode
 	{
 		if (parent != null)
 		{
@@ -66,7 +66,7 @@ class DOMManipulation
 	}
 
 	/** Append this node to the specified parent */
-	static public function appendTo(child:DOMNode, ?parentNode:DOMNode = null, ?parentCollection:DOMCollection = null)
+	static public function appendTo(child:DOMNode, ?parentNode:DOMNode, ?parentCollection:DOMCollection):DOMNode
 	{
 		if (parentNode != null)
 		{
@@ -81,7 +81,7 @@ class DOMManipulation
 	}
 
 	/** Prepend this node to the specified parent */
-	static public function prependTo(child:DOMNode, ?parentNode:DOMNode = null, ?parentCollection:DOMCollection = null)
+	static public function prependTo(child:DOMNode, ?parentNode:DOMNode, ?parentCollection:DOMCollection):DOMNode
 	{
 		if (parentNode != null)
 		{
@@ -101,7 +101,7 @@ class DOMManipulation
 		return child;
 	}
 
-	static public function insertThisBefore(content:DOMNode, ?targetNode:DOMNode = null, ?targetCollection:DOMCollection = null)
+	static public function insertThisBefore(content:DOMNode, ?targetNode:DOMNode, ?targetCollection:DOMCollection):DOMNode
 	{
 		if (content != null)
 		{
@@ -132,7 +132,7 @@ class DOMManipulation
 		return content;
 	}
 
-	static public function insertThisAfter(content:DOMNode, ?targetNode:DOMNode, ?targetCollection:DOMCollection)
+	static public function insertThisAfter(content:DOMNode, ?targetNode:DOMNode, ?targetCollection:DOMCollection):DOMNode
 	{
 		if (content != null)
 		{
@@ -185,7 +185,7 @@ class DOMManipulation
 		return content;
 	}
 
-	static public function beforeThisInsert(target:DOMNode, ?contentNode:DOMNode, ?contentQuery:DOMCollection)
+	static public function beforeThisInsert(target:DOMNode, ?contentNode:DOMNode, ?contentCollection:DOMCollection):DOMNode
 	{
 		if (target != null)
 		{
@@ -193,16 +193,16 @@ class DOMManipulation
 			{
 				insertThisBefore(contentNode, target);
 			}
-			if (contentQuery != null)
+			if (contentCollection != null)
 			{
-				dtx.collection.DOMManipulation.insertThisBefore(contentQuery, target);
+				dtx.collection.DOMManipulation.insertThisBefore(contentCollection, target);
 			}
 		}
 
 		return target;
 	}
 
-	static public function afterThisInsert(target:DOMNode, ?contentNode:DOMNode, ?contentQuery:DOMCollection)
+	static public function afterThisInsert(target:DOMNode, ?contentNode:DOMNode, ?contentCollection:DOMCollection):DOMNode
 	{
 		if (target != null)
 		{
@@ -210,9 +210,9 @@ class DOMManipulation
 			{
 				insertThisAfter(contentNode, target);
 			}
-			if (contentQuery != null)
+			if (contentCollection != null)
 			{
-				dtx.collection.DOMManipulation.insertThisAfter(contentQuery, target);
+				dtx.collection.DOMManipulation.insertThisAfter(contentCollection, target);
 			}
 		}
 		
@@ -220,7 +220,7 @@ class DOMManipulation
 	}
 
 	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
-	static public function remove(childToRemove:DOMNode)
+	static public function remove(childToRemove:DOMNode):DOMNode
 	{
 		if (childToRemove != null)
 		{
@@ -233,13 +233,13 @@ class DOMManipulation
 		return childToRemove;
 	}
 
-	static public inline function removeFromDOM(nodesToRemove:DOMNode)
+	static public inline function removeFromDOM(nodesToRemove:DOMNode):DOMNode
 	{
 		return remove(nodesToRemove);
 	}
 
 	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
-	static public function removeChildren(parent:DOMNode, ?childToRemove:DOMNode, ?childrenToRemove:DOMCollection)
+	static public function removeChildren(parent:DOMNode, ?childToRemove:DOMNode, ?childrenToRemove:DOMCollection):DOMNode
 	{
 		if (parent != null)
 		{
@@ -262,15 +262,15 @@ class DOMManipulation
 	}
 
 	/** Replace this with another node or collection.  This should then be removed from the DOM.  Returns the node that was removed.  */
-	static public function replaceWith(target:DOMNode, ?contentNode:DOMNode, ?contentQuery:DOMCollection)
+	static public function replaceWith(target:DOMNode, ?contentNode:DOMNode, ?contentCollection:DOMCollection):DOMNode
 	{
-		afterThisInsert(target, contentNode, contentQuery);
+		afterThisInsert(target, contentNode, contentCollection);
 		remove(target);
 		return target;
 	}
 
 	/** Empty the current element of all children. */
-	static public function empty(container:DOMNode)
+	static public function empty(container:DOMNode):DOMNode
 	{
 		if (container != null)
 		{

@@ -17,12 +17,12 @@ import dtx.DOMNode;
 class Traversing
 {
 	/** Return a new collection of all child nodes of the current collection. */
-	static public function children(query:DOMCollection, ?elementsOnly = true)
+	static public function children(collection:DOMCollection, ?elementsOnly:Bool = true):DOMCollection
 	{
 		var children = new DOMCollection();
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				if (dtx.single.ElementManipulation.isElement(node))
 				{
@@ -38,12 +38,12 @@ class Traversing
 		return children;
 	}
 
-	static public function firstChildren(query:DOMCollection, ?elementsOnly = true)
+	static public function firstChildren(collection:DOMCollection, ?elementsOnly:Bool = true):DOMCollection
 	{
 		var children = new DOMCollection();
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				if (dtx.single.ElementManipulation.isElement(node))
 				{
@@ -60,12 +60,12 @@ class Traversing
 		return children;
 	}
 
-	static public function lastChildren(query:DOMCollection, ?elementsOnly = true)
+	static public function lastChildren(collection:DOMCollection, ?elementsOnly:Bool = true):DOMCollection
 	{
 		var children = new DOMCollection();
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				if (dtx.single.ElementManipulation.isElement(node))
 				{
@@ -87,12 +87,12 @@ class Traversing
 	}
 
 	/** Gets the direct parents of each element in the collection. */
-	static public function parent(query:DOMCollection)
+	static public function parent(collection:DOMCollection):DOMCollection
 	{
 		var parents = new DOMCollection();
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				if (node.parentNode != null && node != Detox.document)
 					#if js
@@ -107,16 +107,16 @@ class Traversing
 
 	/** This is identical to parents() but it's necessary to use this on non 
 	JS platforms if you want to have null-safety etc. */
-	static inline public function parents(query:DOMCollection)
+	static inline public function parents(collection:DOMCollection):DOMCollection
 	{
-		return parent(query);
+		return parent(collection);
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
-	static public function ancestors(query:DOMCollection):DOMCollection
+	static public function ancestors(collection:DOMCollection):DOMCollection
 	{
 		// start with the direct parents
-		var ancestorList = parent(query);
+		var ancestorList = parent(collection);
 		
 		// If there is at least one parent
 		// Then recurse and add all ancestors of that parent
@@ -130,13 +130,13 @@ class Traversing
 	}
 
 	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
-	static public function descendants(query:DOMCollection, ?elementsOnly:Bool = true):DOMCollection
+	static public function descendants(collection:DOMCollection, ?elementsOnly:Bool = true):DOMCollection
 	{
 		var descendantList = new dtx.DOMCollection();
 
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				var l = dtx.single.Traversing.descendants(node, elementsOnly);
 				descendantList.addCollection(l);
@@ -147,12 +147,12 @@ class Traversing
 		return descendantList;
 	}
 
-	static public function next(query:DOMCollection, ?elementsOnly:Bool = true)
+	static public function next(collection:DOMCollection, ?elementsOnly:Bool = true):DOMCollection
 	{
 		var siblings = new DOMCollection();
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				// Get the next sibling
 				var sibling = #if js node.nextSibling #else node.nextSibling() #end ;
@@ -173,12 +173,12 @@ class Traversing
 		return siblings;
 	}
 
-	static public function prev(query:DOMCollection, ?elementsOnly:Bool = true)
+	static public function prev(collection:DOMCollection, ?elementsOnly:Bool = true):DOMCollection
 	{
 		var siblings = new DOMCollection();
-		if (query != null)
+		if (collection != null)
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				// get the previous sibling
 				var sibling = #if js node.previousSibling #else node.previousSibling() #end;
@@ -199,12 +199,12 @@ class Traversing
 		return siblings;
 	}
 
-	static public function find(query:DOMCollection, selector:String)
+	static public function find(collection:DOMCollection, selector:String):DOMCollection
 	{
 		var newDOMCollection = new DOMCollection();
-		if (query != null && selector != null && selector != "")
+		if (collection != null && selector != null && selector != "")
 		{
-			for (node in query)
+			for (node in collection)
 			{
 				if (dtx.single.ElementManipulation.isElement(node) || dtx.single.ElementManipulation.isDocument(node))
 				{
@@ -219,7 +219,7 @@ class Traversing
 						{
 							var engine:String->DOMNode->Array<DOMNode> = untyped __js__("
 								(('undefined' != typeof Sizzle && Sizzle) || 
-								(('undefined' != typeof jQuery) && jQuery.find) || 
+								(('undefined' != typeof jQuery) && jQuery.find) ||
 								(('undefined' != typeof $) && $.find))
 							");
 							var results = engine(selector, node);

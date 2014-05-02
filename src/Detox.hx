@@ -50,9 +50,6 @@
 //    "#title".find();
 @:noDoc typedef Detox = dtx.Tools;
 
-// Helpers for DetoxLayout
-@:noDoc typedef DetoxLayoutTools = dtx.layout.DetoxLayoutTools;
-
 // 
 // Client JS only classes
 // 

@@ -76,7 +76,7 @@ class DOMCollection
 
 		Usage: `for ( n in myCollection ) trace( n.nodeName )`
 	**/
-	public inline function iterator()
+	public inline function iterator():Iterator<DOMNode>
 	{
 		return collection.iterator();
 	}
@@ -91,7 +91,7 @@ class DOMCollection
 		@param i The index of the node to retrieve.  Default is `0` (first node).
 		@return The given node, or null.
 	**/
-	public function getNode(?i:Int = 0)
+	public function getNode(?i:Int = 0):DOMNode
 	{
 		return if (collection.length > i && i >= 0) collection[i] else null;
 	}
@@ -106,7 +106,7 @@ class DOMCollection
 		@param i The index of the node to retrieve.  Default is `0` (first node).
 		@return A new collection containing the specified node.  
 	**/
-	public function eq(?i:Int = 0)
+	public function eq(?i:Int = 0):DOMCollection
 	{
 		return new DOMCollection().add( getNode(i) );
 	}
@@ -116,7 +116,7 @@ class DOMCollection
 
 		This inline function is a shortcut for `getNode(0)`.
 	**/
-	public inline function first()
+	public inline function first():DOMNode
 	{
 		return getNode(0);
 	}
@@ -126,7 +126,7 @@ class DOMCollection
 
 		This inline function is a shortcut for `getNode(this.length - 1)`.
 	**/
-	public function last()
+	public function last():DOMNode
 	{
 		return getNode(this.length - 1);
 	}
@@ -172,7 +172,7 @@ class DOMCollection
 		@param elementsOnly If true, only element nodes will be added to the collection.  Default: `false`.
 		@return The same DOMCollection, to provide a fluid interface.
 	**/
-	public function addCollection(collection:Iterable<DOMNode>, ?elementsOnly = false):DOMCollection
+	public function addCollection(collection:Iterable<DOMNode>, ?elementsOnly:Bool = false):DOMCollection
 	{
 		if (collection != null)
 		{
@@ -200,7 +200,7 @@ class DOMCollection
 		@return The same DOMCollection, to provide a fluid interface.
 	**/
 	#if js
-		public function addNodeList(nodeList:NodeList, ?elementsOnly = false):DOMCollection
+		public function addNodeList(nodeList:NodeList, ?elementsOnly:Bool = false):DOMCollection
 		{
 			if (nodeList!=null) for (i in 0...nodeList.length)
 			{
@@ -214,7 +214,7 @@ class DOMCollection
 			return this;
 		}
 	#else 
-		public inline function addNodeList(nodeList:Iterable<DOMNode>, ?elementsOnly = false):DOMCollection
+		public inline function addNodeList(nodeList:Iterable<DOMNode>, ?elementsOnly:Bool = false):DOMCollection
 		{
 			return addCollection(nodeList, elementsOnly);
 		}
@@ -245,7 +245,7 @@ class DOMCollection
 		return this;
 	}
 
-	function removeNode(n)
+	function removeNode(n):Void
 	{	
 		#if flash 
 		// Fix bug with Flash where the usual array.remove() didn't work.
@@ -287,7 +287,7 @@ class DOMCollection
 		@param f A function to filter out individual nodes.  If null, no nodes will be filtered - the new collection will contain all the same nodes.
 		@return A new DOMCollection, with only the nodes that passed the filter.
 	**/
-	public function filter(f:DOMNode->Bool)
+	public function filter(f:DOMNode->Bool):DOMCollection
 	{
 		var newCollection:DOMCollection;
 

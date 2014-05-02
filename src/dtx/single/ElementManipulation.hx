@@ -28,11 +28,11 @@ JQuery has these classes, let's copy:
 
 class ElementManipulation
 {
-	static inline var NodeTypeElement = 1;
-	static inline var NodeTypeAttribute = 2;
-	static inline var NodeTypeText = 3;
-	static inline var NodeTypeComment = 8;
-	static inline var NodeTypeDocument = 9;
+	static inline var NodeTypeElement:Int = 1;
+	static inline var NodeTypeAttribute:Int = 2;
+	static inline var NodeTypeText:Int = 3;
+	static inline var NodeTypeComment:Int = 8;
+	static inline var NodeTypeDocument:Int = 9;
 
 	public static function isElement(node:DOMNode):Bool
 	{
@@ -256,7 +256,7 @@ class ElementManipulation
 		return val;
 	}
 
-	public static function setVal(node:DOMNode, val:Dynamic)
+	public static function setVal(node:DOMNode, val:Dynamic):DOMNode
 	{
 		if (node != null)
 		{
@@ -382,10 +382,10 @@ class ElementManipulation
 		return sb.toString();
 	}
 
-	static var selfClosingElms = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
+	static var selfClosingElms:Array<String> = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
 	
 	@:access(dtx.single.Traversing)
-	static function printHtml( n:DOMNode, sb:StringBuf, preserveTagNameCase:Bool ) {
+	static function printHtml( n:DOMNode, sb:StringBuf, preserveTagNameCase:Bool ):Void {
 		if ( isElement(n) ) {
 			var elmName = preserveTagNameCase ? n.nodeName : n.nodeName.toLowerCase();
 			sb.add('<$elmName');
@@ -433,7 +433,7 @@ class ElementManipulation
 		}
 	}
 
-	static function addHtmlEscapedString( str:String, sb:StringBuf, encodeQuotes:Bool )
+	static function addHtmlEscapedString( str:String, sb:StringBuf, encodeQuotes:Bool ):Void
 	{
 		for ( i in 0...str.length ) {
 			var charCode = StringTools.fastCodeAt( str, i );
