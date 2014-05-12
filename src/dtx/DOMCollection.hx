@@ -297,15 +297,14 @@ class DOMCollection
 
 		This not only clones the collection, but each node inside it.
 
-		@param deep Do we do a deep clone for each node (clone all child nodes also) or a shallow clone (move child nodes to cloned parent node)?  Default is `true`, do a deep clone.
 		@return A new DOMCollection with the cloned nodes.
 	**/
-	public function clone(?deep:Bool = true):DOMCollection
+	public function clone():DOMCollection
 	{
 		var q = new DOMCollection();
 		for (node in this)
 		{
-			q.add(node.cloneNode(deep));
+			q.add(node.cloneNode(true));
 		}
 		return q;
 	}

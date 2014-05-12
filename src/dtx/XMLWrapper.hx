@@ -19,7 +19,7 @@ import dtx.DOMCollection;
 
 		This class will likely be deprecated in future in favour of using an abstract to unify Xml and Node.
 
-		As such, no further documentation is provided, and is only unit tested indirectly.
+		As such, no further documentation is provided, and this is only unit tested indirectly.
 	**/
 	class XMLWrapper
 	{
@@ -191,13 +191,8 @@ import dtx.DOMCollection;
 			{
 				if (xml.nodeType == dtx.DOMType.ELEMENT_NODE || xml.nodeType == dtx.DOMType.DOCUMENT_NODE)
 				{
-					var allDescendants:DOMCollection;
-					var textDescendants:DOMCollection;
-					
-					allDescendants = dtx.single.Traversing.descendants(xml, false);
-					
-					textDescendants = allDescendants.filter(function(x:Xml)
-					{
+					var allDescendants = dtx.single.Traversing.descendants(xml, false);
+					var textDescendants = allDescendants.filter(function(x:Xml) {
 						return x.nodeType == dtx.DOMType.TEXT_NODE;
 					});
 					
@@ -277,7 +272,11 @@ import dtx.DOMCollection;
 			return html;
 		}
 
-		static public function cloneNode(xml:DOMNode, ?deep:Bool=true):DOMNode
+		/**
+			Please note that the `deep` argument is ignored, it will always clone "deeply".
+			It is left for compatibility with the JS DOM API.
+		**/
+		static public function cloneNode(xml:DOMNode, deep:Bool=true):DOMNode
 		{
 			var clone = switch (xml.nodeType) {
 				case Xml.Element:
