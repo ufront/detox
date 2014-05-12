@@ -11,20 +11,29 @@
 
 package dtx.collection;
 
+/**
+	This class provides static helper methods to interact with all nodes and elements in a `dtx.DOMCollection`.
+
+	This class is intended to be used with static extension, by placing `using Detox;` in the imports for your module.
+	Each of these methods will then operate on DOMCollections as if they were methods on the DOMCollection object itself.
+	Any method which does not retrieve a specific value will return the original collection, allowing method chaining.
+	Each method is null-safe, if a collection is empty or null it will have no effect.
+**/
 class ElementManipulation
 {
-	/** Find the index of the node relevent to it's siblings.  First child of parent has an index of 0.  When operating on a collection, this returns the index of the first element. */
-	public static function index(q:dtx.DOMCollection):Int 
+	/** Run `dtx.single.ElementManipulation.index` for the first node in the collection. **/
+	public static function index(c:dtx.DOMCollection):Int
 	{
-		return (q != null) ? dtx.single.ElementManipulation.index(q.getNode()) : -1;
+		return (c != null) ? dtx.single.ElementManipulation.index(c.getNode()) : -1;
 	}
 
-	/** Assume we're operating on the first element. */
+	/** Run `dtx.single.ElementManipulation.attr` for the first node in the collection. **/
 	public static function attr(collection:DOMCollection, attName:String):String
 	{
-		return (collection != null && collection.length > 0) ? dtx.single.ElementManipulation.attr(collection.getNode(), attName) : "";
+		return (collection != null) ? dtx.single.ElementManipulation.attr(collection.getNode(), attName) : "";
 	}
 
+	/** Run `dtx.single.ElementManipulation.setAttr` for each node in the collection. **/
 	public static function setAttr<T:DOMCollection>(collection:T, attName:String, attValue:String):T
 	{
 		if (collection != null)
@@ -37,6 +46,7 @@ class ElementManipulation
 		return collection;
 	}
 
+	/** Run `dtx.single.ElementManipulation.removeAttr` for each node in the collection. **/
 	public static function removeAttr<T:DOMCollection>(collection:T, attName:String):T
 	{
 		if (collection != null)
@@ -49,7 +59,13 @@ class ElementManipulation
 		return collection;
 	}
 
-	/** Checks if every element in the collection has the given class */
+	/**
+		Checks if every node in the collection is an element and has the specified class or classes.
+
+		@param collection The DOMCollection to check.  Each node in the collection will be checked.
+		@param className One of more class names (seperated by whitespace) to check for.
+		@return True if every node contains every class name, false otherwise.
+	**/
 	public static function hasClass(collection:DOMCollection, className:String):Bool
 	{
 		var result = false;
@@ -73,6 +89,7 @@ class ElementManipulation
 		return result;
 	}
 
+	/** Run `dtx.single.ElementManipulation.addClass` for each node in the collection. **/
 	public static function addClass<T:DOMCollection>(collection:T, className:String):T
 	{
 		if (collection != null)
@@ -85,6 +102,7 @@ class ElementManipulation
 		return collection;
 	}
 
+	/** Run `dtx.single.ElementManipulation.removeClass` for each node in the collection. **/
 	public static function removeClass<T:DOMCollection>(collection:T, className:String):T
 	{
 		if (collection != null)
@@ -97,6 +115,7 @@ class ElementManipulation
 		return collection;
 	}
 
+	/** Run `dtx.single.ElementManipulation.toggleClass` for each node in the collection. **/
 	public static function toggleClass<T:DOMCollection>(collection:T, className:String):T
 	{
 		if (collection != null)
@@ -109,19 +128,21 @@ class ElementManipulation
 		return collection;
 	}
 
+	/** Run `dtx.single.ElementManipulation.tagName` for the first node in the collection. **/
 	public static inline function tagName(collection:DOMCollection):String
 	{
-		return (collection != null && collection.length > 0) ? dtx.single.ElementManipulation.tagName(collection.getNode()) : "";
+		return (collection != null) ? dtx.single.ElementManipulation.tagName(collection.getNode()) : "";
 	}
 
+	/** Run `dtx.single.ElementManipulation.val` for the first node in the collection. **/
 	public static function val(collection:DOMCollection):String
 	{
-		return (collection != null && collection.length > 0) ? dtx.single.ElementManipulation.val(collection.getNode()) : "";
+		return (collection != null) ? dtx.single.ElementManipulation.val(collection.getNode()) : "";
 	}
 
-	public static function setVal<T:DOMCollection>(collection:T, val:Dynamic):T
+	/** Run `dtx.single.ElementManipulation.setVal` for each node in the collection. **/
+	public static function setVal<T:DOMCollection>(collection:T, value:String):T
 	{
-		var value = Std.string(val);
 		if (collection != null)
 		{
 			for (node in collection)
@@ -132,6 +153,12 @@ class ElementManipulation
 		return collection;
 	}
 	
+	/**
+		Use `dtx.single.ElementManipulation.text` to get the text value for each node in the collection.
+
+		@param The collection of nodes to operate on.
+		@return A concatenated string containing the combined text value for each node in the collection.
+	**/
 	public static function text(collection:DOMCollection):String
 	{
 		var text = "";
@@ -145,6 +172,11 @@ class ElementManipulation
 		return text;
 	}
 	
+	/**
+		Run `dtx.single.ElementManipulation.setText` for each node in the collection.
+
+		If there are multiple nodes in the collection, they will each be set to this text value.
+	**/
 	public static function setText<T:DOMCollection>(collection:T, text:String):T
 	{
 		if (collection != null)
@@ -157,6 +189,12 @@ class ElementManipulation
 		return collection;
 	}
 
+	/**
+		Use `dtx.single.ElementManipulation.innerHTML` to get the inner HTML for each node in the collection.
+
+		@param The collection of nodes to operate on.
+		@return A concatenated string containing the combined inner HTML value for each node in the collection.
+	**/
 	public static function innerHTML(collection:DOMCollection):String
 	{
 		var sb = new StringBuf();
@@ -170,6 +208,11 @@ class ElementManipulation
 		return sb.toString();
 	}
 
+	/**
+		Run `dtx.single.ElementManipulation.setText` for each node in the collection.
+
+		If there are multiple nodes in the collection, they will each be set to use this inner HTML.
+	**/
 	public static function setInnerHTML<T:DOMCollection>(collection:T, html:String):T
 	{
 		if (collection != null)
@@ -182,6 +225,12 @@ class ElementManipulation
 		return collection;
 	}
 
+	/**
+		Use `dtx.single.ElementManipulation.html` to get the inner HTML for each node in the collection.
+
+		@param The collection of nodes to operate on.
+		@return A concatenated string containing the HTML value for each node in the collection.
+	**/
 	public static inline function html(collection:DOMCollection):String
 	{
 		var sb = new StringBuf();
