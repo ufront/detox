@@ -116,6 +116,7 @@ class ToolsTest
 	{
 		var q = Detox.parse("<div id='test'>Hello</div>");
 
+		Assert.areEqual(1, q.length);
 		Assert.areEqual('div', q.tagName());
 		Assert.areEqual('test', q.attr('id'));
 		Assert.areEqual('Hello', q.innerHTML());
