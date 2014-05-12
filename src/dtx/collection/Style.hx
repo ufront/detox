@@ -13,34 +13,48 @@ package dtx.collection;
 import dtx.DOMCollection;
 import js.html.*;
 
+/**
+	This class provides static helper methods to access or modify style properties of all nodes in a `dtx.DOMCollection`.
+
+	This class is intended to be used with static extension, by placing `using Detox;` in the imports for your module.
+	Each of these methods will then operate on DOMCollections as if they were methods on the DOMCollection object itself.
+	Each setter method is chainable, and returns the original collection with the original type information.
+	Each method is null-safe, if a collection is empty or null it will have no effect.
+**/
 class Style
 {
-	/** Return the style object for the first node in the collection */
-	public static function getComputedStyle(c:DOMCollection):CSSStyleDeclaration
+	/** Run `dtx.single.Style.getComputedStyle` for the first node in the collection. **/
+	public static function getComputedStyle(c:DOMCollection):Null<CSSStyleDeclaration>
 	{
-		return dtx.single.Style.getComputedStyle(c.getNode(0));
+		return (c!=null) ? dtx.single.Style.getComputedStyle(c.getNode(0)) : null;
 	}
 	
-	/** Return the computed style value for the given style property (on the first node in the collection) */
-	public static function css(c:DOMCollection, property:String):String
+	/** Run `dtx.single.Style.css` for the first node in the collection. **/
+	public static function css(c:DOMCollection, property:String):Null<String>
 	{
-		return dtx.single.Style.css(c.getNode(0), property);
+		return (c!=null) ? dtx.single.Style.css(c.getNode(0), property) : null;
 	}
 
-	/** Set a CSS property for every node in the collection */
+	/** Run `dtx.single.Style.setCSS` for each node in the collection. **/
 	public static function setCSS<T:DOMCollection>(c:T, prop:String, val:String):T
 	{
-		for (node in c)
+		if (c != null)
 		{
-			dtx.single.Style.setCSS(node, prop, val);
+			for (node in c)
+			{
+				dtx.single.Style.setCSS(node, prop, val);
+			}
 		}
 		return c;
 	}
 
-	public static function show<T:DOMCollection>(c:T):T return setCSS(c, "display", "");
-	public static function hide<T:DOMCollection>(c:T):T return setCSS(c, "display", "none");
+	/** A shortcut for `setCSS(c, "display", "")`. **/
+	public static inline function show<T:DOMCollection>(c:T):T return setCSS(c, "display", "");
 
-	/** Return the position info for the first node in the collection */
+	/** A shortcut for `setCSS(c, "display", "none")`. **/
+	public static inline function hide<T:DOMCollection>(c:T):T return setCSS(c, "display", "none");
+
+	/** Run `dtx.single.Style.pos` for the first node in the collection. **/
 	public static function pos(c:DOMCollection):{ top:Int, left:Int, width:Int, height:Int }
 	{
 		return dtx.single.Style.pos(c.getNode(0));
