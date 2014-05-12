@@ -9,25 +9,6 @@
 * 
 ****/
 
-/**
-* This file wraps all the dtx functionality into 
-* one module, so it's easy to use at once.
-* 
-* The aim is that pretty much all of our main usage can
-* be included with this line at the top of your file:
-*     
-*    using Detox;
-*/
-
-// None of our actual code is defined in this file.
-// However, by using `typedef = dtx.Tools`
-// We can include that class with haxe's "using" magic.
-
-
-// 
-// Core classes
-// 
-
 // Include ElementManipulation
 @:noDoc typedef SingleElementManipulation = dtx.single.ElementManipulation;
 @:noDoc typedef CollectionElementManipulation = dtx.collection.ElementManipulation;
@@ -40,33 +21,44 @@
 @:noDoc typedef SingleTraversing = dtx.single.Traversing;
 @:noDoc typedef CollectionTraversing = dtx.collection.Traversing;
 
+// Include DOMNode and DOMCollection definitions
 @:noDoc typedef DOMNode = dtx.DOMNode;
 @:noDoc typedef DOMCollection = dtx.DOMCollection;
 
-// dtx.Tools provides 3 handy functions:
-// 
-//    "div".create();
-//    "<b>Some Text</b>".parse();
-//    "#title".find();
-@:noDoc typedef Detox = dtx.Tools;
+/**
+	The `Detox` module provides a top-level shortcut to access most of the key functionality of the Detox lib.
 
-// 
-// Client JS only classes
-// 
+	It is intended to be used via static extension, that is, by placing `using Detox;` in your imports.
+
+	This will provide both import and static extension for the following classes:
+
+	- `dtx.single.ElementManipulation`
+	- `dtx.collection.ElementManipulation`
+	- `dtx.single.DOMManipulation`
+	- `dtx.collection.DOMManipulation`
+	- `dtx.single.Traversing`
+	- `dtx.collection.Traversing`
+	- `dtx.DOMNode`
+	- `dtx.DOMCollection`
+	- `dtx.Tools`
+	- `dtx.single.Style` (Client JS Only)
+	- `dtx.collection.Style` (Client JS Only)
+	- `dtx.single.EventManagement` (Client JS Only)
+	- `dtx.collection.EventManagement` (Client JS Only)
+
+	The `Detox` type itself is an alias for `dtx.Tools`.
+**/
+typedef Detox = dtx.Tools;
 
 #if (js && !nodejs)
 
-// Include Style
-@:noDoc typedef SingleStyle = dtx.single.Style;
-@:noDoc typedef CollectionStyle = dtx.collection.Style;
+	// Include Style
+	@:noDoc typedef SingleStyle = dtx.single.Style;
+	@:noDoc typedef CollectionStyle = dtx.collection.Style;
 
-// Include Animation
-//@:noDoc typedef SingleAnimation = dtx.single.Animation;
-//@:noDoc typedef CollectionAnimation = dtx.collection.Animation;
-
-// Include EventManagement
-@:noDoc typedef SingleEventManagement = dtx.single.EventManagement;
-@:noDoc typedef CollectionEventManagement = dtx.collection.EventManagement;
+	// Include EventManagement
+	@:noDoc typedef SingleEventManagement = dtx.single.EventManagement;
+	@:noDoc typedef CollectionEventManagement = dtx.collection.EventManagement;
 
 #end
 
