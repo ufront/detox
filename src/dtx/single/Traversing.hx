@@ -14,19 +14,15 @@ package dtx.single;
 import dtx.DOMNode;
 #if !js using dtx.XMLWrapper; #end
 
-/*
-	parentsUntil(selector)
-	nextAll
-	nextUntil
-	prevAll
-	prevUntil
-	siblings
-	closest() - 
-*/
+/**
+	This class provides static helper methods to traverse the DOM starting from a given `dtx.DOMNode`.
 
-
-
-/** When returning a Null<Node>, it might be worth creating a static NullNode that won't generate errors (so we can chain easily and carelessly) but also not affect the DOM.   For now I'll leave it null.  */
+	This class is intended to be used with static extension, by placing `using Detox;` in the imports for your module.
+	Each of these methods will then operate on a DOMNode as if they were methods on the DOMNode object itself.
+	If a method expects to return a single node, either a `DOMNode` or `null` will be returned.
+	If a method expects to return multiple nodes, a `DOMCollection` will always be returned, even if it is empty.
+	Each method is null-safe, and will silently return null or an empty collection in the case of an error.
+**/
 class Traversing
 {
 	static inline function unsafeGetChildren( elm:DOMNode, elementsOnly:Bool = true):DOMCollection
@@ -39,7 +35,13 @@ class Traversing
 		#end
 	}
 
-	/** Return a collection of all child nodes of the current node. */
+	/**
+		Return all the child elements or nodes for the current node.
+
+		@param node The parent DOMNode.  If null or not an element an empty collection will be returned.
+		@param elementsOnly Should we retrieve only elements (`true`, default) or should we include other node types such as text nodes and comments (`false`).
+		@return A DOMCollection containing the children, if any were able to be found.  Otherwise the DOMCollection will be empty.
+	**/
 	static public function children(node:DOMNode, ?elementsOnly:Bool = true):DOMCollection
 	{
 		if (node != null && ElementManipulation.isElement(node))
@@ -49,6 +51,17 @@ class Traversing
 		else return new DOMCollection();
 	}
 
+	/**
+		Return the first child for the current node.
+
+		@param node The parent node.  If null or not an element the result will be `null`.
+		@param elementsOnly Should we retrieve the first *element* (`true`, default) or should we retrieve the first *node*, regardless of node type (`false`).
+		@return The first child or element.  Null if no child node or element was found.
+
+		Trivia: the reason this is `firstChildren` instead of `firstChild` is because the `firstChild` name is already taken on the underlying `Xml` or `js.html.Node` objects, so static extension will not work.
+		Also, the equivalent method that runs on a collection will return all of the first children for each node in the collection, and so the plural name is appropriate.
+		In future if we have an abstract implementation of `DOMNode` we will be able to rename this and avoid collision with the native `firstChild` field or method.
+	**/
 	static public function firstChildren(node:DOMNode, ?elementsOnly:Bool = true):Null<DOMNode>
 	{
 		var firstChild:DOMNode = null;
@@ -65,6 +78,17 @@ class Traversing
 		return firstChild;
 	}
 
+	/**
+		Return the last child for the current node.
+
+		@param node The parent node.  If null or not an element the result will be `null`.
+		@param elementsOnly Should we retrieve the last *element* (`true`, default) or should we retrieve the last *node*, regardless of node type (`false`).
+		@return The last child or element.  Null if no child node or element was found.
+
+		Trivia: the reason this is `lastChildren` instead of `lastChild` is because the `lastChild` name is already taken on the underlying `Xml` or `js.html.Node` objects, so static extension will not work.
+		Also, the equivalent method that runs on a collection will return all of the last children for each node in the collection, and so the plural name is appropriate.
+		In future if we have an abstract implementation of `DOMNode` we will be able to rename this and avoid collision with the native `lastChild` field or method.
+	**/
 	static public function lastChildren(node:DOMNode, ?elementsOnly:Bool = true):Null<DOMNode>
 	{
 		var lastChild:DOMNode = null;
@@ -81,7 +105,19 @@ class Traversing
 		return cast lastChild;
 	}
 
-	/** Gets the direct parents of each element in the collection. */
+	/**
+		Gets the direct parent of the current node.
+
+		If the parent is the current `Detox.document`, the result will return null - only elements inside the tree are returned as a parent.
+
+		Please note that on platforms other than JS, the underlying `DOMNode` is an `Xml` object, so it already has a `parent` field - and this is a variable, not a method.
+		If writing code for platforms other than JS, or if writing cross platform code, it is recommended you use the `parents()` method, which is a simple alias, but avoids the name collision.
+		The equivalent `parents` method that operates on a `DOMCollection` rather than a `DOMNode` will return multiple parents - one for each node in the collection, so the plural naming may be appropriate.
+		In future if we have an abstract implementation of `DOMNode` we will be able to rename this and avoid collision with the native `parent` field.
+
+		@param node The current (child) node.  If this is null, the result will be `null`.
+		@return The parent element.  Null if no parent was found.
+	**/
 	static public function parent(node:DOMNode):Null<DOMNode>
 	{
 		var p:DOMNode = null;
@@ -92,97 +128,122 @@ class Traversing
 		return p;
 	}
 
-	/** This is identical to parent() but it's necessary to use this on non 
-	JS platforms if you want to have null-safety etc. */
+	/**
+		This is an alias of `parent` that avoids the name collision with the native `parent` property of `Xml`.
+
+		It is recommended you use this on platforms other than JS, as it provides null safety and makes it easier to port code between platforms.
+	**/
 	static inline public function parents(node:DOMNode):Null<DOMNode>
 	{
 		return parent(node);
 	}
 
-	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
+	/**
+		Retrieve all ancestors (parent nodes, grandparent nodes etc) of the current node.
+
+		This will include all parents up to, but not including, the current `Detox.document`.
+
+		@param node The current (child) node.  If null then the method will return an empty collection.
+		@return A DOMCollection containing all of the ancestors.  It will be empty if `node` was null or if `node` has no parent.
+	**/
 	static public function ancestors(node:DOMNode):DOMCollection
 	{
-		// start with the direct parents
-		var ancestorsList:DOMCollection = new DOMCollection();
-		var parent = parent(node);
-		ancestorsList.add(parent);
+		var ancestorList:DOMCollection = new DOMCollection();
 
-		// if there were any parents on this round, then add the parents of the parents, recursively
-		if (ancestorsList.length > 0)
+		var p = parent(node);
+		while (p != null)
 		{
-			var ancestorsOfThisParent = ancestors(parent);
-			ancestorsList.addCollection(ancestorsOfThisParent);
+			ancestorList.add(p);
+			p = parent(p);
 		}
 
-		return ancestorsList;
+		return ancestorList;
 	}
 
-	/** Gets all parents of the current collection, and is called recursively to get all ancestors. */
+	/**
+		Fetch all the descendants of the current node.
+
+		This will include all children, and their descendants recursively.
+
+		@param node The current (parent) node.  If null the result will be an empty collection.
+		@elementsOnly Should the collection of descendants include only elements (`true`, default) or should it include all nodes, including text nodes and comments (`false`).
+		@return A collection of all descendant elements or nodes.  Will be empty if the current node was null or has no children.
+	**/
 	static public function descendants(node:DOMNode, ?elementsOnly:Bool = true):DOMCollection
 	{
 		var descendantList = new DOMCollection();
 
 		for (child in children(node, elementsOnly))
 		{
-			// Add this child
 			descendantList.add(child);
-
-			// Add it's descendants (recurse)
 			descendantList.addCollection(descendants(child, elementsOnly));
 		}
 
-		// Then pass the list back up the line...
 		return descendantList;
 	}
 
+	/**
+		Fetch the next element or node that is a sibling of this node.
+
+		This will search for siblings (nodes that share the same parent) and return the next sibling along from the current one, if it exists.
+
+		@param node The current node.  If null, the result will also be null.
+		@elementsOnly Whether to search for the next element (`true`, default) or the next node, regardless of type (`false`).
+		@return The next element or node if one was found, or null otherwise.
+	**/
 	static public function next(node:DOMNode, ?elementsOnly:Bool = true):Null<DOMNode>
 	{
-		// Get the next sibling if we're not null already
-		var sibling = (node != null) 
-			? #if js node.nextSibling #else node.nextSibling() #end : null;
+		var sibling = (node != null) ? node.nextSibling #if !js () #end : null;
 
-		// While this "nextSibling" actually still exists
-		// and if we only want elements
-		// but this "nextSibling" isn't an element 
-		while (sibling != null 
-			&& elementsOnly
-			&& sibling.nodeType != DOMType.ELEMENT_NODE)
+		// While this "nextSibling" actually still exists and if we only want elements but this "nextSibling" isn't an element...
+		while (sibling != null && elementsOnly && sibling.nodeType != DOMType.ELEMENT_NODE)
 		{
-			// find the next sibling down the line.
-			// If there is none, this will return null, which is okay.
+			// Find the next sibling down the line, maybe it is an element.
+			// Otherwise eventually it will be null, meaning no element was found.
 			sibling = #if js sibling.nextSibling #else sibling.nextSibling() #end ;
 		}
 
-		// This will either be null or the next valid sibling
 		return sibling;
 	}
 
+	/**
+		Fetch the previous element or node that is a sibling of this node.
+
+		This will search for siblings (nodes that share the same parent) and return the previous sibling to the current one, if it exists.
+
+		@param node The current node.  If null, the result will also be null.
+		@elementsOnly Whether to search for the previous element (`true`, default) or the previous node, regardless of type (`false`).
+		@return The previous element or node if one was found, or null otherwise.
+	**/
 	static public function prev(node:DOMNode, ?elementsOnly:Bool = true):Null<DOMNode>
 	{
-		// Get the previous sibling if it's not already null
-		var sibling = (node != null) 
-			? #if js node.previousSibling #else node.previousSibling() #end : null;
+		var sibling = (node != null) ? node.previousSibling #if !js () #end : null;
 
-		// While this "previousSibling" actually still exists
-		// and if we only want elements
-		// but this "previousSibling" isn't an element 
-		while (sibling != null 
-			&& elementsOnly
-			&& sibling.nodeType != dtx.DOMType.ELEMENT_NODE)
+		// While this "previousSibling" actually still exists and if we only want elements but this "previousSibling" isn't an element...
+		while (sibling != null && elementsOnly && sibling.nodeType != dtx.DOMType.ELEMENT_NODE)
 		{
-			// find the prev sibling up the line.
-			// If there is none, this will return null, which is okay.
-			#if js 
-				sibling = sibling.previousSibling;
-			#else 
-				sibling = sibling.previousSibling();
-			#end
+			// Find the previous sibling up the line, maybe it is an element.
+			// Otherwise eventually it will be null, meaning no element was found.
+			sibling = sibling.previousSibling #if !js () #end;
 		}
 
-		// This will either be null or the previous valid sibling
-		return cast sibling;
+		return sibling;
 	}
 
+	/**
+		Find the descendants which match a particular selector.
+
+		On Javascript, this will attempt to use `elm.querySelectorAll` if it is available.
+		If it is not available, a fallback will be attempted to `Sizzle`, `jQuery` or `$`.
+
+		On platforms other than Javascript, `selecthxml.SelectDom.runtimeSelect` will be used.
+
+		This does not include the current node in the search, only child / descendant nodes will be matched.
+
+		@param node The parent DOMNode to search.  If it is null or not an element or document, an empty collection will be returned.
+		@param selector The CSS selector to use when searching for a child.
+		@return The collection of matching elements.  Will be empty if no match was found or the parent node was null / had no children.
+	**/
 	static public function find(node:DOMNode, selector:String):DOMCollection
 	{
 		var newDOMCollection = new DOMCollection();
