@@ -11,11 +11,14 @@
 
 package dtx.widget;
 
+import haxe.io.Path;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Format;
 import haxe.macro.Printer;
 import haxe.macro.Type;
+import sys.io.File;
+import sys.FileSystem;
 using haxe.macro.ExprTools;
 using tink.MacroApi;
 using StringTools;
@@ -562,28 +565,26 @@ class BuildTools
     }
 
     /** Reads a file, relative either to the project class paths, or relative to a specific class.  It will try an absolute path 
-    first (testing against each of the class paths), and then a relative path, testing against each of the class paths in the directory
-    specified by "currentPath".  If currentPath is not given, it will be set to Context.getLocalClass(); */
-    public static function loadFileFromLocalContext(filename:String, ?currentPath:String):String
+    first (testing against each of the class paths), and then a relative path, looking for files in the same package as the file the local class is declared in. */
+    public static function loadFileFromLocalContext(filename:String):String
     {
-        if (currentPath == null) currentPath = Context.getLocalClass().toString();
-        var fileContents = null;
+        var fileContents:String = null;
+
         try 
         {
-            fileContents = sys.io.File.getContent(Context.resolvePath(filename));
+            var path = Context.resolvePath(filename);
+            fileContents = File.getContent(path);
+            Context.registerModuleDependency(Context.getLocalModule(),path);
         }
         catch (e:Dynamic)
         {
             try 
             {
-                // That was searching by fully qualified classpath, but try just the same folder....
-                currentPath;                        // eg. my.pack.Widget
-                var arr = currentPath.split(".");   // eg. [my,pack,Widget]
-                arr.pop();                          // eg. [my,pack]
-                var path = arr.join("/");           // eg. my/pack
-
-                path = (path.length > 0) ? path + "/" : "./"; // add a trailing slash, unless we're on the current directory
-                fileContents = sys.io.File.getContent(Context.resolvePath(path + filename));
+                var modulePath = Context.getPosInfos(Context.getLocalClass().get().pos).file;
+                var moduleDir = Path.directory(modulePath);
+                var path = Context.resolvePath(Path.addTrailingSlash(moduleDir)+filename);
+                fileContents = File.getContent(path);
+                Context.registerModuleDependency(Context.getLocalModule(),path);
             }
             catch (e : Dynamic)
             {
