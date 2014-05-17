@@ -414,26 +414,37 @@ class BuildTools
         If there are no idents, it will return `true` as an expression so you can still safely use it.
     **/
     public static function generateNullCheckForIdents( idents:Array<String> ) {
-        if ( idents.length>0 ) {
-            var nullChecks = [];
-            for (name in idents) {
-                // For static platforms, we don't know if the ident is nullable.
-                // So cast use an ECheckType to cast to Null<Dynamic>, so we can test.
-                if ( Context.defined("cpp") || Context.defined("flash") || Context.defined("java") ) {
-                    nullChecks.push( macro (($i{name}:Null<Dynamic>) != null) );
-                }
-                else {
-                    nullChecks.push( macro ($i{name} != null) );
-                }
-            }
-            var nothingNull = nullChecks.shift();
-            while ( nullChecks.length>0 ) {
-                var nextCheck = nullChecks.shift();
-                nothingNull = macro $nothingNull && $nextCheck;
-            }
-            return nothingNull;
+        var exprs = [ for (i in idents) i.resolve() ];
+        var checks = [];
+        addNullCheckForMultipleExprs( exprs, checks );
+        return
+            if ( checks.length==0 ) macro true;
+            else combineExpressionsWithANDBinop( checks );
+    }
+
+    /**
+        Check if the current compilation target is one of our static platforms: cpp, flash, java or cs.
+    **/
+    public static function isStaticPlatform():Bool {
+        return Context.defined("cpp") || Context.defined("flash") || Context.defined("java") || Context.defined("cs");
+    }
+
+    /**
+        Convert an expression into an ECheckType which casts it to Null<T>.
+
+        On static platforms basic types (Int,Float,Bool) cannot be compared to null.
+        This method wraps expressions in an ECheckType which casts them from `T` to `Null<T>`, so we can perform a comparison.
+
+        On dynamic platforms this has no effect as every value is nullable.
+
+        It would be better to avoid adding the null check for these types.
+        If someone can think of an implementation that would work here, please let me know!
+    **/
+    public static function nullableCast<T>(expr:ExprOf<T>):ExprOf<Null<T>> {
+        if ( isStaticPlatform() ) {
+            expr = macro ($expr:Null<Dynamic>);
         }
-        else return macro true;
+        return expr;
     }
 
     /** 
@@ -472,11 +483,13 @@ class BuildTools
     static function addNullCheckForExpr( expr:Expr, allChecks:Array<Expr> ):Void {
         switch expr.expr {
             case EConst(CIdent(name)):
-                allChecks.push( macro $expr!=null );
+                var nullableExpr = nullableCast(expr);
+                allChecks.push( macro $nullableExpr!=null );
             case EConst(_):
                 // Don't need to add any checks.
             case EField(e,field):
-                allChecks.push( macro $expr!=null );
+                var nullableExpr = nullableCast(expr);
+                allChecks.push( macro $nullableExpr!=null );
                 addNullCheckForExpr( e, allChecks );
             case ECheckType(e,type):
                 addNullCheckForExpr( e, allChecks );
