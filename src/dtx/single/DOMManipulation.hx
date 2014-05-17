@@ -14,12 +14,31 @@ package dtx.single;
 import dtx.DOMNode;
 #if !js using dtx.XMLWrapper; #end
 
-/** This class could do with some more DRY - Don't Repeat Yourself.  I feel like between 
-append() and insertBefore() there should be no need for any other functions */
+/**
+	This class provides static helper methods to manipulate the DOM, adding, moving and removing nodes or collections starting from a given `dtx.DOMNode`.
 
+	This class is intended to be used with static extension, by placing `using Detox;` in the imports for your module.
+	Each of these methods will then perform the operation with the current DOMNode as if they were methods on the DOMNode itself.
+
+	When working with collections, some operations will require nodes to be duplicated.
+	For example, when appending a single node to a collection, that node will be appended to the first node in the collection, and a clone will be created and appended to each remaining node in the collection.
+	The cloned nodes will not be added to the original collection.
+
+	All methods will return the same DOMCollection that was originally operated on.
+	Each method is null-safe, and will silently have no effect in the case of a null value or incorrect node type.
+**/
 class DOMManipulation
 {
-	/** Append the specified child to this node */
+	/**
+		Append the specified child (or children) to the current node.
+
+		The child (or children) are added as the final child of the `parent` node.
+
+		@param parent - The parent node that children will be appended to. If null this method has no effect.
+		@param childNode - (optional) A single node to append to the parent. If null this will be ignored.
+		@param childCollection - (optional) A collection of nodes to append to the parent. If null or empty this will be ignored.
+		@return The original `parent`.
+	**/
 	static public function append(parent:DOMNode, ?childNode:DOMNode, ?childCollection:DOMCollection):DOMNode
 	{
 		if (parent != null)
@@ -40,32 +59,51 @@ class DOMManipulation
 		return parent;
 	}
 
-	/** Prepend the specified child to this node */
-	static public function prepend(parent:DOMNode, ?newChildNode:DOMNode, ?newChildCollection:DOMCollection):DOMNode
+	/**
+		Prepend the specified child (or children) to the current node.
+
+		The child (or children) are added as the first child of the `parent` node.
+
+		@param parent - The parent node that children will be prepended to. If null this method has no effect.
+		@param childNode - (optional) A single node to prepend to the parent. If null this will be ignored.
+		@param childCollection - (optional) A collection of nodes to prepend to the parent. If null or empty this will be ignored.
+		@return The original `parent`.
+	**/
+	static public function prepend(parent:DOMNode, ?childNode:DOMNode, ?childCollection:DOMCollection):DOMNode
 	{
 		if (parent != null)
 		{
-			if (newChildNode != null)
+			if (childNode != null)
 			{
 				if (parent.hasChildNodes())
 				{
-					insertThisBefore(newChildNode, parent.firstChild#if !js () #end);
+					insertThisBefore(childNode, parent.firstChild#if !js () #end);
 				}
 				else 
 				{
-					append(parent, newChildNode);
+					append(parent, childNode);
 				}
 			}
-			if (newChildCollection != null)
+			if (childCollection != null)
 			{
-				dtx.collection.DOMManipulation.insertThisBefore(newChildCollection, parent.firstChild#if !js () #end);
+				dtx.collection.DOMManipulation.insertThisBefore(childCollection, parent.firstChild#if !js () #end);
 			}
 		}
 
 		return parent;
 	}
 
-	/** Append this node to the specified parent */
+	/**
+		Append this node to a given parent or collection, cloning when necessary.
+
+		This node will be inserted as the final child of the parent node(s).
+		If there is more than one parent node, the child will be appended to the first node, and then a clone will be created and appended to each subsequent parent node.
+
+		@param child - The child node that will be appended to any parent nodes.  If null this method has no effect.
+		@param parentNode - (optional) A single parent node to append each child to. If null it will be ignored.
+		@param parentCollection - (optional) A parent collection to append each child to. If null or empty it will be ignored.
+		@return The original `child` node.
+	**/
 	static public function appendTo(child:DOMNode, ?parentNode:DOMNode, ?parentCollection:DOMCollection):DOMNode
 	{
 		if (parentNode != null)
@@ -74,13 +112,24 @@ class DOMManipulation
 		}
 		if (parentCollection != null)
 		{
-			dtx.collection.DOMManipulation.append(parentCollection, child);
+			var childToInsert = (parentNode!=null) ? dtx.single.ElementManipulation.clone(child) : child;
+			dtx.collection.DOMManipulation.append(parentCollection, childToInsert);
 		}
 
 		return child;
 	}
 
-	/** Prepend this node to the specified parent */
+	/**
+		Prepend this node to a given parent or collection, cloning when necessary.
+
+		This node will be inserted as the first child of the parent node(s).
+		If there is more than one parent node, the child will be prepended to the first node, and then a clone will be created and prepended to each subsequent parent node.
+
+		@param child - The child node that will be prepended to any parent nodes.  If null this method has no effect.
+		@param parentNode - (optional) A single parent node to prepend each child to. If null it will be ignored.
+		@param parentCollection - (optional) A parent collection to prepend each child to. If null or empty it will be ignored.
+		@return The original `child` node.
+	**/
 	static public function prependTo(child:DOMNode, ?parentNode:DOMNode, ?parentCollection:DOMCollection):DOMNode
 	{
 		if (parentNode != null)
@@ -89,33 +138,46 @@ class DOMManipulation
 			{
 				insertThisBefore(child, parentNode.firstChild#if !js () #end, parentCollection);
 			}
-			else 
+			else
 			{
 				append(parentNode, child);
 			}
 		}
 		if (parentCollection != null)
 		{
-			dtx.collection.DOMManipulation.prepend(parentCollection, child);
+			var childToInsert = (parentNode!=null) ? dtx.single.ElementManipulation.clone(child) : child;
+			dtx.collection.DOMManipulation.prepend(parentCollection, childToInsert);
 		}
 		return child;
 	}
 
+	/**
+		Insert this node before a target node (as a sibling). Clone when necessary.
+
+		This node will be inserted before the target node(s), so they will share the same parent(s).
+		If there is more than one target node, the content node will be inserted for the first target, and cloned and inserted for each subsequent target.
+
+		@param content The node to insert. If null this method will have no effect.
+		@param targetNode A target node for the content node to be inserted before. Once finished this will be the next sibling of the content node. If null it will be ignored.
+		@param targetCollection A target collection containing nodes for the content node to be inserted before. Once finished these will be the next siblings of the content nodes. If null or empty it will be ignored.
+		@return The original `content` node.
+	**/
 	static public function insertThisBefore(content:DOMNode, ?targetNode:DOMNode, ?targetCollection:DOMCollection):DOMNode
 	{
 		if (content != null)
 		{
+			var firstChildUsed = false;
 			if (targetNode != null)
 			{
 				var parent:DOMNode = #if js targetNode.parentNode; #else targetNode.parent; #end
 				if (parent != null)
 				{
+					firstChildUsed = true;
 					parent.insertBefore(content, targetNode);
 				}
 			}
 			if (targetCollection != null)
 			{
-				var firstChildUsed = false;
 				for (target in targetCollection)
 				{
 					var childToInsert = (firstChildUsed) ? content.cloneNode(true) : content;
@@ -132,16 +194,29 @@ class DOMManipulation
 		return content;
 	}
 
+	/**
+		Insert this node after a target node (as a sibling). Clone when necessary.
+
+		This node will be inserted after the target node(s), so they will share the same parent(s).
+		If there is more than one target node, the content node will be inserted for the first target, and cloned and inserted for each subsequent target.
+
+		@param content The node to insert. If null this method will have no effect.
+		@param targetNode A target node for the content node to be inserted after. Once finished this will be the previous sibling of the content node. If null it will be ignored.
+		@param targetCollection A target collection containing nodes for the content node to be inserted after. Once finished these will be the previous siblings of the content nodes. If null or empty it will be ignored.
+		@return The original `content` node.
+	**/
 	static public function insertThisAfter(content:DOMNode, ?targetNode:DOMNode, ?targetCollection:DOMCollection):DOMNode
 	{
 		if (content != null)
 		{
+			var firstChildUsed = false;
 			if (targetNode != null)
 			{
 				var next = targetNode.nextSibling #if !js () #end;
 				var parent:DOMNode = targetNode.parentNode #if !js () #end;
 				if (parent != null)
 				{
+					firstChildUsed = true;
 					if (next != null)
 					{
 						parent.insertBefore(content, next);
@@ -154,7 +229,6 @@ class DOMManipulation
 			}
 			if (targetCollection != null)
 			{
-				var firstChildUsed = false;
 				for (target in targetCollection)
 				{
 					// clone the child if we've already used it
@@ -185,6 +259,17 @@ class DOMManipulation
 		return content;
 	}
 
+	/**
+		Before this node insert a content node or content collection (as a sibling). Clone when necessary.
+
+		Each content node will be inserted before the current node, so they will share the same parent.
+		If there is more than one content node, their order once inserted will match their order inside the collection.
+
+		@param target A target node for each content node to be inserted before. Once finished this will be the next sibling of the content nodes. If null this method will have no effect.
+		@param contentNode A content node to insert. If null it will be ignored.
+		@param contentCollection A collection of content nodes to insert. If null or empty it will be ignored.
+		@return The original `target` node.
+	**/
 	static public function beforeThisInsert(target:DOMNode, ?contentNode:DOMNode, ?contentCollection:DOMCollection):DOMNode
 	{
 		if (target != null)
@@ -202,6 +287,17 @@ class DOMManipulation
 		return target;
 	}
 
+	/**
+		After this node insert a content node or content collection (as a sibling). Clone when necessary.
+
+		Each content node will be inserted after the current node, so they will share the same parent.
+		If there is more than one content node, their order once inserted will match their order inside the collection.
+
+		@param target A target node for each content node to be inserted after. Once finished this will be the previous sibling of the content nodes. If null this method will have no effect.
+		@param contentNode A content node to insert. If null it will be ignored.
+		@param contentCollection A collection of content nodes to insert. If null or empty it will be ignored.
+		@return The original `target` node.
+	**/
 	static public function afterThisInsert(target:DOMNode, ?contentNode:DOMNode, ?contentCollection:DOMCollection):DOMNode
 	{
 		if (target != null)
@@ -219,7 +315,14 @@ class DOMManipulation
 		return target;
 	}
 
-	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
+	/**
+		Detach this node from it's parent (and from the DOM).
+
+		Please note `removeFromDOM` is an alias of this method designed to prevent a name clash with the `remove` method on `Xml`/`DOMNode` (for removing attributes) on platforms other than Javascript.
+
+		@param childToRemove The node to remove from it's parent and the DOM. If null this method will have no effect.
+		@return The original node that has now been removed.
+	**/
 	static public function remove(childToRemove:DOMNode):DOMNode
 	{
 		if (childToRemove != null)
@@ -233,12 +336,22 @@ class DOMManipulation
 		return childToRemove;
 	}
 
+	/**
+		An alias for `remove` designed to prevent a name clash with the `remove` method on `Xml`/`DOMNode` (for removing attributes) on platforms other than Javascript.
+	**/
 	static public inline function removeFromDOM(nodesToRemove:DOMNode):DOMNode
 	{
 		return remove(nodesToRemove);
 	}
 
-	/** Remove this element from the DOM.  Return the child in case you want to save it for later. */
+	/**
+		Remove one or more children from the current parent node.
+
+		@param parent The parent node to remove children from. If null this method will have no effect.
+		@param childToRemove An individual child node to look for and remove. If null it will be ignored.
+		@param childrenToRemove A collection of nodes to look for and remove. If null or empty it will be ignored.
+		@return The original parent node.
+	**/
 	static public function removeChildren(parent:DOMNode, ?childToRemove:DOMNode, ?childrenToRemove:DOMCollection):DOMNode
 	{
 		if (parent != null)
@@ -261,7 +374,20 @@ class DOMManipulation
 		return parent;
 	}
 
-	/** Replace this with another node or collection.  This should then be removed from the DOM.  Returns the node that was removed.  */
+	/**
+		Replace this node with another node or collection.
+
+		This is functionally the same as calling `afterThisInsert(target,content); remove(target);`.
+
+		The order of the replacement nodes will match the order of the nodes in their collection.
+		If both `contentNode` and `contentCollection` are specified, both will be inserted as a replacement, with the contentNode being inserted before the content collection.
+		If neither `contentNode` nor `contentCollection` are specified, the target will be removed and nothing will be inserted as a replacement.
+
+		@param target The node to be replaced.  If null this will have no effect.
+		@param contentNode The node to be inserted as a replacement. If null, it will be ignored.
+		@param contentCollection A collection of nodes to be inserted as a replacement. If null or empty, it will be ignored.
+		@return The original target node which has now been replaced.
+	**/
 	static public function replaceWith(target:DOMNode, ?contentNode:DOMNode, ?contentCollection:DOMCollection):DOMNode
 	{
 		afterThisInsert(target, contentNode, contentCollection);
@@ -269,17 +395,22 @@ class DOMManipulation
 		return target;
 	}
 
-	/** Empty the current element of all children. */
-	static public function empty(container:DOMNode):DOMNode
+	/**
+		Empty the current nodes, so that it contains no child nodes.
+
+		@param parent The parent node to empty. If null this method will have no effect.
+		@return The original parent node.
+	**/
+	static public function empty(parent:DOMNode):DOMNode
 	{
-		if (container != null)
+		if (parent != null)
 		{
-			while (container.hasChildNodes())
+			while (parent.hasChildNodes())
 			{
-				container.removeChild(container.firstChild#if !js()#end);
+				parent.removeChild(parent.firstChild#if !js()#end);
 			}
 		}
-		return container;
+		return parent;
 	}
 }
 
