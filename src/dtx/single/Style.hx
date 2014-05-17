@@ -11,12 +11,9 @@
 
 package dtx.single;
 
-#if (haxe_211 || haxe3)
-	import js.html.CSSStyleDeclaration;
-#else 
-	import js.w3c.level3.Core;
-	import js.w3c.css.CSSOM;
-#end 
+import js.html.CSSStyleDeclaration;
+import js.html.Element;
+using dtx.single.ElementManipulation;
 
 /**
 	This class provides static helper methods to access or modify style properties of a DOM node.
@@ -34,12 +31,36 @@ class Style
 		This uses `js.Browser.window.getComputedStyle(node)` to fetch the style.
 		If the node is null or not an element, this will return null.
 		On platforms other than Javascript this will always return null.
+
+		Please note that this CSSStyleDeclaration object cannot set properties, only read properties.  If you attempt to set properties an error will be thrown.
+	**/
+	public static function getStyle(node:DOMNode):Null<CSSStyleDeclaration>
+	{
+		var style:CSSStyleDeclaration = null;
+		#if js
+			if (node.isElement())
+			{
+				var elm:Element = cast node;
+				style = elm.style;
+			}
+		#end
+		return style;
+	}
+
+	/**
+		Get the computed style object for a given element.
+
+		This uses `js.Browser.window.getComputedStyle(node)` to fetch the style.
+		If the node is null or not an element, this will return null.
+		On platforms other than Javascript this will always return null.
+
+		Please note that this CSSStyleDeclaration object cannot set properties, only read properties.  If you attempt to set properties an error will be thrown.
 	**/
 	public static function getComputedStyle(node:DOMNode):Null<CSSStyleDeclaration>
 	{
 		var style:CSSStyleDeclaration = null;
 		#if js
-			if (ElementManipulation.isElement(node))
+			if (node.isElement())
 			{
 				style = js.Browser.window.getComputedStyle(cast node);
 			}
@@ -62,7 +83,7 @@ class Style
 	/**
 		Set the CSS value for a specific property.
 
-		This will use `getComputedStyle(node).setProperty(prop,val)`.
+		This will use `getStyle(node).setProperty(prop,val)`.
 
 		@param node The node to set the CSS on.  If the node is null or not an element, this method will have no effect.
 		@param prop The CSS property name to set.  If it is null, it will have no effect.
@@ -74,20 +95,41 @@ class Style
 	**/
 	public static function setCSS(node:DOMNode, prop:String, val:Null<String>, ?important:Bool=false):DOMNode
 	{
-		var style = getComputedStyle(node);
-		if (style!=null && prop!=null)
+		if (node.isElement() && prop!=null)
 		{
+			var style = getStyle(node);
 			var priority = important ? "important" : "";
 			style.setProperty(prop, val, priority);
 		}
 		return node;
 	}
 
-	/** A shortcut for `setCSS(c, "display", "")`. **/
-	public static inline function show(n:DOMNode):DOMNode return setCSS(n, "display", "");
+	/**
+		Remove a CSS property from an element's style declaration.
 
-	/** A shortcut for `setCSS(c, "display", "none")`. **/
-	public static inline function hide(n:DOMNode):DOMNode return setCSS(n, "display", "none");
+		This will use `getStyle(node).removeProperty(prop,val)`, meaning it will only affect style properties directly applied to the node, not those inherited, computed or applied via a stylesheet.
+
+		@param node The node to set the CSS on.  If the node is null or not an element, this method will have no effect.
+		@param prop The CSS property to remove.  If it is null, it will have no effect.
+		@return The same DOM node.
+
+		On platforms other than Javascript this will have no effect.
+	**/
+	public static function removeCSS(node:DOMNode, prop:String):DOMNode
+	{
+		if (node.isElement() && prop!=null)
+		{
+			var style = getStyle(node);
+			style.removeProperty(prop);
+		}
+		return node;
+	}
+
+	/** A shortcut for `removeCSS(n, "display")`. **/
+	public static inline function show(n:DOMNode):DOMNode return removeCSS(n, "display");
+
+	/** A shortcut for `setCSS(c, "display", "none", true)`. **/
+	public static inline function hide(n:DOMNode):DOMNode return setCSS(n, "display", "none", true);
 
 	/**
 		Get the position information for a given element.

@@ -23,6 +23,12 @@ import js.html.*;
 **/
 class Style
 {
+	/** Run `dtx.single.Style.getStyle` for the first node in the collection. **/
+	public static function getStyle(c:DOMCollection):Null<CSSStyleDeclaration>
+	{
+		return (c!=null) ? dtx.single.Style.getStyle(c.getNode(0)) : null;
+	}
+
 	/** Run `dtx.single.Style.getComputedStyle` for the first node in the collection. **/
 	public static function getComputedStyle(c:DOMCollection):Null<CSSStyleDeclaration>
 	{
@@ -36,23 +42,36 @@ class Style
 	}
 
 	/** Run `dtx.single.Style.setCSS` for each node in the collection. **/
-	public static function setCSS<T:DOMCollection>(c:T, prop:String, val:String):T
+	public static function setCSS<T:DOMCollection>(c:T, prop:String, val:Null<String>, ?important:Bool=false):T
 	{
 		if (c != null)
 		{
 			for (node in c)
 			{
-				dtx.single.Style.setCSS(node, prop, val);
+				dtx.single.Style.setCSS(node, prop, val, important);
 			}
 		}
 		return c;
 	}
 
-	/** A shortcut for `setCSS(c, "display", "")`. **/
-	public static inline function show<T:DOMCollection>(c:T):T return setCSS(c, "display", "");
+	/** Run `dtx.single.Style.removeCSS` for each node in the collection. **/
+	public static function removeCSS<T:DOMCollection>(c:T, prop:String):T
+	{
+		if (c != null)
+		{
+			for (node in c)
+			{
+				dtx.single.Style.removeCSS(node, prop);
+			}
+		}
+		return c;
+	}
 
-	/** A shortcut for `setCSS(c, "display", "none")`. **/
-	public static inline function hide<T:DOMCollection>(c:T):T return setCSS(c, "display", "none");
+	/** A shortcut for `removeCSS(c, "display")`. **/
+	public static inline function show<T:DOMCollection>(c:T):T return removeCSS(c, "display");
+
+	/** A shortcut for `setCSS(c, "display", "none", true)`. **/
+	public static inline function hide<T:DOMCollection>(c:T):T return setCSS(c, "display", "none", true);
 
 	/** Run `dtx.single.Style.pos` for the first node in the collection. **/
 	public static function pos(c:DOMCollection):{ top:Int, left:Int, width:Int, height:Int }
