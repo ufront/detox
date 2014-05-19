@@ -1327,12 +1327,12 @@ class WidgetTools
             {
                 case "dtx-show":
                     var className = "hidden".toExpr();
-                    trueStatement = macro dtx.single.ElementManipulation.removeClass($selector, $className);
-                    falseStatement = macro dtx.single.ElementManipulation.addClass($selector, $className);
+                    trueStatement = macro dtx.single.Style.show($selector);
+                    falseStatement = macro dtx.single.Style.hide($selector);
                 case "dtx-hide":
                     var className = "hidden".toExpr();
-                    trueStatement = macro dtx.single.ElementManipulation.addClass($selector, $className);
-                    falseStatement = macro dtx.single.ElementManipulation.removeClass($selector, $className);
+                    trueStatement = macro dtx.single.Style.hide($selector);
+                    falseStatement = macro dtx.single.Style.show($selector);
                 case "dtx-enabled":
                     trueStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "disabled");
                     falseStatement = macro dtx.single.ElementManipulation.setAttr($selector, "disabled", "disabled");
