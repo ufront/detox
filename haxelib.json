@@ -4,28 +4,8 @@
 	"tags": ["cross","dom","xml","js","domtools","dtx","detox"],
 	"description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
 	"contributors": ["jason"],
-	"releasenote": "A tonne of bug fixes, cleanup, documentation and new features. Moving towards a 1.0 release.
-
-	Tests pass on JS, Neko, CPP. Various failures on flash.
-
-	Changes for this release include:
-
-	- Added thorough code documentation to core classes.
-	- Code cleanup and standardize docs, so we can use dox to generate API documentation.
-	- Much better handling of XML entities, and passable support for HTML entities.
-	- Add `getStyle()` and `removeCSS` to Style classes. Improvements to `setCSS`, `show` and `hide`.
-	- Better handling of val() on a checkbox: Before it returned 'true' or 'false' as a string. Now it returns the value of the 'value=' attribute if it exists and is checked, the string 'checked' if no 'value=' attribute exists and is checked, or '' (an empty string) if it is not checked.
-	- Cleanup to some low level methods and types. For example, `DOMCollection.first` now returns a node, not a collection.
-	- And the following widget changes:
-			- Don't fail on `dtx-show`, `dtx-hide` and other attributes when there is a null expression.
-			- More fixes for partials in JS, where due to browser HTML strictness a span placeholder would never be placed into a tr container, etc, so when the partial tried to replace the placeholder, the placeholder did not exist, and so the partial is never created.
-			- Don't DCE variables created when running string interpolation on an element attribute in your widget template.
-			- Add support for `dtx-bind-value`, `dtx-bind-(int|float)-value`, `dtx-on-*` and `dtx-content` widget helpers.
-			- Fix use of member functions on the widget in interpolation. (Still do not support a member function of a property of a widget.)
-			- When calling a partial, reserve all 'dtx-*' attributes for internal use. Allow all other attributes to be parsed and passed to the partial widget. Support similar syntax to string interpolation: direct use for strings, or $val / ${val()} for variables.
-			- Prevent setter expressions in widgets from being initialized more than once, this sometimes happened many times and caused significant slowdown.
-	- Change `Loop.addItem()` to return the already existing item if `preventDuplicates==true` and the item already exists.",
-	"version": "1.0.0-rc.2",
+	"releasenote": "Change `hide()` and `show()` to fallback to `addClass('hidden')` and `removeClass('hidden')` respectively on non-JS platforms. Change `dtx-show` and `dtx-hide` attributes to use `Style.show`. Fix for widget null checking so it no longer checks null against false, true or null expressions (whoops).",
+	"version": "1.0.0-rc.3",
 	"url": "https://github.com/jasononeil/detox",
 	"classPath": "src/",
 	"dependencies": {
