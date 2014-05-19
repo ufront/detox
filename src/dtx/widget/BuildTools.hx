@@ -483,8 +483,10 @@ class BuildTools
     static function addNullCheckForExpr( expr:Expr, allChecks:Array<Expr> ):Void {
         switch expr.expr {
             case EConst(CIdent(name)):
-                var nullableExpr = nullableCast(expr);
-                allChecks.push( macro $nullableExpr!=null );
+                if (name!="null" && name!="false" && name!="true") {
+                    var nullableExpr = nullableCast(expr);
+                    allChecks.push( macro $nullableExpr!=null );
+                }
             case EConst(_):
                 // Don't need to add any checks.
             case EField(e,field):
