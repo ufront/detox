@@ -4,8 +4,8 @@
 	"tags": ["cross","dom","xml","js","domtools","dtx","detox"],
 	"description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
 	"contributors": ["jason"],
-	"releasenote": "Change `hide()` and `show()` to fallback to `addClass('hidden')` and `removeClass('hidden')` respectively on non-JS platforms. Change `dtx-show` and `dtx-hide` attributes to use `Style.show`. Fix for widget null checking so it no longer checks null against false, true or null expressions (whoops).",
-	"version": "1.0.0-rc.3",
+	"releasenote": "Minor fix for unit tests.",
+	"version": "1.0.0-rc.4",
 	"url": "https://github.com/jasononeil/detox",
 	"classPath": "src/",
 	"dependencies": {

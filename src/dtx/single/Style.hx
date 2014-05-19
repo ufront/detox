@@ -11,8 +11,10 @@
 
 package dtx.single;
 
-import js.html.CSSStyleDeclaration;
-import js.html.Element;
+#if js
+	import js.html.CSSStyleDeclaration;
+	import js.html.Element;
+#end
 using dtx.single.ElementManipulation;
 
 /**
@@ -25,105 +27,107 @@ using dtx.single.ElementManipulation;
 **/
 class Style
 {
-	/**
-		Get the computed style object for a given element.
+	#if js
+		/**
+			Get the computed style object for a given element.
 
-		This uses `js.Browser.window.getComputedStyle(node)` to fetch the style.
-		If the node is null or not an element, this will return null.
-		On platforms other than Javascript this will always return null.
+			This uses `js.Browser.window.getComputedStyle(node)` to fetch the style.
+			If the node is null or not an element, this will return null.
+			On platforms other than Javascript this will always return null.
 
-		Please note that this CSSStyleDeclaration object cannot set properties, only read properties.  If you attempt to set properties an error will be thrown.
-	**/
-	public static function getStyle(node:DOMNode):Null<CSSStyleDeclaration>
-	{
-		var style:CSSStyleDeclaration = null;
-		#if js
-			if (node.isElement())
-			{
-				var elm:Element = cast node;
-				style = elm.style;
-			}
-		#end
-		return style;
-	}
-
-	/**
-		Get the computed style object for a given element.
-
-		This uses `js.Browser.window.getComputedStyle(node)` to fetch the style.
-		If the node is null or not an element, this will return null.
-		On platforms other than Javascript this will always return null.
-
-		Please note that this CSSStyleDeclaration object cannot set properties, only read properties.  If you attempt to set properties an error will be thrown.
-	**/
-	public static function getComputedStyle(node:DOMNode):Null<CSSStyleDeclaration>
-	{
-		var style:CSSStyleDeclaration = null;
-		#if js
-			if (node.isElement())
-			{
-				style = js.Browser.window.getComputedStyle(cast node);
-			}
-		#end
-		return style;
-	}
-	
-	/**
-		Return the computed CSS value for a given style property.
-
-		Will use `getComputedStyle(node).getPropertyValue()` to retrieve a text representation of that style property.
-		If the node is null, not an element, or the specified property is null or does not exist, this returns null.
-	**/
-	public static function css(node:DOMNode, prop:String):Null<String>
-	{
-		var style = getComputedStyle(node);
-		return (style!=null && prop!=null) ? style.getPropertyValue(prop) : null;
-	}
-
-	/**
-		Set the CSS value for a specific property.
-
-		This will use `getStyle(node).setProperty(prop,val)`.
-
-		@param node The node to set the CSS on.  If the node is null or not an element, this method will have no effect.
-		@param prop The CSS property name to set.  If it is null, it will have no effect.
-		@param val The value to set the property to.  This should be a string similar to the one you would use in a CSS file.
-		@param important Should the rule have the "important" flag.  Default is false.
-		@return The same DOM node.
-
-		On platforms other than Javascript this will have no effect.
-	**/
-	public static function setCSS(node:DOMNode, prop:String, val:Null<String>, ?important:Bool=false):DOMNode
-	{
-		if (node.isElement() && prop!=null)
+			Please note that this CSSStyleDeclaration object cannot set properties, only read properties.  If you attempt to set properties an error will be thrown.
+		**/
+		public static function getStyle(node:DOMNode):Null<CSSStyleDeclaration>
 		{
-			var style = getStyle(node);
-			var priority = important ? "important" : "";
-			style.setProperty(prop, val, priority);
+			var style:CSSStyleDeclaration = null;
+			#if js
+				if (node.isElement())
+				{
+					var elm:Element = cast node;
+					style = elm.style;
+				}
+			#end
+			return style;
 		}
-		return node;
-	}
 
-	/**
-		Remove a CSS property from an element's style declaration.
+		/**
+			Get the computed style object for a given element.
 
-		This will use `getStyle(node).removeProperty(prop,val)`, meaning it will only affect style properties directly applied to the node, not those inherited, computed or applied via a stylesheet.
+			This uses `js.Browser.window.getComputedStyle(node)` to fetch the style.
+			If the node is null or not an element, this will return null.
+			On platforms other than Javascript this will always return null.
 
-		@param node The node to set the CSS on.  If the node is null or not an element, this method will have no effect.
-		@param prop The CSS property to remove.  If it is null, it will have no effect.
-		@return The same DOM node.
-
-		On platforms other than Javascript this will have no effect.
-	**/
-	public static function removeCSS(node:DOMNode, prop:String):DOMNode
-	{
-		if (node.isElement() && prop!=null)
+			Please note that this CSSStyleDeclaration object cannot set properties, only read properties.  If you attempt to set properties an error will be thrown.
+		**/
+		public static function getComputedStyle(node:DOMNode):Null<CSSStyleDeclaration>
 		{
-			var style = getStyle(node);
-			style.removeProperty(prop);
+			var style:CSSStyleDeclaration = null;
+			#if js
+				if (node.isElement())
+				{
+					style = js.Browser.window.getComputedStyle(cast node);
+				}
+			#end
+			return style;
 		}
-		return node;
-	}
+
+		/**
+			Return the computed CSS value for a given style property.
+
+			Will use `getComputedStyle(node).getPropertyValue()` to retrieve a text representation of that style property.
+			If the node is null, not an element, or the specified property is null or does not exist, this returns null.
+		**/
+		public static function css(node:DOMNode, prop:String):Null<String>
+		{
+			var style = getComputedStyle(node);
+			return (style!=null && prop!=null) ? style.getPropertyValue(prop) : null;
+		}
+
+		/**
+			Set the CSS value for a specific property.
+
+			This will use `getStyle(node).setProperty(prop,val)`.
+
+			@param node The node to set the CSS on.  If the node is null or not an element, this method will have no effect.
+			@param prop The CSS property name to set.  If it is null, it will have no effect.
+			@param val The value to set the property to.  This should be a string similar to the one you would use in a CSS file.
+			@param important Should the rule have the "important" flag.  Default is false.
+			@return The same DOM node.
+
+			On platforms other than Javascript this will have no effect.
+		**/
+		public static function setCSS(node:DOMNode, prop:String, val:Null<String>, ?important:Bool=false):DOMNode
+		{
+			if (node.isElement() && prop!=null)
+			{
+				var style = getStyle(node);
+				var priority = important ? "important" : "";
+				style.setProperty(prop, val, priority);
+			}
+			return node;
+		}
+
+		/**
+			Remove a CSS property from an element's style declaration.
+
+			This will use `getStyle(node).removeProperty(prop,val)`, meaning it will only affect style properties directly applied to the node, not those inherited, computed or applied via a stylesheet.
+
+			@param node The node to set the CSS on.  If the node is null or not an element, this method will have no effect.
+			@param prop The CSS property to remove.  If it is null, it will have no effect.
+			@return The same DOM node.
+
+			On platforms other than Javascript this will have no effect.
+		**/
+		public static function removeCSS(node:DOMNode, prop:String):DOMNode
+		{
+			if (node.isElement() && prop!=null)
+			{
+				var style = getStyle(node);
+				style.removeProperty(prop);
+			}
+			return node;
+		}
+	#end
 
 	/**
 		Show each element in the collection.
@@ -136,7 +140,7 @@ class Style
 		#if js
 			return removeCSS(node, "display");
 		#else
-			return dtx.single.ElementManipulation.removeClass(node,"hidden");
+			return node.removeClass("hidden");
 		#end
 	}
 
@@ -151,7 +155,7 @@ class Style
 		#if js
 			return setCSS(node, "display", "none", true);
 		#else
-			return dtx.single.ElementManipulation.addClass(node,"hidden");
+			return node.addClass("hidden");
 		#end
 	}
 
@@ -176,9 +180,9 @@ class Style
 			height: 0
 		};
 		#if js
-			if (ElementManipulation.isElement(node))
+			if (node.isElement())
 			{
-				var e:js.html.Element = cast node;
+				var e:Element = cast node;
 				return {
 					top: e.offsetTop,
 					left: e.offsetLeft,

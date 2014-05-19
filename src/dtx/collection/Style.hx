@@ -10,8 +10,12 @@
 ****/
 
 package dtx.collection;
+
 import dtx.DOMCollection;
-import js.html.*;
+using dtx.collection.ElementManipulation;
+#if js
+	import js.html.*;
+#end
 
 /**
 	This class provides static helper methods to access or modify style properties of all nodes in a `dtx.DOMCollection`.
@@ -23,49 +27,51 @@ import js.html.*;
 **/
 class Style
 {
-	/** Run `dtx.single.Style.getStyle` for the first node in the collection. **/
-	public static function getStyle(c:DOMCollection):Null<CSSStyleDeclaration>
-	{
-		return (c!=null) ? dtx.single.Style.getStyle(c.getNode(0)) : null;
-	}
-
-	/** Run `dtx.single.Style.getComputedStyle` for the first node in the collection. **/
-	public static function getComputedStyle(c:DOMCollection):Null<CSSStyleDeclaration>
-	{
-		return (c!=null) ? dtx.single.Style.getComputedStyle(c.getNode(0)) : null;
-	}
-	
-	/** Run `dtx.single.Style.css` for the first node in the collection. **/
-	public static function css(c:DOMCollection, property:String):Null<String>
-	{
-		return (c!=null) ? dtx.single.Style.css(c.getNode(0), property) : null;
-	}
-
-	/** Run `dtx.single.Style.setCSS` for each node in the collection. **/
-	public static function setCSS<T:DOMCollection>(c:T, prop:String, val:Null<String>, ?important:Bool=false):T
-	{
-		if (c != null)
+	#if js
+		/** Run `dtx.single.Style.getStyle` for the first node in the collection. **/
+		public static function getStyle(c:DOMCollection):Null<CSSStyleDeclaration>
 		{
-			for (node in c)
-			{
-				dtx.single.Style.setCSS(node, prop, val, important);
-			}
+			return (c!=null) ? dtx.single.Style.getStyle(c.getNode(0)) : null;
 		}
-		return c;
-	}
 
-	/** Run `dtx.single.Style.removeCSS` for each node in the collection. **/
-	public static function removeCSS<T:DOMCollection>(c:T, prop:String):T
-	{
-		if (c != null)
+		/** Run `dtx.single.Style.getComputedStyle` for the first node in the collection. **/
+		public static function getComputedStyle(c:DOMCollection):Null<CSSStyleDeclaration>
 		{
-			for (node in c)
-			{
-				dtx.single.Style.removeCSS(node, prop);
-			}
+			return (c!=null) ? dtx.single.Style.getComputedStyle(c.getNode(0)) : null;
 		}
-		return c;
-	}
+
+		/** Run `dtx.single.Style.css` for the first node in the collection. **/
+		public static function css(c:DOMCollection, property:String):Null<String>
+		{
+			return (c!=null) ? dtx.single.Style.css(c.getNode(0), property) : null;
+		}
+
+		/** Run `dtx.single.Style.setCSS` for each node in the collection. **/
+		public static function setCSS<T:DOMCollection>(c:T, prop:String, val:Null<String>, ?important:Bool=false):T
+		{
+			if (c != null)
+			{
+				for (node in c)
+				{
+					dtx.single.Style.setCSS(node, prop, val, important);
+				}
+			}
+			return c;
+		}
+
+		/** Run `dtx.single.Style.removeCSS` for each node in the collection. **/
+		public static function removeCSS<T:DOMCollection>(c:T, prop:String):T
+		{
+			if (c != null)
+			{
+				for (node in c)
+				{
+					dtx.single.Style.removeCSS(node, prop);
+				}
+			}
+			return c;
+		}
+	#end
 
 	/**
 		Show each element in the collection.
@@ -78,7 +84,7 @@ class Style
 		#if js
 			return removeCSS(c, "display");
 		#else
-			return dtx.collection.ElementManipulation.removeClass(c,"hidden");
+			return c.removeClass("hidden");
 		#end
 	}
 
@@ -93,7 +99,7 @@ class Style
 		#if js
 			return setCSS(c, "display", "none", true);
 		#else
-			return dtx.collection.ElementManipulation.addClass(c,"hidden");
+			return c.addClass("hidden");
 		#end
 	}
 

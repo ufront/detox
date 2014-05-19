@@ -597,25 +597,33 @@ class WidgetTest
 	{
 		var w = new widgets.BoolAttributes.ShowHideBasic();
 
+		function isHidden( n:DOMNode ):Bool {
+			#if js
+				return n.attr("style")=="display: none ! important;";
+			#else
+				return n.hasClass("hidden");
+			#end
+		}
+
 		// Test the constants
-		Assert.isFalse( w.alwaysShow.hasClass("hidden") );
-		Assert.isTrue( w.alwaysHide.hasClass("hidden") );
-		Assert.isTrue( w.neverShow.hasClass("hidden") );
-		Assert.isFalse( w.neverHide.hasClass("hidden") );
+		Assert.isFalse( isHidden(w.alwaysShow) );
+		Assert.isTrue( isHidden(w.alwaysHide) );
+		Assert.isTrue( isHidden(w.neverShow) );
+		Assert.isFalse( isHidden(w.neverHide) );
 
 		// Test the intial state of the Booleans
-		Assert.isFalse( w.showIfSomeFlag.hasClass("hidden") );
-		Assert.isTrue( w.hideIfSomeFlag.hasClass("hidden") );
-		Assert.isTrue( w.showIfSomeString.hasClass("hidden") );
-		Assert.isFalse( w.hideIfSomeString.hasClass("hidden") );
+		Assert.isFalse( isHidden(w.showIfSomeFlag) );
+		Assert.isTrue( isHidden(w.hideIfSomeFlag) );
+		Assert.isTrue( isHidden(w.showIfSomeString) );
+		Assert.isFalse( isHidden(w.hideIfSomeString) );
 
 		// Test the changed state of the Booleans
 		w.someFlag = false;
 		w.someString = "Jason";
-		Assert.isTrue( w.showIfSomeFlag.hasClass("hidden") );
-		Assert.isFalse( w.hideIfSomeFlag.hasClass("hidden") );
-		Assert.isFalse( w.showIfSomeString.hasClass("hidden") );
-		Assert.isTrue( w.hideIfSomeString.hasClass("hidden") );
+		Assert.isTrue( isHidden(w.showIfSomeFlag) );
+		Assert.isFalse( isHidden(w.hideIfSomeFlag) );
+		Assert.isFalse( isHidden(w.showIfSomeString) );
+		Assert.isTrue( isHidden(w.hideIfSomeString) );
 	}
 
 	@Test 
@@ -648,11 +656,19 @@ class WidgetTest
 		w.name = "Jason";
 		w.age = 26.5;
 		w.amITall = true;
-		Assert.areEqual('First letter is J, my last birthday was 26<span class=""> and I am definitely tall</span>.', w.innerHTML());
+		#if js
+			Assert.areEqual('First letter is J, my last birthday was 26<span style=""> and I am definitely tall</span>.', w.innerHTML());
+		#else
+			Assert.areEqual('First letter is J, my last birthday was 26<span class=""> and I am definitely tall</span>.', w.innerHTML());
+		#end
 		w.name = "Anna";
 		w.age = 23.5;
 		w.amITall = false;
-		Assert.areEqual('First letter is A, my last birthday was 23<span class="hidden"> and I am not tall</span>.', w.innerHTML());
+		#if js
+			Assert.areEqual('First letter is A, my last birthday was 23<span style="display: none ! important;"> and I am not tall</span>.', w.innerHTML());
+		#else
+			Assert.areEqual('First letter is A, my last birthday was 23<span class="hidden"> and I am not tall</span>.', w.innerHTML());
+		#end
 	}
 
 	@Test 
