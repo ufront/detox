@@ -67,11 +67,35 @@ class Style
 		return c;
 	}
 
-	/** A shortcut for `removeCSS(c, "display")`. **/
-	public static inline function show<T:DOMCollection>(c:T):T return removeCSS(c, "display");
+	/**
+		Show each element in the collection.
 
-	/** A shortcut for `setCSS(c, "display", "none", true)`. **/
-	public static inline function hide<T:DOMCollection>(c:T):T return setCSS(c, "display", "none", true);
+		On JS this is a shortcut for `removeCSS(c, "display")`.
+		On other platforms this is a shortcut for `dtx.collection.ElementManipulation.removeClass("hidden")`.
+	**/
+	public static inline function show<T:DOMCollection>(c:T):T
+	{
+		#if js
+			return removeCSS(c, "display");
+		#else
+			return dtx.collection.ElementManipulation.removeClass(c,"hidden");
+		#end
+	}
+
+	/**
+		Hide each element in the collection.
+
+		On JS this is a shortcut for `setCSS(c, "display", "none", true)`.
+		On other platforms this is a shortcut for `dtx.collection.ElementManipulation.addClass("hidden")`.
+	**/
+	public static inline function hide<T:DOMCollection>(c:T):T
+	{
+		#if js
+			return setCSS(c, "display", "none", true);
+		#else
+			return dtx.collection.ElementManipulation.addClass(c,"hidden");
+		#end
+	}
 
 	/** Run `dtx.single.Style.pos` for the first node in the collection. **/
 	public static function pos(c:DOMCollection):{ top:Int, left:Int, width:Int, height:Int }

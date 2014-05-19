@@ -125,11 +125,35 @@ class Style
 		return node;
 	}
 
-	/** A shortcut for `removeCSS(n, "display")`. **/
-	public static inline function show(n:DOMNode):DOMNode return removeCSS(n, "display");
+	/**
+		Show each element in the collection.
 
-	/** A shortcut for `setCSS(c, "display", "none", true)`. **/
-	public static inline function hide(n:DOMNode):DOMNode return setCSS(n, "display", "none", true);
+		On JS this is a shortcut for `removeCSS(c, "display")`.
+		On other platforms this is a shortcut for `dtx.single.ElementManipulation.removeClass("hidden")`.
+	**/
+	public static inline function show(node:DOMNode):DOMNode
+	{
+		#if js
+			return removeCSS(node, "display");
+		#else
+			return dtx.single.ElementManipulation.removeClass(node,"hidden");
+		#end
+	}
+
+	/**
+		Hide each element in the collection.
+
+		On JS this is a shortcut for `setCSS(c, "display", "none", true)`.
+		On other platforms this is a shortcut for `dtx.single.ElementManipulation.addClass("hidden")`.
+	**/
+	public static inline function hide(node:DOMNode):DOMNode
+	{
+		#if js
+			return setCSS(node, "display", "none", true);
+		#else
+			return dtx.single.ElementManipulation.addClass(node,"hidden");
+		#end
+	}
 
 	/**
 		Get the position information for a given element.
