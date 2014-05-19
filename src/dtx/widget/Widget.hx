@@ -75,14 +75,8 @@ class Widget extends DOMCollection
 
 	/** You can either map an Input, and we'll try to match each field on the input with a field on the
 	widget.  Or you can do a propMap, like propMap = { templateVarA = myValue, templateVarB = getBValue() }*/
-	public function mapData(?input:Dynamic, ?propMap:Dynamic<Dynamic>) {
-		if (propMap != null) {
-			for (templateVar in Reflect.fields(propMap)) {
-				var modelValue = Reflect.field(propMap, templateVar);
-				Reflect.setProperty(this, templateVar, modelValue);
-			}
-		}
-		else if (input != null) {
+	public function mapData( input:Dynamic ) {
+		if (input != null) {
 			var fieldNames:Array<String>;
 			switch (Type.typeof(input)) {
 				case TObject:

@@ -716,7 +716,7 @@ class WidgetTools
             var propNameExpr = Context.makeExpr( propName, p );
             linesToAdd = macro {
                 // new WidgetLoop($Partial, $varName, propmap=null, automap=true)
-                $variableRef = new dtx.widget.WidgetLoop($partialTypeRef, $propNameExpr, null, true);
+                $variableRef = new dtx.widget.WidgetLoop($partialTypeRef, $propNameExpr, true);
                 $variableRef.setJoins($joinExpr, $finalJoinExpr, $afterJoinExpr);
             };
             BuildTools.addLinesToFunction(initFn, linesToAdd);

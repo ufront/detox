@@ -19,15 +19,13 @@ class WidgetLoop<T, W:KeepWidget> extends Loop<T>
 {
 	var widgetClass:Class<W>;
 	var propName:String;
-	var propMap:Dynamic<String>;
 	var autoPropMap:Bool;
 
-	public function new(widgetClass:Class<W>, ?propName:String = null, ?propMap:Dynamic<String> = null, ?autoPropMap = true)
+	public function new(widgetClass:Class<W>, ?propName:String = null, ?autoPropMap = true)
 	{
 		super();
 		this.widgetClass = widgetClass;
 		this.propName = propName;
-		this.propMap = propMap;
 		this.autoPropMap = autoPropMap;
 	}
 
@@ -40,10 +38,6 @@ class WidgetLoop<T, W:KeepWidget> extends Loop<T>
 		if (propName != null)
 		{
 			Reflect.setProperty(w, propName, input);
-		}
-		if (propMap != null)
-		{
-			w.mapData(input, propMap);
 		}
 		if (autoPropMap)
 		{
