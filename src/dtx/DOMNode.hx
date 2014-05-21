@@ -44,16 +44,27 @@ typedef DOMElement = #if js js.html.Element #else DOMNode #end;
 	On JS this is a typedef capable of using `querySelector` and `querySelectorAll`, so usually an Element or a Document.
 	On other platforms this is simple an alias for `Xml`.
 **/
-typedef DocumentOrElement = 
+abstract DocumentOrElement(DOMNode) to DOMNode {
+	inline function new(n:DOMNode) {
+		this = n;
+	}
+
 	#if js
-		{
-			> DOMNode,
-			var querySelector:String->Dynamic->DOMElement;
-			var querySelectorAll:String->Dynamic->js.html.NodeList;
-		}
+		/** Allow casts from Element **/
+		@:from static inline function fromElement( e:js.html.Element ) return new DocumentOrElement( e );
+
+		/** Allow casts from Document **/
+		@:from static inline function fromDocument( d:js.html.Document ) return new DocumentOrElement( d );
+
+		/** Allow access to the `querySelector` function **/
+		public inline function querySelector( selectors:String ):js.html.Element return untyped this.querySelector( selectors );
+
+		/** Allow access to the `querySelectorAll` function **/
+		public inline function querySelectorAll( selectors:String ):js.html.NodeList return untyped this.querySelectorAll( selectors );
 	#else
-		DOMNode
+		/** On non-JS platforms, all nodes are Xml objects, and all can be used with the `selecthxml` selector engine, so accept casts from all nodes. **/
+		@:from static inline function fromXml( x:Xml ) return new DocumentOrElement( x );
 	#end
-;
+}
 
 

@@ -299,9 +299,9 @@ class CollectionTest
 	{
 		var q = new DOMCollection();
 		#if js 
-		var nodeList = Detox.document.querySelectorAll("li", null);
+		  var nodeList = Detox.document.querySelectorAll("li");
 		#else
-		var nodeList = Detox.document.find("li");
+		  var nodeList = Detox.document.find("li");
 		#end 
 		q.addNodeList(cast nodeList);
 		Assert.areEqual(6, q.length);
