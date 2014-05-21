@@ -172,9 +172,7 @@ class WidgetTools
         var fullTemplate = BuildTools.loadFileFromLocalContext(templateFile);
         if (fullTemplate != null) 
         {
-            var tpl:DOMCollection = fullTemplate.parse();
-            if ( tpl.length==0 )
-                error( 'Failed to parse Xml for template file: $templateFile $partialName', p );
+            var tpl:DOMCollection = parseXml( fullTemplate );
             
             var allNodes = Lambda.concat(tpl, tpl.descendants());
             var partialMatches = allNodes.filter(function (n) { return n.nodeType == Xml.Element && n.nodeName == partialName; });
@@ -212,15 +210,29 @@ class WidgetTools
         }
     }
 
+    static function parseXml(xml:String):DOMCollection {
+        var c = new DOMCollection();
+        if ( xml==null )
+            throw 'Unable to parse null value as Xml';
+        var xml =  haxe.xml.Parser.parse(xml);
+        if ( xml.isDocument() ) {
+            for ( child in xml ) {
+                c.add( child );
+            }
+        }
+        else {
+            c.add( xml );
+        }
+        return c;
+    }
+
     static function processTemplate(template:String):{ template:String, fields:Array<Field> }
     {
         // Get every node (including descendants)
         var localClass = Context.getLocalClass();
         var p = Context.getLocalClass().get().pos;
 
-        var xml = template.parse();
-        if ( xml.length==0 ) 
-            error( 'Failed to parse template for widget $localClass', p );
+        var xml = parseXml(template);
         
         var fieldsToAdd = new Array<Field>();
 
