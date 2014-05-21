@@ -172,7 +172,9 @@ class WidgetTools
         var fullTemplate = BuildTools.loadFileFromLocalContext(templateFile);
         if (fullTemplate != null) 
         {
-            var tpl:DOMCollection = parseXml( fullTemplate );
+            var tpl =
+                try parseXml( fullTemplate )
+                catch ( e:Dynamic ) error( 'Failed to parse partial template for ${Context.getLocalClass()}: $e', p );
             
             var allNodes = Lambda.concat(tpl, tpl.descendants());
             var partialMatches = allNodes.filter(function (n) { return n.nodeType == Xml.Element && n.nodeName == partialName; });
@@ -232,7 +234,9 @@ class WidgetTools
         var localClass = Context.getLocalClass();
         var p = Context.getLocalClass().get().pos;
 
-        var xml = parseXml(template);
+        var xml =
+            try parseXml(template)
+            catch (e:Dynamic) error( 'Failed to parse template for $localClass: $e', p );
         
         var fieldsToAdd = new Array<Field>();
 
