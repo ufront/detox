@@ -12,7 +12,6 @@
 package dtx.collection;
 
 import dtx.DOMNode;
-#if !js using dtx.XMLWrapper; #end
 
 /**
 	This class provides static helper methods to manipulate the DOM, adding, moving and removing nodes or collections starting from a given `dtx.DOMCollection`.
@@ -393,12 +392,8 @@ class DOMManipulation
 		{
 			for (parent in parents)
 			{
-				#if js 
-					while (parent.hasChildNodes())
-						parent.removeChild(parent.firstChild);
-				#else 
-					parent.empty();
-				#end
+				for ( child in Lambda.list(parent.childNodes) )
+					parent.removeChild( child );
 			}
 		}
 		

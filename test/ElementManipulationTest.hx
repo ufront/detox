@@ -54,8 +54,8 @@ class ElementManipulationTest
 		sampleDocument = html.parse().getNode();
 		h1 = sampleDocument.find('h1').getNode();
 		h2 = sampleDocument.find('h2').getNode();
-		comment = sampleDocument.find('.containscomment').getNode().firstChild#if !js () #end;
-		text = sampleDocument.find('.containstext').getNode().firstChild#if !js () #end;
+		comment = sampleDocument.find('.containscomment').getNode().firstChild;
+		text = sampleDocument.find('.containstext').getNode().firstChild;
 		parent = sampleDocument.find('.parent').getNode();
 		child = sampleDocument.find('.child').getNode();
 		classTest = sampleDocument.find('#classtest').getNode();
@@ -139,7 +139,7 @@ class ElementManipulationTest
 		Assert.isFalse(h1.hasAttributes());
 		#else 
 		var i = 0;
-		for (attr in h1.attributes()) i++;
+		for (attr in h1.attributes) i++;
 		Assert.areEqual(0, i);
 		#end
 	}

@@ -12,7 +12,6 @@
 package dtx.collection;
 
 import dtx.DOMNode;
-#if !js using dtx.XMLWrapper; #end
 
 /**
 	This class provides static helper methods to traverse the DOM starting from a given `dtx.DOMCollection`.
@@ -46,11 +45,7 @@ class Traversing
 				if (dtx.single.ElementManipulation.isElement(node))
 				{
 					// Add any child elements
-					#if js
-						children.addNodeList(node.childNodes, elementsOnly);
-					#else 
-						children.addCollection(node, elementsOnly);
-					#end
+					children.addCollection(node.childNodes, elementsOnly);
 				}
 			}
 		}
@@ -74,10 +69,10 @@ class Traversing
 				if (dtx.single.ElementManipulation.isElement(node))
 				{
 					// Add first child node that is an element
-					var e = #if js node.firstChild #else node.firstChild() #end;
+					var e = node.firstChild;
 					while (elementsOnly == true && e != null && dtx.single.ElementManipulation.isElement(cast e) == false)
 					{
-						e = #if js e.nextSibling; #else  e = e.nextSibling(); #end
+						e = e.nextSibling;
 					}
 					if (e != null) children.add(cast e);
 				}
@@ -103,14 +98,10 @@ class Traversing
 				if (dtx.single.ElementManipulation.isElement(node))
 				{
 					// Add first child node that is an element
-					var e = #if js node.lastChild #else node.lastChild() #end;
+					var e = node.lastChild;
 					while (elementsOnly == true && e != null && dtx.single.ElementManipulation.isElement(e) == false)
 					{
-						#if js
-							e = e.previousSibling;
-						#else 
-							e = e.previousSibling();
-						#end
+						e = e.previousSibling;
 					}
 					if (e != null) children.add(e);
 				}
@@ -135,11 +126,7 @@ class Traversing
 			for (node in collection)
 			{
 				if (node.parentNode != null && node != Detox.document)
-					#if js
-						parents.add(node.parentNode);
-					#else 
-						parents.add(node.parent);
-					#end
+					parents.add(node.parentNode);
 			}
 		}
 		return parents;
@@ -225,7 +212,7 @@ class Traversing
 			for (node in collection)
 			{
 				// Get the next sibling
-				var sibling = #if js node.nextSibling #else node.nextSibling() #end ;
+				var sibling = node.nextSibling;
 				
 				// If it's not null, but isn't an element, and we want an element,
 				// keep going.
@@ -233,7 +220,7 @@ class Traversing
 					&& sibling.nodeType != dtx.DOMType.ELEMENT_NODE
 					&& elementsOnly )
 				{
-					sibling = #if js sibling.nextSibling #else sibling.nextSibling() #end;
+					sibling = sibling.nextSibling;
 				}
 
 				// if we found a match, add it to our group
@@ -258,7 +245,7 @@ class Traversing
 			for (node in collection)
 			{
 				// get the previous sibling
-				var sibling = #if js node.previousSibling #else node.previousSibling() #end;
+				var sibling = node.previousSibling;
 
 				// If it's not null, but isn't an element, and we want an element,
 				// keep going.
@@ -266,7 +253,7 @@ class Traversing
 					&& sibling.nodeType != dtx.DOMType.ELEMENT_NODE
 					&& elementsOnly)
 				{
-					sibling = #if js sibling.previousSibling #else sibling.previousSibling() #end;
+					sibling = sibling.previousSibling;
 				}
 
 				// if we found a match, add it to our group

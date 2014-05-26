@@ -20,8 +20,8 @@ package dtx;
 	This will work with both `js.html.Node` and `Xml`.
 **/
 class DOMType {
-	static public var DOCUMENT_NODE = #if js dtx.DOMNode.DOCUMENT_NODE #else Xml.Document #end;
-	static public var ELEMENT_NODE = #if js dtx.DOMNode.ELEMENT_NODE #else Xml.Element #end;
-	static public var TEXT_NODE = #if js dtx.DOMNode.TEXT_NODE #else Xml.PCData #end;
-	static public var COMMENT_NODE = #if js dtx.DOMNode.COMMENT_NODE #else Xml.Comment #end;
+	static public var DOCUMENT_NODE = #if js js.html.Node.DOCUMENT_NODE #else Xml.Document #end;
+	static public var ELEMENT_NODE = #if js js.html.Node.ELEMENT_NODE #else Xml.Element #end;
+	static public var TEXT_NODE = #if js js.html.Node.TEXT_NODE #else Xml.PCData #end;
+	static public var COMMENT_NODE = #if js js.html.Node.COMMENT_NODE #else Xml.Comment #end;
 }

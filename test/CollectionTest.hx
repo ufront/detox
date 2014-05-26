@@ -278,7 +278,7 @@ class CollectionTest
 		var q2 = new DOMCollection();
 		var q3 = new DOMCollection();
 		#if js
-		var nodeList = "table".find().getNode().childNodes;
+		var nodeList = ("table".find().getNode():js.html.Node).childNodes;
 		#else 
 		var nodeList = "table".find().getNode();
 		#end
@@ -315,7 +315,7 @@ class CollectionTest
 		var q3 = new DOMCollection();
 
 		#if js
-		var nodeList = "table".find().getNode().childNodes;
+		var nodeList = ("table".find().getNode():js.html.Node).childNodes;
 		#else 
 		var nodeList = "table".find().getNode();
 		#end

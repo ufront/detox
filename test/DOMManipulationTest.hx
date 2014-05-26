@@ -610,7 +610,7 @@ class DOMManipulationTest
 		insertSiblingTargetNode.replaceWith(insertSiblingContentDOMCollection);
 
 		// target should be removed, have no parent. All content should be in place, correct HTML
-		Assert.isNull(insertSiblingTargetNode.parents());		
+		Assert.isNull(insertSiblingTargetNode.parents());
 		Assert.areEqual('<p class="1"><b class="content">1</b><b class="content">2</b></p><p class="2"><i class="target">i</i></p>', sampleDOMCollection.html());
 	}
 

@@ -12,7 +12,6 @@
 package dtx.single;
 
 import dtx.DOMNode;
-#if !js using dtx.XMLWrapper; #end
 
 /**
 	This class provides static helper methods to manipulate the DOM, adding, moving and removing nodes or collections starting from a given `dtx.DOMNode`.
@@ -77,7 +76,7 @@ class DOMManipulation
 			{
 				if (parent.hasChildNodes())
 				{
-					insertThisBefore(childNode, parent.firstChild#if !js () #end);
+					insertThisBefore(childNode, parent.firstChild);
 				}
 				else 
 				{
@@ -86,7 +85,7 @@ class DOMManipulation
 			}
 			if (childCollection != null)
 			{
-				dtx.collection.DOMManipulation.insertThisBefore(childCollection, parent.firstChild#if !js () #end);
+				dtx.collection.DOMManipulation.insertThisBefore(childCollection, parent.firstChild);
 			}
 		}
 
@@ -136,7 +135,7 @@ class DOMManipulation
 		{
 			if (parentNode.hasChildNodes())
 			{
-				insertThisBefore(child, parentNode.firstChild#if !js () #end, parentCollection);
+				insertThisBefore(child, parentNode.firstChild, parentCollection);
 			}
 			else
 			{
@@ -169,7 +168,7 @@ class DOMManipulation
 			var firstChildUsed = false;
 			if (targetNode != null)
 			{
-				var parent:DOMNode = #if js targetNode.parentNode; #else targetNode.parent; #end
+				var parent:DOMNode = targetNode.parentNode;
 				if (parent != null)
 				{
 					firstChildUsed = true;
@@ -181,7 +180,7 @@ class DOMManipulation
 				for (target in targetCollection)
 				{
 					var childToInsert = (firstChildUsed) ? content.cloneNode(true) : content;
-					var parent:DOMNode = #if js target.parentNode; #else target.parent; #end
+					var parent:DOMNode = target.parentNode;
 					if (parent != null)
 					{
 						parent.insertBefore(childToInsert, target);
@@ -212,8 +211,8 @@ class DOMManipulation
 			var firstChildUsed = false;
 			if (targetNode != null)
 			{
-				var next = targetNode.nextSibling #if !js () #end;
-				var parent:DOMNode = targetNode.parentNode #if !js () #end;
+				var next = targetNode.nextSibling;
+				var parent:DOMNode = targetNode.parentNode;
 				if (parent != null)
 				{
 					firstChildUsed = true;
@@ -234,12 +233,12 @@ class DOMManipulation
 					// clone the child if we've already used it
 					var childToInsert = (firstChildUsed) ? content.cloneNode(true) : content;
 					
-					var next = #if js target.nextSibling #else target.nextSibling() #end;
+					var next = target.nextSibling;
 					if (next != null)
 					{
 						// add the (possibly cloned) child after.the target
 						// (that is, before the targets next sibling)
-						var parent:DOMNode = #if js target.parentNode #else target.parentNode() #end;
+						var parent:DOMNode = target.parentNode;
 						if (parent != null)
 						{
 							parent.insertBefore(childToInsert, next);
@@ -249,7 +248,7 @@ class DOMManipulation
 					{
 						// add the (possibly cloned) child after the target
 						// by appending it to the very end of the parent
-						append(target.parentNode#if !js () #end, childToInsert);
+						append(target.parentNode, childToInsert);
 					}
 					
 					firstChildUsed = true;
@@ -327,7 +326,7 @@ class DOMManipulation
 	{
 		if (childToRemove != null)
 		{
-			var parent:DOMNode = #if js childToRemove.parentNode; #else childToRemove.parent; #end
+			var parent:DOMNode = childToRemove.parentNode;
 			if (parent != null)
 			{
 				parent.removeChild(childToRemove);
@@ -356,7 +355,7 @@ class DOMManipulation
 	{
 		if (parent != null)
 		{
-			if (childToRemove != null && childToRemove.parentNode #if !js () #end == parent)
+			if (childToRemove != null && childToRemove.parentNode == parent)
 			{
 				parent.removeChild(childToRemove);
 			}
@@ -364,7 +363,7 @@ class DOMManipulation
 			{
 				for (child in childrenToRemove)
 				{
-					if (child.parentNode #if !js () #end == parent)
+					if (child.parentNode == parent)
 					{
 						parent.removeChild(child);
 					}
@@ -405,9 +404,9 @@ class DOMManipulation
 	{
 		if (parent != null)
 		{
-			while (parent.hasChildNodes())
+			for ( child in Lambda.list(parent.childNodes) )
 			{
-				parent.removeChild(parent.firstChild#if !js()#end);
+				parent.removeChild( child );
 			}
 		}
 		return parent;

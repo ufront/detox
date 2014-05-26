@@ -15,8 +15,6 @@ import dtx.DOMNode;
 import Detox;
 #if js
 	import js.html.NodeList;
-#else
-	using dtx.XMLWrapper; 
 #end
 using Detox;
 

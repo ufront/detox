@@ -12,7 +12,6 @@
 package dtx.single;
 
 import dtx.DOMNode;
-#if !js using dtx.XMLWrapper; #end
 
 /**
 	This class provides static helper methods to traverse the DOM starting from a given `dtx.DOMNode`.
@@ -27,12 +26,7 @@ class Traversing
 {
 	static inline function unsafeGetChildren( elm:DOMNode, elementsOnly:Bool = true):DOMCollection
 	{
-		#if js
-			return new DOMCollection().addNodeList(elm.childNodes, elementsOnly);
-		#else 
-			// With Xml, "node" itself is iterable, so we can just pass that
-			return new DOMCollection().addCollection(elm, elementsOnly);
-		#end
+		return new DOMCollection().addCollection(elm.childNodes, elementsOnly);
 	}
 
 	/**
@@ -68,12 +62,12 @@ class Traversing
 		if (node != null && ElementManipulation.isElement(node))
 		{
 			// Add first child node that is an element
-			var e = #if js node.firstChild #else node.firstChild() #end;
+			var e = node.firstChild;
 			while (elementsOnly == true && e != null && ElementManipulation.isElement(cast e) == false)
 			{
-				e = #if js e.nextSibling #else e.nextSibling() #end;
+				e = e.nextSibling;
 			}
-			if (e != null) firstChild = cast e;
+			if (e != null) firstChild = e;
 		}
 		return firstChild;
 	}
@@ -95,10 +89,10 @@ class Traversing
 		if (node != null && ElementManipulation.isElement(node))
 		{
 			// Add last child node that is an element
-			var e = #if js node.lastChild #else node.lastChild() #end;
+			var e = node.lastChild;
 			while (elementsOnly == true && e != null && ElementManipulation.isElement(cast e) == false)
 			{
-				e = #if js e.previousSibling #else e.previousSibling() #end;
+				e = e.previousSibling;
 			}
 			if (e != null) lastChild = cast e;
 		}
@@ -123,7 +117,7 @@ class Traversing
 		var p:DOMNode = null;
 		if (node != null && node != Detox.document)
 		{
-			p = node.parentNode #if !js () #end;
+			p = node.parentNode;
 		}
 		return p;
 	}
@@ -193,14 +187,14 @@ class Traversing
 	**/
 	static public function next(node:DOMNode, ?elementsOnly:Bool = true):Null<DOMNode>
 	{
-		var sibling = (node != null) ? node.nextSibling #if !js () #end : null;
+		var sibling = (node != null) ? node.nextSibling : null;
 
 		// While this "nextSibling" actually still exists and if we only want elements but this "nextSibling" isn't an element...
 		while (sibling != null && elementsOnly && sibling.nodeType != DOMType.ELEMENT_NODE)
 		{
 			// Find the next sibling down the line, maybe it is an element.
 			// Otherwise eventually it will be null, meaning no element was found.
-			sibling = #if js sibling.nextSibling #else sibling.nextSibling() #end ;
+			sibling = sibling.nextSibling;
 		}
 
 		return sibling;
@@ -217,14 +211,14 @@ class Traversing
 	**/
 	static public function prev(node:DOMNode, ?elementsOnly:Bool = true):Null<DOMNode>
 	{
-		var sibling = (node != null) ? node.previousSibling #if !js () #end : null;
+		var sibling = (node != null) ? node.previousSibling : null;
 
 		// While this "previousSibling" actually still exists and if we only want elements but this "previousSibling" isn't an element...
 		while (sibling != null && elementsOnly && sibling.nodeType != dtx.DOMType.ELEMENT_NODE)
 		{
 			// Find the previous sibling up the line, maybe it is an element.
 			// Otherwise eventually it will be null, meaning no element was found.
-			sibling = sibling.previousSibling #if !js () #end;
+			sibling = sibling.previousSibling;
 		}
 
 		return sibling;

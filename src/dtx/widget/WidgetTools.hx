@@ -408,7 +408,7 @@ class WidgetTools
                     }
                     ret = sb.toString();
                 default:
-                    ret = dtx.XMLWrapper.textContent( elm ); 
+                    ret = elm.textContent;
 
             }
         }
@@ -509,7 +509,7 @@ class WidgetTools
         BuildTools.addLinesToFunction(initFn, linesToAdd, 0);
 
         // Any attributes on the partial are variables to be passed.  Every time a setter on the parent widget is called, it should trigger the relevent setter on the child widget
-        for (attName in node.attributes())
+        for (attName in (node:Xml).attributes())
         {
             if (attName.startsWith("dtx")==false)
             {
@@ -683,7 +683,7 @@ class WidgetTools
             
             // Replace the call with <div data-dtx-loop="$name"></div>
             var partialFirstElement = node.firstChildren( true );
-            var placeholderName = switch( node.parent.tagName() ) {
+            var placeholderName = switch( node.parentNode.tagName() ) {
                 case "tbody", "table", "thead", "tfoot": "tr";
                 case "colgroup": "col";
                 case "tr": "td";
@@ -777,7 +777,7 @@ class WidgetTools
 
     static function processAttributes(node:dtx.DOMNode)
     {
-        for (attName in node.attributes())
+        for (attName in (node:Xml).attributes())
         {
             if (attName.startsWith('dtx-on-'))
             {
@@ -803,7 +803,7 @@ class WidgetTools
             else 
             {
                 // look for variable interpolation eg <div id="person_$name">...</div>
-                if (node.get(attName).indexOf('$') > -1)
+                if (node.getAttribute(attName).indexOf('$') > -1)
                 {
                     interpolateAttributes(node, attName);
                 }
@@ -1054,7 +1054,7 @@ class WidgetTools
     static function interpolateTextNodes(node:dtx.DOMNode)
     {
         // Get (or set) ID on parent, get selector
-        var selectorAsExpr = getUniqueSelectorForNode(node.parent);
+        var selectorAsExpr = getUniqueSelectorForNode(node.parentNode);
         var index = node.index();
         var indexAsExpr = index.toExpr();
         

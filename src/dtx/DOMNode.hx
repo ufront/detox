@@ -12,13 +12,19 @@
 package dtx;
 
 /**
-	A generic DOM Node that references the underlying node type for each platform.
+	A typedef pointing to the underlying type for each platform - `js.html.Node` on JS, and `Xml` on other platforms.
+**/
+private typedef DOMNodeImplementationType = #if js js.html.Node #else Xml #end;
 
-	On Javascript, this is a typedef alias for `js.html.Node`.
+/**
+	A generic DOM Node. This is an abstract that wraps the underlying XML/DOM type for each platform.
 
-	On other targets, this is a typedef alias for `Xml`.
+	On Javascript, this wraps `js.html.Node` and forwards most fields.
+	Please note `childNodes` and `attributes` as we chose to expose them with a different type signiature to make cross platform implementations simpler.
+	Also note that `hasAttributes`, `getAttribute`, `setAttribute` and `removeAttribute` are also exposed, even though these belong to Element, not Node.
 
-	Even though these two types (`Xml` and `js.html.Node`) differ considerably, this typedef can be used with most Detox classes for a unified approach to interacting with DOM / Xml content.
+	On other targets, this wraps `Xml` and provides an interface similar to `js.html.Node`.
+	Not every property or method is implemented, but enough are implemented to allow our various Detox methods to function correctly.
 
 	Classes for interacting with DOMNode include:
 
@@ -28,13 +34,334 @@ package dtx;
 	- `dtx.single.EventManagement`
 	- `dtx.single.Style`
 **/
-typedef DOMNode = #if js js.html.Node #else Xml #end;
+#if js
+	@:forward(
+		nodeType, nodeValue, nodeName,
+		parentNode, firstChild, lastChild, nextSibling, previousSibling,
+		removeChild, hasChildNodes, appendChild, insertBefore,
+		hasAttributes, getAttribute, setAttribute, removeAttribute, // Should these only be on elements?
+		textContent, cloneNode,
+		addEventListener
+		// Notably absent: childNodes, attributes.
+		// I considered the implementations too JS specific to replicate on other platforms.
+	)
+#else
+	@:forward(
+		nodeType, nodeValue, nodeName,
+		removeChild
+	)
+#end
+abstract DOMNode( DOMNodeImplementationType ) from DOMNodeImplementationType to DOMNodeImplementationType {
+
+	public var attributes(get,never):Iterable<{ name:String, value:String }>;
+	public var childNodes(get,never):Iterable<DOMNode>;
+	#if !js
+		public var parentNode(get,never):DOMNode;
+		public var firstChild(get,never):DOMNode;
+		public var lastChild(get,never):DOMNode;
+		public var nextSibling(get,never):DOMNode;
+		public var previousSibling(get,never):DOMNode;
+		public var textContent(get,set):String;
+	#end
+
+	inline function new( n:#if js js.html.Node #else Xml #end ) {
+		this=n;
+	}
+
+	@:allow(dtx)
+	function _getInnerHTML():String {
+		#if js
+			if ( this.nodeType==DOMType.ELEMENT_NODE ) {
+				return (cast(this,js.html.Element)).innerHTML;
+			}
+			else return null;
+		#else
+			var html = "";
+			for ( child in this ) {
+				html += child.toString();
+			}
+			return html;
+		#end
+	}
+
+	@:allow(dtx)
+	function _setInnerHTML( html:String ):String {
+		#if js
+			if ( this.nodeType==DOMType.ELEMENT_NODE ) {
+				(cast (this,js.html.Element)).innerHTML = html;
+			}
+		#else
+			var xmlDocNode:Xml = null;
+			try {
+				#if macro
+					xmlDocNode = haxe.xml.Parser.parse( "<doc>" + html + "</doc>" ).firstChild();
+				#elseif (neko || cpp)
+					// Neko's native parser has issues with over-encoding HTML entities.
+					// The Haxe based parser is a little better, it at least gets <, &, and > correct.
+					xmlDocNode = html.indexOf("&")>-1 ? haxe.xml.Parser.parse( html ) : Xml.parse( html );
+				#else
+					xmlDocNode = Xml.parse( html );
+				#end
+			}
+			catch ( e:Dynamic ) {
+				xmlDocNode = Xml.createDocument();
+			}
+
+			_empty();
+			for ( child in Lambda.list(xmlDocNode) ) {
+				this.addChild( child );
+			}
+		#end
+		return html;
+	}
+
+	// Member methods (Platforms other than JS)
+	#if !js
+		public inline function hasChildNodes():Bool {
+			return this.iterator().hasNext();
+		}
+
+		public inline function getAttribute( name:String ):String {
+			return this.get( name );
+		}
+
+		public inline function setAttribute( name:String, value:String ):Void {
+			this.set( name, value );
+		}
+
+		public inline function removeAttribute( name:String ):Void {
+			this.remove( name );
+		}
+
+		@:access(Xml)
+		public function appendChild( newChild:DOMNode ):DOMNode {
+			#if flash
+				var flashXML:flash.xml.XML = this._node;
+				if( this.nodeType!=Xml.Element && this.nodeType!=Xml.Document )
+					throw "Bad NodeType";
+				flashXML.appendChild( (newChild:Xml)._node );
+			#else
+				this.addChild( newChild );
+			#end
+			return newChild;
+		}
+
+		@:access(Xml)
+		public function insertBefore( newChild:DOMNode, refChild:DOMNode ):DOMNode {
+			#if flash
+				if ( newChild.parentNode!=null ) newChild.parentNode.removeChild( newChild );
+				if( this.nodeType!=Xml.Element && this.nodeType!=Xml.Document )
+					throw "bad nodeType";
+				(this:Xml)._node.insertChildBefore( (refChild:Xml)._node, (newChild:Xml)._node );
+			#else
+				var targetIndex = 0;
+				var iter = this.iterator();
+				while ( iter.hasNext() && iter.next()!=refChild ) {
+					targetIndex++;
+				}
+				this.insertChild( newChild, targetIndex );
+			#end
+			return newChild;
+		}
+
+		public function removeChild( oldChild:DOMNode ):DOMNode {
+			this.removeChild( oldChild );
+			return oldChild;
+		}
+
+		public function cloneNode( deep:Bool ):DOMNode {
+			var clone = switch this.nodeType {
+				case Xml.Element: Xml.createElement( this.nodeName );
+				case Xml.PCData: Xml.createPCData( this.nodeValue );
+				case Xml.CData: Xml.createCData( this.nodeValue );
+				case Xml.Comment: Xml.createComment( this.nodeValue );
+				case Xml.DocType: Xml.createDocType( this.nodeValue );
+				case Xml.ProcessingInstruction: Xml.createProcessingInstruction( this.nodeValue );
+				case Xml.Document: Xml.createDocument();
+			}
+			if ( this.nodeType==Xml.Element ) {
+				for ( attName in this.attributes() ) {
+					clone.set( attName, this.get(attName) );
+				}
+			}
+			if ( deep && (this.nodeType==Xml.Element || this.nodeType==Xml.Document) ) {
+				for ( child in this ) {
+					clone.addChild( (child:DOMNode).cloneNode(true) );
+				}
+			}
+			return clone;
+		}
+	#end
+
+	// Getters (All platforms)
+
+	function get_attributes():Iterable<{ name:String, value:String }> {
+		var list = new List();
+		#if js
+			for ( i in 0...this.attributes.length ) {
+				var attNode = this.attributes[i];
+				list.push({ name: attNode.nodeName, value: attNode.nodeValue });
+			}
+		#else
+			for ( a in this.attributes() ) {
+				list.push({ name: a, value: this.get(a) });
+			}
+		#end
+		return list;
+	}
+
+	function get_childNodes():Array<DOMNode> {
+		var children = [];
+		#if js
+			for ( i in 0...this.childNodes.length ) {
+				children.push( this.childNodes.item(i) );
+			}
+		#else
+			for ( n in this ) {
+				children.push( n );
+			}
+		#end
+		return children;
+	}
+
+	// Getters (Non JS Platforms)
+
+	#if !js
+		inline function get_parentNode():DOMNode {
+			return this.parent;
+		}
+
+		inline function get_firstChild():DOMNode {
+			return this.firstChild();
+		}
+
+		function get_lastChild():DOMNode {
+			var lastChild:Xml = null;
+			if ( this!=null )
+				for ( child in this )
+					lastChild = child;
+			return lastChild;
+		}
+
+		@:access(Xml)
+		function get_nextSibling():DOMNode {
+			#if flash
+				// get the flash node
+				var flashXML:flash.xml.XML = this._node;
+				// get the index
+				var i = flashXML.childIndex();
+				var sibling:Xml = null;
+				// get the siblings
+				var parent = flashXML.parent();
+				if ( parent!=null ) {
+					var children:flash.xml.XMLList = parent.children();
+					// get the previous item
+					var index = i + 1;
+					if ( index>=0 && index<children.length() ) {
+						sibling = Xml.wrap( children[index] );
+					}
+				}
+				return sibling;
+			#else
+				var itsTheNextOne = false;
+				var p = this.parent;
+				if ( p!=null ) {
+					for ( child in p ){
+						if ( itsTheNextOne ) {
+							return child;
+							break;
+						}
+						if ( child==this ) itsTheNextOne = true;
+					}
+				}
+				return null;
+			#end
+		}
+
+		@:access(Xml)
+		function get_previousSibling():DOMNode {
+			#if flash
+				// get the flash node
+				var flashXML:flash.xml.XML = this._node;
+				// get the index
+				var i = flashXML.childIndex();
+				// get the siblings
+				var children:flash.xml.XMLList = flashXML.parent().children();
+				// get the previous item
+				var sibling:Xml = null;
+				var index = i - 1;
+				if ( index>=0 && index<children.length() ){
+					sibling = Xml.wrap( children[index] );
+				}
+				return sibling;
+			#else
+				var sibling:Xml = null;
+				var p = this.parent;
+				if ( p!=null ) {
+					for ( child in p ) {
+						if ( child!=this ) {
+							sibling = child;
+						}
+						else {
+							// If it's equal, leave "sibling" set to the previous value,
+							// and exit the loop...
+							break;
+						}
+					}
+				}
+				return sibling;
+			#end
+		}
+
+		function get_textContent():String {
+			var ret = "";
+			if ( this.nodeType==dtx.DOMType.ELEMENT_NODE || this.nodeType==dtx.DOMType.DOCUMENT_NODE ) {
+				var allDescendants = dtx.single.Traversing.descendants( this, false );
+				var textDescendants = allDescendants.filter(function(x:Xml) {
+					return x.nodeType==dtx.DOMType.TEXT_NODE;
+				});
+
+
+				var s = new StringBuf();
+				for ( textNode in textDescendants ) {
+					s.add( textNode.nodeValue );
+				}
+
+				ret = s.toString();
+			}
+			else {
+				ret = this.nodeValue;
+			}
+			return ret;
+		}
+
+		function _empty():Void {
+			for ( child in Lambda.list(this) ) {
+				removeChild( child );
+			}
+		}
+
+		function set_textContent( text:String ):String {
+			if ( this.nodeType==dtx.DOMType.ELEMENT_NODE || this.nodeType==dtx.DOMType.DOCUMENT_NODE ) {
+				_empty();
+				var textNode = Xml.createPCData( text );
+				this.addChild( textNode );
+			}
+			else {
+				this.nodeValue = text;
+			}
+			return text;
+		}
+	#end
+}
 
 /**
 	A generic DOM Element.
 
 	Similar to `dtx.DOMNode` this changes depending on the platform.
-	`DOMElement` is a typedef alias for `js.html.Element` on Javascript, and `Xml` on other platforms.
+	`DOMElement` is a typedef alias for `js.html.Element` on Javascript, and `DOMNode` on other platforms.
+
+	At some point it may be worth changing this as now that DOMNode is an abstract, this extension is sometimes awkward and leads to unexpected behaviour.
 **/
 typedef DOMElement = #if js js.html.Element #else DOMNode #end;
 

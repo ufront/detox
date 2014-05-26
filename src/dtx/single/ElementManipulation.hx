@@ -14,7 +14,6 @@ package dtx.single;
 import dtx.DOMCollection;
 import dtx.DOMNode;
 import dtx.DOMType;
-#if !js using dtx.XMLWrapper; #end
 using Lambda;
 
 /**
@@ -64,11 +63,7 @@ class ElementManipulation
 	**/
 	public static function index(n:DOMNode):Int 
 	{
-		#if js
-			return dtx.single.Traversing.children(dtx.single.Traversing.parents(n), false).indexOf(n);
-		#else
-			return (n != null && n.parent != null) ? n.parent.indexOf(n) : -1;
-		#end 
+		return dtx.single.Traversing.children(dtx.single.Traversing.parents(n), false).indexOf(n);
 	}
 
 	/**
@@ -84,11 +79,7 @@ class ElementManipulation
 		if (isElement(elm) && attName != null)
 		{
 			var element:DOMElement = cast elm;
-			#if js
 			ret = element.getAttribute(attName);
-			#else 
-			ret = element.get(attName);
-			#end 
 			if (ret == null) ret = "";
 		}
 		return ret;
@@ -110,11 +101,7 @@ class ElementManipulation
 				attValue = "";
 			}
 			var element:DOMElement = cast elm;
-			#if js
 			element.setAttribute(attName, attValue);
-			#else 
-			element.set(attName, attValue);
-			#end 
 		}
 		return elm;
 	}
@@ -131,11 +118,7 @@ class ElementManipulation
 		if (elm!=null && elm.nodeType == dtx.DOMType.ELEMENT_NODE && attName != null)
 		{
 			var element:DOMElement = cast elm;
-			#if js 
 			element.removeAttribute(attName);
-			#else 
-			element.remove(attName);
-			#end 
 		}
 		return elm;
 	}
@@ -277,28 +260,28 @@ class ElementManipulation
 	public static #if js inline #end function tagName(elm:DOMNode):String
 	{
 		#if js
-		return (elm == null) ? "" : elm.nodeName.toLowerCase();
+			return (elm == null) ? "" : elm.nodeName.toLowerCase();
 		#else 
-		var ret = "";
-		// Make XML behaviour mimic the JS DOM behaviour
-		if (elm != null)
-		{
-			ret = switch (elm.nodeType)
+			var ret = "";
+			// Make XML behaviour mimic the JS DOM behaviour
+			if (elm != null)
 			{
-				case dtx.DOMType.ELEMENT_NODE:
-					elm.nodeName.toLowerCase();
-				case dtx.DOMType.DOCUMENT_NODE:
-					"#document";
-				case dtx.DOMType.TEXT_NODE:
-					"#text";
-				case dtx.DOMType.COMMENT_NODE:
-					"#comment";
-				default:
-					"#other";
+				ret = switch (elm.nodeType)
+				{
+					case dtx.DOMType.ELEMENT_NODE:
+						elm.nodeName.toLowerCase();
+					case dtx.DOMType.DOCUMENT_NODE:
+						"#document";
+					case dtx.DOMType.TEXT_NODE:
+						"#text";
+					case dtx.DOMType.COMMENT_NODE:
+						"#comment";
+					default:
+						"#other";
+				}
+
 			}
-			
-		}
-		return ret;
+			return ret;
 		#end
 	}
 
@@ -411,7 +394,7 @@ class ElementManipulation
 		{
 			if (isElement(elm) || isDocument(elm))
 			{
-				text = #if js elm.textContent #else elm.textContent() #end;
+				text = elm.textContent;
 			}
 			else 
 			{
@@ -440,11 +423,7 @@ class ElementManipulation
 		{
 			if (isElement(elm) || isDocument(elm))
 			{
-				#if js
 				elm.textContent = text;
-				#else 
-				elm.setTextContent(text);
-				#end
 			}
 			else 
 			{
@@ -479,7 +458,7 @@ class ElementManipulation
 		}
 		else if (elm != null)
 		{
-			ret = elm.textContent #if !js () #end;
+			ret = elm.textContent;
 		}
 		return ret;
 	}
@@ -504,18 +483,9 @@ class ElementManipulation
 			switch (elm.nodeType)
 			{
 				case dtx.DOMType.ELEMENT_NODE:
-					var element:DOMElement = cast elm;
-					#if js
-					element.innerHTML = html;
-					#else 
-					elm.setInnerHTML(html);
-					#end
+					elm._setInnerHTML(html);
 				default:
-					#if js
 					elm.textContent = html;
-					#else 
-					elm.setTextContent(html);
-					#end
 			}
 		}
 		return elm;
@@ -532,7 +502,7 @@ class ElementManipulation
 	**/
 	public static inline function clone(elm:Null<DOMNode>):Null<DOMNode>
 	{
-		return (elm == null) ? null : elm.cloneNode( #if js true #end );
+		return (elm == null) ? null : elm.cloneNode( true );
 	}
 
 	/**
@@ -584,20 +554,11 @@ class ElementManipulation
 			var elmName = preserveTagNameCase ? n.nodeName : n.nodeName.toLowerCase();
 			sb.add('<$elmName');
 			
-			#if js
-				for ( i in 0...n.attributes.length ) {
-					var attNode = n.attributes[i];
-					sb.add(' ${attNode.nodeName}="');
-					addHtmlEscapedString( attNode.nodeValue, sb, true );
-					sb.add('"');
-				}
-			#else
-				for ( a in n.attributes() ) {
-					sb.add(' $a="');
-					addHtmlEscapedString( attr(n,a), sb, true );
-					sb.add('"');
-				}
-			#end
+			for ( att in n.attributes ) {
+				sb.add(' ${att.name}="');
+				addHtmlEscapedString( att.value, sb, true );
+				sb.add('"');
+			}
 			
 			var children = dtx.single.Traversing.unsafeGetChildren(n,false);
 			if ( children.length > 0 ) {
