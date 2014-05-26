@@ -72,7 +72,8 @@ abstract DOMNode( DOMNodeImplementationType ) from DOMNodeImplementationType to 
 	function _getInnerHTML():String {
 		#if js
 			if ( this.nodeType==DOMType.ELEMENT_NODE ) {
-				return (cast(this,js.html.Element)).innerHTML;
+				var elm:js.html.Element = cast this;
+				return elm.innerHTML;
 			}
 			else return null;
 		#else
@@ -88,7 +89,8 @@ abstract DOMNode( DOMNodeImplementationType ) from DOMNodeImplementationType to 
 	function _setInnerHTML( html:String ):String {
 		#if js
 			if ( this.nodeType==DOMType.ELEMENT_NODE ) {
-				(cast (this,js.html.Element)).innerHTML = html;
+				var elm:js.html.Element = cast this;
+				elm.innerHTML = html;
 			}
 		#else
 			var xmlDocNode:Xml = null;

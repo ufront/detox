@@ -4,8 +4,8 @@
 	"tags": ["cross","dom","xml","js","domtools","dtx","detox"],
 	"description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
 	"contributors": ["jason"],
-	"releasenote": "Use abstract for DOMNode. It wraps `js.html.Node` on Javascript, and `Xml` on other platforms. This is much cleaner than the previous typedef / conditional compilation solution.",
-	"version": "1.0.0-rc.4",
+	"releasenote": "Fix for casting behaviour on old browsers.",
+	"version": "1.0.0-rc.5",
 	"url": "https://github.com/jasononeil/detox",
 	"classPath": "src/",
 	"dependencies": {
