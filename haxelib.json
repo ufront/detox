@@ -4,8 +4,8 @@
 	"tags": ["cross","dom","xml","js","domtools","dtx","detox"],
 	"description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
 	"contributors": ["jason"],
-	"releasenote": "Fix for casting behaviour on old browsers.",
-	"version": "1.0.0-rc.5",
+	"releasenote": "YACEF (yet another chacter encoding fix), still not happy with the solution.",
+	"version": "1.0.0-rc.6",
 	"url": "https://github.com/jasononeil/detox",
 	"classPath": "src/",
 	"dependencies": {

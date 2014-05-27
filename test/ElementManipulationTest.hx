@@ -590,14 +590,23 @@ class ElementManipulationTest
 		var content = "<div>&laquo;Haxe&raquo;</div>";
 		var div = content.parse();
 		#if js
-			var text = div.text();
-			Assert.areEqual( "«".code, StringTools.fastCodeAt( text, 0 ) );
-			Assert.areEqual( "»".code, StringTools.fastCodeAt( text, 5 ) );
-			Assert.areEqual( "<div>&#171;Haxe&#187;</div>", div.html() );
-		#else 
+			// This difference is frustrating but I can't yet find a workaround.
+			// On JS, when parsing the string into the DOM, those entities are converted to the unicode characters.
+			// When we go to output, they are unicode, not the entities.
+			// Ideally, I would like text() to contain the unencoded unicode, and html() to use the entities.
+			// If anyone can think of an implementation please let me know.
+			Assert.areEqual( 6, div.text().length ); // "«Haxe»"
+			Assert.areEqual( 17, div.html().length ); // "<div>«Haxe»</div>"
+		#else
 			Assert.areEqual( "&laquo;Haxe&raquo;", div.text() );
 			Assert.areEqual( "<div>&laquo;Haxe&raquo;</div>", div.html() );
 		#end
+
+		// Test escaping of non-standard entities
+		var content = "<p>Furthermore, Cauê Waneck's</p>";
+		var div = content.parse();
+		Assert.areEqual( "Furthermore, Cauê Waneck's", div.text() );
+		Assert.areEqual( "<p>Furthermore, Cauê Waneck's</p>", div.html() );
 	}
 
 	@Test

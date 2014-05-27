@@ -553,13 +553,13 @@ class ElementManipulation
 		if ( isElement(n) ) {
 			var elmName = preserveTagNameCase ? n.nodeName : n.nodeName.toLowerCase();
 			sb.add('<$elmName');
-			
+
 			for ( att in n.attributes ) {
 				sb.add(' ${att.name}="');
 				addHtmlEscapedString( att.value, sb, true );
 				sb.add('"');
 			}
-			
+
 			var children = dtx.single.Traversing.unsafeGetChildren(n,false);
 			if ( children.length > 0 ) {
 				sb.add(">");
@@ -572,15 +572,15 @@ class ElementManipulation
 				if ( selfClosingElms.has(elmName) ) sb.add(" />");
 				else sb.add('></$elmName>');
 			}
-		} 
+		}
 		else if ( isDocument(n) ) {
 			for ( child in dtx.single.Traversing.children(n, false) ) {
 				printHtml( child, sb, preserveTagNameCase );
 			}
-		} 
+		}
 		else if ( isTextNode(n) ) {
 			addHtmlEscapedString( n.nodeValue, sb, false );
-		} 
+		}
 		else if ( isComment(n) ) {
 			sb.add( '<!--' );
 			sb.add( n.nodeValue );
@@ -625,7 +625,7 @@ class ElementManipulation
 			else if ( encodeQuotes && charCode=="'".code ) sb.add( "&#039;" );
 			else if ( encodeQuotes && charCode=='"'.code ) sb.add( "&quot;" );
 			else if ( charCode<161 ) sb.addChar( charCode );
-			else sb.add( '&#$charCode;' );
+			else sb.addChar( charCode );
 		}
 	}
 }
