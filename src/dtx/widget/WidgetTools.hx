@@ -744,7 +744,14 @@ class WidgetTools
                 var iterableNullCheck = BuildTools.generateNullCheckForExpression( iterableExpr );
                 var setListLine = macro 
                     if ( $variableRef!=null && $iterableNullCheck ) {
-                        try $variableRef.setList( $iterableExpr ) catch (e:Dynamic) $variableRef.empty();
+                        try 
+                            $variableRef.setList( $iterableExpr )
+                        catch (e:Dynamic) {
+                            var stack = haxe.CallStack.toString( haxe.CallStack.exceptionStack() );
+                            trace( 'Failed to update loop: '+e );
+                            trace( 'Stack trace: '+stack );
+                            $variableRef.empty();
+                        }
                     }
 
                 if ( idents.length>0 ) 
