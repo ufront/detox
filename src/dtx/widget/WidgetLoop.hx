@@ -21,7 +21,7 @@ class WidgetLoop<T, W:KeepWidget> extends Loop<T>
 	var propName:String;
 	var autoPropMap:Bool;
 
-	public function new(widgetClass:Class<W>, ?propName:String = null, ?autoPropMap = true)
+	public function new(widgetClass:Class<W>, ?propName:String = null, ?autoPropMap = false)
 	{
 		super();
 		this.widgetClass = widgetClass;

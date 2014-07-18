@@ -730,9 +730,10 @@ class WidgetTools
             // Get the init function, instantiate our loop object
             var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
             var propNameExpr = Context.makeExpr( propName, p );
+            var useAutoMap = false; // Later we might add an attribute to enable this...
             linesToAdd = macro {
                 // new WidgetLoop($Partial, $varName, propmap=null, automap=true)
-                $variableRef = new dtx.widget.WidgetLoop($partialTypeRef, $propNameExpr, true);
+                $variableRef = new dtx.widget.WidgetLoop($partialTypeRef, $propNameExpr, $v{useAutoMap});
                 $variableRef.setJoins($joinExpr, $finalJoinExpr, $afterJoinExpr);
             };
             BuildTools.addLinesToFunction(initFn, linesToAdd);
