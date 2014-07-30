@@ -1163,10 +1163,10 @@ class WidgetTools
     {
         var stringAsExpr = Context.makeExpr(string, BuildTools.currentPos());
         var interpolationExpr = Format.format(stringAsExpr);
-        
+
         // Get an array of all the variables in interpolationExpr
         var variables:Array<ExtractedVarType> = extractVariablesUsedInInterpolation(interpolationExpr);
-        var variableNames:Array<String> = [];
+        var variableNames:Array<String> = BuildTools.extractIdents(interpolationExpr);
 
         for (extractedVar in variables)
         {
