@@ -155,7 +155,7 @@ class WidgetTools
                     var parentHasTemplatePartial = BuildTools.hasClassMetadata(":partialInside",true);
                     if ( false==(noTemplate||parentHasTemplate||parentHasTemplateFile||parentHasTemplatePartial) )
                     {
-                        error('Could not load the widget template: $templateFile', p);
+                        Context.warning('Could not load the widget template: $templateFile', p);
                     }
 
                 }
