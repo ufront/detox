@@ -511,6 +511,9 @@ class BuildTools
             case EObjectDecl( fields ):
                 var exprs = [ for (f in fields) f.expr ];
                 addNullCheckForMultipleExprs( exprs, allChecks );
+            case EArray( arr, index ):
+                addNullCheckForExpr( arr, allChecks );
+                addNullCheckForExpr( index, allChecks );
             case unsupportedType:
                 var typeName = std.Type.enumConstructor( unsupportedType );
                 Context.fatalError( 'Unable to generate null check for `${expr.toString()}`, field access from "$typeName" is currently not supported.', Context.getLocalClass().get().pos );
