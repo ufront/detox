@@ -29,6 +29,7 @@ import tink.core.Ref in TinkRef;
 class WidgetTools
 {
     static var templates:StringMap<String>;
+    static var indent = "";
 
     /**
     * This macro is called on ANY subclass of detox.widget.Widget
@@ -48,6 +49,11 @@ class WidgetTools
         var localClass = Context.getLocalClass();    // Class that is being declared
         var widgetPos = localClass.get().pos;                   // Position where the original Widget class is declared
         var fields = BuildTools.getFields();
+        var returnBuildFuilds = false;
+        #if detox_widget_debug
+            trace( '$indent Start: '+localClass.toString() );
+        #end
+        indent+="  ";
 
         // If get_template() already exists, don't recreate it
         var skipTemplating = BuildTools.hasClassMetadata(":skipTemplating");
@@ -83,13 +89,18 @@ class WidgetTools
                     BuildTools.printFields();
                 }
 
-                return fields;
+                returnBuildFuilds = true;
             }
         }
 
 
+        indent = indent.substr( 2 );
+        #if detox_widget_debug
+            trace( '$indent Finish: '+localClass.toString() );
+        #end
+
         // Leave the fields as is
-        return null;
+        return returnBuildFuilds ? fields : null;
     }
 
     /**
