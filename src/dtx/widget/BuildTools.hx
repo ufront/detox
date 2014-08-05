@@ -791,28 +791,30 @@ class BuildTools
     public static function loadFileFromLocalContext(filename:String):String
     {
         var fileContents:String = null;
-
-        try 
+        var path:String;
+        try
         {
-            var path = Context.resolvePath(filename);
+            path = Context.resolvePath(filename);
             fileContents = File.getContent(path);
-            Context.registerModuleDependency(Context.getLocalModule(),path);
         }
         catch (e:Dynamic)
         {
-            try 
+            try
             {
                 var modulePath = Context.getPosInfos(Context.getLocalClass().get().pos).file;
                 var moduleDir = Path.directory(modulePath);
-                var path = Context.resolvePath(Path.addTrailingSlash(moduleDir)+filename);
-                fileContents = File.getContent(path);
-                Context.registerModuleDependency(Context.getLocalModule(),path);
+                path = Context.resolvePath(Path.addTrailingSlash(moduleDir)+filename);
+                fileContents = FileSystem.exists(path) ? File.getContent(path) : null;
             }
-            catch (e : Dynamic)
+            catch (e : String)
             {
-                fileContents = null;
+                if ( e.indexOf("File not found")==1 )
+                    trace( e );
+                path = null;
             }
         }
+        if ( path!=null )
+            Context.registerModuleDependency(Context.getLocalModule(),path);
         return fileContents;
     }
 
