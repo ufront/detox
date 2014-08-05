@@ -319,14 +319,13 @@ class WidgetTools
         else
             node.setText(text);
     }
-    
-    static function processPartialDeclarations(name:String, node:dtx.DOMNode, ?fields:Array<Field>, ?useKeepWidget=false)
+
+    static function processPartialDeclarations(name:String, node:dtx.DOMNode, ?fields:Array<Field>)
     {
         var localClass = Context.getLocalClass();
         var p = localClass.get().pos;
         var pack = localClass.get().pack;
-        if ( node.attr('keep')=="true" ) useKeepWidget = true;
-        
+
         // Before getting the partial TPL, let's clear out any whitespace
         for (d in node.descendants(false))
         {
@@ -367,13 +366,14 @@ class WidgetTools
                 default:
             }
         }
-        else 
+        else
         {
+            var parentClass = Context.toComplexType( Context.getLocalType() );
             var classKind = TypeDefKind.TDClass({
                 sub: null,
-                params: [],
+                params: [TPType(parentClass)],
                 pack: ['dtx','widget'],
-                name: (useKeepWidget) ? "KeepWidget" : "Widget"
+                name: "ChildWidget"
             });
             if (fields==null) fields = [];
 
@@ -449,6 +449,8 @@ class WidgetTools
             else throw e;
         }
 
+        var isChildWidget = type.isSubTypeOf(Context.getType("dtx.widget.ChildWidget")).match(Success(_));
+
         // Alternatively use: type = Context.typeof(macro new $typeName()), see what works
         var classType:Ref<ClassType>;
         switch (type)
@@ -503,9 +505,9 @@ class WidgetTools
 
         // Get the init function, instantiate our partial
         var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
-        linesToAdd = macro {
-            $variableRef = new $typePath();
-        };
+        linesToAdd =
+            if (isChildWidget) macro { $variableRef = new $typePath(this); }
+            else macro { $variableRef = new $typePath(); };
         BuildTools.addLinesToFunction(initFn, linesToAdd, 0);
 
         // Any attributes on the partial are variables to be passed.  Every time a setter on the parent widget is called, it should trigger the relevent setter on the child widget
@@ -578,15 +580,8 @@ class WidgetTools
                             case _:
                                 throw 'Was expecting EConst(CIdent(propName)), but got $e1';
                         }
-                        // For "typeof" to work, it needs us to mock member variables so it knows what type they are
-                        var variablesInContext = [];
-                        for ( field in BuildTools.getFields() ) {
-                            switch (field.kind) {
-                                case FVar(ct,_), FProp(_,_,ct,_):
-                                    variablesInContext.push({ name: field.name, type: ct, expr: null });
-                                case _:
-                            }
-                        }
+                        // For "typeof" to work, it needs us to mock member variables and static variables so it knows what type they are.
+                        var variablesInContext = BuildTools.fakeVariablesContextForLocalClass();
                         switch e2.typeof(variablesInContext) {
                             case Success(itType):
                                 var result;
@@ -666,11 +661,13 @@ class WidgetTools
 
             // Extract the ClassType for the chosen type
             var partialClassType:Ref<ClassType>;
+            var widgetType:Type;
             try {
-                switch ( Context.getType(partialTypeName) )
+                widgetType = Context.getType(partialTypeName);
+                switch ( widgetType )
                 {
                     case TInst(t,_):
-                        // get the type
+                        // get the widgetType
                         partialClassType = t;
                     default:
                         throw "Asked for loop partial " + partialTypeName + " but that doesn't appear to be a class";
@@ -680,6 +677,7 @@ class WidgetTools
                     error('Unable to find Loop Widget/Partial "$partialTypeName" in widget template $widgetClass', p);
                 else throw e;
             }
+            var isChildWidget = widgetType.isSubTypeOf(Context.getType("dtx.widget.ChildWidget")).match(Success(_));
 
             // Replace the call with <div data-dtx-loop="$name"></div>
             var partialFirstElement = node.firstChildren( true );
@@ -698,13 +696,15 @@ class WidgetTools
                 pack: partialClassType.get().pack,
                 name: partialTypeName
             });
+            var localComplexType = Context.toComplexType(Context.getLocalType());
             var inputTypeParam = TPType( loopInputCT );
             var widgetTypeParam = TPType( widgetTypePath );
+            var parentTypeParam = isChildWidget ? TPType( localComplexType ) : null;
             var loopPropType = TPath( {
                 sub: null,
-                params: [ inputTypeParam, widgetTypeParam ],
+                params: isChildWidget ? [parentTypeParam,inputTypeParam,widgetTypeParam] : [inputTypeParam,widgetTypeParam],
                 pack: ["dtx","widget"],
-                name: "WidgetLoop"
+                name: isChildWidget ? "ChildWidgetLoop" : "WidgetLoop"
             });
             var prop = BuildTools.getOrCreateProperty(name, loopPropType, false, true);
 
@@ -731,11 +731,18 @@ class WidgetTools
             var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
             var propNameExpr = Context.makeExpr( propName, p );
             var useAutoMap = false; // Later we might add an attribute to enable this...
-            linesToAdd = macro {
-                // new WidgetLoop($Partial, $varName, propmap=null, automap=true)
-                $variableRef = new dtx.widget.WidgetLoop($partialTypeRef, $propNameExpr, $v{useAutoMap});
-                $variableRef.setJoins($joinExpr, $finalJoinExpr, $afterJoinExpr);
-            };
+
+            linesToAdd =
+                if (isChildWidget) macro {
+                    // new ChildWidgetLoop(this, $Partial, $varName, propmap=null, automap=true)
+                    $variableRef = new dtx.widget.ChildWidgetLoop(this, $partialTypeRef, $propNameExpr, $v{useAutoMap});
+                    $variableRef.setJoins($joinExpr, $finalJoinExpr, $afterJoinExpr);
+                }
+                else macro {
+                    // new WidgetLoop($Partial, $varName, propmap=null, automap=true)
+                    $variableRef = new dtx.widget.WidgetLoop($partialTypeRef, $propNameExpr, $v{useAutoMap});
+                    $variableRef.setJoins($joinExpr, $finalJoinExpr, $afterJoinExpr);
+                };
             BuildTools.addLinesToFunction(initFn, linesToAdd);
 
             // Find any variables mentioned in the iterable / for loop, and add to our setter
@@ -781,6 +788,17 @@ class WidgetTools
             doc: "",
             access: [APrivate,AOverride]
         }
+    }
+
+    static function getSetterTemplateForSuperProperty( setterName:String, ct:ComplexType ) {
+        return (macro class OurField{
+            override function $setterName( val:$ct ):$ct {
+                // First time to set.
+                super.$setterName(val);
+                // Second time for return value.
+                return super.$setterName(val);
+            }
+        }).fields[0];
     }
 
     static function processAttributes(node:dtx.DOMNode)
@@ -1096,7 +1114,24 @@ class WidgetTools
             {
                 varName.getField().getSetter().addLinesToFunction(expr, 1);
             }
-            else error('Field $varName not found in ${Context.getLocalClass()}', BuildTools.currentPos() );
+            else
+            {
+                switch varName.getFieldFromSuperClass() {
+                    case Some(field):
+                        if (field.kind.match(FVar(_,AccCall))) {
+                            var setterName = 'set_$varName';
+                            var type = BuildTools.replaceSuperTypeParamsWithImplementation( field.type );
+                            var ct = type.toComplex();
+                            var setterTemplate = getSetterTemplateForSuperProperty( setterName,ct );
+                            var setterFn = BuildTools.getOrCreateField(setterTemplate);
+                            BuildTools.addLinesToFunction(setterFn, expr, 1);
+                        }
+                        else
+                            error('Field $varName on superclass must be a property with a setter.', BuildTools.currentPos() );
+                    case None:
+                        error('Field $varName not found in ${Context.getLocalClass()}', BuildTools.currentPos() );
+                }
+            }
         }
     }
 
@@ -1231,10 +1266,15 @@ class WidgetTools
                                         if ( leftMostVarName.fieldExists() )
                                             variablesInside.push( ExtractedVarType.Field(leftMostVarName) );
                                         else {
-                                            var localClass = Context.getLocalClass();
-                                            var printer = new Printer("  ");
-                                            var partString = printer.printExpr(part);
-                                            error('In the Detox template for $localClass, in the expression `$partString`, variable "$leftMostVarName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                            switch leftMostVarName.getFieldFromSuperClass() {
+                                                case Some(field):
+                                                    variablesInside.push( ExtractedVarType.Field(leftMostVarName) );
+                                                case None:
+                                                    var localClass = Context.getLocalClass();
+                                                    var printer = new Printer("  ");
+                                                    var partString = printer.printExpr(part);
+                                                    error('In the Detox template for $localClass, in the expression `$partString`, variable "$leftMostVarName" could not be found.  Variables used in complex expressions inside the template must be explicitly declared.', localClass.get().pos);
+                                            }
                                         }
                                     }
                                 case ECall(e, params):

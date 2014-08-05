@@ -19,6 +19,7 @@ class WidgetLoop<T, W:KeepWidget> extends Loop<T>
 {
 	var widgetClass:Class<W>;
 	var propName:String;
+	var constructorArgs:Array<Widget>;
 	public var autoMapData:Bool;
 
 	public function new(widgetClass:Class<W>, ?propName:String = null, ?autoMapData = false)
@@ -27,12 +28,13 @@ class WidgetLoop<T, W:KeepWidget> extends Loop<T>
 		this.widgetClass = widgetClass;
 		this.propName = propName;
 		this.autoMapData = autoMapData;
+		this.constructorArgs = [];
 	}
 
 	override function generateItem(input:T):WidgetLoopItem<T, W>
 	{
 		// Create a new instance of [widgetClass]
-		var w:W = Type.createInstance(widgetClass, []);
+		var w:W = Type.createInstance(widgetClass, constructorArgs);
 
 		// Set the property or the map of properties
 		if (propName != null)

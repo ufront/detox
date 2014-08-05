@@ -1,17 +1,18 @@
 /****
 * Copyright (c) 2013 Jason O'Neil
-* 
+*
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-* 
+*
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-* 
+*
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-* 
+*
 ****/
 
 package dtx.widget;
 
 import haxe.io.Path;
+import haxe.ds.Option;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Format;
@@ -25,8 +26,8 @@ using StringTools;
 using Lambda;
 using Detox;
 
-#if macro 
-class BuildTools 
+#if macro
+class BuildTools
 {
     static var fieldsForClass:Map<String, Array<Field>> = new Map();
 
@@ -35,15 +36,63 @@ class BuildTools
 
     /** Allow us to get a list of fields, but will keep a local copy, in case we make changes.  This way
     in an autobuild macro you can use BuildTools.getFields() over and over, and modify the array each time,
-    and finally use it as the return value of the build macro.  */
-    public static function getFields():Array<Field>
-    {
+    and finally use it as the return value of the build macro.
+
+    We also apply the `makeComplexTypeAbsolute` transformation to any ComplexTypes in the field signiature.
+    This makes it easier to reference the ComplexType from outside (for example, in a new TypeDefinition) and not have it break because the new definition doesn't share the same local imports.
+    */
+    public static function getFields():Array<Field> {
         var className = haxe.macro.Context.getLocalClass().toString();
         if (fieldsForClass.exists(className) == false)
         {
-            fieldsForClass.set(className, Context.getBuildFields());
+            var fields = [];
+            for ( field in Context.getBuildFields() ) {
+                var kind:FieldType = switch field.kind {
+                    case FVar(ct,e): FVar(makeComplexTypeAbsolute(ct),e);
+                    case FProp(get,set,ct,e): FProp(get,set,makeComplexTypeAbsolute(ct),e);
+                    case FFun(f): FFun({
+                        ret: makeComplexTypeAbsolute(f.ret),
+                        params: f.params,
+                        expr: f.expr,
+                        args: [
+                            for (arg in f.args) {
+                                value: arg.value,
+                                type: makeComplexTypeAbsolute(arg.type),
+                                opt: arg.opt,
+                                name: arg.name
+                            }
+                        ],
+                    });
+                }
+                field.kind = kind;
+                fields.push( field );
+            }
+            fieldsForClass.set(className, fields);
         }
         return fieldsForClass.get(className);
+    }
+
+    /**
+        Attempt to transform a ComplexType to use an absolute TypePath, so local imports are included in the CT.
+        This works by transforming the ComplexType into a Type, and then converting it back again.
+        If the operation fails, the original ComplexType is returned.
+    **/
+    public static function makeComplexTypeAbsolute( ct:ComplexType ):ComplexType
+    {
+        if (ct==null) return null;
+        switch ct.toType() {
+            case Success(type): return type.toComplex();
+            case Failure(err): return ct;
+        }
+    }
+
+    /**
+        While a class is being built, it's ClassType has an empty fields array.
+        This returns an Iterable (read-only) on any fields which may (or may not be) cached from calling `BuildTools.getFields()`.
+        This allows you to retrieve a copy of the fields that are half way through building.
+    **/
+    public static function getFieldsForClass( className:String ):Iterable<Field> {
+        return fieldsForClass.exists(className) ? fieldsForClass.get(className) : [];
     }
 
     /** See if a field with the given name exists */
@@ -56,6 +105,20 @@ class BuildTools
     public static function getField(name:String)
     {
         return getFields().filter(function (f) { return f.name == name; })[0];
+    }
+
+    /** Return a field, assuming it already exists */
+    public static function getFieldFromSuperClass(name:String):Option<ClassField>
+    {
+        var superClass = Context.getLocalClass().get().superClass;
+        while ( superClass!=null ) {
+            var cls = superClass.t.get();
+            for ( f in cls.fields.get() ) {
+                if ( f.name==name ) return Some( f );
+            }
+            superClass = cls.superClass;
+        }
+        return None;
     }
 
     /** Get the fully qualified name for a type, or null if not found */
@@ -104,33 +167,33 @@ class BuildTools
         Sys.println("----------------------------------");
     }
 
-    /** Return a setter from a field.  
+    /** Return a setter from a field.
 
     If it is a FProp, it returns the existing setter, or creates one if it did not have a setter already.
 
     If it is a FVar, it will transform it into FProp(default,set) to create the setter and return it.
 
-    If it is a FFun
+    If it is a FFun it will throw an error.
     */
     public static function getSetter(field:Field)
     {
         switch (field.kind)
         {
-            case FieldType.FProp(_, _, t, _) | FieldType.FVar(t,_): 
+            case FieldType.FProp(_, _, t, _) | FieldType.FVar(t,_):
                 return getOrCreateProperty(field.name, t, false, true).setter;
-            case FieldType.FFun(_): 
+            case FieldType.FFun(_):
                 throw "Was expecting " + field.name + " to be a var or property, but it was a function.";
                 return null;
         }
     }
 
-    public static function hasClassMetadata(dataName:String, recursive=false, ?cl:Ref<ClassType>):Bool 
+    public static function hasClassMetadata(dataName:String, recursive=false, ?cl:Ref<ClassType>):Bool
     {
         var p = currentPos();                           // Position where the original Widget class is declared
         var localClass = (cl == null) ? haxe.macro.Context.getLocalClass() : cl;    // Class that is being declared, or class that is passed in
         var meta = localClass.get().meta;                       // Metadata of the this class
-        
-        if (meta.has(dataName)) 
+
+        if (meta.has(dataName))
             return true;
         else if (recursive)
         {
@@ -150,7 +213,7 @@ class BuildTools
         var array = getClassMetadata_ArrayOfStrings(dataName, recursive, cl);
         return (array != null && array.length > 0) ? array[0] : null;
     }
-    
+
     /** Searches the metadata for the current class - expects to find one or more strings @dataName("my string", "2nd string"), returns empty array in none found.  Generates an error if one was found but it was the wrong type. Can search recursively up the super-classes if 'recursive' is true */
     public static function getClassMetadata_ArrayOfStrings(dataName:String, recursive=false, ?cl:Ref<ClassType>):Array<String>
     {
@@ -167,19 +230,19 @@ class BuildTools
                     if (metadataItem.params.length == 0) Context.error("Metadata " + dataName + "() exists, but was empty.", p);
                     for (targetMetaData in metadataItem.params)
                     {
-                        switch( targetMetaData.expr ) 
+                        switch( targetMetaData.expr )
                         {
                             case EConst(c):
-                                switch(c) 
+                                switch(c)
                                 {
-                                    case CString(str): 
+                                    case CString(str):
                                         result.push(str);
-                                    default: 
+                                    default:
                                         Context.error("Metadata for " + dataName + "() existed, but was not a constant String.", p);
                                 }
-                            default: 
+                            default:
                                 Context.error("Metadata for " + dataName + "() existed, but was not a constant String.", p);
-                        } 
+                        }
                     }
                 }
             }
@@ -216,10 +279,10 @@ class BuildTools
         }
     }
 
-    /** Gets an existing (or creates a new) property on the class, with the given name and type.  Optionally can set a setter or 
-    a getter.  
+    /** Gets an existing (or creates a new) property on the class, with the given name and type.  Optionally can set a setter or
+    a getter.
 
-    If the property already exists and was explicitly typed, it will not be changed. 
+    If the property already exists and was explicitly typed, it will not be changed.
 
     If the property already exists and is a FVar, it will be transformed into a FProp
 
@@ -229,7 +292,7 @@ class BuildTools
     public static function getOrCreateProperty(propertyName:String, propertyType:ComplexType, useGetter:Bool, useSetter:Bool):{ property:Field, getter:Field, setter:Field }
     {
         var p = currentPos();                           // Position where the original Widget class is declared
-        
+
         var getterString = (useGetter) ? "get_" + propertyName : "default";
         var setterString = (useSetter) ? "set_" + propertyName : "default";
         var variableRef = propertyName.resolve();
@@ -269,7 +332,7 @@ class BuildTools
         {
             var getterBody = macro {
                 // Just return the current value... If they want to add lines to this function later then they can.
-                return $variableRef; 
+                return $variableRef;
             };
             getter = getOrCreateField({
                 pos: p,
@@ -291,8 +354,8 @@ class BuildTools
         if (useSetter)
         {
             var setterBody = macro {
-                $variableRef = v; 
-                return v; 
+                $variableRef = v;
+                return v;
             };
             setter = getOrCreateField({
                 pos: p,
@@ -345,7 +408,7 @@ class BuildTools
         {
             case FFun(f):
                 fn = f;
-            default: 
+            default:
                 Context.error("addLinesToFunction was sent a field that is not a function.", currentPos());
         }
 
@@ -358,7 +421,7 @@ class BuildTools
             default:
                 Context.error("addLinesToFunction was expecting an EBlock as the function body, but got something else.", currentPos());
         }
-        
+
         addLinesToBlock(body, lines, whereToAdd);
     }
 
@@ -394,23 +457,23 @@ class BuildTools
     {
         var parts = [];
         var getIdent:Expr->Void = null;
-        getIdent = function (e) { 
-            switch(e.expr) { 
-                case EConst(CIdent(s)): 
+        getIdent = function (e) {
+            switch(e.expr) {
+                case EConst(CIdent(s)):
                     // If first letter is capital, it's a Type. If not, it's an ident. Only add idents
-                    if ( s.charAt(0) != s.charAt(0).toUpperCase() ) 
-                        if ( s!="null" && s!="true" && s!="false" ) 
+                    if ( s.charAt(0) != s.charAt(0).toUpperCase() )
+                        if ( s!="null" && s!="true" && s!="false" )
                             parts.push(s);
-                case _: 
-                    e.iter(getIdent); 
+                case _:
+                    e.iter(getIdent);
             }
         }
         getIdent(expr);
         return parts;
     }
 
-    /** 
-        Given a list of idents, generate a `(ident1!=null && ident2!=null)` type expression.  
+    /**
+        Given a list of idents, generate a `(ident1!=null && ident2!=null)` type expression.
         If there are no idents, it will return `true` as an expression so you can still safely use it.
     **/
     public static function generateNullCheckForIdents( idents:Array<String> ) {
@@ -447,7 +510,7 @@ class BuildTools
         return expr;
     }
 
-    /** 
+    /**
         Given an expression, null check all idents / field access.
 
         For example, the expression `result.name.first` will generate `result!=null && result.name!=null && result.name.first!=null`
@@ -582,7 +645,148 @@ class BuildTools
         return parts;
     }
 
-    /** Reads a file, relative either to the project class paths, or relative to a specific class.  It will try an absolute path 
+    /**
+        Fake the local variable context for a class.
+        This is useful when use in combination with `tink.MacroApi.typeOf()` which tries to infer the type of an expression and allows you to mock the context.
+        Please note methods from super classes are not included, only variables and properties.
+    **/
+    public static function fakeVariablesContextForLocalClass():Array<{ name:String, type:ComplexType, expr:Expr }>
+    {
+        var variablesInContext = [];
+        for ( field in BuildTools.getFields() ) {
+            switch (field.kind) {
+                case FVar(ct,_), FProp(_,_,ct,_):
+                    variablesInContext.push({ name: field.name, type: ct, expr: null });
+                case _:
+            }
+        }
+        // Also fetch member variables from super classes, up until (but not including) the Widget class...
+        /*This code using tink_macros feels much shorter than what we used below, but doesn't substitute type parameters...
+        for ( field in Context.getLocalType().getFields().sure() ) {
+            if ( variablesInContext.exists(function(obj) return obj.name==field.name)==false ) {
+                var ct = field.type.toComplex();
+                variablesInContext.push({ name: field.name, type: ct, expr: null });
+            }
+        }*/
+        var cls = Context.getLocalClass().get();
+        var clsName = Context.getLocalClass().toString();
+        var typeParamSubstitutions:Array<Type> = [];
+        while (cls!=null) {
+            function subtituteParam( type:Type ):Type {
+                for (i in 0...typeParamSubstitutions.length) {
+                    if ( Context.unify(cls.params[i].t,type) ) {
+                        return typeParamSubstitutions[i];
+                    }
+                }
+                // TODO: Do we need to recurse here, for example into Array<T> or Void<T>?
+                return type;
+            }
+            for ( field in cls.fields.get() ) {
+                if ( field.kind.match(FMethod(_)) )
+                    continue;
+                var fieldType = subtituteParam( field.type );
+                // We need to check if the type of this variable is currently being built, and mock the fields if so.
+                fieldType = mockTypeIfItIsMidBuild( fieldType );
+                var fieldCT = Context.toComplexType( fieldType );
+                // Only add fields that weren't already in our context from a child class.
+                if ( variablesInContext.filter(function(v) return v.name==field.name).length==0 )
+                    variablesInContext.push({ name: field.name, type: fieldCT, expr:null });
+            }
+            if ( cls.superClass!=null && cls.superClass.t.toString()!="dtx.widget.Widget" ) {
+                typeParamSubstitutions = cls.superClass.params;
+                clsName = cls.superClass.t.toString();
+                cls = cls.superClass.t.get();
+            }
+            else cls = null;
+        }
+        return variablesInContext;
+    }
+
+    /**
+        Substitute a type that is being built (and has no fields) for an object with similar looking fields.
+        While a type is being built, it's fields are inaccessible so if you try to force typing you will get `Type X has no field Y` errors.
+        This is a workaround.
+        This will only work if the class being built has called getFields() at some point.
+        Only works for classes (TInst) at the moment.
+        If no substitute is needed (the type had fields already, or no fields were found cached) then the original type is returned unchanged.
+    **/
+    public static function mockTypeIfItIsMidBuild( type:Type ):Type {
+        switch type {
+            case TInst( ref, params ):
+                var classType = ref.get();
+                if ( classType.fields.get().length==0 ) {
+                    var buildFields = getFieldsForClass(ref.toString());
+                    if ( Lambda.count(buildFields)>0 ) {
+                        var newName = classType.name+"__BuildMock";
+                        var fields = [];
+                        for ( origField in buildFields ) {
+                            if ( origField.name=="new" || origField.access.has(AStatic) || origField.access.has(APrivate) || origField.access.has(AMacro) )
+                                continue;
+
+                            // When we copy these fields, we used buildFields, so they should have signiatures with absolute type paths already.
+                            // However, any expressions in those fields might not, so let's create a copy of the field with no expressions.
+                            var newKind:FieldType = switch origField.kind {
+                                case FVar(t,_), FProp(_,_,t,_):
+                                    FVar(t,null);
+                                case FFun(f):
+                                    FFun({
+                                        ret: f.ret,
+                                        params: f.params,
+                                        expr: null,
+                                        args: f.args
+                                    });
+                            }
+                            var newField = {
+                                pos: origField.pos,
+                                name: origField.name,
+                                meta: origField.meta,
+                                kind: newKind,
+                                doc: origField.doc,
+                                access: [APublic],
+                            }
+                            fields.push( newField );
+                        }
+                        Context.defineType({
+                            pos: classType.pos,
+                            params: [],
+                            pack: classType.pack,
+                            name: newName,
+                            meta: [],
+                            kind: TDStructure,
+                            isExtern: true,
+                            fields: fields
+                        });
+                        return Context.getType( newName );
+                    }
+                }
+            default:
+        }
+        return type;
+    }
+
+    /**
+        If the given type is a type parameter on a super class, replace it with the chosen parameter from the child class.
+    **/
+    public static function replaceSuperTypeParamsWithImplementation(type:Type):Type {
+        var localClass = Context.getLocalClass().get();
+        var superClass = localClass.superClass;
+        while ( superClass!=null ) {
+            var cls = superClass.t.get();
+            var superClassTypeParams = cls.params;
+            var subClassImplementationTypes = superClass.params;
+            var i = 0;
+            for ( typeParam in superClassTypeParams ) {
+                if ( ""+typeParam.t == ""+type ) {
+                    return subClassImplementationTypes[i];
+                }
+                i++;
+            }
+            superClass = cls.superClass;
+        }
+        return type;
+    }
+
+    /** Reads a file, relative either to the project class paths, or relative to a specific class.  It will try an absolute path
     first (testing against each of the class paths), and then a relative path, looking for files in the same package as the file the local class is declared in. */
     public static function loadFileFromLocalContext(filename:String):String
     {
@@ -617,7 +821,7 @@ class BuildTools
     **/
     public static function getFieldsFromAnonymousCT(ct:ComplexType):Array<Field> {
         switch (ct) {
-            case TAnonymous(fields): 
+            case TAnonymous(fields):
                 return fields;
             case _:
                 throw 'Was Expecting TAnonymous, but got something else: $ct';
@@ -625,9 +829,9 @@ class BuildTools
         }
     }
 
-    /** 
+    /**
     * Generate a function call
-    * Only tested with functions that are part of the same class so far... 
+    * Only tested with functions that are part of the same class so far...
     */
     public static function writeSimpleFunctionCall(fn:Field, arguments:Array<Expr>)
     {
