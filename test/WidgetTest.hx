@@ -9,29 +9,29 @@ using Detox;
 using StringTools;
 
 /**
-* Auto generated ExampleTest for MassiveUnit. 
-* This is an example test class can be used as a template for writing normal and async tests 
+* Auto generated ExampleTest for MassiveUnit.
+* This is an example test class can be used as a template for writing normal and async tests
 * Refer to munit command line tool for more information (haxelib run munit)
 */
-class WidgetTest 
+class WidgetTest
 {
-	
-	public function new() 
+
+	public function new()
 	{
 	}
-	
+
 	@BeforeClass
 	public function beforeClass():Void
 	{
 		// trace ("BeforeClass");
 	}
-	
+
 	@AfterClass
 	public function afterClass():Void
 	{
 		// trace ("AfterClass");
 	}
-	
+
 	@Before
 	public function setup():Void
 	{
@@ -44,7 +44,7 @@ class WidgetTest
 		</myxml>".parse();
 		Detox.setDocument(sampleDocument.getNode());
 	}
-	
+
 	@After
 	public function tearDown():Void
 	{
@@ -52,7 +52,7 @@ class WidgetTest
 	}
 
 	// @Test @TestDebug
-	// public function testWidgetTimes() 
+	// public function testWidgetTimes()
 	// {
 	// 	var html = "<p><b>Some Stufff</b> and <em>More stuff</em><!-- and even more --></p>";
 	// 	var iterations = 10000;
@@ -88,7 +88,7 @@ class WidgetTest
 	// 	});
 	// }
 
-	@Test 
+	@Test
 	public function createWidgetNonElement()
 	{
 		Widget.useCache = false;
@@ -102,7 +102,7 @@ class WidgetTest
 		Assert.areEqual(1, w2.length);
 	}
 
-	@Test 
+	@Test
 	public function createWidgetMultipleElements()
 	{
 		Widget.useCache = false;
@@ -120,7 +120,7 @@ class WidgetTest
 		Assert.areEqual(3, w.length);
 	}
 
-	@Test 
+	@Test
 	public function createWidgetFromSubClass()
 	{
 		Widget.useCache = false;
@@ -130,7 +130,7 @@ class WidgetTest
 		Assert.areEqual("<h1>Widget set by subclass</h1>", w.html());
 	}
 
-	@Test 
+	@Test
 	public function createWidgetFromMetadata()
 	{
 		var w = new widgets.WidgetSetByMetadata();
@@ -139,7 +139,7 @@ class WidgetTest
 		Assert.areEqual("<h1>Widget set by metadata</h1>", w.html());
 	}
 
-	@Test 
+	@Test
 	public function createWidgetFromMetadataFile()
 	{
 		var w = new widgets.WidgetSetByMetadataFile();
@@ -148,7 +148,7 @@ class WidgetTest
 		Assert.areEqual("<h1>Some Template File</h1>", w.html());
 	}
 
-	@Test 
+	@Test
 	public function createWidgetFromMetadataFileRelative()
 	{
 		var w = new widgets.WidgetSetByMetadataFileRelative();
@@ -157,7 +157,7 @@ class WidgetTest
 		Assert.areEqual("<h1>some other file</h1>", w.html());
 	}
 
-	@Test 
+	@Test
 	public function createWidgetFromDefaultFile()
 	{
 		var w = new widgets.WidgetSetByDefaultFile();
@@ -166,7 +166,7 @@ class WidgetTest
 		Assert.areEqual("<h1>Widget Set by Default File</h1>", w.html());
 	}
 
-	@Test 
+	@Test
 	public function parseTagWithDtxNamespace()
 	{
 		// Only allow these features (partials) through the use of macros
@@ -180,7 +180,7 @@ class WidgetTest
 		Assert.areEqual("<doc><header><title>Test Partial</title></header><section><h1>Header</h1><p>Paragraph</p></section></doc>", w2.html());
 	}
 
-	@Test 
+	@Test
 	public function parseTagWithUnderscore()
 	{
 		// Test that the macro XML parser won't spew on a "<_SomeThing />"
@@ -191,7 +191,7 @@ class WidgetTest
 		Assert.areEqual("<p>This is the underscore widget</p>", w2.html());
 	}
 
-	@Test 
+	@Test
 	public function generatePartialWithinFile()
 	{
 		var w = new widgets.PartialInSameFile1();
@@ -204,11 +204,11 @@ class WidgetTest
 		Assert.areEqual(1, w.getNode().children().length); // children of <doc>
 
 		// Check that the class is generated
-		var p = new widgets.PartialInSameFile1_BodyPartial();
+		var p = new widgets.PartialInSameFile1_BodyPartial( w );
 		Assert.areEqual("<section><h1>Header</h1><p>Paragraph</p></section>", p.html());
 	}
 
-	@Test 
+	@Test
 	public function includePartialInSameFile()
 	{
 		var w = new widgets.PartialInSameFile2();
@@ -225,7 +225,7 @@ class WidgetTest
 		Assert.areEqual("p", w.getNode(0).children().getNode(1).children().getNode(1).tagName());
 	}
 
-	@Test 
+	@Test
 	public function includePartialInSamePackage()
 	{
 		var w = new widgets.PartialInSamePackageLayout();
@@ -233,7 +233,7 @@ class WidgetTest
 		Assert.areEqual("<doc><header><title>Test Partial</title></header><section><h1>Header</h1><p>Paragraph</p></section></doc>", w.html());
 	}
 
-	@Test 
+	@Test
 	public function includePartialThatIsIncluded()
 	{
 		var w = new widgets.PartialThatIsIncludedLayout();
@@ -242,11 +242,11 @@ class WidgetTest
 		Assert.areEqual("<doc><header><title>Test Partial</title></header><section><h1>Header</h1><p>Paragraph</p><p>In <code>testpackage</code> package</p></section></doc>", w.html());
 	}
 
-	/* 
+	/*
 	* For now I'm leaving this as unsupported.
 	* To use a partial from another package, you must run "include" on the class.
 	*/
-	// @Test 
+	// @Test
 	// public function includePartialFromFullyQualifiedName()
 	// {
 	// 	var w = new widgets.PartialFromQualifiedName();
@@ -255,14 +255,14 @@ class WidgetTest
 	// 	Assert.areEqual("...", w.html());
 	// }
 
-	@Test 
+	@Test
 	public function includePartialMultipleTimes()
 	{
 		var w = new widgets.PartialInSameFile3();
 
 		Assert.areEqual( "doc", w.getNode(0).tagName() );
 		Assert.areEqual( 4, w.find("section").children().length );
-		
+
 		// Check that it has come through twice
 		var btn1 = w.find("section").children().getNode(2);
 		var btn2 = w.find("section").children().getNode(3);
@@ -276,10 +276,10 @@ class WidgetTest
 		Assert.areEqual( "Button", btn2.innerHTML() );
 	}
 
-	@Test 
+	@Test
 	public function callInlinePartialFromCode()
 	{
-		var w = new widgets.PartialInSameFile3_Button();
+		var w = new widgets.PartialInSameFile3_Button( null );
 
 		// See if it matches _Button from that class...
 		Assert.areEqual( "a", w.tagName() );
@@ -288,11 +288,11 @@ class WidgetTest
 		Assert.areEqual( "Button", w.innerHTML() );
 	}
 
-	@Test 
+	@Test
 	public function includePartialThenReplaceViaWidgetProperty()
 	{
 		var w = new widgets.PartialInSameFile2();
-		var p = new widgets.PartialInSameFile2_BodyPartial();
+		var p = new widgets.PartialInSameFile2_BodyPartial( w );
 		p.find("h1").setText("New Partial");
 		w.partial_1 = p;
 
@@ -300,7 +300,7 @@ class WidgetTest
 		Assert.areEqual("<doc><header><title>Test Partial</title></header><section><h1>New Partial</h1><p>Paragraph</p></section></doc>", w.html());
 	}
 
-	@Test 
+	@Test
 	public function namedElements()
 	{
 		var w = new widgets.WidgetWithNamedElements();
@@ -315,7 +315,7 @@ class WidgetTest
 		Assert.areEqual("The <b>Body!</b>", w.body.innerHTML());
 	}
 
-	@Test 
+	@Test
 	public function topLevelNamedElements()
 	{
 		var w = new widgets.WidgetWithNamedElements.TopLevelNamedElements2();
@@ -330,7 +330,7 @@ class WidgetTest
 		Assert.areEqual("2", w.div.text());
 	}
 
-	@Test 
+	@Test
 	public function namedElementsClash1()
 	{
 		var div = "div".create();
@@ -348,7 +348,7 @@ class WidgetTest
 		Assert.areEqual("2", w2.paragraph.text());
 	}
 
-	@Test 
+	@Test
 	public function namedElementsClash2()
 	{
 		var div = "div".create();
@@ -372,7 +372,7 @@ class WidgetTest
 		Assert.areEqual("4", w2.div.text());
 	}
 
-	@Test 
+	@Test
 	public function initTest()
 	{
 		var w = new widgets.Init();
@@ -382,7 +382,7 @@ class WidgetTest
 		Assert.areNotEqual(-1, w.html().indexOf("Some Content"));
 	}
 
-	@Test 
+	@Test
 	public function noTplTest()
 	{
 		var w = new widgets.NoTplWidget();
@@ -391,7 +391,7 @@ class WidgetTest
 		Assert.areEqual(0, w.length);
 	}
 
-	@Test 
+	@Test
 	public function includeNamedPartial()
 	{
 		var w = new widgets.PartialInSameFile4();
@@ -400,7 +400,7 @@ class WidgetTest
 		Assert.areEqual("btn1btn2", w.find("a").text());
 	}
 
-	@Test 
+	@Test
 	public function partialSetParameters()
 	{
 		var w = new widgets.PartialInSameFile5();
@@ -421,13 +421,13 @@ class WidgetTest
 		Assert.areEqual("This person is an adult: true", w.profile1.find("p").text());
 
 		w.person = { id:1, name:"David", over18:false }
-		
+
 		Assert.areEqual("David", w.profile2.find("h2").text());
 		Assert.areEqual("1", w.profile2.attr("id"));
 		Assert.areEqual("This person is an adult: false", w.profile2.find("p").text());
 
 		w.person = { id:2, name:"Michael", over18:true }
-		
+
 		Assert.areEqual("Michael", w.profile2.find("h2").text());
 		Assert.areEqual("2", w.profile2.attr("id"));
 		Assert.areEqual("This person is an adult: true", w.profile2.find("p").text());
@@ -436,14 +436,14 @@ class WidgetTest
 	@Test
 	public function testPartialCasePreserves()
 	{
-		// When we read a partial, we call "innerHTML" on the partial declaration.  
+		// When we read a partial, we call "innerHTML" on the partial declaration.
 		// Printing the HTML for this section would usually force all tag names to lower case, which can break our partial names.
 		// This tests a widget where this issue would arise.
 		var w = new widgets.PartialInSameFile6();
 		Assert.areEqual('<doc><form><a href="#">Click!</a><a href="#">Click!</a></form></doc>', w.html());
 	}
 
-	@Test 
+	@Test
 	public function interpolationNotSetStrings()
 	{
 		var w = new widgets.Interpolation.InterpolationBasic();
@@ -453,7 +453,7 @@ class WidgetTest
 		Assert.areEqual("My name is , I am  years old and I believe in ", w.text());
 	}
 
-	@Test 
+	@Test
 	public function interpolationNotSetButWithInitialization()
 	{
 		var w = new widgets.Interpolation.InterpolationWithInitialisation();
@@ -463,7 +463,7 @@ class WidgetTest
 		Assert.areEqual("My name is Jason, I am 26 years old and it is true that I am tall", w.text());
 	}
 
-	@Test 
+	@Test
 	public function interpolationNotSetOtherTypes()
 	{
 		var w = new widgets.Interpolation.InterpolationDifferentTypes();
@@ -475,7 +475,7 @@ class WidgetTest
 		Assert.areEqual(false, w.wasTruth);
 	}
 
-	@Test 
+	@Test
 	public function interpolationSetStrings()
 	{
 		var w = new widgets.Interpolation.InterpolationBasic();
@@ -486,7 +486,7 @@ class WidgetTest
 		Assert.areEqual("This is about Jason", w.attr('title'));
 	}
 
-	@Test 
+	@Test
 	public function interpolationSetOtherTypes()
 	{
 		var w = new widgets.Interpolation.InterpolationDifferentTypes();
@@ -498,11 +498,11 @@ class WidgetTest
 		w.wasTruth = true;
 
 		// Slightly different date.toString() output...
-		#if js 
+		#if js
 			Assert.areEqual("My name is Jason, I am 25 years old, my birthday is Fri Oct 16 1987 00:00:00 GMT+0800 (WST) and I have these pets: [Cuddles,Theodore]. My favourite number is 3.14, and the statement I just made was true", w.text());
-		#else 
+		#else
 			Assert.areEqual("My name is Jason, I am 25 years old, my birthday is 1987-10-16 00:00:00 and I have these pets: [Cuddles,Theodore]. My favourite number is 3.14, and the statement I just made was true", w.text());
-		#end 
+		#end
 	}
 
 	@Test
@@ -517,14 +517,14 @@ class WidgetTest
 		Assert.areEqual("My name is Jason, I am 5 years old and I believe in getting younger", w.text());
 	}
 
-	@Test 
+	@Test
 	public function interpolationNonVariableExpression()
 	{
 		var w = new widgets.Interpolation.InterpolationNonVarExpr();
 		Assert.areEqual("The SHA of 8 is fe5dbbcea5ce7e2988b8c69bcfdfde8904aabc1f", w.text());
 	}
 
-	@Test 
+	@Test
 	public function interpolationComplexExpression()
 	{
 		var w = new widgets.Interpolation.InterpolationComplexExpr();
@@ -544,7 +544,7 @@ class WidgetTest
 		Assert.areEqual("Sum = 3", w.text());
 	}
 
-	@Test 
+	@Test
 	public function interpolationOutsideFunction()
 	{
 		var w = new widgets.Interpolation.InterpolationOutsideFunction();
@@ -592,7 +592,7 @@ class WidgetTest
 		Assert.areEqual("Your encoded email address is [jason.oneil%40example.com]", w.text());
 	}
 
-	@Test 
+	@Test
 	public function showHideBoolAttributes()
 	{
 		var w = new widgets.BoolAttributes.ShowHideBasic();
@@ -626,7 +626,7 @@ class WidgetTest
 		Assert.isTrue( isHidden(w.hideIfSomeString) );
 	}
 
-	@Test 
+	@Test
 	@:access( widgets.WidgetWithHtmlEncoding )
 	public function htmlCharacterEncodings()
 	{
@@ -635,7 +635,7 @@ class WidgetTest
 		Assert.areEqual(expected, w.get_template());
 	}
 
-	@Test 
+	@Test
 	public function interpolationWithPrintFields()
 	{
 		var w = new widgets.Interpolation.InterpolationWithPrintFields();
@@ -649,7 +649,7 @@ class WidgetTest
 		Assert.areEqual("My name is Anna, I am 23 years old and I am not tall", w.text());
 	}
 
-	@Test 
+	@Test
 	public function interpolationWithPrintFieldsComplex()
 	{
 		var w = new widgets.Interpolation.InterpolationWithPrintFieldsComplex();
@@ -671,7 +671,7 @@ class WidgetTest
 		#end
 	}
 
-	@Test 
+	@Test
 	public function widgetLoopsDefinedPartial()
 	{
 		var w = new widgets.LoopsInWidget.LoopInlineArrayWithImportedPartial();
@@ -684,7 +684,7 @@ class WidgetTest
 		Assert.areEqual("Defined 5", items.eq(4).text());
 	}
 
-	@Test 
+	@Test
 	public function widgetLoopsRelativePartial()
 	{
 		var w = new widgets.LoopsInWidget.LoopInlineArrayWithRelativePartial();
@@ -697,7 +697,7 @@ class WidgetTest
 		Assert.areEqual("Relative 5", items.eq(4).text());
 	}
 
-	@Test 
+	@Test
 	public function widgetLoopsInlinePartial()
 	{
 		var w = new widgets.LoopsInWidget.LoopInlineArrayWithInlinePartial();
@@ -719,12 +719,12 @@ class WidgetTest
 		Assert.areEqual("Inline Named Jason", items.eq(0).text());
 		Assert.areEqual("Inline Named Clare", items.eq(1).text());
 		Assert.areEqual("Inline Named Aaron", items.eq(2).text());
-		
+
 		w.myLoop.addItem("Michael");
 		var items = w.find("li");
 		Assert.areEqual(4, items.length);
 		Assert.areEqual("Inline Named Michael", items.eq(3).text());
-		
+
 		w.myLoop.setList(["Haxe","Detox","Ufront"]);
 		var items = w.find("li");
 		Assert.areEqual(3, items.length);
@@ -733,7 +733,7 @@ class WidgetTest
 		Assert.areEqual("Inline Named Ufront", items.eq(2).text());
 	}
 
-	@Test 
+	@Test
 	public function widgetLoopFromMemberVariable()
 	{
 		var w = new widgets.LoopsInWidget.LoopFromMemberVariable();
@@ -750,7 +750,7 @@ class WidgetTest
 		Assert.areEqual("Member Iter 0.4", items.eq(1).text());
 	}
 
-	@Test 
+	@Test
 	public function widgetLoopFromComplexExpr()
 	{
 		var w = new widgets.LoopsInWidget.LoopFromComplexExpr();
@@ -773,7 +773,7 @@ class WidgetTest
 		Assert.areEqual("Complex Iter Expr 8", items.eq(4).text());
 	}
 
-	@Test 
+	@Test
 	public function widgetLoopsUsingIterator()
 	{
 		var w = new widgets.LoopsInWidget.LoopUsingInlineIterator();

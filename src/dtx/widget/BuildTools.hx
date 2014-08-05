@@ -173,7 +173,7 @@ class BuildTools
 
     If it is a FVar, it will transform it into FProp(default,set) to create the setter and return it.
 
-    If it is a FFun it will throw an error.
+    If it is a FFun it will return null.
     */
     public static function getSetter(field:Field)
     {
@@ -182,7 +182,6 @@ class BuildTools
             case FieldType.FProp(_, _, t, _) | FieldType.FVar(t,_):
                 return getOrCreateProperty(field.name, t, false, true).setter;
             case FieldType.FFun(_):
-                throw "Was expecting " + field.name + " to be a var or property, but it was a function.";
                 return null;
         }
     }

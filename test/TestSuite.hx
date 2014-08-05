@@ -1,21 +1,21 @@
 import massive.munit.TestSuite;
 
+import AnimationTest;
+import CollectionAnimationTest;
+import ElementManipulationTest;
+import StyleTest;
+import CollectionStyleTest;
+import TraversingTest;
+import DOMManipulationTest;
+import CollectionEventManagementTest;
+import LoopTest;
+import EventManagementTest;
+import CollectionElementManipulationTest;
 import CollectionTraversingTest;
 import ToolsTest;
-import CollectionStyleTest;
-import ElementManipulationTest;
-import CollectionElementManipulationTest;
 import CollectionTest;
-import CollectionEventManagementTest;
-import StyleTest;
-import WidgetTest;
-import DOMManipulationTest;
 import CollectionDOMManipulationTest;
-import TraversingTest;
-import CollectionAnimationTest;
-import EventManagementTest;
-import LoopTest;
-import AnimationTest;
+import WidgetTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -29,21 +29,21 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
+		add(AnimationTest);
+		add(CollectionAnimationTest);
+		add(ElementManipulationTest);
+		add(StyleTest);
+		add(CollectionStyleTest);
+		add(TraversingTest);
+		add(DOMManipulationTest);
+		add(CollectionEventManagementTest);
+		add(LoopTest);
+		add(EventManagementTest);
+		add(CollectionElementManipulationTest);
 		add(CollectionTraversingTest);
 		add(ToolsTest);
-		add(CollectionStyleTest);
-		add(ElementManipulationTest);
-		add(CollectionElementManipulationTest);
 		add(CollectionTest);
-		add(CollectionEventManagementTest);
-		add(StyleTest);
-		add(WidgetTest);
-		add(DOMManipulationTest);
 		add(CollectionDOMManipulationTest);
-		add(TraversingTest);
-		add(CollectionAnimationTest);
-		add(EventManagementTest);
-		add(LoopTest);
-		add(AnimationTest);
+		add(WidgetTest);
 	}
 }

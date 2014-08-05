@@ -1112,18 +1112,14 @@ class WidgetTools
 
     static function addExprToAllSetters(expr:Expr, variables:Array<String>, ?prepend)
     {
-        if (variables.length == 0)
-        {
-            // Add it to the init() function instead instead
-            var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
-            BuildTools.addLinesToFunction(initFn, expr);
-        }
-        else for (varName in variables)
+        for (varName in variables)
         {
             // Add bindingExpr to every setter.  Add at position `1`, so after the first line, which should be 'this.field = v;'
             if (varName.fieldExists())
             {
-                varName.getField().getSetter().addLinesToFunction(expr, 1);
+                var setter = varName.getField().getSetter();
+                if (setter!=null)
+                    setter.addLinesToFunction(expr, 1);
             }
             else
             {
@@ -1140,9 +1136,17 @@ class WidgetTools
                         else
                             error('Field $varName on superclass must be a property with a setter.', BuildTools.currentPos() );
                     case None:
-                        error('Field $varName not found in ${Context.getLocalClass()}', BuildTools.currentPos() );
+                        // It might be an identifier from the local context, or from an import, or a type name etc.
+                        // Remove it from the list, so that if no other setters are found it will set during `init()`.
+                        /*variables.remove(varName);*/
                 }
             }
+        }
+        if (variables.length==0)
+        {
+            // Add it to the init() function instead
+            var initFn = BuildTools.getOrCreateField(getInitFnTemplate());
+            BuildTools.addLinesToFunction(initFn, expr);
         }
     }
 
@@ -1157,6 +1161,8 @@ class WidgetTools
         for (varName in variables)
         {
             var field = varName.getField();
+            if ( field==null )
+                continue;
             switch (field.kind)
             {
                 case FProp(get,set,type,e):
