@@ -1,12 +1,12 @@
 /****
 * Copyright (c) 2013 Jason O'Neil
-* 
+*
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-* 
+*
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-* 
+*
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-* 
+*
 ****/
 
 package dtx;
@@ -25,7 +25,7 @@ using StringTools;
 
 	A typedef alias `Detox` exists, pointing to this class, so that you can write `using Detox` to enable static extension on all of these methods.
 **/
-class Tools 
+class Tools
 {
 	/**
 		A reference to the `document` element or node to be used as a global.
@@ -39,20 +39,20 @@ class Tools
 		On other platforms, the default value will be `Xml.parse("<html></html>")`.
 	**/
 	public static var document(get_document,null):DocumentOrElement;
-	
+
 	static function get_document():DocumentOrElement {
 		if (document == null) {
-			#if js 
+			#if js
 				// Sensible default: window.document in JS
 				document = untyped __js__("document");
-			#else 
+			#else
 				document = Xml.parse("<html></html>");
 			#end
 		}
 		return document;
 	}
 
-	#if js 
+	#if js
 		/**
 			Available on Javascript only, this is a shortcut for `document.body`.
 		**/
@@ -62,7 +62,7 @@ class Tools
 		/**
 			Available on Javascript only, this is a shortcut for `window`.
 		**/
-		public static var window(get_window,null):DOMWindow; 
+		public static var window(get_window,null):DOMWindow;
 		static inline function get_window():DOMWindow return untyped __js__("window");
 	#end
 
@@ -89,7 +89,7 @@ class Tools
 	public static function find(selector:String):DOMCollection
 	{
 		return dtx.single.Traversing.find(document, selector);
-	} 
+	}
 
 	/**
 		Create a new element with the given tag name.
@@ -110,7 +110,7 @@ class Tools
 				// Haxe doesn't validate the name, so we should.
 				// I'm going to use a simplified (but not entirely accurate) validation.  See:
 				// http://stackoverflow.com/questions/3158274/what-would-be-a-regex-for-valid-xml-names
-				
+
 				// If it is valid, create, if it's not, return null
 				var valid = ~/^[a-zA-Z_:]([a-zA-Z0-9_:\.])*$/;
 				elm = (valid.match(tagName)) ? Xml.createElement(tagName) : null;
@@ -120,7 +120,7 @@ class Tools
 	}
 
 	static var firstTag:EReg = ~/<([a-z]+)[ \/>]/;
-	
+
 	/**
 		Parse a given Xml string and return a DOMCollection.
 
@@ -129,12 +129,12 @@ class Tools
 		If there was an error parsing the xml, the resulting DOMCollection will be empty and no error will be given.
 
 		This is implemented by creating a parent element and calling `parent.setInnerHTML(xml)`.
-		This means that the collection does not contain a document node, but rather all the nodes in your fragment.  
+		This means that the collection does not contain a document node, but rather all the nodes in your fragment.
 		For example `var collection = "<p>Para</p> Text Node <div>Div</div>".parse()` would result in `collection.length==3`.
 		On Javascript, care is taken to make sure the parent tag is correct for whatever HTML you are parsing, as there are rules about which child tags can belong to certain parent tags.
 
 		On Javascript, the browsers built in HTML/Xml parser is used via `setInnerHTML`.
-		On other targets, either `Xml.parse` or `haxe.xml.Parser.parse` is used, depending on the platform and if the string has an ampersand.  
+		On other targets, either `Xml.parse` or `haxe.xml.Parser.parse` is used, depending on the platform and if the string has an ampersand.
 		(Note: `haxe.xml.Parser.parse()` handles HTML entities slightly better than `Xml.parse()`.)
 
 		@param xml The XML or HTML string to parse.  On Javascript the browser is fairly tolerant of both Xml and Html, and invalid code also.  On other platforms it must be valid Xml.
@@ -145,11 +145,11 @@ class Tools
 		var q:DOMCollection;
 		if (xml != null && xml != "")
 		{
-			#if js 
+			#if js
 				var parentTag = "div";
 				if (firstTag.match(xml))
 				{
-					// It begins with a 
+					// It begins with a
 					var tagName = firstTag.matched(1);
 					parentTag = switch(tagName) {
 						case "tbody": "table";
@@ -164,7 +164,7 @@ class Tools
 					};
 				}
 				var n:DOMNode = create(parentTag);
-			#else 
+			#else
 				var n:DOMNode = create("div");
 			#end
 
@@ -192,12 +192,12 @@ class Tools
 			}
 			#end
 		}
-		else 
+		else
 		{
 			q = new DOMCollection();
 		}
 		return q;
-	} 
+	}
 
 	/**
 		Set the `document` to be used as our global document, for `find()` etc to be based on.
@@ -233,14 +233,14 @@ class Tools
 	public static function toDetox(x:Xml):DOMCollection
 	{
 		return ( x!=null ) ? parse( x.toString() ) : new DOMCollection();
-	} 
-	
+	}
+
 	/**
 		Cast an EventTarget to a DOMNode.
 
 		If the event handler is of the wrong type, it returns null.
 
-		Usage: 
+		Usage:
 
 		```
 		var buttons = ".btn".find();
@@ -251,17 +251,17 @@ class Tools
 	public static function toNode(eventHandler:EventTarget):DOMNode
 	{
 		return (eventHandler!=null && Std.is(eventHandler,js.html.Node)) ? cast eventHandler : null;
-	} 
+	}
 
 	/**
 		Run a function once the DOM is ready.
-		
+
 		See the comments in the code for details on the implementation, but basically this is a highly minimized, fairly safe way to know that the DOM is ready to go, even before `window.load` has fired.
-		
+
 		If the DOM has already loaded when this is called, the function will call immediately.
-		
+
 		Usage: `Detox.ready( function() "p".find().setText("It's READY!") )`
-		
+
 		@param f function to call when DOM is ready.  If null, it will be ignored.
 	**/
 	public static function ready(f:Void->Void):Void

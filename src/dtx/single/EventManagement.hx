@@ -1,12 +1,12 @@
 /****
 * Copyright (c) 2013 Jason O'Neil
-* 
+*
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-* 
+*
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-* 
+*
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-* 
+*
 ****/
 
 package dtx.single;
@@ -38,7 +38,7 @@ class EventManagement
 	**/
 	public static inline function trigger(target:DOMNode, eventName:String):DOMNode
 	{
-		#if js 
+		#if js
 			if (target!=null && eventName!=null) Bean.fire(target, eventName);
 		#end
 		return target;
@@ -70,7 +70,7 @@ class EventManagement
 	**/
 	public static function on(target:DOMNode, eventType:String, ?selector:String, ?listener:EventListener):DOMNode
 	{
-		#if js 
+		#if js
 			if (target != null && eventType != null)
 			{
 				if (listener != null)
@@ -104,7 +104,7 @@ class EventManagement
 	**/
 	public static function off(target:DOMNode, ?eventType:String, ?listener:EventListener):DOMNode
 	{
-		#if js 
+		#if js
 			if (target != null)
 			{
 				if (eventType != null && listener != null) Bean.off(target, eventType, listener);
@@ -142,7 +142,7 @@ class EventManagement
 	**/
 	public static function one(target:DOMNode, eventType:String, ?selector:String, listener:EventListener):DOMNode
 	{
-		#if js 
+		#if js
 			if (target != null)
 			{
 				if (selector != null) Bean.one(target, eventType, selector, listener);
@@ -349,7 +349,7 @@ class EventManagement
 		// Just use the HTML5 standard for now.  Works in IE9+ and FF17+, probably not webkit/opera yet.
 		target.addEventListener("wheel", untyped listener);
 		return target;
-		
+
 		// Later, we can try implement this, which has good fallbacks
 		// https://developer.mozilla.org/en-US/docs/Mozilla_event_reference/wheel?redirectlocale=en-US&redirectslug=DOM%2FDOM_event_reference%2Fwheel
 	}

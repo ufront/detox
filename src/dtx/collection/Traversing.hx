@@ -1,12 +1,12 @@
 /****
 * Copyright (c) 2013 Jason O'Neil
-* 
+*
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-* 
+*
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-* 
+*
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-* 
+*
 ****/
 
 package dtx.collection;
@@ -155,7 +155,7 @@ class Traversing
 	static public function ancestors(collection:DOMCollection):DOMCollection
 	{
 		var ancestorList:DOMCollection = new DOMCollection();
-		
+
 		if (collection != null)
 		{
 			for (node in collection)
@@ -213,10 +213,10 @@ class Traversing
 			{
 				// Get the next sibling
 				var sibling = node.nextSibling;
-				
+
 				// If it's not null, but isn't an element, and we want an element,
 				// keep going.
-				while (sibling != null 
+				while (sibling != null
 					&& sibling.nodeType != dtx.DOMType.ELEMENT_NODE
 					&& elementsOnly )
 				{
@@ -249,7 +249,7 @@ class Traversing
 
 				// If it's not null, but isn't an element, and we want an element,
 				// keep going.
-				while (sibling != null  
+				while (sibling != null
 					&& sibling.nodeType != dtx.DOMType.ELEMENT_NODE
 					&& elementsOnly)
 				{
@@ -293,10 +293,10 @@ class Traversing
 							var results = element.querySelectorAll(selector);
 							newDOMCollection.addNodeList(results);
 						}
-						else 
+						else
 						{
 							var engine:String->DOMNode->Array<DOMNode> = untyped __js__("
-								(('undefined' != typeof Sizzle && Sizzle) || 
+								(('undefined' != typeof Sizzle && Sizzle) ||
 								(('undefined' != typeof jQuery) && jQuery.find) ||
 								(('undefined' != typeof $) && $.find))
 							");
@@ -314,7 +314,7 @@ class Traversing
 						// only searches descendant nodes.  Therefore, remove the current node
 						// if it was returned as a match.
 						results.remove(node);
-						
+
 						newDOMCollection.addCollection(results);
 					#end
 				}

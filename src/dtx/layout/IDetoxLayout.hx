@@ -4,16 +4,16 @@ using Detox;
 
 interface IDetoxLayout
 {
-	#if !macro 
+	#if !macro
 		/** Updating the title will update the `<title>` element on the page **/
 		public var title(default,set):String;
 
 		/** This is a contentContainer that you can empty and fill with new content **/
 		public var contentContainer(get,null):DOMNode;
-		
+
 		/** This is the `<html>` element or the document node.  Used as a workaround until we have a toHtml() method... that we can have in the interface **/
 		public var document(get,null):DOMNode;
-		
+
 		/** This is the `<head>` element on the page.  We append stylesheets to this. **/
 		public var head(get,null):DOMNode;
 

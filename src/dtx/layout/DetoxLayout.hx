@@ -17,7 +17,7 @@ class DetoxLayout extends dtx.DOMCollection
 	var contentDOM:DOMNode;
 	var titleDOM:DOMNode;
 	var navigationDOM:DOMNode;
-	
+
 	public var scripts:StringMap<DOMCollection>;
 	public var stylesheets:StringMap<DOMCollection>;
 
@@ -28,8 +28,8 @@ class DetoxLayout extends dtx.DOMCollection
 		if (layout != null)
 		{
 			this.add(layout);
-		} 
-		else if (template != null) 
+		}
+		else if (template != null)
 		{
 			this.addCollection(template.parse());
 		}

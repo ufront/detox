@@ -1,12 +1,12 @@
 /****
 * Copyright (c) 2013 Jason O'Neil
-* 
+*
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-* 
+*
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-* 
+*
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-* 
+*
 ****/
 
 package dtx;
@@ -21,7 +21,7 @@ using Detox;
 /**
 	A `DOMCollection` is a collection of DOM / Xml nodes.
 
-	Working with collections of nodes is essential when interacting with the DOM.  
+	Working with collections of nodes is essential when interacting with the DOM.
 
 	Examples of places where DOMCollection could be used:
 
@@ -48,7 +48,7 @@ class DOMCollection
 	/**
 		The array of `dtx.DOMNode` nodes we are interacting with.
 
-		This array is created during the constructor. 
+		This array is created during the constructor.
 		While you cannot set a new array, you can interact with the contents of the given array.
 	**/
 	public var collection(default,null):Array<DOMNode>;
@@ -60,7 +60,7 @@ class DOMCollection
 
 	/**
 		Create a new DOMCollection.
-	
+
 		Initializes with a new array, and will add any nodes.
 	**/
 	public function new( ?nodes:Iterable<DOMNode> )
@@ -97,12 +97,12 @@ class DOMCollection
 	/**
 		Return a new collection containing only the node at the given index.
 
-		The node remains in the old collection also.  
+		The node remains in the old collection also.
 
 		If no node is found at the given index, an empty collection is returned.
-		
+
 		@param i The index of the node to retrieve.  Default is `0` (first node).
-		@return A new collection containing the specified node.  
+		@return A new collection containing the specified node.
 	**/
 	public function eq(?i:Int = 0):DOMCollection
 	{
@@ -139,7 +139,7 @@ class DOMCollection
 	public function add(node:DOMNode, ?pos = -1):DOMCollection
 	{
 		if (pos < 0 || pos > collection.length) pos = collection.length;
-		if (node != null)   
+		if (node != null)
 		{
 			if (collection.indexOf(node) == -1)
 			{
@@ -199,7 +199,7 @@ class DOMCollection
 			}
 			return this;
 		}
-	#else 
+	#else
 		public inline function addNodeList(nodeList:Iterable<DOMNode>, ?elementsOnly:Bool = false):DOMCollection
 		{
 			return addCollection(nodeList, elementsOnly);
@@ -232,10 +232,10 @@ class DOMCollection
 	}
 
 	function removeNode(n:DOMNode):Void
-	{	
-		#if flash 
+	{
+		#if flash
 		// Fix bug with Flash where the usual array.remove() didn't work.
-		// It seems that 
+		// It seems that
 		//    a = xml.firstChild();
 		//    b = xml.firstChild();
 		//    a == b; // true
@@ -252,7 +252,7 @@ class DOMCollection
 		}
 		#else
 		collection.remove(n);
-		#end 
+		#end
 	}
 
 	/**
@@ -264,7 +264,7 @@ class DOMCollection
 	public function each(f : DOMNode -> Void):DOMCollection
 	{
 		if (f != null) for( n in collection ) { f(n); }
-		return this; 
+		return this;
 	}
 
 	/**
@@ -282,7 +282,7 @@ class DOMCollection
 			var filtered = collection.filter(f);
 			newCollection = new DOMCollection(filtered);
 		}
-		else 
+		else
 		{
 			newCollection = new DOMCollection(collection);
 		}

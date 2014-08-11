@@ -1,12 +1,12 @@
 /****
 * Copyright (c) 2013 Jason O'Neil
-* 
+*
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-* 
+*
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-* 
+*
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-* 
+*
 ****/
 
 package dtx.single;
@@ -61,7 +61,7 @@ class ElementManipulation
 
 		@return The zero-based index of this node relative to it's siblings, or -1 if this node was null or did not have a parent.
 	**/
-	public static function index(n:DOMNode):Int 
+	public static function index(n:DOMNode):Int
 	{
 		return dtx.single.Traversing.children(dtx.single.Traversing.parents(n), false).indexOf(n);
 	}
@@ -181,7 +181,7 @@ class ElementManipulation
 				}
 			}
 		}
-		
+
 		return elm;
 	}
 
@@ -213,7 +213,7 @@ class ElementManipulation
 		var newClassValue = classes.join(" ");
 
 		setAttr(elm, "class", newClassValue);
-		
+
 		return elm;
 	}
 
@@ -261,7 +261,7 @@ class ElementManipulation
 	{
 		#if js
 			return (elm == null) ? "" : elm.nodeName.toLowerCase();
-		#else 
+		#else
 			var ret = "";
 			// Make XML behaviour mimic the JS DOM behaviour
 			if (elm != null)
@@ -313,14 +313,14 @@ class ElementManipulation
 							if ( Reflect.field(node,'checked') ) {
 								val = attr( node, "value" );
 								if ( val=="" ) val = "checked";
-							} 
+							}
 							else {
 								"";
 							}
 						}
 						else {
 							val = Reflect.field(node, 'value');
-							
+
 							// If the value is null, that means
 							// the element did not have a field
 							// "value".  See if it has an attr
@@ -332,14 +332,14 @@ class ElementManipulation
 								val = attr(node, "value");
 							}
 						}
-					#else 
+					#else
 						val = attr(node, "value");
 					#end
 				default:
 					val = node.nodeValue;
 			}
 		}
-			
+
 
 		return val;
 	}
@@ -366,7 +366,7 @@ class ElementManipulation
 					// Set value with Javascript
 					#if js
 					Reflect.setField(node, "value", val);
-					
+
 					// Set Attr for non client / js targets
 					#else
 					setAttr(node, "value", Std.string(val));
@@ -379,7 +379,7 @@ class ElementManipulation
 
 		return node;
 	}
-	
+
 	/**
 		This returns the text value of a node.
 
@@ -390,20 +390,20 @@ class ElementManipulation
 	public static function text(elm:DOMNode):String
 	{
 		var text = "";
-		if (elm != null) 
+		if (elm != null)
 		{
 			if (isElement(elm) || isDocument(elm))
 			{
 				text = elm.textContent;
 			}
-			else 
+			else
 			{
 				text = elm.nodeValue;
 			}
 		}
 		return text;
 	}
-	
+
 	/**
 		This sets the text content of the node.  If the node is null, then this method has no effect.
 
@@ -425,12 +425,12 @@ class ElementManipulation
 			{
 				elm.textContent = text;
 			}
-			else 
+			else
 			{
 				elm.nodeValue = text;
 			}
-			
-		} 
+
+		}
 		return elm;
 	}
 
@@ -534,7 +534,7 @@ class ElementManipulation
 	public static function html(node:DOMNode):String
 	{
 		if ( node == null ) return "";
-		
+
 		var sb = new StringBuf();
 		printHtml( node, sb, false );
 		return sb.toString();
@@ -547,7 +547,7 @@ class ElementManipulation
 		You can edit this array at runtime if needed.
 	**/
 	public static var selfClosingElms:Array<String> = ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"];
-	
+
 	@:access(dtx.single.Traversing)
 	static function printHtml( n:DOMNode, sb:StringBuf, preserveTagNameCase:Bool ):Void {
 		if ( isElement(n) ) {
@@ -601,7 +601,7 @@ class ElementManipulation
 				while (peekIndex<str.length) {
 					var c = StringTools.fastCodeAt( str, peekIndex );
 					if ( c == ';'.code ) {
-						// This is the end of an entity.  Providing it's not empty (we peeked at least one character before 
+						// This is the end of an entity.  Providing it's not empty (we peeked at least one character before
 						// the semicolon), then "isEntity" is true.
 						isEntity = peekIndex > i+1;
 						break;
