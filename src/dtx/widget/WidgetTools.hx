@@ -1368,7 +1368,7 @@ class WidgetTools
                             currentName = field;
                             currentExpr = e;
                         case _:
-                            err = true;
+                            leftMostVarName = getLeftMostVariable( currentExpr );
                             break;
                     }
                 }
@@ -1379,6 +1379,8 @@ class WidgetTools
                 // In that case we might want this to return `[text, student]`, as we will want setters on both of those
                 return getLeftMostVariable(e);
             case EMeta(_,e):
+                return getLeftMostVariable(e);
+            case EArray(e,index):
                 return getLeftMostVariable(e);
             case EConst(_): // A constant.  Leave it null
             case _: err = true;
