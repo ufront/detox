@@ -33,19 +33,8 @@ class WidgetLoop<T, W:KeepWidget> extends Loop<T>
 
 	override function generateItem(input:T):WidgetLoopItem<T, W>
 	{
-		// Create a new instance of [widgetClass]
 		var w:W = Type.createInstance(widgetClass, constructorArgs);
-
-		// Set the property or the map of properties
-		if (propName != null)
-		{
-			Reflect.setProperty(w, propName, input);
-		}
-		if (autoMapData)
-		{
-			w.mapData(input);
-		}
-		return new WidgetLoopItem(this, input, w);
+		return new WidgetLoopItem(this, input, w).bindData();
 	}
 
 	override public function addItem(input:T, ?pos:Int):WidgetLoopItem<T, W>
@@ -56,6 +45,14 @@ class WidgetLoop<T, W:KeepWidget> extends Loop<T>
 	inline public function getWidgetLoopItems():Array<WidgetLoopItem<T, W>>
 	{
 		return cast items;
+	}
+	
+	public function refreshItems()
+	{
+		for ( item in getWidgetLoopItems() )
+		{
+			item.bindData();
+		}
 	}
 
 	override public function findItem(?input:T, ?node:DOMNode, ?collection:DOMCollection):WidgetLoopItem<T,W>
@@ -72,8 +69,28 @@ class WidgetLoopItem<T, W:KeepWidget> extends LoopItem<T>
 	{
 		super(loop, input, dom);
 	}
+	
+	/**
+		Re-bind the data for this loop item.
+		Used when first creating the loop, and if you want to trigger a refresh.
+	**/
+	@:access(dtx.widget.WidgetLoop)
+	public function bindData()
+	{
+		var widgetLoop = Std.instance( loop, WidgetLoop );
+		// Set the property or the map of properties
+		if (widgetLoop.propName != null)
+		{
+			Reflect.setProperty(widget, widgetLoop.propName, input);
+		}
+		if (widgetLoop.autoMapData)
+		{
+			widget.mapData(input);
+		}
+		return this;
+	}
 
-	public function get_widget()
+	function get_widget()
 	{
 		return cast dom;
 	}
