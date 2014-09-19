@@ -1,0 +1,15 @@
+<doc>
+	<h1>$docValue</h1>
+	<dtx:_Form dtx-name="form" />
+</doc>
+
+<_Form>
+	<h2>$formValue</h2>
+	<form>
+		<dtx:_Button dtx-name="btn1" letter="a" />
+		<dtx:_Button dtx-name="btn2" letter="b" />
+	</form>
+	<_Button>
+		<a href="#" dtx-on-click="docValue+=letter; formValue+=letter.toUpperCase()">$docValue $formValue $letter</a>
+	</_Button>
+</_Form>

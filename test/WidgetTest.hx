@@ -789,6 +789,13 @@ class WidgetTest
 		Assert.areEqual("Map Key Jason", w2.find('li.jason').text());
 	}
 
+	@Test
+	public function testDoubleLoop()
+	{
+		var w = new widgets.DoubleLoopWidget();
+		Assert.areEqual( 50, w.find("td").length );
+	}
+
 	// Test JOINS
 	// Test multiple elements in partial
 	// Test complex objects (eg models) being looped over and parsed to the child (and defined in the child)
