@@ -15,7 +15,7 @@ class ChildWidget<T:Widget> extends KeepWidget {
     /**
         The parent widget which this belongs to.
         Please note that the setter for this does not move the widget's position in the DOM.
-        The only effect of setting `parent` to a different value is that this field changes, and any variables / interpolation in a sub-class that references parent will be triggered.
+        The only effect of setting `parent` to a different value is that this field changes, and any variables / interpolation in a sub-widget that references the parent will be triggered.
     **/
     public var parent(default,set):T;
 
