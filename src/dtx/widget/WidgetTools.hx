@@ -1428,6 +1428,12 @@ class WidgetTools
                 case "dtx-unchecked":
                     trueStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "checked");
                     falseStatement = macro dtx.single.ElementManipulation.setAttr($selector, "checked", "checked");
+                case "dtx-selected":
+                    trueStatement = macro dtx.single.ElementManipulation.setAttr($selector, "selected", "selected");
+                    falseStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "selected");
+                case "dtx-deselected":
+                    trueStatement = macro dtx.single.ElementManipulation.removeAttr($selector, "selected");
+                    falseStatement = macro dtx.single.ElementManipulation.setAttr($selector, "selected", "selected");
                 default:
                     if (attName.startsWith('dtx-class-'))
                     {
