@@ -576,6 +576,8 @@ class BuildTools
             case EArray( arr, index ):
                 addNullCheckForExpr( arr, allChecks );
                 addNullCheckForExpr( index, allChecks );
+            case ETernary( cond, ifExpr, elseExpr ):
+                // Often this is used for an (a!=null ? a : "fallback"), so null checking really isn't practical here
             case unsupportedType:
                 var typeName = std.Type.enumConstructor( unsupportedType );
                 Context.fatalError( 'Unable to generate null check for `${expr.toString()}`, field access from "$typeName" is currently not supported.', Context.getLocalClass().get().pos );
@@ -812,8 +814,9 @@ class BuildTools
                 path = null;
             }
         }
-        if ( path!=null )
-            Context.registerModuleDependency(Context.getLocalModule(),path);
+        // Commented out the `registerModuleDependency` as it was causing stack overflows in one project. WTF?
+//        if ( path!=null )
+//            Context.registerModuleDependency(Context.getLocalModule(),path);
         return fileContents;
     }
 
