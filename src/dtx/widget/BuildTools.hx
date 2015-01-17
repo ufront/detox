@@ -310,8 +310,8 @@ class BuildTools
         {
             case FieldType.FProp(get, set, t, _):
                 // Read the getter / setter string, in case it already exists and was different
-                getterString = get;
-                setterString = set;
+                if (get != "get") getterString = get;
+                if (set != "set") setterString = set;
                 propertyType = t;
             case FieldType.FVar(type,expr):
                 // This was originally a function or a var, change it to a property
