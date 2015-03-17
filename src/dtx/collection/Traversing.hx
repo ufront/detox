@@ -288,7 +288,7 @@ class Traversing
 				{
 					#if (js && !macro)
 						var element:DOMElement = cast node;
-						if ( untyped element.querySelectorAll )
+						if ( untyped __js__('element.querySelectorAll') )
 						{
 							var results = element.querySelectorAll(selector);
 							newDOMCollection.addNodeList(results);
