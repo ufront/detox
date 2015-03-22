@@ -265,13 +265,13 @@ class WidgetTools
 
         // Process the remaining template nodes
         for ( node in xml ) {
-            processNode( node, partialNumber, loopNumber );
+            processNode( node, partialNumber, loopNumber, Some(xml) );
         }
 
         return { template: xml.html(), fields: fieldsToAdd };
     }
 
-    static function processNode( node:DOMNode, partialNumber:TinkRef<Int>, loopNumber:TinkRef<Int> ) {
+    static function processNode( node:DOMNode, partialNumber:TinkRef<Int>, loopNumber:TinkRef<Int>, topLevel:Option<DOMCollection> ) {
         if (node.tagName() == "dtx:loop")
         {
             // It's a loop element... either:
@@ -284,7 +284,7 @@ class WidgetTools
         {
             // This is a partial call.  <dtx:_MyPartial /> or <dtx:SomePartial /> etc
             partialNumber.value = partialNumber.value+1;
-            processPartialCalls(node, partialNumber.value);
+            processPartialCalls(node, partialNumber.value, topLevel);
         }
         else if ( node.isElement() || node.isDocument() )
         {
@@ -292,7 +292,7 @@ class WidgetTools
             if ( node.isElement() ) processAttributes(node);
 
             // recurse documents and elements
-            for ( child in node.children(false) ) processNode( child, partialNumber, loopNumber );
+            for ( child in node.children(false) ) processNode( child, partialNumber, loopNumber, None );
         }
         else if (node.isTextNode())
         {
@@ -426,7 +426,13 @@ class WidgetTools
         return ret;
     }
 
-    static function processPartialCalls(node:dtx.DOMNode, t:Int)
+    /**
+        @param node The DOMNode of the partial call eg `<dtx:MyPartial name="test"></dtx:MyPartial>`
+        @param t The count of the number of partials, used to generate a default name `${partial}_t`
+        @param topLevel Some(collection) if this is a top level node in the widget.
+        @param topLevel None if this node has a parent element.
+    **/
+    static function processPartialCalls(node:dtx.DOMNode, t:Int, topLevel:Option<DOMCollection>)
     {
         // Elements beginning with <dtx:SomeTypeName /> or <dtx:my.package.SomeTypeName />
         // May have attributes <dtx:Button text="Click Me" />
@@ -478,7 +484,15 @@ class WidgetTools
         var partialDOM = templates.get( classType.toString() ).parse();
         var partialFirstElement = partialDOM.filter( function (n) return n.isElement() ).getNode(0);
         var placeholderName = (partialFirstElement!=null) ? partialFirstElement.tagName() : "span";
-        node.replaceWith( placeholderName.create().setAttr("data-dtx-partial", name) );
+        var placeholder = placeholderName.create().setAttr("data-dtx-partial", name);
+        switch topLevel {
+            case Some(widgetCollection):
+                var placeholderIndex = widgetCollection.collection.indexOf( node );
+                widgetCollection.collection[placeholderIndex] = placeholder;
+            case _:
+                var parent = node.parent();
+                node.replaceWith( placeholder );
+        }
 
         // Set up a public field in the widget, public var $name(default,set_$name):$type
         var typePath = {
@@ -492,7 +506,35 @@ class WidgetTools
         var variableRef = name.resolve();
         var typeRef = typeName.resolve();
 
-        // Add some lines to the setter
+        // If we have a partial declaration on the top level of a widget (it does not have a parent element),
+        // then we also need to add it to the Widget collection.  Otherwise, if the widget is *not* inserted into a DOM
+        // yet, then `replaceWith()` will insert it into the containing <div> of the widget, but not in the collection,
+        // and when you finally insert the collection into a DOM, it will not include the new partial.
+        switch topLevel {
+            case Some(widgetCollection):
+                var linesToAdd = macro {
+                    var placeholder = this.filter(function(node) return dtx.single.ElementManipulation.attr(node, 'data-dtx-partial')==$v{name} ).getNode(0);
+                    var index = -1;
+                    if ( placeholder!=null ) {
+                        index = this.collection.indexOf( placeholder );
+                        this.removeFromCollection( placeholder );
+                    }
+                    else if ( v!=null ) {
+                        this.removeFromCollection( $variableRef );
+                        trace(this.get_template());
+                        trace(this.collection.join(", "));
+                        index = this.collection.indexOf( v.getNode(0) );
+                        trace( 'v not null, and index is '+index+" "+v.getNode(0) );
+                    }
+                    for ( node in v ) {
+                        this.add( node, index++ );
+                    }
+                }
+                BuildTools.addLinesToFunction(prop.setter, linesToAdd, 0);
+            case _:
+        }
+
+        // Add the partial to the DOM when the setter is called, replacing either the placeholder or an existing partial.
         var selector = ("[data-dtx-partial='" + name + "']").toExpr();
         var linesToAdd = macro {
             // Either replace the existing partial, or if none set, replace the <div data-dtx-partial='name'/> placeholder
