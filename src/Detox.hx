@@ -24,6 +24,7 @@
 // Include DOMNode and DOMCollection definitions
 @:noDoc typedef DOMNode = dtx.DOMNode;
 @:noDoc typedef DOMCollection = dtx.DOMCollection;
+@:noDoc typedef DOMElement = dtx.DOMNode.DOMElement;
 
 /**
 	The `Detox` module provides a top-level shortcut to access most of the key functionality of the Detox lib.
@@ -61,5 +62,3 @@ typedef Detox = dtx.Tools;
 	@:noDoc typedef CollectionEventManagement = dtx.collection.EventManagement;
 
 #end
-
-

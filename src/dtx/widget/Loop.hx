@@ -511,6 +511,6 @@ abstract Iter<T>(Iterator<T>) from Iterator<T> to Iterator<T>
 	inline function new(it:Iterator<T>)
 		this = it;
 
-	@:from static public inline function fromIterable(it:Iterable<T>)
+	@:from static public inline function fromIterable<A>(it:Iterable<A>)
 		return new Iter(it.iterator());
 }

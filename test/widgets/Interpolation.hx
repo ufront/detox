@@ -6,14 +6,14 @@ import dtx.widget.Widget;
 class InterpolationBasic extends Widget {}
 
 @:template("<p>My name is $name, I am $age years old and it is $isTall that I am tall</p>")
-class InterpolationWithInitialisation extends Widget 
+class InterpolationWithInitialisation extends Widget
 {
 	public var name = "Jason";
 	public var age = 26;
 	public var isTall = true;
 }
 
-@:template("<p>My name is $name, I am $age years old, my birthday is $birthday and I have these pets: $pets. My favourite number is $favouriteNumber, and the statement I just made was $wasTruth</p>")
+@:template("<p>My name is $name, I am $age years old, my birthday is ${DateTools.format(birthday,'%Y-%m-%d')} and I have these pets: $pets. My favourite number is $favouriteNumber, and the statement I just made was $wasTruth</p>")
 class InterpolationDifferentTypes extends Widget
 {
 	public var name:String;
@@ -63,7 +63,7 @@ class InterpolationFieldAccessAsFunctionArg extends Widget {
 }
 
 @:template("<p>$name, $age and $amITall</p>")
-class InterpolationWithPrintFields extends Widget 
+class InterpolationWithPrintFields extends Widget
 {
 	public var name:String;
 	public var age:Int;
@@ -75,7 +75,7 @@ class InterpolationWithPrintFields extends Widget
 }
 
 @:template("<p>First letter is ${name.charAt(0)}, my last birthday was ${Math.floor(age)}<span dtx-show='amITall'> and I am $amITall tall</span>.</p>")
-class InterpolationWithPrintFieldsComplex extends Widget 
+class InterpolationWithPrintFieldsComplex extends Widget
 {
 	public var name:String;
 	public var age:Float;

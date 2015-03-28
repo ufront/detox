@@ -137,32 +137,18 @@ abstract DOMNode( DOMNodeImplementationType ) from DOMNodeImplementationType to 
 
 		@:access(Xml)
 		public function appendChild( newChild:DOMNode ):DOMNode {
-			#if flash
-				var flashXML:flash.xml.XML = this._node;
-				if( this.nodeType!=Xml.Element && this.nodeType!=Xml.Document )
-					throw "Bad NodeType";
-				flashXML.appendChild( (newChild:Xml)._node );
-			#else
-				this.addChild( newChild );
-			#end
+			this.addChild( newChild );
 			return newChild;
 		}
 
 		@:access(Xml)
 		public function insertBefore( newChild:DOMNode, refChild:DOMNode ):DOMNode {
-			#if flash
-				if ( newChild.parentNode!=null ) newChild.parentNode.removeChild( newChild );
-				if( this.nodeType!=Xml.Element && this.nodeType!=Xml.Document )
-					throw "bad nodeType";
-				(this:Xml)._node.insertChildBefore( (refChild:Xml)._node, (newChild:Xml)._node );
-			#else
-				var targetIndex = 0;
-				var iter = this.iterator();
-				while ( iter.hasNext() && iter.next()!=refChild ) {
-					targetIndex++;
-				}
-				this.insertChild( newChild, targetIndex );
-			#end
+			var targetIndex = 0;
+			var iter = this.iterator();
+			while ( iter.hasNext() && iter.next()!=refChild ) {
+				targetIndex++;
+			}
+			this.insertChild( newChild, targetIndex );
 			return newChild;
 		}
 
@@ -200,9 +186,12 @@ abstract DOMNode( DOMNodeImplementationType ) from DOMNodeImplementationType to 
 	function get_attributes():Iterable<{ name:String, value:String }> {
 		var list = new List();
 		#if js
-			for ( i in 0...this.attributes.length ) {
-				var attNode = this.attributes[i];
-				list.push({ name: attNode.nodeName, value: attNode.nodeValue });
+			if ( this.nodeType==js.html.Node.ELEMENT_NODE ) {
+				var element:DOMElement = cast this;
+				for ( i in 0...element.attributes.length ) {
+					var attNode = element.attributes[i];
+					list.push({ name: attNode.nodeName, value: attNode.nodeValue });
+				}
 			}
 		#else
 			for ( a in this.attributes() ) {
@@ -247,72 +236,37 @@ abstract DOMNode( DOMNodeImplementationType ) from DOMNodeImplementationType to 
 
 		@:access(Xml)
 		function get_nextSibling():DOMNode {
-			#if flash
-				// get the flash node
-				var flashXML:flash.xml.XML = this._node;
-				// get the index
-				var i = flashXML.childIndex();
-				var sibling:Xml = null;
-				// get the siblings
-				var parent = flashXML.parent();
-				if ( parent!=null ) {
-					var children:flash.xml.XMLList = parent.children();
-					// get the previous item
-					var index = i + 1;
-					if ( index>=0 && index<children.length() ) {
-						sibling = Xml.wrap( children[index] );
+			var itsTheNextOne = false;
+			var p = this.parent;
+			if ( p!=null ) {
+				for ( child in p ){
+					if ( itsTheNextOne ) {
+						return child;
+						break;
 					}
+					if ( child==this ) itsTheNextOne = true;
 				}
-				return sibling;
-			#else
-				var itsTheNextOne = false;
-				var p = this.parent;
-				if ( p!=null ) {
-					for ( child in p ){
-						if ( itsTheNextOne ) {
-							return child;
-							break;
-						}
-						if ( child==this ) itsTheNextOne = true;
-					}
-				}
-				return null;
-			#end
+			}
+			return null;
 		}
 
 		@:access(Xml)
 		function get_previousSibling():DOMNode {
-			#if flash
-				// get the flash node
-				var flashXML:flash.xml.XML = this._node;
-				// get the index
-				var i = flashXML.childIndex();
-				// get the siblings
-				var children:flash.xml.XMLList = flashXML.parent().children();
-				// get the previous item
-				var sibling:Xml = null;
-				var index = i - 1;
-				if ( index>=0 && index<children.length() ){
-					sibling = Xml.wrap( children[index] );
-				}
-				return sibling;
-			#else
-				var sibling:Xml = null;
-				var p = this.parent;
-				if ( p!=null ) {
-					for ( child in p ) {
-						if ( child!=this ) {
-							sibling = child;
-						}
-						else {
-							// If it's equal, leave "sibling" set to the previous value,
-							// and exit the loop...
-							break;
-						}
+			var sibling:Xml = null;
+			var p = this.parent;
+			if ( p!=null ) {
+				for ( child in p ) {
+					if ( child!=this ) {
+						sibling = child;
+					}
+					else {
+						// If it's equal, leave "sibling" set to the previous value,
+						// and exit the loop...
+						break;
 					}
 				}
-				return sibling;
-			#end
+			}
+			return sibling;
 		}
 
 		function get_textContent():String {
@@ -365,7 +319,14 @@ abstract DOMNode( DOMNodeImplementationType ) from DOMNodeImplementationType to 
 
 	At some point it may be worth changing this as now that DOMNode is an abstract, this extension is sometimes awkward and leads to unexpected behaviour.
 **/
-typedef DOMElement = #if js js.html.Element #else DOMNode #end;
+typedef DOMElement =
+	#if (js && haxe_ver >= "3.2")
+		js.html.DOMElement
+	#elseif (js)
+		js.html.Element
+	#else
+		DOMNode
+	#end;
 
 /**
 	An element that can contain other elements.
@@ -395,5 +356,3 @@ abstract DocumentOrElement(DOMNode) to DOMNode {
 		@:from static inline function fromXml( x:Xml ) return new DocumentOrElement( x );
 	#end
 }
-
-

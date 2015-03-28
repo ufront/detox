@@ -6,11 +6,11 @@ import dtx.DOMNode;
 using Detox;
 
 /**
-* Auto generated ExampleTest for MassiveUnit. 
-* This is an example test class can be used as a template for writing normal and async tests 
+* Auto generated ExampleTest for MassiveUnit.
+* This is an example test class can be used as a template for writing normal and async tests
 * Refer to munit command line tool for more information (haxelib run munit)
 */
-class ElementManipulationTest 
+class ElementManipulationTest
 {
 	var sampleDocument:DOMNode;
 	var h1:DOMNode;
@@ -22,23 +22,23 @@ class ElementManipulationTest
 	var child:DOMNode;
 	var classTest:DOMNode;
 	var nullnode:DOMNode;
-	
-	public function new() 
+
+	public function new()
 	{
 	}
-	
+
 	@BeforeClass
 	public function beforeClass():Void
 	{
 		// trace ("BeforeClass");
 	}
-	
+
 	@AfterClass
 	public function afterClass():Void
 	{
 		// trace ("AfterClass");
 	}
-	
+
 	@Before
 	public function setup():Void
 	{
@@ -61,14 +61,14 @@ class ElementManipulationTest
 		classTest = sampleDocument.find('#classtest').getNode();
 		nullnode = null;
 	}
-	
+
 	@After
 	public function tearDown():Void
 	{
 		// trace ("Tear Down");
 	}
-	
-	
+
+
 	@Test
 	public function isElement():Void
 	{
@@ -94,7 +94,7 @@ class ElementManipulationTest
 		Assert.isFalse(comment.isTextNode());
 		Assert.isTrue(text.isTextNode());
 	}
-	
+
 	@Test
 	public function typeCheckOnNull():Void
 	{
@@ -136,8 +136,8 @@ class ElementManipulationTest
 	{
 		h1.removeAttr('id');
 		#if js
-		Assert.isFalse(h1.hasAttributes());
-		#else 
+		Assert.isFalse(cast(h1,DOMElement).hasAttributes());
+		#else
 		var i = 0;
 		for (attr in h1.attributes) i++;
 		Assert.areEqual(0, i);
@@ -295,7 +295,7 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testTagName():Void 
+	public function testTagName():Void
 	{
 		Assert.areEqual("h1", h1.tagName());
 		Assert.areEqual("h2", h2.tagName());
@@ -303,7 +303,7 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testTagNameOfNonElement():Void 
+	public function testTagNameOfNonElement():Void
 	{
 		Assert.areEqual("#text", text.tagName());
 		Assert.areEqual("#comment", comment.tagName());
@@ -311,7 +311,7 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testUpperCaseTagName():Void 
+	public function testUpperCaseTagName():Void
 	{
 		var elm = "MyElement".create();
 		Assert.areEqual( "myelement", elm.tagName() );
@@ -319,43 +319,43 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testValInput():Void 
+	public function testValInput():Void
 	{
 		var input = "<input type='text' value='attr' />".parse().getNode();
-		#if js 
+		#if js
 		Reflect.setField(input, "value", "myvalue");
-		#else 
-		input.setAttr("value", "myvalue"); 
+		#else
+		input.setAttr("value", "myvalue");
 		#end
 		Assert.areEqual("myvalue", input.val());
 	}
 
 	@Test
-	public function testValOnTextArea():Void 
+	public function testValOnTextArea():Void
 	{
 		var ta = "<textarea>test</textarea>".parse().getNode();
-		#if js 
+		#if js
 		Reflect.setField(ta, "value", "myvalue");
-		#else 
+		#else
 		ta.setAttr("value", "myvalue");
 		#end
 		Assert.areEqual("myvalue", ta.val());
 	}
 
 	@Test
-	public function testValOnComment():Void 
+	public function testValOnComment():Void
 	{
 		Assert.areEqual(" A comment ", comment.val());
 	}
 
 	@Test
-	public function testValOnTextNode():Void 
+	public function testValOnTextNode():Void
 	{
 		Assert.areEqual("Text", text.val());
 	}
 
 	@Test
-	public function testValOnAttribute():Void 
+	public function testValOnAttribute():Void
 	{
 		var div = "<div value='attr'></div>".parse().getNode();
 		Assert.areEqual("attr", div.val());
@@ -368,7 +368,7 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testSetValInput():Void 
+	public function testSetValInput():Void
 	{
 		var input = "<input type='text' value='attr' />".parse().getNode();
 		input.setVal("newvalue");
@@ -383,34 +383,34 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testSetValComment():Void 
+	public function testSetValComment():Void
 	{
 		comment.setVal("mycomment");
 		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML());
 	}
 
 	@Test
-	public function testSetValTextNode():Void 
+	public function testSetValTextNode():Void
 	{
 		text.setVal("NewText");
 		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML());
 	}
 
 	@Test
-	public function testText():Void 
+	public function testText():Void
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
 		Assert.areEqual("Hello World", helloworld.text());
 	}
 
 	@Test
-	public function testNullText():Void 
+	public function testNullText():Void
 	{
 		Assert.areEqual("", nullnode.text());
 	}
 
 	@Test
-	public function testSetText():Void 
+	public function testSetText():Void
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
 		helloworld.setText("Goodbye Planet");
@@ -418,27 +418,27 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testNullSetText():Void 
+	public function testNullSetText():Void
 	{
 		Assert.areEqual(null, nullnode.setText("text"));
 	}
 
 	@Test
-	public function testSetTextComment():Void 
+	public function testSetTextComment():Void
 	{
 		comment.setText("mycomment");
 		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML());
 	}
 
 	@Test
-	public function testSetTextTextNode():Void 
+	public function testSetTextTextNode():Void
 	{
 		text.setText("NewText");
 		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML());
 	}
 
 	@Test
-	public function testInnerHTML():Void 
+	public function testInnerHTML():Void
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
 		Assert.areEqual("Hello <i>World</i>", helloworld.innerHTML());
@@ -446,20 +446,20 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testNullInnerHTML():Void 
+	public function testNullInnerHTML():Void
 	{
 		Assert.areEqual("", nullnode.innerHTML());
 	}
 
 	@Test
-	public function testInnerHTMLOnNonElements():Void 
+	public function testInnerHTMLOnNonElements():Void
 	{
 		Assert.areEqual(" A comment ", comment.innerHTML());
 		Assert.areEqual("Text", text.innerHTML());
 	}
 
 	@Test
-	public function testSetInnerHTML():Void 
+	public function testSetInnerHTML():Void
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
 		helloworld.setInnerHTML("Goodbye <i>Cruel</i> Planet");
@@ -467,27 +467,27 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testNullSetInnerHTML():Void 
+	public function testNullSetInnerHTML():Void
 	{
 		Assert.areEqual(null, nullnode.setInnerHTML("innerhtml"));
 	}
 
 	@Test
-	public function testSetInnerHTMLComment():Void 
+	public function testSetInnerHTMLComment():Void
 	{
 		comment.setInnerHTML("mycomment");
 		Assert.areEqual("<!--mycomment-->", sampleDocument.find('.containscomment').innerHTML());
 	}
 
 	@Test
-	public function testSetInnerHTMLTextNode():Void 
+	public function testSetInnerHTMLTextNode():Void
 	{
 		text.setInnerHTML("NewText");
 		Assert.areEqual("NewText", sampleDocument.find('.containstext').innerHTML());
 	}
 
 	@Test
-	public function testHtml():Void 
+	public function testHtml():Void
 	{
 		var helloworld = "<div>Hello <i>World</i></div>".parse().getNode();
 		Assert.areEqual("<div>Hello <i>World</i></div>", helloworld.html());
@@ -495,7 +495,7 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testHtmlSelfClosing():Void 
+	public function testHtmlSelfClosing():Void
 	{
 		var div = "<div id='1'>Test</div>".parse().getNode();
 		var emptyDiv = "<div id='1' />".parse().getNode();
@@ -507,8 +507,8 @@ class ElementManipulationTest
 		Assert.isTrue(emptyImg.html().indexOf("</img>") == -1);
 	}
 
-	@Test 
-	public function htmlWithDifferentNodeTypes() 
+	@Test
+	public function htmlWithDifferentNodeTypes()
 	{
 		// slight differences in toString() rendering between JS and Xml platforms
 		// toString() seems to ignore empty text nodes...
@@ -523,13 +523,13 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testNullHtml():Void 
+	public function testNullHtml():Void
 	{
 		Assert.areEqual("", nullnode.html());
 	}
 
 	@Test
-	public function testHtmlOnNonElements():Void 
+	public function testHtmlOnNonElements():Void
 	{
 		Assert.areEqual("<!-- A comment -->", comment.html());
 		Assert.areEqual("Text", text.html());
@@ -552,7 +552,7 @@ class ElementManipulationTest
 		Assert.areEqual( "<div>This &amp; That</div>", div.html() );
 
 		// Test escapting quotes in `setAttr` to prevent maliciousness
-		
+
 		var link = '<a href="">Link</a>'.parse();
 
 		var attemptEscapeAttr = 'fakelink" onclick="HAHA!';
@@ -564,13 +564,13 @@ class ElementManipulationTest
 		var newLink = link.html().parse();
 		Assert.areEqual( attemptEscapeAttr, newLink.attr('href') );
 		Assert.areEqual( '', newLink.attr('onclick') );
-		
+
 		// Test escaping from `setAttr`
 
 		var div = "div".create();
 		var content = "Hello <\'Friends\' & \"Family\">";
 		var encodedContent = StringTools.htmlEscape( content, true );
-		
+
 		div.setAttr("title",content);
 
 		Assert.areEqual('<div title="$encodedContent"></div>', div.html());
@@ -610,7 +610,7 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testCloneTextNode():Void 
+	public function testCloneTextNode():Void
 	{
 		var newText = text.clone();
 		Assert.areEqual(text.nodeValue, newText.nodeValue);
@@ -619,13 +619,13 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testCloneNullNode():Void 
+	public function testCloneNullNode():Void
 	{
 		Assert.areEqual(null, nullnode.clone());
 	}
 
 	@Test
-	public function testCloneComment():Void 
+	public function testCloneComment():Void
 	{
 		var newComment = comment.clone();
 		Assert.areEqual(comment.nodeValue, newComment.nodeValue);
@@ -634,7 +634,7 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testCloneElement():Void 
+	public function testCloneElement():Void
 	{
 		var newH1 = h1.clone();
 		Assert.areEqual(h1.text(), newH1.text());
@@ -647,7 +647,7 @@ class ElementManipulationTest
 	}
 
 	@Test
-	public function testCloneElementRecursive():Void 
+	public function testCloneElementRecursive():Void
 	{
 		var newSampleDoc = sampleDocument.clone();
 		var newH1 = newSampleDoc.find('h1').getNode();
@@ -661,8 +661,8 @@ class ElementManipulationTest
 		Assert.areEqual(h2.text(), newH2.text());
 	}
 
-	@Test 
-	function testIndexNormal():Void 
+	@Test
+	function testIndexNormal():Void
 	{
 		Assert.areEqual(1, h1.index());
 		Assert.areEqual(3, h2.index());
@@ -671,14 +671,14 @@ class ElementManipulationTest
 		Assert.areEqual(0, child.index());
 	}
 
-	@Test 
-	function testIndexNull():Void 
+	@Test
+	function testIndexNull():Void
 	{
 		Assert.areEqual(-1, nullnode.index());
 	}
 
-	@Test 
-	function testChaining():Void 
+	@Test
+	function testChaining():Void
 	{
 		var originalElement:DOMNode = "div".create().setAttr("id", "original");
 		var returnedElement:DOMNode;

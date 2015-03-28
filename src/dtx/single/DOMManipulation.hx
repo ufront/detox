@@ -412,4 +412,3 @@ class DOMManipulation
 		return parent;
 	}
 }
-

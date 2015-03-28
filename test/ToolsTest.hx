@@ -8,29 +8,29 @@ import dtx.DOMNode;
 using Detox;
 
 /**
-* Auto generated ExampleTest for MassiveUnit. 
-* This is an example test class can be used as a template for writing normal and async tests 
+* Auto generated ExampleTest for MassiveUnit.
+* This is an example test class can be used as a template for writing normal and async tests
 * Refer to munit command line tool for more information (haxelib run munit)
 */
-class ToolsTest 
+class ToolsTest
 {
-	
-	public function new() 
+
+	public function new()
 	{
 	}
-	
+
 	@BeforeClass
 	public function beforeClass():Void
 	{
 		// trace ("BeforeClass");
 	}
-	
+
 	@AfterClass
 	public function afterClass():Void
 	{
 		// trace ("AfterClass");
 	}
-	
+
 	@Before
 	public function setup():Void
 	{
@@ -42,7 +42,7 @@ class ToolsTest
 		</myxml>".parse();
 		Detox.setDocument(sampleDocument.getNode());
 	}
-	
+
 	@After
 	public function tearDown():Void
 	{
@@ -52,16 +52,16 @@ class ToolsTest
 	//
 	// These are just a basic wrapper on some DOMCollection functions (new, create, parse)
 	// There are unit tests there, so just test that they work from a string.
-	// 
+	//
 
-	@Test 
+	@Test
 	public function find()
 	{
 		Assert.areEqual(1, "h1".find().length);
 		Assert.areEqual(2, "p".find().length);
 	}
 
-	@Test 
+	@Test
 	public function create_via_using()
 	{
 		Assert.areEqual(#if js "DIV" #else "div" #end, "div".create().nodeName);
@@ -78,16 +78,16 @@ class ToolsTest
 		Assert.areEqual(0, "".parse().length);
 	}
 
-	@Test 
-	public function create() 
+	@Test
+	public function create()
 	{
 		var div:DOMNode = Detox.create("div");
 		Assert.areEqual("div", div.tagName());
 		Assert.areEqual("", div.innerHTML());
 	}
 
-	@Test 
-	public function createBadInput() 
+	@Test
+	public function createBadInput()
 	{
 		var elm:DOMNode = Detox.create("actual_element");
 		Assert.areEqual("actual_element", elm.tagName());
@@ -97,22 +97,22 @@ class ToolsTest
 		Assert.isNull(bad);
 	}
 
-	@Test 
-	public function createNullInput() 
+	@Test
+	public function createNullInput()
 	{
 		var bad = Detox.create(null);
 		Assert.isNull(bad);
 	}
 
-	@Test 
-	public function createEmptyString() 
+	@Test
+	public function createEmptyString()
 	{
 		var bad = Detox.create("");
 		Assert.isNull(bad);
 	}
 
-	@Test 
-	public function parse() 
+	@Test
+	public function parse()
 	{
 		var q = Detox.parse("<div id='test'>Hello</div>");
 
@@ -122,8 +122,8 @@ class ToolsTest
 		Assert.areEqual('Hello', q.innerHTML());
 	}
 
-	@Test 
-	public function parseMultiple() 
+	@Test
+	public function parseMultiple()
 	{
 		var q = Detox.parse("<div id='test1'>Hello</div><p id='test2'>World</p><!--comment-->");
 
@@ -133,8 +133,8 @@ class ToolsTest
 		Assert.areEqual("comment", q.eq(2).val());
 	}
 
-	@Test 
-	public function parseTextOnly() 
+	@Test
+	public function parseTextOnly()
 	{
 		var q3 = Detox.parse("text only");
 
@@ -143,8 +143,8 @@ class ToolsTest
 		Assert.areEqual(1, q3.length);
 	}
 
-	@Test 
-	public function parseComment() 
+	@Test
+	public function parseComment()
 	{
 		var q1 = Detox.parse("<!-- Just 1 comment -->");
 
@@ -166,22 +166,22 @@ class ToolsTest
 		Assert.areEqual(2, q3.length);
 	}
 
-	@Test 
-	public function parseNull() 
+	@Test
+	public function parseNull()
 	{
 		var q = Detox.parse(null);
 		Assert.areEqual(0, q.length);
 	}
 
-	@Test 
-	public function parseEmptyString() 
+	@Test
+	public function parseEmptyString()
 	{
 		var q = Detox.parse("");
 		Assert.areEqual(0, q.length);
 	}
 
-	@Test 
-	public function parseBrokenHTML() 
+	@Test
+	public function parseBrokenHTML()
 	{
 		// This passes in most browsers, but it's not entirely consistent
 		// in it's behaviour.  However, I don't think it's a common enough
@@ -191,12 +191,12 @@ class ToolsTest
 		var q = Detox.parse("<p>My <b>Broken Paragraph</p>");
 	}
 
-	@Test 
-	public function parseTableElements() 
+	@Test
+	public function parseTableElements()
 	{
-		// On the JS target, the browser can be a douché and mess with the parsing of an element if it 
+		// On the JS target, the browser can be a douché and mess with the parsing of an element if it
 		// deems it to be bad html.  This mostly shows with elements used in tables - they fail to create
-		// correctly unless they have the correct parent element.  
+		// correctly unless they have the correct parent element.
 		// This test ensures that our workarounds work - and that the elements are created correctly.
 		var q1 = Detox.parse("<td>Table Data Cell</td>");
 		Assert.areEqual("td", q1.tagName());
@@ -231,7 +231,7 @@ class ToolsTest
 		Assert.isTrue( xml.html().indexOf("This &amp; That")>-1 );
 	}
 
-	@Test 
+	@Test
 	public function setDocument()
 	{
 		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
@@ -239,7 +239,7 @@ class ToolsTest
 		Assert.areEqual("My Element", "b".find().innerHTML());
 	}
 
-	@Test 
+	@Test
 	public function setDocument_null()
 	{
 		var node = "<p>This is <b>My Element</b>.</p>".parse().getNode();
@@ -250,9 +250,9 @@ class ToolsTest
 		Assert.areEqual("My Element", "b".find().innerHTML());
 	}
 
-	#if js 
+	#if js
 
-	@Test 
+	@Test
 	public function toDetox()
 	{
 		var x = Xml.parse("<div>123</div><p>ABC</p>");
@@ -261,7 +261,7 @@ class ToolsTest
 		Assert.areEqual(2, x.toDetox().length);
 		Assert.areEqual(0, xNull.toDetox().length);
 	}
-	
-	#end 
+
+	#end
 
 }

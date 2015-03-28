@@ -178,18 +178,17 @@ class Tools
 			dtx.single.ElementManipulation.setInnerHTML(n, xml);
 			q = dtx.single.Traversing.children(n, false);
 
-			#if (neko || cpp)
-			// This is a workaround for a glitch in neko where parse("<!-- Comment -->") generates
-			// a collection with 2 nodes - the comment and an empty text node.  Not sure if it comes
-			// from a child of these or from neko's XML parser...
-			// Note - also happens on CPP.
-			for (child in q)
-			{
-				if (dtx.single.ElementManipulation.isTextNode(child) && child.nodeValue == "")
+			#if (!js)
+				// This is a workaround for a glitch where parse("<!-- Comment -->") generates
+				// a collection with 2 nodes - the comment and an empty text node.
+				// See https://github.com/HaxeFoundation/haxe/issues/4096
+				for (child in q)
 				{
-					q.removeFromCollection(child);
+					if (dtx.single.ElementManipulation.isTextNode(child) && child.nodeValue == "")
+					{
+						q.removeFromCollection(child);
+					}
 				}
-			}
 			#end
 		}
 		else
