@@ -68,7 +68,7 @@ class EventManagement
 		@param listener The event listener function.  It should take a single parameter containing the current event.
 		@return The original DOMNode.
 	**/
-	public static function on(target:DOMNode, eventType:String, ?selector:String, ?listener:EventListener):DOMNode
+	public static function on(target:DOMNode, eventType:String, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		#if js
 			if (target != null && eventType != null)
@@ -102,7 +102,7 @@ class EventManagement
 		@param listener The event listener function.  It should take a single parameter containing the current event.
 		@return The original DOMNode.
 	**/
-	public static function off(target:DOMNode, ?eventType:String, ?listener:EventListener):DOMNode
+	public static function off(target:DOMNode, ?eventType:String, ?listener:Event->Void):DOMNode
 	{
 		#if js
 			if (target != null)
@@ -140,7 +140,7 @@ class EventManagement
 		@param listener The event listener function.  It should take a single parameter containing the current event.
 		@return The original DOMNode.
 	**/
-	public static function one(target:DOMNode, eventType:String, ?selector:String, listener:EventListener):DOMNode
+	public static function one(target:DOMNode, eventType:String, ?selector:String, listener:Event->Void):DOMNode
 	{
 		#if js
 			if (target != null)
@@ -239,7 +239,7 @@ class EventManagement
 	}
 
 	/** A shortcut for `on(target,"submit",selector,listener)`. **/
-	public static inline function submit(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function submit(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "submit", selector, listener);
 	}
@@ -284,55 +284,55 @@ class EventManagement
 	}
 
 	/** A shortcut for `on(target,"blur",selector,listener)`. **/
-	public static inline function blur(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function blur(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "blur", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"change",selector,listener)`. **/
-	public static inline function change(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function change(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "change", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"click",selector,listener)`. **/
-	public static inline function click(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function click(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "click", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"dblclick",selector,listener)`. **/
-	public static inline function dblclick(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function dblclick(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "dblclick", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"focus",selector,listener)`. **/
-	public static inline function focus(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function focus(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "focus", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"focusIn",selector,listener)`. **/
-	public static inline function focusIn(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function focusIn(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "focusIn", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"focusOut",selector,listener)`. **/
-	public static inline function focusOut(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function focusOut(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "focusOut", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"resize",selector,listener)`. **/
-	public static inline function resize(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function resize(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "resize", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"scroll",selector,listener)`. **/
-	public static inline function scroll(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function scroll(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "scroll", selector, listener);
 	}
@@ -355,25 +355,25 @@ class EventManagement
 	}
 
 	/** A shortcut for `on(target,"select",selector,listener)`. **/
-	public static inline function select(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function select(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "select", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"load",selector,listener)`. **/
-	public static inline function load(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function load(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "load", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"unload",selector,listener)`. **/
-	public static inline function unload(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function unload(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "unload", selector, listener);
 	}
 
 	/** A shortcut for `on(target,"error",selector,listener)`. **/
-	public static inline function error(target:DOMNode, ?selector:String, ?listener:EventListener):DOMNode
+	public static inline function error(target:DOMNode, ?selector:String, ?listener:Event->Void):DOMNode
 	{
 		return on(target, "error", selector, listener);
 	}

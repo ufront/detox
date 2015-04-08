@@ -43,7 +43,7 @@ class EventManagement
 	}
 
 	/** Run `dtx.single.EventManagement.on` for each node in the target collection. **/
-	public static function on<T:DOMCollection>(targetCollection:T, eventType:String, ?selector:String, ?listener:EventListener):T
+	public static function on<T:DOMCollection>(targetCollection:T, eventType:String, ?selector:String, ?listener:Event->Void):T
 	{
 		if (targetCollection!=null) for (target in targetCollection)
 		{
@@ -53,7 +53,7 @@ class EventManagement
 	}
 
 	/** Run `dtx.single.EventManagement.off` for each node in the target collection. **/
-	public static function off<T:DOMCollection>(targetCollection:T, ?eventType:String, ?listener:EventListener):T
+	public static function off<T:DOMCollection>(targetCollection:T, ?eventType:String, ?listener:Event->Void):T
 	{
 		if (targetCollection!=null) for (target in targetCollection)
 		{
@@ -63,7 +63,7 @@ class EventManagement
 	}
 
 	/** Run `dtx.single.EventManagement.one` for each node in the target collection. **/
-	public static function one<T:DOMCollection>(targetCollection:T, eventType:String, ?selector:String, listener:EventListener):T
+	public static function one<T:DOMCollection>(targetCollection:T, eventType:String, ?selector:String, listener:Event->Void):T
 	{
 		if (targetCollection!=null) for (target in targetCollection)
 		{
@@ -143,7 +143,7 @@ class EventManagement
 	}
 
 	/** A shortcut for `on(target, "submit", selector, listener)`. **/
-	public static inline function submit<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function submit<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "submit", selector, listener);
 	}
@@ -159,55 +159,55 @@ class EventManagement
 	}
 
 	/** A shortcut for `on(target, "blur", selector, listener)`. **/
-	public static inline function blur<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function blur<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "blur", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "change", selector, listener)`. **/
-	public static inline function change<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function change<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "change", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "click", selector, listener)`. **/
-	public static inline function click<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function click<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "click", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "dblclick", selector, listener)`. **/
-	public static inline function dblclick<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function dblclick<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "dblclick", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "focus", selector, listener)`. **/
-	public static inline function focus<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function focus<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "focus", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "focusIn", selector, listener)`. **/
-	public static inline function focusIn<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function focusIn<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "focusIn", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "focusOut", selector, listener)`. **/
-	public static inline function focusOut<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function focusOut<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "focusOut", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "resize", selector, listener)`. **/
-	public static inline function resize<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function resize<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "resize", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "scroll", selector, listener)`. **/
-	public static inline function scroll<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function scroll<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "scroll", selector, listener);
 	}
@@ -223,31 +223,31 @@ class EventManagement
 	}
 
 	/** A shortcut for `on(target, "select", selector, listener)`. **/
-	public static inline function select<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function select<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "select", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "load", selector, listener)`. **/
-	public static inline function load<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function load<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "load", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "unload", selector, listener)`. **/
-	public static inline function unload<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function unload<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "unload", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "error", selector, listener)`. **/
-	public static inline function error<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function error<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "error", selector, listener);
 	}
 
 	/** A shortcut for `on(target, "ready", selector, listener)`. **/
-	public static inline function ready<T:DOMCollection>(target:T, ?selector:String, ?listener:EventListener):T
+	public static inline function ready<T:DOMCollection>(target:T, ?selector:String, ?listener:Event->Void):T
 	{
 		return on(target, "ready", selector, listener);
 	}
