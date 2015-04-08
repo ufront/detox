@@ -9,3 +9,12 @@
 -D embed_js
 -dce full
 -js example/datawidget/build/datawidgetexample.js
+
+--next 
+
+-main TodoExample
+-lib detox
+-cp example/todo
+-D embed_js
+-dce full
+-js example/todo/build/todo.js
