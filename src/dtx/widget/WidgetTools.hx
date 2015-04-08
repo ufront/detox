@@ -1499,6 +1499,10 @@ class WidgetTools
 
             // Turn the attribute into an expression, and check it is a Bool, so we can use it in an if statement
             var testExprStr = node.attr(attName);
+            #if (haxe_ver >= 3.200)
+                // From Haxe 3.2, the XML parser turns "a && b" into "a &&&& b". Weird, but we can work with that. It isn't valid XML anyway.
+                testExprStr = testExprStr.replace( "&&&&", "&&" );
+            #end
             var testExpr =
                 try
                     Context.parse( testExprStr, classPos )
