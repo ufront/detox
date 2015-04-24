@@ -294,6 +294,13 @@ class WidgetTools
             // recurse documents and elements
             for ( child in node.children(false) ) processNode( child, partialNumber, loopNumber, None );
         }
+        else if (node.isCData())
+        {
+            if (node.text().indexOf('$') > -1)
+            {
+                interpolateTextNodes(node);
+            }
+        }
         else if (node.isTextNode())
         {
             // look for variable interpolation eg "Welcome back, $name..."

@@ -44,6 +44,12 @@ class ElementManipulation
 		return node != null && node.nodeType == dtx.DOMType.COMMENT_NODE;
 	}
 
+	/** @return Returns true if the given node is not null and is a CData. **/
+	public static function isCData(node:DOMNode):Bool
+	{
+		return node != null && node.nodeType == dtx.DOMType.CDATA_NODE;
+	}
+
 	/** @return Returns true if the given node is not null and is a text node. **/
 	public static function isTextNode(node:DOMNode):Bool
 	{
@@ -586,6 +592,11 @@ class ElementManipulation
 			sb.add( n.nodeValue );
 			sb.add( '-->' );
 		}
+		else if ( isCData(n) ) {
+			sb.add( '<![CDATA[' );
+			sb.add( n.nodeValue );
+			sb.add( ']]>' );
+		}
 	}
 
 	static function addHtmlEscapedString( str:String, sb:StringBuf, encodeQuotes:Bool ):Void
@@ -629,4 +640,3 @@ class ElementManipulation
 		}
 	}
 }
-
