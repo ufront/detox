@@ -4,8 +4,8 @@
 	"tags": ["cross","dom","xml","js","domtools","dtx","detox"],
 	"description": "Detox - A cross-platform library for Haxe to make working with Xml and the DOM easy... similar to jQuery and friends, but works wherever Haxe works, in a more haxe-like way.",
 	"contributors": ["jason"],
-	"releasenote": "Further Haxe 3.2 fixes.",
-	"version": "1.0.0-rc.10",
+	"releasenote": "1.0.0 stabe release. Only real change is supporting CData nodes in widgets.",
+	"version": "1.0.0",
 	"url": "https://github.com/jasononeil/detox",
 	"classPath": "src/",
 	"dependencies": {
