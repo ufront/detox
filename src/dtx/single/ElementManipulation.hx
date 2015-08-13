@@ -397,16 +397,7 @@ class ElementManipulation
 	{
 		var text = "";
 		if (elm != null)
-		{
-			if (isElement(elm) || isDocument(elm))
-			{
-				text = elm.textContent;
-			}
-			else
-			{
-				text = elm.nodeValue;
-			}
-		}
+			text = elm.textContent;
 		return text;
 	}
 

@@ -277,7 +277,6 @@ abstract DOMNode( DOMNodeImplementationType ) from DOMNodeImplementationType to 
 					return x.nodeType==dtx.DOMType.TEXT_NODE;
 				});
 
-
 				var s = new StringBuf();
 				for ( textNode in textDescendants ) {
 					s.add( textNode.nodeValue );
