@@ -506,11 +506,13 @@ class LoopItem<T>
 	}
 }
 
-abstract Iter<T>(Iterator<T>) from Iterator<T> to Iterator<T>
+abstract Iter<T>(Iterator<T>) from Iterator<T>
 {
 	inline function new(it:Iterator<T>)
 		this = it;
 
 	@:from static public inline function fromIterable<A>(it:Iterable<A>)
 		return new Iter(it.iterator());
+
+	public function iterator() return this;
 }

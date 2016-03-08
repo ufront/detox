@@ -20,9 +20,9 @@ package dtx;
 	This will work with both `js.html.Node` and `Xml`.
 **/
 class DOMType {
-	static public var DOCUMENT_NODE = #if js js.html.Node.DOCUMENT_NODE #else Xml.Document #end;
-	static public var ELEMENT_NODE = #if js js.html.Node.ELEMENT_NODE #else Xml.Element #end;
-	static public var TEXT_NODE = #if js js.html.Node.TEXT_NODE #else Xml.PCData #end;
-	static public var COMMENT_NODE = #if js js.html.Node.COMMENT_NODE #else Xml.Comment #end;
-	static public var CDATA_NODE = #if js js.html.Node.CDATA_SECTION_NODE #else Xml.CData #end;
+	inline static public var DOCUMENT_NODE = #if js js.html.Node.DOCUMENT_NODE #else Xml.XmlType.Document #end;
+	inline static public var ELEMENT_NODE = #if js js.html.Node.ELEMENT_NODE #else Xml.XmlType.Element #end;
+	inline static public var TEXT_NODE = #if js js.html.Node.TEXT_NODE #else Xml.XmlType.PCData #end;
+	inline static public var COMMENT_NODE = #if js js.html.Node.COMMENT_NODE #else Xml.XmlType.Comment #end;
+	inline static public var CDATA_NODE = #if js js.html.Node.CDATA_SECTION_NODE #else Xml.XmlType.CData #end;
 }

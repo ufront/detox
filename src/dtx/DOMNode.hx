@@ -159,13 +159,13 @@ abstract DOMNode( DOMNodeImplementationType ) from DOMNodeImplementationType to 
 
 		public function cloneNode( deep:Bool ):DOMNode {
 			var clone = switch this.nodeType {
-				case Xml.Element: Xml.createElement( this.nodeName );
-				case Xml.PCData: Xml.createPCData( this.nodeValue );
-				case Xml.CData: Xml.createCData( this.nodeValue );
-				case Xml.Comment: Xml.createComment( this.nodeValue );
-				case Xml.DocType: Xml.createDocType( this.nodeValue );
-				case Xml.ProcessingInstruction: Xml.createProcessingInstruction( this.nodeValue );
-				case Xml.Document: Xml.createDocument();
+				case Element: Xml.createElement( this.nodeName );
+				case PCData: Xml.createPCData( this.nodeValue );
+				case CData: Xml.createCData( this.nodeValue );
+				case Comment: Xml.createComment( this.nodeValue );
+				case DocType: Xml.createDocType( this.nodeValue );
+				case ProcessingInstruction: Xml.createProcessingInstruction( this.nodeValue );
+				case Document: Xml.createDocument();
 			}
 			if ( this.nodeType==Xml.Element ) {
 				for ( attName in this.attributes() ) {
