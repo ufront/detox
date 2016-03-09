@@ -8,6 +8,11 @@ os:
   - linux
   - osx
 
+matrix:
+  # Allow Haxe development to fail.
+  allow_failures:
+    - haxe: development
+
 sudo: false
 
 install:
