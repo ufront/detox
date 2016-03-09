@@ -1,5 +1,6 @@
 Detox
 =====
+[![Build Status](https://travis-ci.org/ufront/detox.svg?branch=master)](https://travis-ci.org/ufront/detox)
 
 This is a library for haxeJS that makes it easier to work with the DOM or XML.  It is mostly inspired by JQuery but aims to give a more haxe-like way of coding.
 
@@ -7,7 +8,7 @@ It makes heavy use of haxe's ["using" mixin](http://haxe.org/manual/using), whic
 
 Here's some code so you can get an idea of what I mean:
 
-```
+```haxe
 
 // You include this at the top of your file
 
