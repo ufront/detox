@@ -17,7 +17,11 @@ using StringTools;
 #if js
 	import js.html.BodyElement;
 	import js.html.EventTarget;
-	import js.html.DOMWindow;
+	#if (haxe_ver < 3.300)
+		import js.html.DOMWindow;
+	#else
+		import js.html.Window in DOMWindow;
+	#end
 #end
 
 /**
